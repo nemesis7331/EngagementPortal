@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Persone nell'engagement · 4 alternative</title>
+<style>
+:root{
+  --brand-950:#061d36;--brand-900:#0a2a4d;--brand-700:#0f4275;--brand-600:#0b5fa5;
+  --brand-500:#2a86d8;--brand-100:#e1eefa;--brand-50:#f1f7fc;--accent:#0e9fb5;--accent-soft:#d6f4f8;
+  --ink:#0a1b2e;--muted:#566a80;--muted-2:#78899b;--line:#dfe7ef;--line-soft:#edf2f7;
+  --bg:#f4f7fa;--card:#fff;--surface-2:#f8fafc;
+  --st-action:#b42318;--st-action-bg:#fee4e2;--st-action-border:#fda29b;
+  --st-wait:#7a5b00;--st-wait-bg:#fff8c5;--st-wait-border:#eac54f;
+  --st-progress:#175cd3;--st-progress-bg:#d1e9ff;--st-progress-border:#b2ddff;
+  --st-done:#067647;--st-done-bg:#dcfae6;--st-done-border:#a9efc5;
+  --st-blocked:#475467;--st-blocked-bg:#f2f4f7;--st-blocked-border:#e4e7ec;
+  --radius:14px;--radius-md:10px;--shadow:0 1px 2px rgba(6,29,54,.06),0 6px 20px rgba(6,29,54,.06);
+  --shadow-lg:0 10px 30px rgba(6,29,54,.12);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button{font:inherit;cursor:pointer}
+a{color:var(--brand-600)}
+h1{font-size:30px;line-height:1.15;letter-spacing:-.02em;margin:0 0 8px;color:var(--brand-900)}
+h2{font-size:20px;margin:0;color:var(--brand-900);letter-spacing:-.01em}
+h3{font-size:15px;margin:0;color:var(--brand-900)}
+p{margin:0}
+.sub{color:var(--muted)}
+.small{font-size:12.5px;color:var(--muted)}
+.tiny{font-size:11.5px;color:var(--muted)}
+.wrap{max-width:1220px;margin:0 auto;padding:28px 24px 80px}
+.top{display:flex;align-items:center;gap:14px;padding:14px 24px;background:var(--brand-900);color:#fff}
+.top .logo{width:34px;height:34px;border-radius:10px;background:var(--accent);display:grid;place-items:center;color:var(--brand-950);font-weight:800}
+.top b{font-size:15px}
+.top .meta{margin-left:auto;font-size:12.5px;color:#bed3e6}
+.intro{padding:34px 0 8px;max-width:1000px}
+.lede{font-size:17px;color:var(--muted);margin:0 0 20px}
+.statebar{display:flex;align-items:flex-start;gap:12px;background:#fff;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:10px;padding:13px 15px;margin:0 0 20px}
+.statebar .i{width:30px;height:30px;border-radius:50%;background:var(--accent-soft);color:var(--brand-700);display:grid;place-items:center;font-weight:800;flex:none}
+.statebar b{display:block;font-size:13.5px;color:var(--brand-900)}
+.statebar span{font-size:12.5px;color:var(--muted)}
+.switcher{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 8px;padding:10px 0}
+.switcher button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 16px;font-weight:650;color:var(--muted);display:flex;align-items:center;gap:8px}
+.switcher button.on{border-color:var(--brand-600);color:var(--brand-700);box-shadow:0 0 0 3px var(--brand-100)}
+.switcher .n{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--brand-100);color:var(--brand-700);font-size:11px;font-weight:800}
+.switcher button.on .n{background:var(--brand-600);color:#fff}
+.proposal{display:none;padding-top:16px}
+.proposal.active{display:block}
+.prop-head{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap;margin-bottom:4px}
+.tag{font-size:11px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent-soft);background:#fff;padding:4px 10px;border-radius:999px;margin-top:3px}
+.prop-head h2{font-size:24px}
+.prop-desc{max-width:900px;color:var(--muted);margin:5px 0 16px}
+.metrics{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}
+.metric{background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:12.5px;color:var(--muted)}
+.metric b{color:var(--brand-900)}
+.mock{border:1px solid #c9d8e7;border-radius:18px;background:#fbfdff;padding:18px;box-shadow:var(--shadow)}
+.mockbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 2px 12px;border-bottom:1px solid var(--line-soft);margin-bottom:16px}
+.mockbar .dots{display:flex;gap:5px}
+.mockbar .dots i{display:block;width:9px;height:9px;border-radius:50%;background:#d6e1ec}
+.mockbar .name{font-size:12px;color:var(--muted);font-weight:600}
+.crumbs{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted);margin-bottom:10px}
+.crumbs b{color:var(--brand-700)}
+.enghead{display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:14px}
+.enghead .t{flex:1;min-width:240px}
+.enghead h3{font-size:22px;line-height:1.2;margin-bottom:3px}
+.enghead .sub{font-size:13px}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:650;white-space:nowrap;border:1px solid transparent}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
+.p-action{background:var(--st-action-bg);color:var(--st-action);border-color:var(--st-action-border)}
+.p-wait{background:var(--st-wait-bg);color:var(--st-wait);border-color:var(--st-wait-border)}
+.p-progress{background:var(--st-progress-bg);color:var(--st-progress);border-color:var(--st-progress-border)}
+.p-done{background:var(--st-done-bg);color:var(--st-done);border-color:var(--st-done-border)}
+.p-blocked{background:var(--st-blocked-bg);color:var(--st-blocked);border-color:var(--st-blocked-border)}
+.btn{border:1px solid transparent;border-radius:9px;padding:9px 15px;font-weight:650;font-size:13.5px;display:inline-flex;align-items:center;gap:7px;text-decoration:none}
+.btn.pri{background:var(--brand-600);color:#fff}
+.btn.pri:hover{background:var(--brand-700)}
+.btn.sec{background:#fff;border-color:var(--line);color:var(--brand-900)}
+.btn.ghost{background:transparent;color:var(--brand-600);padding:6px 4px}
+.btn.sm{padding:5px 10px;font-size:12.5px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.grid{display:grid;gap:14px;align-items:start}
+.split{grid-template-columns:minmax(0,1fr) 300px}
+.card2{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px}
+.card2 h3{font-size:14px;margin-bottom:10px}
+.sec-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.sec-head h3{margin:0}
+.avatar{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--brand-100);color:var(--brand-700);font-size:11px;font-weight:800;flex:none}
+.person{display:flex;align-items:center;gap:9px;border:1px solid var(--line);border-radius:9px;padding:8px 10px;background:#fff;min-width:0}
+.person .nm{display:block;font-size:13px;font-weight:650;color:var(--brand-900);line-height:1.25}
+.person .rl{display:block;font-size:11px;color:var(--muted)}
+.person .end{margin-left:auto;display:flex;align-items:center;gap:6px}
+.badge{font-size:10px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;padding:2px 7px;border-radius:999px;border:1px solid var(--line);color:var(--muted);background:var(--surface-2)}
+.badge.int{border-color:var(--st-progress-border);background:var(--st-progress-bg);color:var(--st-progress)}
+.badge.ext{border-color:var(--st-wait-border);background:var(--st-wait-bg);color:var(--st-wait)}
+.badge.ok{border-color:var(--st-done-border);background:var(--st-done-bg);color:var(--st-done)}
+.slot{border:1px solid var(--line);border-radius:10px;padding:10px 11px;background:#fff;margin-bottom:8px}
+.slot .lbl{font-size:10.5px;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);font-weight:800;margin-bottom:7px;display:flex;justify-content:space-between;gap:8px}
+.slot .lbl span{font-weight:600;letter-spacing:0;text-transform:none;font-size:11px;color:var(--muted)}
+.slot .empty{font-size:12.5px;color:var(--muted);border:1px dashed #c9d8e7;border-radius:7px;padding:8px 10px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.picker{border:1px solid var(--brand-100);border-radius:12px;background:linear-gradient(180deg,var(--brand-50),#fff);padding:14px}
+.picker h3{font-size:14px;margin-bottom:10px}
+.searchbox{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 10px;margin-bottom:9px}
+.searchbox input{border:0;outline:0;width:100%;font:inherit;font-size:13px;background:transparent}
+.cand{display:flex;align-items:center;gap:9px;border:1px solid var(--line);border-radius:9px;padding:8px 9px;background:#fff;margin-bottom:7px;cursor:pointer}
+.cand.on{border-color:var(--brand-500);box-shadow:0 0 0 2px var(--brand-100)}
+.cand input{width:16px;height:16px;accent-color:var(--brand-600);flex:none}
+.cand .nm{display:block;font-size:12.5px;font-weight:650;color:var(--brand-900)}
+.cand .meta{display:block;font-size:10.5px;color:var(--muted)}
+.cand .when{font-size:10.5px;color:var(--st-wait);font-weight:650;white-space:nowrap;margin-left:auto}
+.picker .actions{display:flex;gap:7px;justify-content:flex-end;margin-top:10px}
+.warning{background:var(--st-wait-bg);border:1px solid var(--st-wait-border);color:var(--st-wait);border-radius:8px;padding:8px 10px;font-size:11.5px;margin-top:8px}
+.extbox{border:1px dashed #c9d8e7;border-radius:10px;padding:11px 12px;margin-top:12px;background:var(--surface-2)}
+.extbox h4{margin:0 0 5px;font-size:12.5px;color:var(--brand-900)}
+.extbox p{font-size:11.5px;color:var(--muted)}
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:9px}
+.toolbar .btn{margin-left:auto}
+.tabs2{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.tabs2 span{font-size:11.5px;font-weight:650;border:1px solid var(--line);border-radius:999px;padding:4px 10px;background:#fff;color:var(--muted)}
+.tabs2 span.on{border-color:var(--brand-600);background:var(--brand-100);color:var(--brand-700)}
+.role-tpl{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tpl{border:1px solid var(--line);border-radius:10px;padding:12px;background:#fff;position:relative}
+.tpl.on{border-color:var(--brand-500);box-shadow:0 0 0 3px var(--brand-100)}
+.tpl b{display:block;font-size:13.5px;color:var(--brand-900)}
+.tpl span{display:block;font-size:11.5px;color:var(--muted);margin-top:2px}
+.tpl .slots{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.tpl .slots i{font-style:normal;font-size:10px;background:var(--surface-2);border:1px solid var(--line);border-radius:5px;padding:2px 6px;color:var(--muted)}
+.tpl .apply{margin-top:9px;width:100%;justify-content:center}
+.claim{border:1px solid var(--line);border-radius:10px;background:#fff;padding:11px 12px;margin-bottom:8px;display:flex;gap:10px;align-items:center}
+.claim .t{flex:1;min-width:0}
+.claim b{display:block;font-size:13px;color:var(--brand-900)}
+.claim span{display:block;font-size:11.5px;color:var(--muted)}
+.claim .acts{display:flex;gap:6px;flex-wrap:wrap}
+.callouts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:18px 0 0}
+.callout{background:#fff;border:1px solid var(--line);border-radius:10px;padding:11px 12px;font-size:12.5px;color:var(--muted)}
+.callout b{display:block;color:var(--brand-900);font-size:12px;margin-bottom:2px}
+.proscons{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0 0}
+.pc{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:13px}
+.pc h5{margin:0 0 6px;font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:800}
+.pc ul{margin:0;padding-left:18px;color:var(--muted)}
+.pc li{margin-bottom:3px}
+.pc.good ul{color:#196345}
+.pc.bad ul{color:#8a4b00}
+.compare{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;margin-top:34px;box-shadow:var(--shadow)}
+.compare h2{margin-bottom:4px}
+.compare p{color:var(--muted);font-size:13px;margin-bottom:14px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)}
+td b{color:var(--brand-900)}
+.reco{margin-top:16px;background:var(--brand-50);border:1px solid var(--brand-100);border-radius:10px;padding:14px;font-size:13.5px;color:var(--brand-800)}
+.reco b{color:var(--brand-900)}
+.tech{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;margin-top:18px;box-shadow:var(--shadow)}
+.tech h2{font-size:18px;margin-bottom:6px}
+.tech h3{font-size:13.5px;margin:16px 0 7px}
+.tech code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px;background:var(--surface-2);border:1px solid var(--line);border-radius:4px;padding:1px 5px;color:var(--brand-900)}
+.tech ul{margin:0;padding-left:18px;color:var(--muted);font-size:13px}
+.tech li{margin-bottom:4px}
+.decisions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.decision{border:1px solid var(--line);border-radius:9px;padding:10px 12px;background:var(--surface-2);font-size:12.5px;color:var(--muted)}
+.decision b{display:block;color:var(--brand-900);font-size:12.5px;margin-bottom:2px}
+.toast{position:fixed;right:24px;bottom:24px;background:var(--brand-900);color:#fff;padding:11px 16px;border-radius:10px;font-size:13px;box-shadow:var(--shadow-lg);opacity:0;transform:translateY(8px);transition:.2s;pointer-events:none;z-index:100}
+.toast.show{opacity:1;transform:translateY(0)}
+@media(max-width:1000px){.split{grid-template-columns:1fr}.role-tpl{grid-template-columns:1fr}.callouts{grid-template-columns:1fr}.decisions{grid-template-columns:1fr}}
+@media(max-width:720px){.wrap{padding:20px 14px 70px}.proscons{grid-template-columns:1fr}.person{flex-wrap:wrap}.person .end{width:100%;margin-left:39px}.claim{flex-wrap:wrap}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="logo">EP</div>
+  <div><b>Cyber Engagement Portal</b><div class="tiny" style="color:#9fb9cf">Persone nell'engagement · alternative di implementazione</div></div>
+  <div class="meta">ENG-2026-001 · dati demo</div>
+</header>
+
+<main class="wrap">
+  <section class="intro">
+    <h1>Aggiungere persone, non solo invitarle</h1>
+    <p class="lede">
+      Oggi il team gestisce solo <b>partecipanti esterni</b> (Cliente, Partner, Altro) con un invito.
+      Il Pentester invece è un <b>profilo demo</b>, non una persona assegnata all'attività.
+      Per aggiungere più pentester a un engagement servono un <b>elenco interno del provider</b> e un
+      concetto di <b>assegnazione</b>, distinto dall'invito.
+    </p>
+    <div class="statebar">
+      <span class="i">i</span>
+      <div><b>Stato attuale</b><span>TeamMember = nome + email + organizzazione. Nessuna directory interna, nessuna assegnazione per ruolo, nessuna verifica di disponibilità. L'“Owner” è solo una stringa.</span></div>
+    </div>
+    <div class="switcher" role="tablist" aria-label="Alternative">
+      <button class="on" data-variant="a" role="tab" aria-selected="true"><span class="n">A</span> Squadra per ruoli <span class="tiny">· consigliata</span></button>
+      <button data-variant="b" role="tab" aria-selected="false"><span class="n">B</span> Lista unica</button>
+      <button data-variant="c" role="tab" aria-selected="false"><span class="n">C</span> Modelli squadra</button>
+      <button data-variant="d" role="tab" aria-selected="false"><span class="n">D</span> Staffing aperto</button>
+    </div>
+  </section>
+
+  <!-- ================= A ================= -->
+  <section class="proposal active" id="v-a">
+    <div class="prop-head"><span class="tag">Alternativa A</span><h2>Squadra per ruoli + directory interna</h2></div>
+    <p class="prop-desc">
+      Una sezione <b>Squadra</b> con slot chiari: Lead Pentester, Pentester (multipli), PMO, Manager,
+      Auditor. Si aggiungono persone dalla <b>directory interna</b> con ricerca, competenze e
+      disponibilità. Gli ospiti esterni restano separati: un interno si <b>aggiunge</b> subito, un
+      esterno si <b>invita</b>.
+    </p>
+    <div class="metrics">
+      <span class="metric"><b>2 click</b> per aggiungere 2 pentester</span>
+      <span class="metric"><b>Ruoli</b> espliciti</span>
+      <span class="metric"><b>Disponibilità</b> verificata</span>
+      <span class="metric">Esterni separati</span>
+    </div>
+
+    <div class="mock">
+      <div class="mockbar"><span class="dots"><i></i><i></i><i></i></span><span class="name">engagement · squadra · profilo PMO</span></div>
+      <div class="crumbs"><span>Tutti gli engagement</span><span>/</span><b>External Penetration Test</b></div>
+      <div class="enghead">
+        <div class="t"><h3>External Penetration Test</h3><p class="sub">ENG-2026-001 · Contoso · Penetration Test · 20–25 nov 2026</p></div>
+        <span class="pill p-progress">In preparazione</span>
+      </div>
+
+      <div class="grid split">
+        <div class="card2">
+          <div class="sec-head"><h3>Squadra dell'engagement</h3><span class="tiny">4 interni · 2 esterni</span></div>
+
+          <div class="slot">
+            <div class="lbl">Lead Pentester <span>1 persona</span></div>
+            <div class="person"><span class="avatar">SC</span><span><span class="nm">Sara Conti</span><span class="rl">Lead Pentester · Web/API</span></span><span class="end"><span class="badge int">Dalla directory</span><button class="btn ghost sm" data-toast="Sostituisci lead (demo)">Sostituisci</button></span></div>
+          </div>
+
+          <div class="slot">
+            <div class="lbl">Pentester <span>2 assegnati · disponibili 3</span></div>
+            <div class="person" style="margin-bottom:7px"><span class="avatar">MV</span><span><span class="nm">Marco Verdi</span><span class="rl">Pentester · Web/API</span></span><span class="end"><span class="badge int">Dalla directory</span><span class="badge" style="border-color:var(--st-wait-border);background:var(--st-wait-bg);color:var(--st-wait)">70% su altro</span><button class="btn ghost sm" data-toast="Rimosso (demo)">×</button></span></div>
+            <div class="person" style="margin-bottom:8px"><span class="avatar">EF</span><span><span class="nm">Elena Fabbri</span><span class="rl">Pentester · Cloud</span></span><span class="end"><span class="badge int">Dalla directory</span><button class="btn ghost sm" data-toast="Rimosso (demo)">×</button></span></div>
+            <div class="empty"><span>Serve un altro pentester per il mobile?</span><button class="btn sec sm" data-toast="Apri selettore (demo)">+ Aggiungi pentester</button></div>
+          </div>
+
+          <div class="slot">
+            <div class="lbl">PMO e Manager <span>assegnazione automatica</span></div>
+            <div class="person" style="margin-bottom:7px"><span class="avatar">LF</span><span><span class="nm">Luca Ferri</span><span class="rl">PMO · coordinamento</span></span><span class="end"><span class="badge">Automatico</span></span></div>
+            <div class="person"><span class="avatar">GM</span><span><span class="nm">Giorgio Marino</span><span class="rl">Manager · approvazioni</span></span><span class="end"><span class="badge">Automatico</span></span></div>
+          </div>
+
+          <div class="slot">
+            <div class="lbl">Auditor <span>opzionale</span></div>
+            <div class="empty"><span>Nessun auditor assegnato.</span><button class="btn ghost sm" data-toast="Apri selettore (demo)">+ Assegna</button></div>
+          </div>
+
+          <div class="extbox">
+            <h4>Ospiti esterni</h4>
+            <p>Cliente e partner restano nella lista inviti: <b>Marta Rinaldi</b> (Cliente), <b>Anna Rossi</b> (Cliente), <b>Marco Neri</b> (Partner). Non occupano slot interni.</p>
+            <button class="btn sec sm" data-toast="Invito esterno (demo)">+ Invita esterno</button>
+          </div>
+        </div>
+
+        <aside class="picker">
+          <h3>Aggiungi pentester</h3>
+          <div class="searchbox"><input placeholder="Cerca per nome o competenza…" aria-label="Cerca pentester"><span class="tiny">6</span></div>
+          <label class="cand"><input type="checkbox"><span class="avatar" style="width:25px;height:25px">MV</span><span><span class="nm">Marco Verdi</span><span class="meta">Web/API · 8 anni</span></span><span class="when">Occupato 18–22 nov</span></label>
+          <label class="cand on"><input type="checkbox" checked><span class="avatar" style="width:25px;height:25px">EF</span><span><span class="nm">Elena Fabbri</span><span class="meta">Cloud · 6 anni</span></span><span class="when" style="color:var(--st-done)">Disponibile</span></label>
+          <label class="cand on"><input type="checkbox" checked><span class="avatar" style="width:25px;height:25px">DR</span><span><span class="nm">Davide Riva</span><span class="meta">Mobile · 5 anni</span></span><span class="when" style="color:var(--st-done)">Disponibile</span></label>
+          <label class="cand"><input type="checkbox"><span class="avatar" style="width:25px;height:25px">GN</span><span><span class="nm">Giulia Neri</span><span class="meta">OT/SCADA · 10 anni</span></span><span class="when">40% su altro</span></label>
+          <div class="warning"><b>Attenzione:</b> Marco Verdi ha già il 70% di allocazione nella stessa settimana. Puoi assegnarlo, ma il sistema segnala il sovraccarico.</div>
+          <div class="actions"><button class="btn sec sm" data-toast="Selettore chiuso (demo)">Annulla</button><button class="btn pri sm" data-toast="2 pentester aggiunti (demo)">Aggiungi 2</button></div>
+          <p class="tiny" style="margin-top:9px">Subito dopo l'aggiunta: audit, notifica interna e comparsa nella lista Persone.</p>
+        </aside>
+      </div>
+    </div>
+
+    <div class="callouts">
+      <div class="callout"><b>1 · Aggiungere ≠ invitare</b>L'interno è subito operativo; l'esterno resta “Invitato” finché accetta.</div>
+      <div class="callout"><b>2 · Ruoli espliciti</b>Il lead è una persona, non una stringa “Owner”. I pentester possono essere più di uno.</div>
+      <div class="callout"><b>3 · Disponibilità</b>Il selettore mostra carico e sovrapposizioni prima di assegnare.</div>
+    </div>
+    <div class="proscons">
+      <div class="pc good"><h5>Perché funziona</h5><ul><li>Il modello mentale è chiaro: ruoli interni + ospiti esterni.</li><li>Permette più pentester e un lead responsabile.</li><li>La disponibilità evita doppie assegnazioni.</li><li>Estendibile a PMO/Manager/Auditor senza cambiare la UI.</li></ul></div>
+      <div class="pc bad"><h5>Da decidere</h5><ul><li>Serve una directory interna (anche demo all'inizio).</li><li>Va stabilito se l'assegnazione limita davvero la visibilità.</li><li>Il cliente vede i nomi? Consiglio: sì, nome e ruolo, senza contatti.</li></ul></div>
+    </div>
+  </section>
+
+  <!-- ================= B ================= -->
+  <section class="proposal" id="v-b">
+    <div class="prop-head"><span class="tag">Alternativa B</span><h2>Una sola lista “Persone” con due sorgenti</h2></div>
+    <p class="prop-desc">
+      Un unico elenco, con un pulsante <b>Aggiungi persona</b> che chiede: <b>dalla directory interna</b>
+      oppure <b>invita esterno</b>. Le righe interne sono “Assegnato”, quelle esterne “Invitato”.
+      Meno sezioni, più semplice da spiegare; il rischio è mescolare due concetti diversi.
+    </p>
+    <div class="metrics"><span class="metric"><b>1 punto d'ingresso</b></span><span class="metric"><b>Badge</b> interno/esterno</span><span class="metric">Meno struttura</span><span class="metric">Ruolo nella riga</span></div>
+
+    <div class="mock">
+      <div class="mockbar"><span class="dots"><i></i><i></i><i></i></span><span class="name">engagement · persone · profilo PMO</span></div>
+      <div class="crumbs"><span>Tutti gli engagement</span><span>/</span><b>External Penetration Test</b></div>
+      <div class="enghead"><div class="t"><h3>External Penetration Test</h3><p class="sub">ENG-2026-001 · Contoso · 4 interni · 3 esterni</p></div><span class="pill p-progress">In preparazione</span></div>
+
+      <div class="card2">
+        <div class="toolbar">
+          <div class="tabs2"><span class="on">Tutti · 7</span><span>Interni · 4</span><span>Esterni · 3</span></div>
+          <button class="btn pri sm" data-toast="Menu aggiunta (demo)">+ Aggiungi persona</button>
+        </div>
+
+        <div class="person" style="margin-bottom:7px"><span class="avatar">SC</span><span><span class="nm">Sara Conti</span><span class="rl">Lead Pentester · Web/API</span></span><span class="end"><span class="badge int">Interno</span><span class="badge ok">Assegnato</span><button class="btn ghost sm" data-toast="Rimosso (demo)">×</button></span></div>
+        <div class="person" style="margin-bottom:7px"><span class="avatar">MV</span><span><span class="nm">Marco Verdi</span><span class="rl">Pentester · Web/API</span></span><span class="end"><span class="badge int">Interno</span><span class="badge" style="border-color:var(--st-wait-border);background:var(--st-wait-bg);color:var(--st-wait)">70% su altro</span><button class="btn ghost sm" data-toast="Rimosso (demo)">×</button></span></div>
+        <div class="person" style="margin-bottom:7px"><span class="avatar">EF</span><span><span class="nm">Elena Fabbri</span><span class="rl">Pentester · Cloud</span></span><span class="end"><span class="badge int">Interno</span><span class="badge ok">Assegnato</span><button class="btn ghost sm" data-toast="Rimosso (demo)">×</button></span></div>
+        <div class="person" style="margin-bottom:7px"><span class="avatar">LF</span><span><span class="nm">Luca Ferri</span><span class="rl">PMO · coordinamento</span></span><span class="end"><span class="badge int">Interno</span><span class="badge">Automatico</span></span></div>
+        <div class="person" style="margin-bottom:7px"><span class="avatar">MR</span><span><span class="nm">Marta Rinaldi</span><span class="rl">Referente cliente</span></span><span class="end"><span class="badge ext">Esterno</span><span class="badge">Invitato</span><button class="btn ghost sm" data-toast="Rimosso (demo)">×</button></span></div>
+        <div class="person" style="margin-bottom:7px"><span class="avatar">AR</span><span><span class="nm">Anna Rossi</span><span class="rl">Referente cliente</span></span><span class="end"><span class="badge ext">Esterno</span><span class="badge ok">Accettato</span><button class="btn ghost sm" data-toast="Rimosso (demo)">×</button></span></div>
+        <div class="person"><span class="avatar">MN</span><span><span class="nm">Marco Neri</span><span class="rl">Partner · consulente legale</span></span><span class="end"><span class="badge ext">Esterno</span><span class="badge">Invitato</span><button class="btn ghost sm" data-toast="Rimosso (demo)">×</button></span></div>
+
+        <div class="extbox" style="margin-top:14px"><h4>Menu “Aggiungi persona”</h4><p><b>Dalla directory interna</b> → scegli un dipendente e il ruolo (Lead/Pentester/PMO/Manager/Auditor), assegnazione immediata.<br><b>Invita esterno</b> → nome, email, organizzazione, invito via email.</p></div>
+      </div>
+    </div>
+
+    <div class="callouts">
+      <div class="callout"><b>1 · Un solo posto</b>Tutte le persone dell'engagement sono nella stessa lista, con badge chiari.</div>
+      <div class="callout"><b>2 · Due semantiche</b>Assegnato (interno) e invitato (esterno) restano distinti dal badge, non dalla posizione.</div>
+      <div class="callout"><b>3 · Ruolo visibile</b>Ogni riga mostra il ruolo nell'engagement, non solo l'organizzazione.</div>
+    </div>
+    <div class="proscons">
+      <div class="pc good"><h5>Perché funziona</h5><ul><li>Meno sezioni e meno navigazione: un solo elenco.</li><li>Facile da capire per chi gestisce poche persone.</li><li>Riusa il team esistente e aggiunge solo la sorgente interna.</li></ul></div>
+      <div class="pc bad"><h5>Da decidere</h5><ul><li>Interni ed esterni hanno permessi e cicli di vita diversi.</li><li>La lista può diventare lunga e mista.</li><li>Meno adatta a mostrare slot obbligatori (lead, manager, auditor).</li></ul></div>
+    </div>
+  </section>
+
+  <!-- ================= C ================= -->
+  <section class="proposal" id="v-c">
+    <div class="prop-head"><span class="tag">Alternativa C</span><h2>Modelli di squadra riutilizzabili</h2></div>
+    <p class="prop-desc">
+      Si definiscono <b>modelli</b> (“Pentest standard”, “Cloud review”, “Red team”) con ruoli e
+      competenze richieste. Alla creazione o in un secondo momento si applica il modello e si
+      sostituiscono le persone. È il modo più veloce per staffare attività ripetitive; richiede
+      un minimo di amministrazione dei modelli.
+    </p>
+    <div class="metrics"><span class="metric"><b>1 click</b> per applicare</span><span class="metric">Riutilizzabile</span><span class="metric">Ruoli predefiniti</span><span class="metric">Admin modelli</span></div>
+
+    <div class="mock">
+      <div class="mockbar"><span class="dots"><i></i><i></i><i></i></span><span class="name">engagement · modelli squadra · profilo PMO</span></div>
+      <div class="enghead"><div class="t"><h3>External Penetration Test</h3><p class="sub">ENG-2026-001 · Contoso · scegli un modello e sostituisci i nomi</p></div><span class="pill p-action">Squadra da completare</span></div>
+
+      <div class="card2">
+        <div class="sec-head"><h3>Modello squadra</h3><span class="tiny">Puoi modificare le persone dopo l'applicazione</span></div>
+        <div class="role-tpl">
+          <div class="tpl on"><b>Pentest standard</b><span>Web/API · 5 giorni · 1 lead + 2 pentester</span><div class="slots"><i>Lead Pentester</i><i>2 × Pentester</i><i>PMO</i><i>Manager</i></div><button class="btn pri sm apply" data-toast="Modello applicato (demo)">Applica modello</button></div>
+          <div class="tpl"><b>Cloud review</b><span>Azure/AWS · 10 giorni · 1 lead + 1 pentester</span><div class="slots"><i>Lead Cloud</i><i>1 × Pentester</i><i>PMO</i><i>Manager</i></div><button class="btn sec sm apply" data-toast="Modello applicato (demo)">Applica modello</button></div>
+          <div class="tpl"><b>Red team</b><span>5 giorni · 1 lead + 3 operatori</span><div class="slots"><i>Red Team Lead</i><i>3 × Operatore</i><i>PMO</i><i>Manager</i></div><button class="btn sec sm apply" data-toast="Modello applicato (demo)">Applica modello</button></div>
+          <div class="tpl"><b>Personalizzato</b><span>Parti da zero e aggiungi gli slot</span><div class="slots"><i>Lead Pentester</i><i>Pentester</i><i>PMO</i></div><button class="btn sec sm apply" data-toast="Squadra manuale (demo)">Crea</button></div>
+        </div>
+      </div>
+
+      <div class="card2" style="margin-top:12px">
+        <div class="sec-head"><h3>Dopo l'applicazione</h3><span class="tiny">Modello “Pentest standard”</span></div>
+        <div class="person" style="margin-bottom:7px"><span class="avatar">SC</span><span><span class="nm">Sara Conti</span><span class="rl">Lead Pentester · proposta</span></span><span class="end"><span class="badge int">Da confermare</span><button class="btn ghost sm" data-toast="Sostituisci (demo)">Sostituisci</button></span></div>
+        <div class="person" style="margin-bottom:7px"><span class="avatar">MV</span><span><span class="nm">Marco Verdi</span><span class="rl">Pentester · proposta</span></span><span class="end"><span class="badge int">Da confermare</span><button class="btn ghost sm" data-toast="Sostituisci (demo)">Sostituisci</button></span></div>
+        <div class="person"><span class="avatar">EF</span><span><span class="nm">Elena Fabbri</span><span class="rl">Pentester · proposta</span></span><span class="end"><span class="badge int">Da confermare</span><button class="btn ghost sm" data-toast="Sostituisci (demo)">Sostituisci</button></span></div>
+      </div>
+    </div>
+
+    <div class="callouts">
+      <div class="callout"><b>1 · Velocità</b>Un modello riempie gli slot e propone le persone in base a competenze e disponibilità.</div>
+      <div class="callout"><b>2 · Coerenza</b>Tutte le attività dello stesso tipo partono con la stessa struttura.</div>
+      <div class="callout"><b>3 · Flessibilità</b>Dopo l'applicazione si sostituisce chi serve: il modello è un punto di partenza.</div>
+    </div>
+    <div class="proscons">
+      <div class="pc good"><h5>Perché funziona</h5><ul><li>Riduce i click per le attività ricorrenti.</li><li>Standardizza ruoli e responsabilità.</li><li>Si combina bene con A: il modello popola gli slot.</li></ul></div>
+      <div class="pc bad"><h5>Da decidere</h5><ul><li>Serve una schermata admin per creare i modelli.</li><li>Da solo non risolve l'aggiunta di una persona singola.</li><li>I modelli vanno mantenuti nel tempo.</li></ul></div>
+    </div>
+  </section>
+
+  <!-- ================= D ================= -->
+  <section class="proposal" id="v-d">
+    <div class="prop-head"><span class="tag">Alternativa D</span><h2>Staffing aperto con candidature</h2></div>
+    <p class="prop-desc">
+      L'engagement viene pubblicato come “staffing aperto”. I pentester idonei vedono l'attività e
+      <b>richiedono di partecipare</b>; PMO o Manager approvano. Utile se l'assegnazione è
+      bottom-up o distribuita tra più team. Aggiunge un passaggio di approvazione e un nuovo stato.
+    </p>
+    <div class="metrics"><span class="metric"><b>1 click</b> per candidarsi</span><span class="metric">Approvazione PMO</span><span class="metric">Nuovo stato staffing</span><span class="metric">Più adatto a team grandi</span></div>
+
+    <div class="mock">
+      <div class="mockbar"><span class="dots"><i></i><i></i><i></i></span><span class="name">engagement · staffing aperto · profilo Pentester</span></div>
+      <div class="enghead"><div class="t"><h3>External Penetration Test</h3><p class="sub">ENG-2026-001 · Contoso · 20–25 nov · servono 2 pentester</p></div><span class="pill p-wait">Candidature aperte</span></div>
+
+      <div class="grid split">
+        <div class="card2">
+          <div class="sec-head"><h3>Candidature</h3><span class="tiny">3 richieste · 1 approvata</span></div>
+          <div class="claim"><span class="avatar">MV</span><span class="t"><b>Marco Verdi</b><span>Web/API · richiesta il 15/11 · 70% su altro</span></span><span class="acts"><span class="badge" style="border-color:var(--st-wait-border);background:var(--st-wait-bg);color:var(--st-wait)">In attesa</span><button class="btn ghost sm" data-toast="Candidatura aperta (demo)">Dettagli</button></span></div>
+          <div class="claim"><span class="avatar">EF</span><span class="t"><b>Elena Fabbri</b><span>Cloud · richiesta il 15/11 · disponibile</span></span><span class="acts"><span class="badge ok">Approvata</span></span></div>
+          <div class="claim"><span class="avatar">DR</span><span class="t"><b>Davide Riva</b><span>Mobile · richiesta il 14/11 · disponibile</span></span><span class="acts"><span class="badge" style="border-color:var(--st-wait-border);background:var(--st-wait-bg);color:var(--st-wait)">In attesa</span><button class="btn ghost sm" data-toast="Candidatura aperta (demo)">Dettagli</button></span></div>
+        </div>
+        <aside class="card2">
+          <h3>Vista del pentester</h3>
+          <p class="small" style="margin-bottom:10px">L'engagement compare tra le opportunità perché sei idoneo per competenza e disponibilità.</p>
+          <div class="claim" style="margin:0"><span class="avatar">GN</span><span class="t"><b>Ottima combinazione</b><span>Web/API · 20–25 nov · disponibilità 100%</span></span></div>
+          <button class="btn pri" style="width:100%;justify-content:center;margin-top:10px" data-toast="Richiesta inviata (demo)">Richiedi di partecipare</button>
+          <p class="tiny" style="margin-top:8px">PMO/Manager ricevono la richiesta e approvano. L'assegnazione diventa effettiva solo dopo l'approvazione.</p>
+        </aside>
+      </div>
+    </div>
+
+    <div class="callouts">
+      <div class="callout"><b>1 · Bottom-up</b>I pentester propongono la propria partecipazione, il PMO mantiene il controllo.</div>
+      <div class="callout"><b>2 · Nuovo stato</b>Lo staffing aperto è uno stato dell'engagement, separato dal workflow di consegna.</div>
+      <div class="callout"><b>3 · Trasparenza</b>Competenze e carico sono visibili prima della candidatura.</div>
+    </div>
+    <div class="proscons">
+      <div class="pc good"><h5>Perché funziona</h5><ul><li>Coinvolge i pentester nella scelta delle attività.</li><li>Riduce il lavoro del PMO su team grandi.</li><li>La disponibilità è parte della candidatura.</li></ul></div>
+      <div class="pc bad"><h5>Da decidere</h5><ul><li>Aggiunge approvazioni e stati da gestire.</li><li>Non è un “aggiungi” immediato: c'è sempre un'attesa.</li><li>Serve una policy di idoneità e visibilità.</li></ul></div>
+    </div>
+  </section>
+
+  <section class="compare">
+    <h2>Confronto rapido</h2>
+    <p>Le quattro alternative non sono esclusive: A è la base, C può accelerarla, B è una semplificazione, D è un modello organizzativo diverso.</p>
+    <table>
+      <thead><tr><th></th><th>A · Squadra per ruoli</th><th>B · Lista unica</th><th>C · Modelli squadra</th><th>D · Staffing aperto</th></tr></thead>
+      <tbody>
+        <tr><td><b>Punto di forza</b></td><td>Ruoli e disponibilità chiari</td><td>Semplicità e un solo elenco</td><td>Velocità sulle attività ricorrenti</td><td>Coinvolgimento dei pentester</td></tr>
+        <tr><td><b>Click per aggiungere</b></td><td>2–3 (ricerca + selezione)</td><td>2–3 (menu + scelta)</td><td>1 (applica modello)</td><td>1 per candidarsi + approvazione</td></tr>
+        <tr><td><b>Directory interna</b></td><td>Necessaria</td><td>Necessaria</td><td>Necessaria</td><td>Necessaria</td></tr>
+        <tr><td><b>Approvazione</b></td><td>No (assegnazione PMO/Manager)</td><td>No</td><td>No</td><td>Sì (PMO/Manager)</td></tr>
+        <tr><td><b>Complessità</b></td><td>Media</td><td>Bassa-media</td><td>Media</td><td>Alta</td></tr>
+        <tr><td><b>Migliore per</b></td><td>Team strutturato, più ruoli</td><td>Poche persone, uso semplice</td><td>Attività ripetitive</td><td>Team grandi e distribuiti</td></tr>
+      </tbody>
+    </table>
+    <div class="reco"><b>Consiglio:</b> implementare <b>A</b> come base (directory + assegnazioni per ruolo), aggiungendo subito dopo i <b>modelli C</b> per le tipologie ricorrenti. La lista unica B è una variante di UI di A, non un modello diverso. Lo staffing aperto D lo terrei per una fase successiva, quando esiste una vera policy di allocazione e accesso.</div>
+  </section>
+
+  <section class="tech">
+    <h2>Come implementarla (per A)</h2>
+    <p class="sub" style="font-size:13px;margin-bottom:12px">Il modello attuale ha solo <code>TeamMember</code> (nome, email, organizzazione, invito). Per gli interni serve una directory e un’assegnazione separata.</p>
+
+    <h3>Modello dati proposto</h3>
+    <ul>
+      <li><code>ProviderUser</code>: id, nome, email, titolo, competenze, attivo. In demo si può popolare da file/seed; in produzione da Entra ID o dalla tabella utenti del provider.</li>
+      <li><code>EngagementAssignment</code>: id, engagementId, providerUserId, ruolo (LeadPentester, Pentester, PMO, Manager, Auditor), allocazione %, data inizio/fine, aggiunto da/data.</li>
+      <li><code>TeamMember</code> resta per gli <b>esterni</b> (cliente/partner): invito, accettazione, organizzazione.</li>
+      <li>Denormalizzare nome/email nell’assegnazione per continuità storica; il <b>lead</b> può alimentare l’attuale <code>Owner</code> o sostituirlo.</li>
+    </ul>
+
+    <h3>API minime</h3>
+    <ul>
+      <li><code>GET /api/provider/users?q=&amp;role=Pentester</code> → directory filtrabile (solo interni).</li>
+      <li><code>GET /api/provider/users/{id}/availability?from&amp;to</code> → carico e sovrapposizioni.</li>
+      <li><code>POST /api/engagements/{id}/assignments</code> → aggiunge uno o più interni con ruolo e allocazione.</li>
+      <li><code>DELETE /api/engagements/{id}/assignments/{assignmentId}</code> → rimuove l’assegnazione.</li>
+      <li><code>GET /api/engagements/{id}</code> → restituisce <code>assignments</code> + <code>teamEffective</code>; la directory resta accessibile solo ai profili interni autorizzati.</li>
+    </ul>
+
+    <h3>Permessi e visibilità</h3>
+    <ul>
+      <li><b>PMO e Manager</b>: aggiungono/rimuovono interni; il PMO propone, il Manager può approvare.</li>
+      <li><b>Pentester</b>: vede la propria assegnazione; in fase 1 non può aggiungere altri.</li>
+      <li><b>Cliente</b>: vede nome e ruolo dei pentester assegnati, non email/telefono; non vede la directory.</li>
+      <li><b>Auditor</b>: sola lettura.</li>
+    </ul>
+
+    <h3>Accesso: due fasi</h3>
+    <ul>
+      <li><b>Fase 1 — metadati:</b> l’assegnazione è informativa; tutti i Pentester continuano a vedere tutti gli engagement (demo attuale). Basso rischio.</li>
+      <li><b>Fase 2 — accesso:</b> solo i Pentester assegnati vedono e operano sull’engagement. Richiede autenticazione reale e filtro lato API, non solo UI.</li>
+    </ul>
+
+    <div class="decisions">
+      <div class="decision"><b>Lead vs Owner</b>Consiglio: il Lead Pentester è un’assegnazione, l’Owner denormalizzato resta per compatibilità e si aggiorna dal lead.</div>
+      <div class="decision"><b>Cliente e nomi</b>Consiglio: mostra nome e ruolo, non i contatti interni. La directory non è mai visibile al cliente.</div>
+      <div class="decision"><b>Invitare vs aggiungere</b>Interno = assegnazione immediata + audit + notifica. Esterno = invito con stato “Invitato/Accettato”.</div>
+      <div class="decision"><b>Sovraccarico</b>Consiglio: warning non bloccante (come per la pianificazione), con allocazione e date visibili prima di confermare.</div>
+    </div>
+  </section>
+</main>
+
+<div class="toast" id="toast"></div>
+<script>
+const toast = document.getElementById('toast');
+let t;
+function showToast(msg){ toast.textContent = msg; toast.classList.add('show'); clearTimeout(t); t=setTimeout(()=>toast.classList.remove('show'),2200); }
+document.querySelectorAll('.switcher button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const key = btn.dataset.variant;
+    document.querySelectorAll('.switcher button').forEach(b => { const on = b===btn; b.classList.toggle('on',on); b.setAttribute('aria-selected',String(on)); });
+    document.querySelectorAll('.proposal').forEach(p => p.classList.toggle('active', p.id === 'v-'+key));
+    window.scrollTo({top:0});
+  });
+});
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-toast]');
+  if (el) { e.preventDefault(); showToast(el.dataset.toast); }
+});
+document.querySelectorAll('.cand input').forEach(cb => {
+  cb.addEventListener('change', () => cb.closest('.cand').classList.toggle('on', cb.checked));
+});
+</script>
+</body>
+</html>
