@@ -1,0 +1,351 @@
+# Documento di Progetto — Portale Gestione Engagement
+## Specifica funzionale, architetturale e piano di implementazione
+**Destinatario:** agente di implementazione
+**Fonte funzionale:** `portale-engagement-demo.html` (demo interattiva già validata)
+**Stack target:** C# / ASP.NET Core su Azure con SSO multitenant
+
+---
+
+## 0. Contesto e obiettivo
+
+Realizzare un portale web per la gestione del ciclo di vita degli engagement di sicurezza informatica (Penetration Test, Vulnerability Assessment, Red Team, Code Review, Cloud Security) tra un provider (Bip) e i propri clienti enterprise. Il portale deve:
+
+- gestire il workflow documentale e di pianificazione di ogni engagement;
+- esporre ai diversi profili viste e azioni differenziate;
+- autenticare gli utenti tramite **Microsoft Entra ID con SSO multitenant**;
+- isolare rigorosamente i dati tra tenant/clienti;
+- tracciare ogni evento in un registro di audit immutabile.
+
+La demo HTML/JS allegata è la **specifica funzionale di riferimento**: contiene modello dati, macchina a stati, matrice permessi, regole di business e UX già validate. L'implementazione deve replicarne fedelmente il comportamento, colmando le lacune di sicurezza (MFA reale, storage sicuro, autorizzazione server-side).
+
+---
+
+## 1. Analisi funzionale della demo
+
+### 1.1 Profili utente e permessi
+
+Cinque ruoli, modellati come **app roles Entra ID** + policy applicative:
+
+| Ruolo | Visibilità | Scrittura | Note |
+|---|---|---|---|
+| **Cliente** | Solo engagement del proprio tenant | STAF, scope, credenziali, proposte, DL (solo destinatari cliente) | Decide sulle proposte Bip |
+| **Cybersec** | Tutti gli engagement + dati interni | STAF per conto cliente, DL | Registra ordini; gestisce solleciti |
+| **Cyberdefence** | Tutti, incluse credenziali | Scope e credenziali per conto cliente, report | Gestisce email; pubblica deliverables |
+| **Manager** | Tutti (no credenziali) | Solo revisione deliverables | Approva o richiede modifiche |
+| **Auditor** | Tutti (no credenziali) | Nessuna | Sola lettura |
+
+Funzioni di autorizzazione di riferimento (dalla demo):
+
+```
+isBip()        = role ∈ {cybersec, cyberdefence}
+canWrite()     = role ∈ {client, cybersec, cyberdefence}
+seesInt()      = role ≠ client
+canCreds()     = role ∈ {client, cyberdefence}
+canMail()      = role = cyberdefence
+canRem()       = role = cybersec
+canDecide(p)   = p.status = 'pending' ∧
+                 ((p.from = 'client' ∧ role = 'cyberdefence') ∨
+                  (p.from = 'bip'    ∧ role = 'client'))
+```
+
+Nell'implementazione reale queste diventano **policy-based authorization** (`IAuthorizationHandler`, `[Authorize(Policy="...")]`), con l'aggiunta del filtro tenant a livello di query EF Core.
+
+### 1.2 Entità del dominio
+
+**Engagement** — radice aggregata:
+- `Id` (formato `ENG-YYYY-NNN`), `Name`, `Type` (Penetration Test, Vulnerability Assessment, Red Team, Code Review, Cloud Security), `Client` (tenant), `Owner` (responsabile Bip), `CreatedDate`
+- `Staf` (file + data caricamento), `Stid` (file + data), `Order` (`ok`, `ref`, `date`), `BusinessCase` (file + data)
+- `Scope`, `Credentials`, `Proposals[]`, `Reports[]`, `Review`, `DistributionList[]`, `Mails[]`, `Log[]`
+
+**Proposal** (proposta di pianificazione):
+- `Id`, `From` (`client`|`bip`), `By` (autore), `Kind` (`initial`|`resched`), `StartDate`, `EndDate`, `Note`, `Status` (`pending`|`accepted`|`rejected`|`superseded`|`replaced`), `Date`, `Reason` (motivo rifiuto)
+
+**Scope**:
+- `Host`, `IpRange`, `SwaggerFile`, `OutOfScope`, `Window`, `Contact`, `Notes`, `Done`, `By`, `Date`
+
+**Credentials**:
+- `Vpn`, `Users`, `DeliveryMethod` (Vault aziendale / File cifrato / Altro), `Notes`, `Done`, `By`, `Date`
+- **Mai memorizzare password**: solo metodo e riferimento al segreto in Key Vault
+
+**Report** (deliverable):
+- `Name`, `Date`, `Type` (PDF/XLSX/DOCX), `Size`, `Published` (bool)
+
+**Review**:
+- `Status` (`none`|`pending`|`approved`|`changes`), `By`, `Date`, `Comment`
+
+**DistributionListEntry**:
+- `Name`, `Email`, `Role`, `Organization` (`Cliente`|`Bip Cybersec`|`Bip Cyberdefence`)
+
+**Mail** (3 tipi: `start`, `end`, `deliver`):
+- `Auto` (bool), `SentDate`; storico in `MailHistory[]`
+
+**AuditLogEntry**:
+- `Date`, `Time`, `Author`, `AuthorRole`, `Text`, `Visibility` (`All`|`BipOnly`), `ClientText` (testo alternativo per il cliente)
+
+**SolicitationRule**:
+- `Key` (`staf`|`order`|`prop`|`prep`|`rep`|`rev`), `Enabled`, `ThresholdDays`, `Recipient`, `Subject`, `Description`
+
+### 1.3 Macchina a stati
+
+Fasi sequenziali, determinate dinamicamente dalla data corrente e dallo stato dei documenti:
+
+```
+docs → planning → prep → scheduled → running → reporting → done
+```
+
+| Fase | Condizione di ingresso |
+|---|---|
+| `docs` | `!Staf.File` ∨ `!Order.Ok` |
+| `planning` | Documenti completi; nessuna proposal `accepted` |
+| `prep` | Proposal accettata; `!Scope.Done` ∨ `!Credentials.Done` |
+| `scheduled` | Tutto pronto; `now < proposal.Start` |
+| `running` | `proposal.Start ≤ now ≤ proposal.End` |
+| `reporting` | `now > proposal.End`; nessun report pubblicato |
+| `done` | Almeno un report `Published = true` |
+
+Lo **step index** (0–5) per la UI deriva dalla fase:
+
+```
+docs=0, planning=1, prep=2, scheduled=running=3, reporting=4, done=5
+```
+
+### 1.4 Azioni richieste (`TodoResolver`)
+
+Per ciascun engagement e per ciascun ruolo, il sistema deve determinare **l'azione richiesta** e la scheda di destinazione. Regole (dalla funzione `myTodo()` della demo):
+
+| Ruolo | Fase | Condizione | Azione |
+|---|---|---|---|
+| Manager | reporting | review = pending | "Rivedi i deliverables" → tab reports |
+| Chi decide | qualunque | proposal pending ∧ canDecide | "Accetta o rifiuta la proposta" → tab plan |
+| Cliente | docs | `!Staf.File` | "Firma e carica STAF" → tab docs |
+| Cybersec/Cyberdefence | docs | `!Order.Ok` | "Registra ordine" → tab docs |
+| Chi scrive | planning | nessuna proposal | "Proponi date" → tab plan |
+| Cliente/Cyberdefence | prep | scope e/o credenziali mancanti | "Fornisci scope/credenziali" → tab corrispondente |
+| Cyberdefence | reporting | no reports caricati | "Carica deliverables" → tab reports |
+| Cyberdefence | reporting | review = none | "Invia in revisione" → tab reports |
+| Cyberdefence | reporting | review = changes | "Aggiorna e reinvia" → tab reports |
+| Cyberdefence | reporting | review = approved | "Pubblica al cliente" → tab reports |
+
+### 1.5 Meccanismi trasversali
+
+- **Gate 2FA sui report**: nella demo finto (codice `123456`). In produzione si usa **MFA reale di Entra ID** + Conditional Access; il gate va rimosso e sostituito con una policy di accesso.
+- **Download sicuri**: link monouso 15 minuti, documenti filigranati, download registrati → **SAS token Azure Blob** generati server-side.
+- **Solleciti automatici**: 6 regole con soglie in giorni, attivabili, con job schedulato.
+- **Email automatiche**: 3 trigger (inizio, fine, consegna deliverables), disattivabili, con invio manuale.
+- **Audit differenziato**: il cliente vede solo eventi `All`, con eventuale `ClientText`; i profili Bip vedono tutto.
+- **Draft dei campi**: la demo salva i valori degli input durante il re-render. In produzione questo è compito del frontend (state management).
+
+---
+
+## 2. Architettura tecnica
+
+### 2.1 Stack
+
+| Livello | Scelta |
+|---|---|
+| Backend | **ASP.NET Core 8/9** (Web API) |
+| Frontend | **Blazor** (Server o WASM) per coerenza C#; alternativa SPA (Angular/React) + API |
+| Auth | **Microsoft Entra ID multi-tenant** tramite `Microsoft.Identity.Web` |
+| Dati | **Azure SQL** + **Entity Framework Core 8** |
+| File | **Azure Blob Storage** (SAS token a breve scadenza) |
+| Segreti | **Azure Key Vault** |
+| Workflow | Libreria **Stateless** (FSM) o classe custom |
+| Job | **Azure Functions** (timer trigger) per solleciti/email, oppure `IHostedService` |
+| Hosting | **Azure App Service** (PaaS) con EasyAuth |
+| Email | **Microsoft Graph** o provider transazionale (SendGrid) |
+
+### 2.2 Multi-tenancy
+
+Modello **shared database, shared schema** con due barriere:
+
+1. **Global query filter EF Core** su ogni entità tenant-scoped:
+   ```csharp
+   modelBuilder.Entity<Engagement>()
+       .HasQueryFilter(e => e.TenantId == _tenantProvider.TenantId);
+   ```
+2. **Row-Level Security (RLS) su Azure SQL** come difesa in profondità, con `SESSION_CONTEXT('TenantId')` impostato a ogni connessione.
+
+**Mapping tenant ↔ cliente applicativo:** il `TenantId` Entra ID identifica l'organizzazione; il campo `Client` dell'engagement è l'entità di business. Una tabella `TenantClientMapping` associa `EntraTenantId` → `ClientId` al primo accesso (onboarding). I profili Bip (Cybersec, Cyberdefence, Manager, Auditor) appartengono al tenant del provider e hanno visibilità cross-tenant.
+
+### 2.3 Autenticazione Entra ID
+
+Configurazione app registration:
+
+- `signInAudience: AzureADMultipleOrgs`
+- Authority: `https://login.microsoftonline.com/organizations`
+- Validazione rigorosa di **issuer, audience, tenant ID, client ID** contro allowlist (in produzione). Per la demo, allowlist aperta.
+- **Onboarding tenant**: al primo accesso, se il tenant non è registrato, l'app crea il record `TenantClientMapping`; il provisioning può essere automatico (per demo) o richiedere approvazione admin (produzione).
+- **App roles**: `Client`, `Cybersec`, `Cyberdefence`, `Manager`, `Auditor` assegnati nel tenant del provider o, per i clienti, come guest con assegnazione manuale.
+
+**MFA**: abilitata via **Conditional Access** su tutti i tenant che la supportano; per i tenant che non la forzano, il portale può richiedere **step-up authentication** prima dell'accesso ai report tramite `WithStepUp()` di `Microsoft.Identity.Web`.
+
+### 2.4 API suggerita (superficie minima)
+
+```
+GET    /api/engagements                          → lista filtrata per ruolo/tenant
+GET    /api/engagements/{id}                     → dettaglio + todo
+POST   /api/engagements                          → crea (solo Bip)
+POST   /api/engagements/{id}/staf                → upload STAF firmato
+POST   /api/engagements/{id}/order               → registra ordine
+POST   /api/engagements/{id}/business-case       → upload BC
+GET    /api/engagements/{id}/proposals
+POST   /api/engagements/{id}/proposals           → crea proposta
+POST   /api/engagements/{id}/proposals/{pid}/decide  → accetta/rifiuta
+GET    /api/engagements/{id}/scope
+PUT    /api/engagements/{id}/scope
+GET    /api/engagements/{id}/credentials
+PUT    /api/engagements/{id}/credentials
+GET    /api/engagements/{id}/reports
+POST   /api/engagements/{id}/reports             → upload bozza
+POST   /api/engagements/{id}/reports/{rid}/download  → SAS token
+POST   /api/engagements/{id}/review/submit       → invia in revisione
+POST   /api/engagements/{id}/review/decide       → approva/richiedi modifiche
+POST   /api/engagements/{id}/reports/publish
+GET    /api/engagements/{id}/distribution-list
+POST   /api/engagements/{id}/distribution-list
+DELETE /api/engagements/{id}/distribution-list/{entryId}
+GET    /api/engagements/{id}/mails
+POST   /api/engagements/{id}/mails/{type}/toggle
+POST   /api/engagements/{id}/mails/{type}/send
+GET    /api/engagements/{id}/log
+GET    /api/solicitations/rules
+PUT    /api/solicitations/rules/{key}
+GET    /api/solicitations/due
+POST   /api/solicitations/{key}/send
+GET    /api/dashboard/todo                        → azioni richieste per l'utente
+```
+
+### 2.5 Modello dati (schema sintetico)
+
+```
+Engagement (Id, TenantId, ClientId, Name, Type, Owner, CreatedDate, Status)
+  └─ Document (EngagementId, Type [Staf|Stid|Order|BC], FileRef, Date, Ok, Ref)
+  └─ Proposal (Id, EngagementId, From, By, Kind, StartDate, EndDate, Note, Status, Reason, Date)
+  └─ Scope (EngagementId, Host, IpRange, SwaggerFileRef, OutOfScope, Window, Contact, Notes, Done, By, Date)
+  └─ Credentials (EngagementId, Vpn, Users, DeliveryMethod, Notes, Done, By, Date)
+  └─ Report (Id, EngagementId, Name, FileRef, Date, Type, Size, Published)
+  └─ Review (EngagementId, Status, By, Date, Comment)
+  └─ DistributionListEntry (Id, EngagementId, Name, Email, Role, Organization)
+  └─ MailConfig (EngagementId, Type, Auto, SentDate)
+  └─ MailHistory (Id, EngagementId, Type, SentDate, Recipients, Auto, Visibility)
+  └─ AuditLogEntry (Id, EngagementId, Date, Time, Author, AuthorRole, Text, Visibility, ClientText)
+SolicitationRule (Key, Enabled, ThresholdDays, Recipient, Subject, Description)
+SolicitationHistory (Id, EngagementId, RuleKey, SentDate, Recipient, Detail, Auto)
+TenantClientMapping (EntraTenantId, ClientId, OnboardedDate, Approved)
+UserRole (UserId, EntraTenantId, Role, ClientId?)
+```
+
+### 2.6 Sicurezza
+
+| Elemento | Implementazione |
+|---|---|
+| MFA report | Conditional Access + step-up authentication |
+| Download | SAS token 15 min, watermarking server-side, audit |
+| Credenziali | Solo metodo di consegna; segreti in Key Vault |
+| Autorizzazione | Policy per endpoint + query filter EF + RLS SQL |
+| Audit | Tabella append-only; nessun endpoint UPDATE/DELETE |
+| Tenant isolation | Global query filter + RLS + test di integrazione cross-tenant |
+| Upload | Virus scan (Defender for Storage), validazione MIME, dimensione max |
+
+---
+
+## 3. Demo gratuita con SSO multitenant funzionante
+
+Obiettivo: far **toccare con mano** il flusso SSO multitenant reale, senza costi e senza scrivere codice di autenticazione.
+
+### 3.1 Strada consigliata: App Service F1 + EasyAuth
+
+**Costi**: zero.
+
+- **Azure App Service piano F1 (Free)**: 1 GB storage, 60 minuti CPU/giorno, nessun dominio personalizzato, nessun "Always On".
+- **Microsoft Entra ID edizione gratuita**: app registration multitenant senza costi, fino a 50.000 risorse per tenant.
+- **Account Azure gratuito**: include i servizi free tier.
+
+**Passi operativi**:
+
+1. Creare account Azure gratuito.
+2. Pubblicare l'app (HTML/JS esistente o progetto ASP.NET Core minimale) su App Service con piano F1 da Visual Studio o VS Code.
+3. Portale Azure → **Authentication** → **Add identity provider** → **Microsoft** → tipo account **"Any Microsoft Entra directory – Multitenant"**. App Service crea l'app registration e configura tutto.
+4. Modificare l'**Issuer URL** dell'identity provider in `https://login.microsoftonline.com/common/v2.0` per accettare utenti da tenant esterni.
+5. Leggere l'utente autenticato da `/.auth/me` (claims: name, email, tid). Sostituire o affiancare al selettore di ruolo finto la visualizzazione dell'utente reale e usare `tid` per filtrare gli engagement del cliente.
+
+**Limiti da gestire**:
+
+- **Cold start**: aprire l'app un minuto prima della demo.
+- **Quota CPU**: 60 min/giorno; se esaurita, passare temporaneamente a **B1** (pochi centesimi/ora) e tornare a F1.
+- **URL**: `https://<nomeapp>.azurewebsites.net`, sufficiente per demo.
+- **Multi-tenant aperto**: con `common/v2.0` chiunque con account work/school accede; per demo va bene, in produzione serve allowlist.
+
+### 3.2 Alternative (non consigliate per questo caso)
+
+- **GitHub Pages/Netlify/Vercel + Auth0/ZITADEL**: gratuiti, ma richiedono federazione manuale con Entra ID e aggiungono complessità. Preferibili solo se non si vuole usare Azure per l'hosting.
+- **Azure Static Web Apps Free + Entra ID**: possibile ma il multitenant richiede configurazione manuale dell'app registration; meno "out of the box" di EasyAuth.
+
+### 3.3 Riuso della demo esistente
+
+La demo HTML/JS può essere deployata **così com'è** su App Service F1, aggiungendo un piccolo script che legge `/.auth/me` e mostra in header l'utente reale (nome, tenant). Il selettore di ruolo può restare per la demo, ma affiancato dall'identità reale: l'effetto "SSO funzionante" è immediato e non richiede refactoring.
+
+---
+
+## 4. Piano di implementazione
+
+### 4.1 Ordine di sviluppo
+
+1. **Autenticazione e onboarding multi-tenant** (Entra ID, ruoli, mapping tenant→cliente).
+2. **Modello dati e API CRUD** per tutte le entità del §1.2.
+3. **Macchina a stati** (`EngagementStateMachine`) e **`TodoResolver`** + endpoint `/api/dashboard/todo`.
+4. **Workflow di pianificazione** (proposte, decisione, riprogrammazione).
+5. **Workflow di revisione report** (bozza → revisione → approvazione → pubblicazione).
+6. **Comunicazioni**: email automatiche, distribution list.
+7. **Solleciti automatici** con job schedulato (Azure Functions timer).
+8. **Registro audit** con visibilità differenziata.
+9. **Blob Storage** per file e download sicuri con SAS.
+10. **Dashboard e UX** allineate alla demo (stepper, tab con stato, chips, legenda).
+
+### 4.2 Regole di business invarianti (da testare obbligatoriamente)
+
+- Pianificazione bloccata finché `Staf.File` **e** `Order.Ok` non sono entrambi presenti.
+- Scope e credenziali sbloccati solo dopo proposal `accepted`.
+- Report non visibili al cliente finché `Review.Status = approved` **e** `Report.Published = true`.
+- Nuovo file caricato → `Review.Status = none` (reset).
+- Distribution list: almeno un destinatario `Cliente`; il cliente non può rimuovere destinatari Bip.
+- Proposte `pending` → `superseded` alla creazione di una nuova.
+- Audit log immutabile; il cliente vede solo eventi `All` (con `ClientText` se presente).
+- La data di inizio proposta non può essere nel passato; durata massima 60 giorni; fine ≥ inizio.
+
+### 4.3 Testing
+
+- **Unit test** (xUnit + Moq + FluentAssertions): macchina a stati, `TodoResolver`, regole di business, validazioni.
+- **Integration test**: isolamento tenant (un cliente non vede mai dati di altri), autorizzazione per ruolo × endpoint, workflow end-to-end.
+- **E2E** (Playwright): flusso completo cliente → Bip → manager → pubblicazione.
+
+### 4.4 Criteri di accettazione
+
+- Un utente di un tenant esterno accede via SSO e vede solo i propri engagement.
+- Ogni ruolo vede solo le schede/azioni consentite.
+- Il workflow end-to-end funziona dalla creazione alla pubblicazione dei report.
+- I download sono protetti da SAS a scadenza breve e tracciati.
+- L'audit log riflette fedelmente le azioni e rispetta la visibilità.
+- La demo è pubblicata su App Service F1 e accessibile via SSO multitenant.
+
+---
+
+## 5. Riepilogo decisioni architetturali
+
+| Ambito | Decisione |
+|---|---|
+| Linguaggio backend | C# / ASP.NET Core 8+ |
+| Frontend | Blazor (consigliato) o SPA + API |
+| Autenticazione | Entra ID multi-tenant (`AzureADMultipleOrgs`, authority `/organizations`) |
+| Autorizzazione | App roles + policy + query filter EF + RLS |
+| Dati | Azure SQL shared schema, `TenantId`, EF Core, RLS |
+| File | Azure Blob + SAS 15 min |
+| Segreti | Azure Key Vault |
+| Workflow | FSM lineare (Stateless o custom) + `TodoResolver` |
+| Job | Azure Functions timer per solleciti/email |
+| Hosting | Azure App Service (F1 per demo, B1+ per produzione) |
+| Email | Microsoft Graph o SendGrid |
+| Audit | Tabella append-only con visibilità differenziata |
+| Demo SSO gratis | App Service F1 + EasyAuth multitenant + `/.auth/me` |
+
+Questo documento, insieme alla demo `portale-engagement-demo.html` come riferimento funzionale, fornisce all'agente di implementazione tutte le informazioni necessarie per realizzare il portale in C# su Azure, inclusa una via immediata e gratuita per dimostrare l'SSO multitenant funzionante.
