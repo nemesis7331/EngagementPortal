@@ -30,7 +30,7 @@ public class WorkflowTests
         ClientName = "Nova Bank",
         Name = "External Penetration Test",
         Type = EngagementType.PenetrationTest,
-        Owner = "Provider Cyberdefence",
+        Owner = "Provider Pentester",
         HasManleva = true,
         OrderConfirmed = true,
         ScopeDone = true,
@@ -246,10 +246,26 @@ public class WorkflowTests
             false));
 
         var todo = new TodoResolver(Workflow())
-            .Resolve(engagement, Roles.Cyberdefence);
+            .Resolve(engagement, Roles.Pentester);
 
         Assert.NotNull(todo);
         Assert.Equal("Invia in revisione", todo.Action);
+    }
+
+    [Fact]
+    public void Todo_Pmo_CompilesScopeDuringPreparation()
+    {
+        var engagement = NewEngagement();
+        engagement.ScopeDone = false;
+        engagement.CredentialsDone = true;
+        AddAcceptedProposal(engagement, Today.AddDays(2), Today.AddDays(5));
+
+        var todo = new TodoResolver(Workflow())
+            .Resolve(engagement, Roles.PMO);
+
+        Assert.NotNull(todo);
+        Assert.Equal("Compila lo scope dell'attività", todo.Action);
+        Assert.Equal("scope", todo.TargetTab);
     }
 
     [Fact]

@@ -80,12 +80,12 @@ public sealed class InMemoryEngagementRepository :
             By = "Provider Planner",
             StartDate = today.AddDays(7),
             EndDate = today.AddDays(12),
-            Note = "Finestra proposta dal team Cyberdefence"
+            Note = "Finestra proposta dal team PMO"
         });
 
         planning.AddAudit(
-            "Provider Planner",
-            Roles.Cyberdefence,
+            "Luca Ferri",
+            Roles.PMO,
             "Planning proposal created",
             AuditVisibility.All);
 
@@ -101,8 +101,8 @@ public sealed class InMemoryEngagementRepository :
         AddDefaultDistribution(documents, "fabrikam.example");
 
         documents.AddAudit(
-            "Provider Cyberdefence",
-            Roles.Cyberdefence,
+            "Luca Ferri",
+            Roles.PMO,
             "Engagement created",
             AuditVisibility.All);
 
@@ -170,8 +170,8 @@ public sealed class InMemoryEngagementRepository :
         reporting.ReviewStatus = ReviewStatus.Pending;
 
         reporting.AddAudit(
-            "Provider Cyberdefence",
-            Roles.Cyberdefence,
+            "Provider Pentester",
+            Roles.Pentester,
             "Deliverable submitted for review",
             AuditVisibility.ProviderOnly,
             "Deliverable is under review");
@@ -201,7 +201,7 @@ public sealed class InMemoryEngagementRepository :
             Contact = "soc@novabank.example",
             Notes = "Esercitazione con regole concordate",
             Done = true,
-            By = "Provider Cyberdefence",
+            By = "Provider Pentester",
             Date = DateTimeOffset.UtcNow.AddDays(-7)
         };
         running.Credentials = new CredentialData
@@ -236,8 +236,8 @@ public sealed class InMemoryEngagementRepository :
             false));
 
         running.AddAudit(
-            "Provider Cyberdefence",
-            Roles.Cyberdefence,
+            "Luca Ferri",
+            Roles.PMO,
             "Engagement started",
             AuditVisibility.All);
 
@@ -292,8 +292,8 @@ public sealed class InMemoryEngagementRepository :
         });
 
         scheduled.AddAudit(
-            "Provider Planner",
-            Roles.Cyberdefence,
+            "Luca Ferri",
+            Roles.PMO,
             "Planning proposal accepted",
             AuditVisibility.All);
 
@@ -322,7 +322,7 @@ public sealed class InMemoryEngagementRepository :
             Contact = "appsec@novabank.example",
             Notes = "Test completato",
             Done = true,
-            By = "Provider Cyberdefence",
+            By = "Provider Pentester",
             Date = DateTimeOffset.UtcNow.AddDays(-35)
         };
         done.Credentials = new CredentialData
@@ -360,8 +360,8 @@ public sealed class InMemoryEngagementRepository :
         done.ReviewStatus = ReviewStatus.Approved;
 
         done.AddAudit(
-            "Provider Cyberdefence",
-            Roles.Cyberdefence,
+            "Provider Pentester",
+            Roles.Pentester,
             "Deliverables published",
             AuditVisibility.All);
 
@@ -389,7 +389,7 @@ public sealed class InMemoryEngagementRepository :
             ClientName = clientName,
             Name = name,
             Type = type,
-            Owner = "Provider Cyberdefence",
+            Owner = "Provider Pentester",
             CreatedDate = DateTimeOffset.UtcNow.AddDays(-createdDaysAgo)
         };
 
@@ -408,12 +408,12 @@ public sealed class InMemoryEngagementRepository :
                 $"DL-{engagement.Id}-2",
                 "Luca Ferri",
                 "luca.ferri@provider.example",
-                "Provider Cyberdefence"),
+                "Provider PMO"),
             new DistributionEntry(
                 $"DL-{engagement.Id}-3",
                 "Sara Conti",
                 "sara.conti@provider.example",
-                "Provider Cybersec")
+                "Provider Pentester")
         ]);
     }
 

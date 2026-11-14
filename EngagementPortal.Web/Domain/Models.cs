@@ -52,13 +52,13 @@ public enum AuditVisibility
 public static class Roles
 {
     public const string Client = "Client";
-    public const string Cybersec = "Cybersec";
-    public const string Cyberdefence = "Cyberdefence";
+    public const string PMO = "PMO";
+    public const string Pentester = "Pentester";
     public const string Manager = "Manager";
     public const string Auditor = "Auditor";
 
     public static bool IsProvider(string role) =>
-        role is Cybersec or Cyberdefence or Manager or Auditor;
+        role is PMO or Pentester or Manager or Auditor;
 }
 
 public sealed class ScopeData
@@ -239,6 +239,22 @@ public sealed record DistributionEntryRequest(
     string Name,
     string Email,
     string Organization);
+
+public sealed class ClientAccount
+{
+    public required string TenantId { get; init; }
+    public required string Name { get; set; }
+    public DateTimeOffset CreatedDate { get; init; } = DateTimeOffset.UtcNow;
+    public List<ClientUser> Users { get; init; } = [];
+}
+
+public sealed record ClientUser(string Id, string Name, string Email);
+
+public sealed record CreateClientRequest(string Name, string? TenantId);
+
+public sealed record RenameClientRequest(string Name);
+
+public sealed record AddClientUserRequest(string Name, string Email);
 
 public sealed record SolicitationRuleRequest(
     bool Enabled,

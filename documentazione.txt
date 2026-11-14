@@ -29,22 +29,22 @@ Cinque ruoli, modellati come **app roles Entra ID** + policy applicative:
 | Ruolo | Visibilità | Scrittura | Note |
 |---|---|---|---|
 | **Cliente** | Solo engagement del proprio tenant | STAF, scope, credenziali, proposte, DL (solo destinatari cliente) | Decide sulle proposte Bip |
-| **Cybersec** | Tutti gli engagement + dati interni | STAF per conto cliente, DL | Registra ordini; gestisce solleciti |
-| **Cyberdefence** | Tutti, incluse credenziali | Scope e credenziali per conto cliente, report | Gestisce email; pubblica deliverables |
+| **PMO** | Tutti gli engagement + dati interni | STAF per conto cliente, DL | Registra ordini; gestisce solleciti |
+| **Pentester** | Tutti, incluse credenziali | Scope e credenziali per conto cliente, report | Gestisce email; pubblica deliverables |
 | **Manager** | Tutti (no credenziali) | Solo revisione deliverables | Approva o richiede modifiche |
 | **Auditor** | Tutti (no credenziali) | Nessuna | Sola lettura |
 
 Funzioni di autorizzazione di riferimento (dalla demo):
 
 ```
-isBip()        = role ∈ {cybersec, cyberdefence}
-canWrite()     = role ∈ {client, cybersec, cyberdefence}
+isBip()        = role ∈ {pmo, pentester}
+canWrite()     = role ∈ {client, pmo, pentester}
 seesInt()      = role ≠ client
-canCreds()     = role ∈ {client, cyberdefence}
-canMail()      = role = cyberdefence
-canRem()       = role = cybersec
+canCreds()     = role ∈ {client, pentester}
+canMail()      = role = pentester
+canRem()       = role = pmo
 canDecide(p)   = p.status = 'pending' ∧
-                 ((p.from = 'client' ∧ role = 'cyberdefence') ∨
+                 ((p.from = 'client' ∧ role = 'pentester') ∨
                   (p.from = 'bip'    ∧ role = 'client'))
 ```
 
@@ -74,7 +74,7 @@ Nell'implementazione reale queste diventano **policy-based authorization** (`IAu
 - `Status` (`none`|`pending`|`approved`|`changes`), `By`, `Date`, `Comment`
 
 **DistributionListEntry**:
-- `Name`, `Email`, `Role`, `Organization` (`Cliente`|`Bip Cybersec`|`Bip Cyberdefence`)
+- `Name`, `Email`, `Role`, `Organization` (`Cliente`|`Bip PMO`|`Bip Pentester`)
 
 **Mail** (3 tipi: `start`, `end`, `deliver`):
 - `Auto` (bool), `SentDate`; storico in `MailHistory[]`
@@ -118,13 +118,13 @@ Per ciascun engagement e per ciascun ruolo, il sistema deve determinare **l'azio
 | Manager | reporting | review = pending | "Rivedi i deliverables" → tab reports |
 | Chi decide | qualunque | proposal pending ∧ canDecide | "Accetta o rifiuta la proposta" → tab plan |
 | Cliente | docs | `!Staf.File` | "Firma e carica STAF" → tab docs |
-| Cybersec/Cyberdefence | docs | `!Order.Ok` | "Registra ordine" → tab docs |
+| PMO/Pentester | docs | `!Order.Ok` | "Registra ordine" → tab docs |
 | Chi scrive | planning | nessuna proposal | "Proponi date" → tab plan |
-| Cliente/Cyberdefence | prep | scope e/o credenziali mancanti | "Fornisci scope/credenziali" → tab corrispondente |
-| Cyberdefence | reporting | no reports caricati | "Carica deliverables" → tab reports |
-| Cyberdefence | reporting | review = none | "Invia in revisione" → tab reports |
-| Cyberdefence | reporting | review = changes | "Aggiorna e reinvia" → tab reports |
-| Cyberdefence | reporting | review = approved | "Pubblica al cliente" → tab reports |
+| Cliente/Pentester | prep | scope e/o credenziali mancanti | "Fornisci scope/credenziali" → tab corrispondente |
+| Pentester | reporting | no reports caricati | "Carica deliverables" → tab reports |
+| Pentester | reporting | review = none | "Invia in revisione" → tab reports |
+| Pentester | reporting | review = changes | "Aggiorna e reinvia" → tab reports |
+| Pentester | reporting | review = approved | "Pubblica al cliente" → tab reports |
 
 ### 1.5 Meccanismi trasversali
 
@@ -165,7 +165,7 @@ Modello **shared database, shared schema** con due barriere:
    ```
 2. **Row-Level Security (RLS) su Azure SQL** come difesa in profondità, con `SESSION_CONTEXT('TenantId')` impostato a ogni connessione.
 
-**Mapping tenant ↔ cliente applicativo:** il `TenantId` Entra ID identifica l'organizzazione; il campo `Client` dell'engagement è l'entità di business. Una tabella `TenantClientMapping` associa `EntraTenantId` → `ClientId` al primo accesso (onboarding). I profili Bip (Cybersec, Cyberdefence, Manager, Auditor) appartengono al tenant del provider e hanno visibilità cross-tenant.
+**Mapping tenant ↔ cliente applicativo:** il `TenantId` Entra ID identifica l'organizzazione; il campo `Client` dell'engagement è l'entità di business. Una tabella `TenantClientMapping` associa `EntraTenantId` → `ClientId` al primo accesso (onboarding). I profili Bip (PMO, Pentester, Manager, Auditor) appartengono al tenant del provider e hanno visibilità cross-tenant.
 
 ### 2.3 Autenticazione Entra ID
 
@@ -175,7 +175,7 @@ Configurazione app registration:
 - Authority: `https://login.microsoftonline.com/organizations`
 - Validazione rigorosa di **issuer, audience, tenant ID, client ID** contro allowlist (in produzione). Per la demo, allowlist aperta.
 - **Onboarding tenant**: al primo accesso, se il tenant non è registrato, l'app crea il record `TenantClientMapping`; il provisioning può essere automatico (per demo) o richiedere approvazione admin (produzione).
-- **App roles**: `Client`, `Cybersec`, `Cyberdefence`, `Manager`, `Auditor` assegnati nel tenant del provider o, per i clienti, come guest con assegnazione manuale.
+- **App roles**: `Client`, `PMO`, `Pentester`, `Manager`, `Auditor` assegnati nel tenant del provider o, per i clienti, come guest con assegnazione manuale.
 
 **MFA**: abilitata via **Conditional Access** su tutti i tenant che la supportano; per i tenant che non la forzano, il portale può richiedere **step-up authentication** prima dell'accesso ai report tramite `WithStepUp()` di `Microsoft.Identity.Web`.
 

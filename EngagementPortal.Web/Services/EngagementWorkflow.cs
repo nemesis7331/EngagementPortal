@@ -73,7 +73,7 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
 
         var canDecide = pending is not null &&
             ((pending.From == ProposalParty.Client &&
-              role == Roles.Cyberdefence) ||
+              role == Roles.PMO) ||
              (pending.From == ProposalParty.Provider &&
               role == Roles.Client));
 
@@ -89,26 +89,27 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
         if (phase == EngagementPhase.Docs)
         {
             if (!engagement.HasManleva &&
-                role is Roles.Client or Roles.Cybersec or Roles.Cyberdefence)
+                role is Roles.Client or Roles.PMO)
                 return new TodoItem(
                     "Firma e carica la manleva",
                     "docs");
 
             if (!engagement.OrderConfirmed &&
-                role is Roles.Cybersec or Roles.Cyberdefence)
+                role is Roles.PMO)
                 return new TodoItem("Registra ordine", "docs");
 
             return null;
         }
 
-        if (phase == EngagementPhase.Planning && pending is null)
+        if (phase == EngagementPhase.Planning && pending is null &&
+            role is Roles.Client or Roles.PMO)
             return new TodoItem("Proponi date", "plan");
 
         if (phase == EngagementPhase.Prep)
         {
             var needsScope = !engagement.ScopeDone;
             var needsCredentials = !engagement.CredentialsDone &&
-                role is Roles.Client or Roles.Cyberdefence;
+                role is Roles.Client or Roles.PMO;
 
             if (needsScope && needsCredentials)
                 return new TodoItem(
@@ -116,7 +117,7 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
                     "scope");
 
             if (needsScope &&
-                role is Roles.Client or Roles.Cybersec or Roles.Cyberdefence)
+                role is Roles.Client or Roles.PMO)
                 return new TodoItem(
                     "Compila lo scope dell'attività",
                     "scope");
@@ -130,7 +131,7 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
         }
 
         if (phase == EngagementPhase.Reporting &&
-            role == Roles.Cyberdefence)
+            role == Roles.Pentester)
         {
             if (!engagement.Reports.Any(report => !report.Published))
                 return new TodoItem("Carica i deliverables", "reports");

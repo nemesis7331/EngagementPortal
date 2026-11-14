@@ -4,7 +4,7 @@
 >
 > **Fonte di verità funzionale:** `demo-poc.html` (UX, macchina a stati, regole, testi).
 > **Fonte di verità architetturale:** `documentazione.txt` (§1–§5).
-> **Stato live verificato:** l'endpoint lista risponde correttamente con ruolo `Cyberdefence` e tenant interno, restituendo 3 engagement seed (Contoso/Fabrikam).
+> **Stato live verificato:** l'endpoint lista risponde correttamente con ruolo `Pentester` e tenant interno, restituendo 3 engagement seed (Contoso/Fabrikam).
 
 ---
 
@@ -17,12 +17,12 @@ Il prodotto si chiama **Cyber Engagement Portal**. Questi termini sono obbligato
 | Concetto | Termine ufficiale | Note |
 |---|---|---|
 | Nome prodotto | **Cyber Engagement Portal** | Titolo pagina, header, `README.md`, titolo OpenAPI, oggetto email, metadati |
-| Azienda fornitrice | **Provider** | Mai il nome dell'azienda; ruoli interni: `Provider Cybersec`, `Provider Cyberdefence` |
+| Azienda fornitrice | **Provider** | Mai il nome dell'azienda; ruoli interni: `Provider PMO`, `Provider Pentester` |
 | Documento di autorizzazione all'attività | **manleva** | Sostituisce la sigla storica usata nella demo |
 | Documento di ingaggio | **documento di ingaggio** | Sostituisce la sigla storica usata nella demo |
 | Ordine | **ordine** | Invariato |
 | Business Case | **business case** | Invariato |
-| Ruoli | `Client`, `Cybersec`, `Cyberdefence`, `Manager`, `Auditor` | Invariati |
+| Ruoli | `Client`, `PMO`, `Pentester`, `Manager`, `Auditor` | Invariati |
 
 Regole:
 - **Nessun riferimento all'azienda fornitrice** (nome, dominio email, owner, testi, seed, commenti). Usare `Provider` / `provider.example`.
@@ -168,7 +168,7 @@ Entità e campi minimi da implementare (tutte con `Id`, `TenantId` dove indicato
 - **Credentials**: `Vpn`, `Users`, `DeliveryMethod`, `Notes`, `Done`, `By`, `Date` (**mai password**, solo `SecretReference`).
 - **Report**: `Name`, `FileRef`, `Date`, `Type`, `Size`, `Published`.
 - **Review**: `Status`, `By`, `Date`, `Comment` (entità 1:1, non enum su Engagement).
-- **DistributionListEntry**: `Name`, `Email`, `Role`, `Organization` (`Cliente|Provider Cybersec|Provider Cyberdefence`).
+- **DistributionListEntry**: `Name`, `Email`, `Role`, `Organization` (`Cliente|Provider PMO|Provider Pentester`).
 - **MailConfig**: `Type` (`start|end|deliver`), `Auto`, `SentDate`.
 - **MailHistory**: `Type`, `SentDate`, `Recipients`, `Auto`, `Visibility`.
 - **AuditLogEntry**: `Date`, `Time`, `Author`, `AuthorRole`, `Text`, `Visibility`, `ClientText` — **append-only** (nessun update/delete esposto).
@@ -205,25 +205,25 @@ Legenda stato: ✅ esiste · ⚠️ parziale · ❌ manca.
 | `GET /api/engagements/{id}/proposals` | ⚠️ incluso nel dettaglio | autenticato |
 | `POST /api/engagements/{id}/proposals` | ✅ | canWrite |
 | `POST /api/engagements/{id}/proposals/{pid}/decide` | ✅ | canDecide |
-| `GET/PUT /api/engagements/{id}/scope` | ❌ (solo flag) | Client/Cyberdefence |
-| `GET/PUT /api/engagements/{id}/credentials` | ❌ (solo flag) | Client/Cyberdefence |
+| `GET/PUT /api/engagements/{id}/scope` | ❌ (solo flag) | Client/Pentester |
+| `GET/PUT /api/engagements/{id}/credentials` | ❌ (solo flag) | Client/Pentester |
 | `GET /api/engagements/{id}/reports` | ⚠️ | autenticato (cliente: solo pubblicati) |
-| `POST /api/engagements/{id}/reports` | ⚠️ metadati | Cyberdefence |
-| `POST /api/engagements/{id}/reports/{rid}/download` | ❌ | Cyberdefence/Provider + step-up |
-| `POST /api/engagements/{id}/review/submit` | ✅ | Cyberdefence |
+| `POST /api/engagements/{id}/reports` | ⚠️ metadati | Pentester |
+| `POST /api/engagements/{id}/reports/{rid}/download` | ❌ | Pentester/Provider + step-up |
+| `POST /api/engagements/{id}/review/submit` | ✅ | Pentester |
 | `POST /api/engagements/{id}/review/decide` | ✅ | Manager |
-| `POST /api/engagements/{id}/reports/publish` | ✅ | Cyberdefence + approved |
+| `POST /api/engagements/{id}/reports/publish` | ✅ | Pentester + approved |
 | `GET/POST /api/engagements/{id}/distribution-list` + `DELETE .../{entryId}` | ❌ | canWrite / regole DL |
-| `GET /api/engagements/{id}/mails` + `POST .../{type}/toggle` + `.../send` | ❌ | Cyberdefence (lettura a tutti) |
+| `GET /api/engagements/{id}/mails` + `POST .../{type}/toggle` + `.../send` | ❌ | Pentester (lettura a tutti) |
 | `GET /api/engagements/{id}/log` + `GET .../log/export` | ⚠️ incluso nel dettaglio / ❌ export | autenticato, visibilità |
-| `GET /api/solicitations/rules`, `PUT .../{key}`, `GET /due`, `POST /{key}/send` | ❌ | Cybersec write, altri read |
+| `GET /api/solicitations/rules`, `PUT .../{key}`, `GET /due`, `POST /{key}/send` | ❌ | PMO write, altri read |
 | `GET /api/dashboard/todo` | ✅ | autenticato |
 
 Convenzioni API:
 - `JsonStringEnumConverter`; DTO espliciti (no entità EF serializzate); `ProblemDetails` per errori.
 - OpenAPI (`Microsoft.AspNetCore.OpenApi`) su `/openapi/v1.json` in Development, titolo **Cyber Engagement Portal**.
 - Paginazione/filtri su lista (`?client=&phase=&q=`), ordinamento stabile.
-- Nessun endpoint espone `SecretReference` o dati credenziali a Manager/Auditor/Cybersec.
+- Nessun endpoint espone `SecretReference` o dati credenziali a Manager/Auditor/PMO.
 
 ---
 
@@ -244,11 +244,11 @@ Ogni fase elenca step atomici, con criteri di accettazione e impatto deploy. Le 
 - [x] **0.9** **Rinominazione e branding** (completato localmente, non ancora pushato; build+test verdi, smoke test su lista e `/manleva`):
   - `wwwroot/index.html`: titolo, header e testi → **Cyber Engagement Portal**.
   - `Domain/Models.cs`: `HasManleva`, `AuditVisibility.ProviderOnly`, `Roles.IsProvider()`; nessun nome fornitore.
-  - `InMemoryEngagementRepository`: owner `Provider Cyberdefence`, clienti demo, testi log con "manleva" e "documento di ingaggio".
+  - `InMemoryEngagementRepository`: owner `Provider Pentester`, clienti demo, testi log con "manleva" e "documento di ingaggio".
   - Testi UI/API: "Firma e carica la manleva", "documento di ingaggio disponibile", "Registra ordine".
   - `README.md` → titolo **Cyber Engagement Portal** + descrizione breve.
   - `NamingGuardTests`: fallisce se nel codice del prodotto (Web, workflow, README) compaiono i termini vietati (nome fornitore, sigle storiche). Esclusi `demo-poc.html`, `documentazione.txt` e la cartella `Guard` stessa.
-- [ ] **0.10** Seed demo allineato al naming ufficiale (le 9 engagement della demo, con ruoli/org `Provider Cybersec`/`Provider Cyberdefence`).
+- [ ] **0.10** Seed demo allineato al naming ufficiale (le 9 engagement della demo, con ruoli/org `Provider PMO`/`Provider Pentester`).
 - [ ] **0.11** Igiene repository: rimuovere `bin/` e `obj/` dal versionamento (`git rm -r --cached EngagementPortal.Web/bin EngagementPortal.Web/obj EngagementPortal.Tests/bin EngagementPortal.Tests/obj`) e aggiungere `.gitignore` (`bin/`, `obj/`, `.vs/`, `*.user`, `TestResults/`). Verificare che la pipeline continui a pubblicare da sorgente.
 
 **Accettazione:** il sito live risponde a `/health` 200; deploy verde; endpoint legacy invariato; UI mostra **Cyber Engagement Portal**; `dotnet test` con ≥8 test verdi + naming guard verde.
@@ -302,7 +302,7 @@ Ogni fase elenca step atomici, con criteri di accettazione e impatto deploy. Le 
 - [ ] **4.2** Portare 1:1 la palette e i componenti CSS della demo (`:root`, `.card`, `.pill`, `.stepper`, `.tabs`, `.chipb`, `.sw`, `.modal`, `#toast`, responsive ≤820px), con titolo/logo del prodotto.
 - [ ] **4.3** Stato frontend minimale (`state.js`): `role`, `tenant`, `demoDate`, `cur`, `tab`, `listTab`, `drafts` (persistenza input in `sessionStorage`).
 - [ ] **4.4** Lista: KPI (attivi, azioni richieste, prossima attività, completati), tabella, mini-progress, pill di stato, periodo, filtro "azione richiesta".
-- [ ] **4.5** Vista "Solleciti automatici" (sola lettura per client/auditor; editing per Cybersec) con regole, soglie, situazioni dovute, storico.
+- [ ] **4.5** Vista "Solleciti automatici" (sola lettura per client/auditor; editing per PMO) con regole, soglie, situazioni dovute, storico.
 - [ ] **4.6** Accessibilità base: focus visibile, `aria-*` su tab/modali/toast, contrasti, navigazione da tastiera.
 
 **Accettazione:** confronto visivo con `demo-poc.html` a parità di dati seed; nessun `JSON.stringify` in UI; branding corretto.

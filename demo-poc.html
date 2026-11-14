@@ -164,8 +164,8 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
     <div class="roleSw">Visualizza come
       <select id="roleSel" onchange="setRole(this.value)">
         <option value="client">Cliente – Marta Rinaldi (Nova Bank)</option>
-        <option value="cybersec">Cybersec – Luca Ferri</option>
-        <option value="cyberdefence">Cyberdefence – Sara Conti</option>
+        <option value="pmo">PMO – Luca Ferri</option>
+        <option value="pentester">Pentester – Sara Conti</option>
         <option value="manager">Manager – Giorgio Marino</option>
         <option value="auditor">Auditor – Elena Greco (sola lettura)</option>
       </select>
@@ -193,28 +193,28 @@ function pickFile(cb,accept){const i=document.createElement('input');i.type='fil
 /* ====== PROFILI ====== */
 const ROLES={
   client:{name:'Marta Rinaldi',role:'Cliente · Nova Bank',av:'MR',client:'Nova Bank'},
-  cybersec:{name:'Luca Ferri',role:'Cybersec · Bip',av:'LF',client:null},
-  cyberdefence:{name:'Sara Conti',role:'Cyberdefence · Bip',av:'SC',client:null},
+  pmo:{name:'Luca Ferri',role:'PMO · Bip',av:'LF',client:null},
+  pentester:{name:'Sara Conti',role:'Pentester · Bip',av:'SC',client:null},
   manager:{name:'Giorgio Marino',role:'Manager · Bip',av:'GM',client:null},
   auditor:{name:'Elena Greco',role:'Auditor · sola lettura',av:'EG',client:null}
 };
-const ROLE_LABEL={client:'Cliente',cybersec:'Cybersec',cyberdefence:'Cyberdefence',manager:'Manager',auditor:'Auditor'};
+const ROLE_LABEL={client:'Cliente',pmo:'PMO',pentester:'Pentester',manager:'Manager',auditor:'Auditor'};
 let role='client',cur=null,tab='docs',listTab='eng',logAuthor='',renderedFor=null;
 const editing={},pendingSw={},drafts={};
 let mfaUntil=0;const MFA_CODE='123456';
-const isBip=()=>role==='cybersec'||role==='cyberdefence';
+const isBip=()=>role==='pmo'||role==='pentester';
 const canWrite=()=>role==='client'||isBip();
 const seesInt=()=>role!=='client';
-const canCreds=()=>role==='client'||role==='cyberdefence';
-const canMail=()=>role==='cyberdefence';
-const canRem=()=>role==='cybersec';
-const canDecide=p=>p.status==='pending'&&((p.from==='client'&&role==='cyberdefence')||(p.from==='bip'&&role==='client'));
+const canCreds=()=>role==='client'||role==='pentester';
+const canMail=()=>role==='pentester';
+const canRem=()=>role==='pmo';
+const canDecide=p=>p.status==='pending'&&((p.from==='client'&&role==='pentester')||(p.from==='bip'&&role==='client'));
 
 /* ====== DATI DEMO ====== */
 const L=(t,txt,who,rl,aud,h)=>({t,h:h||'09:30',txt,who:who||'Sistema',rl:rl||'Automatico',aud:aud||'all',cl:null});
 const P=(id,from,start,end,status,o={})=>({id,from,by:from==='client'?'Marta Rinaldi':'Sara Conti',kind:o.kind||'initial',start,end,note:o.note||'',status,date:o.date||'2026-10-01'});
 const eng=o=>Object.assign({scope:{done:false},cred:{done:false},proposals:[],reports:[],review:{status:'none'},bc:null,log:[],sent:{}},o);
-const MR=['Marta Rinaldi','Cliente'],SC=['Sara Conti','Cyberdefence'],LF=['Luca Ferri','Cybersec'],GM=['Giorgio Marino','Manager'];
+const MR=['Marta Rinaldi','Cliente'],SC=['Sara Conti','Pentester'],LF=['Luca Ferri','PMO'],GM=['Giorgio Marino','Manager'];
 const lg=(t,txt,p,aud)=>L(t,txt,p[0],p[1],aud);
 const SCOPE_OK=(host,ip,sw,out,win,date,by)=>({host,ip,swagger:sw,out,win,contact:'Marta Rinaldi · +39 02 0000 000',notes:'',done:true,by:by||'client',date});
 const CRED_OK=(date)=>({vpn:'vpn.novabank.example – profilo BIP',users:'2 utenze di test (utente standard e amministratore)',delivery:'Vault aziendale',notes:'',done:true,by:'client',date});
@@ -255,7 +255,7 @@ const E=[
   log:[lg('2026-11-04','Engagement creato',SC),lg('2026-11-05','STAF firmato (con manleva) caricato',['Giulia Sala','Cliente'])]})
 ];
 const DLC={'Nova Bank':[['Marta Rinaldi','marta.rinaldi@novabank.example','Referente progetto','Cliente'],['Paolo Bassi','paolo.bassi@novabank.example','CISO','Cliente']],'Orion Energia':[['Giulia Sala','giulia.sala@orion.example','IT Security Manager','Cliente']]};
-const DLB=[['Luca Ferri','luca.ferri@bip.example','Account','Bip Cybersec'],['Sara Conti','sara.conti@bip.example','Responsabile attività','Bip Cyberdefence']];
+const DLB=[['Luca Ferri','luca.ferri@bip.example','Account','Bip PMO'],['Sara Conti','sara.conti@bip.example','Responsabile attività','Bip Pentester']];
 const MAIL_META={start:{t:'Inizio attività',subj:'Avvio attività',desc:'Comunica alla distribution list l\'avvio dell\'attività.'},end:{t:'Fine attività',subj:'Conclusione attività',desc:'Comunica alla distribution list la conclusione dell\'attività.'},deliver:{t:'Consegna deliverables',subj:'Consegna deliverables',desc:'Notifica la disponibilità dei report e degli altri deliverables.'}};
 E.forEach(e=>{
   e.dl=(DLC[e.client]||[]).concat(DLB).map(x=>({name:x[0],email:x[1],role:x[2],org:x[3]}));
@@ -400,7 +400,7 @@ function decide(id,pid,ok){const e=E.find(x=>x.id===id),p=e.proposals.find(x=>x.
     const what=p.kind==='resched'?'Riprogrammazione':'Pianificazione';
     log(e,ok?`${what} ${fmt(p.start)} → ${fmt(p.end)} accettata`:`${what} ${fmt(p.start)} → ${fmt(p.end)} rifiutata${reason?': '+reason:''}`);toast(ok?what+' accettata':'Proposta rifiutata');tickMail();render()};
   if(ok)apply('');else openModal({title:'Rifiuta proposta',fields:[{id:'r',label:'Motivazione (opzionale)',type:'textarea'}],ok:'Rifiuta',onOk:v=>apply(v.r)})}
-function canEditData(e){const ph=phase(e);return canWrite()&&(ph==='prep'||ph==='scheduled'||(role==='cyberdefence'&&ph==='running'))}
+function canEditData(e){const ph=phase(e);return canWrite()&&(ph==='prep'||ph==='scheduled'||(role==='pentester'&&ph==='running'))}
 function startEdit(id,k){editing[id+':'+k]=true;render()}
 function cancelEdit(id,k){delete editing[id+':'+k];clearDrafts(id);render()}
 function pickSwagger(id){pickFile(n=>{if(!/\.(json|ya?ml)$/i.test(n)){toast('Seleziona un file .json, .yaml o .yml');return}pendingSw[id]=n;$('#sw').textContent=n},'.json,.yaml,.yml')}
@@ -439,14 +439,14 @@ function setLogAuthor(v){logAuthor=v;render()}
 const REM_RULES=[
  {k:'staf',t:'STAF non firmato',to:'Cliente',unit:'giorni dalla creazione',subj:'Promemoria: STAF da firmare',desc:'Il cliente non ha caricato lo STAF firmato (comprende la manleva).',
   ev:(e,d)=>{if(!e.staf.file){const a=dayDiff(e.created,demoDate);if(a>=d)return{ref:'s'+Math.floor(a/d),to:'Cliente',detail:`STAF non firmato da ${a} giorni`}}}},
- {k:'order',t:'Ordine non ricevuto',to:'Cybersec',unit:'giorni dal caricamento STAF',subj:'Promemoria: ordine da registrare',desc:'STAF firmato ma l\'ordine non risulta ancora ricevuto.',
-  ev:(e,d)=>{if(e.staf.file&&!e.order.ok){const a=dayDiff(e.staf.date,demoDate);if(a>=d)return{ref:'o'+Math.floor(a/d),to:'Cybersec',detail:`Ordine non ricevuto da ${a} giorni`}}}},
+ {k:'order',t:'Ordine non ricevuto',to:'PMO',unit:'giorni dal caricamento STAF',subj:'Promemoria: ordine da registrare',desc:'STAF firmato ma l\'ordine non risulta ancora ricevuto.',
+  ev:(e,d)=>{if(e.staf.file&&!e.order.ok){const a=dayDiff(e.staf.date,demoDate);if(a>=d)return{ref:'o'+Math.floor(a/d),to:'PMO',detail:`Ordine non ricevuto da ${a} giorni`}}}},
  {k:'prop',t:'Proposta senza risposta',to:'Chi deve decidere',unit:'giorni di attesa',subj:'Promemoria: proposta di date in attesa',desc:'Una proposta o richiesta di riprogrammazione non ha ricevuto risposta.',
-  ev:(e,d)=>{const p=pend(e);if(p){const a=dayDiff(p.date,demoDate);if(a>=d)return{ref:'p'+p.id+'_'+Math.floor(a/d),to:p.from==='client'?'Cyberdefence':'Cliente',detail:`Proposta ${fmt(p.start)} senza risposta da ${a} giorni`}}}},
+  ev:(e,d)=>{const p=pend(e);if(p){const a=dayDiff(p.date,demoDate);if(a>=d)return{ref:'p'+p.id+'_'+Math.floor(a/d),to:p.from==='client'?'Pentester':'Cliente',detail:`Proposta ${fmt(p.start)} senza risposta da ${a} giorni`}}}},
  {k:'prep',t:'Scope / credenziali mancanti',to:'Cliente',unit:'giorni prima dell\'inizio',subj:'Promemoria: scope e credenziali da fornire',desc:'Scope o credenziali non ancora forniti a ridosso dell\'attività.',
   ev:(e,d)=>{if(phase(e)==='prep'){const a=acc(e),dd=dayDiff(demoDate,a.start);if(dd<=d)return{ref:'prep'+(dd<=0?'late':dd<=3?'t3':'t'+d),to:'Cliente',detail:(dd>=0?`Inizio tra ${dd} giorni`:'Attività già iniziata')+`: mancano ${missing(e)}`}}}},
- {k:'rep',t:'Deliverables non consegnati',to:'Cyberdefence',unit:'giorni dalla fine attività',subj:'Promemoria: deliverables da consegnare',desc:'Attività conclusa ma deliverables non ancora pubblicati.',
-  ev:(e,d)=>{if(phase(e)==='reporting'){const a=dayDiff(acc(e).end,demoDate);if(a>=d)return{ref:'r'+Math.floor(a/d),to:'Cyberdefence',detail:`Deliverables non pubblicati da ${a} giorni dalla fine`}}}},
+ {k:'rep',t:'Deliverables non consegnati',to:'Pentester',unit:'giorni dalla fine attività',subj:'Promemoria: deliverables da consegnare',desc:'Attività conclusa ma deliverables non ancora pubblicati.',
+  ev:(e,d)=>{if(phase(e)==='reporting'){const a=dayDiff(acc(e).end,demoDate);if(a>=d)return{ref:'r'+Math.floor(a/d),to:'Pentester',detail:`Deliverables non pubblicati da ${a} giorni dalla fine`}}}},
  {k:'rev',t:'Revisione manager in attesa',to:'Manager',unit:'giorni di attesa',subj:'Promemoria: deliverables da rivedere',desc:'I deliverables sono in attesa di revisione.',
   ev:(e,d)=>{if(phase(e)==='reporting'&&e.review.status==='pending'){const a=dayDiff(e.review.date,demoDate);if(a>=d)return{ref:'v'+Math.floor(a/d),to:'Manager',detail:`Revisione in attesa da ${a} giorni`}}}}
 ];
@@ -492,7 +492,7 @@ function listTabs(){
 }
 function renderRem(){
   const ed=canRem(),due=remDue();
-  return`<h1>Solleciti automatici</h1><p class="sub">${ed?'Pannello Cybersec: attiva le regole e imposta le soglie.':'Sola lettura: le regole sono gestite da Cybersec.'} Data di riferimento: ${fmt(demoDate)}</p>${listTabs()}
+  return`<h1>Solleciti automatici</h1><p class="sub">${ed?'Pannello PMO: attiva le regole e imposta le soglie.':'Sola lettura: le regole sono gestite da PMO.'} Data di riferimento: ${fmt(demoDate)}</p>${listTabs()}
   <div class="card"><h2>Regole</h2>${REM_RULES.map(r=>{const c=REM.cfg[r.k];return`<div class="mailc"><div class="t"><b>${r.t}</b><span>${r.desc}</span><span>Destinatario: <b>${r.to}</b></span></div>
    <div class="ctl">${ed?`<label class="sw"><input type="checkbox" ${c.on?'checked':''} onchange="toggleRem('${r.k}')"><i></i><span>${c.on?'Attivo':'Disattivo'}</span></label>
    <label style="font-weight:500;margin:0">Soglia <input type="number" min="1" max="60" value="${c.days}" style="width:64px;padding:6px" onchange="setRemDays('${r.k}',this.value)"> ${r.unit}</label>`
@@ -507,7 +507,7 @@ function renderStepper(e){const s=step(e);
 /* azione richiesta al profilo corrente */
 function myTodo(e){
   if(role==='auditor')return null;
-  const ph=phase(e),p=pend(e),c=role==='client',cd=role==='cyberdefence',cs=role==='cybersec';
+  const ph=phase(e),p=pend(e),c=role==='client',cd=role==='pentester',cs=role==='pmo';
   if(role==='manager')return(ph==='reporting'&&e.review.status==='pending')?{tab:'reports',t:'Rivedi i deliverables prima della pubblicazione.',b:'Vai alla revisione'}:null;
   if(p&&canDecide(p))return{tab:'plan',t:`${p.kind==='resched'?'Richiesta di riprogrammazione':'Proposta di pianificazione'} ${fmt(p.start)} → ${fmt(p.end)} ${p.from==='client'?'del cliente':'di Bip'}: accetta o rifiuta.`,b:'Vai alla pianificazione'};
   if(ph==='docs'){
@@ -535,13 +535,13 @@ function nextAction(e){
   if(t)return`<div class="note"><b>Azione richiesta:</b> ${esc(t.t)} <button class="btn pri sm" style="margin-left:8px" onclick="setTab('${t.tab}',1)">${t.b}</button></div>`;
   const ph=phase(e),a=acc(e),p=pend(e);let m='',cls='';
   if(ph==='docs')m='In attesa di: '+[!e.staf.file?'STAF firmato dal cliente':'',!e.order.ok?'ricezione ordine da parte di Bip':''].filter(Boolean).join(' e ')+'. La pianificazione si sblocca quando entrambi sono completati.';
-  else if(ph==='planning')m=p?`Proposta ${fmt(p.start)} → ${fmt(p.end)} in attesa di decisione ${p.from==='client'?'di Cyberdefence':'del cliente'}.`:'Nessuna proposta di date ancora inviata.';
+  else if(ph==='planning')m=p?`Proposta ${fmt(p.start)} → ${fmt(p.end)} in attesa di decisione ${p.from==='client'?'di Pentester':'del cliente'}.`:'Nessuna proposta di date ancora inviata.';
   else if(ph==='prep')m=`In attesa che vengano forniti: ${missing(e)}.`;
   else if(ph==='scheduled')m=`Tutto pronto: attività pianificata dal ${fmt(a.start)} al ${fmt(a.end)}.`;
   else if(ph==='running')m=`Attività in corso fino al ${fmt(a.end)}.`;
   else if(ph==='reporting')m=(role!=='client'&&e.review.status==='pending')?`Attività conclusa: deliverables in attesa di revisione del manager.`:`Attività conclusa il ${fmt(a.end)}: i deliverables sono in redazione (report in progress).`;
   else{m='Engagement completato. I deliverables sono disponibili nella scheda Reportistica.';cls='ok'}
-  if(p&&p.kind==='resched'&&ph!=='planning')m+=` Richiesta di riprogrammazione ${fmt(p.start)} → ${fmt(p.end)} in attesa di decisione ${p.from==='client'?'di Cyberdefence':'del cliente'}.`;
+  if(p&&p.kind==='resched'&&ph!=='planning')m+=` Richiesta di riprogrammazione ${fmt(p.start)} → ${fmt(p.end)} in attesa di decisione ${p.from==='client'?'di Pentester':'del cliente'}.`;
   const ro=role==='auditor'?'<b>Profilo Auditor</b>: sola lettura. ':'';
   return cls?`<div class="note" style="background:var(--ok-bg);border-color:#b7ebd3;color:var(--ok)">${m}</div>`:`<div class="note lockbox">${ro}${esc(m)}</div>`;
 }
@@ -558,7 +558,7 @@ function tabOverview(e){const a=acc(e),[st,c]=statusOf(e),lg2=visibleLog(e).slic
 
 function tabDocs(e){
   const wr=canWrite(),bip=isBip();
-  const VIS={client:'STAF (con manleva), STID, credenziali fornite e deliverables',cybersec:'STAF, STID, ordine, Business Case e deliverables (le credenziali non sono visibili)',cyberdefence:'tutti i file, comprese le credenziali',manager:'STAF, STID, ordine, Business Case e deliverables (le credenziali non sono visibili)',auditor:'tutti i file tranne le credenziali, in sola lettura'};
+  const VIS={client:'STAF (con manleva), STID, credenziali fornite e deliverables',pmo:'STAF, STID, ordine, Business Case e deliverables (le credenziali non sono visibili)',pentester:'tutti i file, comprese le credenziali',manager:'STAF, STID, ordine, Business Case e deliverables (le credenziali non sono visibili)',auditor:'tutti i file tranne le credenziali, in sola lettura'};
   const row=(ic,t,sub,right)=>`<div class="doc"><div class="ico">${ic}</div><div class="t"><b>${t}</b><span>${sub}</span></div>${right}</div>`;
   let h=`<div class="note">Profilo <b>${ROLE_LABEL[role]}</b> · puoi vedere: ${VIS[role]}.</div><div class="card"><h2>Documenti associati</h2>`;
   h+=row('STAF','STAF – Scheda tecnica di attività e manleva',e.staf.file?`Firmato · ${esc(e.staf.file)} · caricato il ${fmt(e.staf.date)}`:'Da firmare e caricare da parte del cliente: vale anche come manleva',
@@ -570,7 +570,7 @@ function tabDocs(e){
   }
   if(canCreds()){
     const c=e.cred;
-    h+=row('CRED','Credenziali fornite',c.done?`Credenziali_${esc(e.id)}.zip.enc · fornite da ${c.by==='client'?'cliente':'Cyberdefence per conto del cliente'} il ${fmt(c.date)}`:'Non ancora fornite',
+    h+=row('CRED','Credenziali fornite',c.done?`Credenziali_${esc(e.id)}.zip.enc · fornite da ${c.by==='client'?'cliente':'Pentester per conto del cliente'} il ${fmt(c.date)}`:'Non ancora fornite',
       c.done?pill('Fornite','ok')+' '+dl('Credenziali_'+e.id+'.zip.enc')+` <button class="btn sec sm" onclick="setTab('cred')">Dettagli</button>`:acc(e)&&wr?`<button class="btn pri sm" onclick="setTab('cred')">Compila</button>`:pill(acc(e)?'In attesa':'Dopo pianificazione','mute'));
   }
   const nR=(role==='client'?pubs(e):e.reports).length;
@@ -587,19 +587,19 @@ function tabPlan(e){
   let right;
   if(a){
     let act='';
-    if(p0)act=`<p style="color:var(--muted);font-size:13px;margin:12px 0 0">Richiesta di riprogrammazione in corso: decide ${p0.from==='client'?'Cyberdefence':'il cliente'}.</p>`;
+    if(p0)act=`<p style="color:var(--muted);font-size:13px;margin:12px 0 0">Richiesta di riprogrammazione in corso: decide ${p0.from==='client'?'Pentester':'il cliente'}.</p>`;
     else if(!wr)act='';
     else if(ph==='prep'||ph==='scheduled')act=`<div style="margin-top:14px"><button class="btn sec" onclick="requestResched('${e.id}')">Richiedi riprogrammazione</button></div>`;
     else act=`<p style="color:var(--muted);font-size:13px;margin:12px 0 0">L'attività è già avviata: non è più possibile riprogrammarla da qui.</p>`;
-    right=`<h2>Pianificazione confermata</h2><div class="note" style="background:var(--ok-bg);border-color:#b7ebd3;color:var(--ok)"><b>${fmt(a.start)} → ${fmt(a.end)}</b><br>Confermata${a.from==='client'?' da Cyberdefence':' dal cliente'}.</div>${act}`;
+    right=`<h2>Pianificazione confermata</h2><div class="note" style="background:var(--ok-bg);border-color:#b7ebd3;color:var(--ok)"><b>${fmt(a.start)} → ${fmt(a.end)}</b><br>Confermata${a.from==='client'?' da Pentester':' dal cliente'}.</div>${act}`;
   }else if(!wr)right=`<h2>Nuova proposta</h2><div class="note lockbox">Sola lettura: da questo profilo non si possono inviare proposte.</div>`;
-  else right=`<h2>Nuova proposta</h2><p class="sub" style="margin-bottom:12px">Le date proposte dal cliente vengono accettate da Cyberdefence.</p><div class="fgrid"><div><label for="ps">Inizio attività</label><input type="date" id="ps" min="${demoDate}"></div><div><label for="pe">Fine attività</label><input type="date" id="pe" min="${demoDate}"></div>
+  else right=`<h2>Nuova proposta</h2><p class="sub" style="margin-bottom:12px">Le date proposte dal cliente vengono accettate da Pentester.</p><div class="fgrid"><div><label for="ps">Inizio attività</label><input type="date" id="ps" min="${demoDate}"></div><div><label for="pe">Fine attività</label><input type="date" id="pe" min="${demoDate}"></div>
     <div class="full"><label for="pn">Note (vincoli, finestre di manutenzione…)</label><textarea id="pn" rows="3"></textarea></div></div>
     <div style="margin-top:14px"><button class="btn pri" onclick="propose('${e.id}')">${role==='client'?'Invia proposta a Bip':'Invia proposta al cliente'}</button></div>`;
   return`<div class="grid two" style="align-items:start"><div class="card"><h2>Proposte e richieste</h2>${list}</div><div class="card">${right}</div></div>`}
 
 const FIELD=(id,label,val,o={})=>`<div class="${o.full?'full':''}"><label for="f_${id}">${label}</label>${o.area?`<textarea id="f_${id}" rows="3">${esc(val)}</textarea>`:`<input type="text" id="f_${id}" value="${esc(val)}" ${o.ph?`placeholder="${esc(o.ph)}"`:''}>`}</div>`;
-function who(x){return x.by==='client'?'cliente':'Cyberdefence per conto del cliente'}
+function who(x){return x.by==='client'?'cliente':'Pentester per conto del cliente'}
 function tabScope(e){
   if(!acc(e))return`<div class="note lockbox"><b>Sezione bloccata.</b> Lo scope si compila dopo l'accettazione della pianificazione.</div>`;
   const s=e.scope,can=canEditData(e),isEd=!!editing[e.id+':scope'];
@@ -627,10 +627,10 @@ function tabCred(e){
    <table style="font-size:14px">${[['VPN',c.vpn],['Utenze di test',c.users],['Metodo di consegna dei segreti',c.delivery],['Note',c.notes||'–']].map(r=>`<tr><td style="padding:9px 0;color:var(--muted);width:32%">${r[0]}</td><td><b>${esc(r[1])}</b></td></tr>`).join('')}</table>
    ${can?`<div style="margin-top:14px"><button class="btn sec sm" onclick="startEdit('${e.id}','cred')">Modifica</button></div>`:''}</div>`;
   if(!can)return`<div class="note lockbox">${c.done?'Le credenziali non sono più modificabili.':'Credenziali non ancora fornite.'}</div>`;
-  const opts=['Vault aziendale','File cifrato (password su canale separato)','Altro (concordato con Cyberdefence)'];
+  const opts=['Vault aziendale','File cifrato (password su canale separato)','Altro (concordato con Pentester)'];
   return`<div class="card"><h2>${c.done?'Modifica credenziali':'Fornisci le credenziali'}</h2>
    <div class="note">Non scrivere password in questo modulo: indica solo dove e come verranno consegnate.</div>
-   ${role==='cyberdefence'?'<div class="note">Stai compilando come Cyberdefence <b>per conto del cliente</b>.</div>':''}
+   ${role==='pentester'?'<div class="note">Stai compilando come Pentester <b>per conto del cliente</b>.</div>':''}
    <div class="fgrid">${FIELD('vpn','VPN (endpoint e profilo)*',c.vpn||'',{ph:'es. vpn.cliente.it – profilo test'})}${FIELD('users','Utenze di test*',c.users||'',{ph:'es. 2 utenze: utente e amministratore'})}
     <div><label for="f_delivery">Metodo di consegna dei segreti*</label><select class="f" id="f_delivery"><option value="">Seleziona…</option>${opts.map(o=>`<option ${c.delivery===o?'selected':''}>${esc(o)}</option>`).join('')}</select></div>
     ${FIELD('cnotes','Note',c.notes||'',{full:1,area:1})}</div>
@@ -640,7 +640,7 @@ function mfaGate(){return`<div class="card" style="text-align:center;padding:34p
   <p class="sub" style="max-width:460px;margin:0 auto 16px">I report contengono informazioni riservate. Per aprirli è richiesta la verifica a due fattori. Ogni accesso e download viene registrato.</p>
   <button class="btn pri" onclick="verifyMfa()">Verifica con codice 2FA</button></div>`}
 function reviewCard(e){
-  const rv=e.review,dr=e.reports.filter(r=>!r.pub).length,cd=role==='cyberdefence',mg=role==='manager';
+  const rv=e.review,dr=e.reports.filter(r=>!r.pub).length,cd=role==='pentester',mg=role==='manager';
   const S={none:['Non inviata','mute'],pending:['In attesa del manager','warn'],approved:['Approvata','ok'],changes:['Modifiche richieste','err']}[rv.status];
   let act='';
   if(cd&&dr&&(rv.status==='none'||rv.status==='changes'))act=`<button class="btn pri" onclick="submitReview('${e.id}')">Invia in revisione al manager</button>`;
@@ -649,7 +649,7 @@ function reviewCard(e){
   return`<div class="card" style="margin-bottom:16px"><h2>Revisione del manager ${pill(S[0],S[1])}</h2>
    <p class="sub" style="margin-bottom:${act?12:0}px">I deliverables non arrivano al cliente finché il manager non li approva.${rv.by&&rv.status!=='none'?` Ultimo esito: ${esc(rv.by)} · ${fmt(rv.date)}.`:''}${rv.comment?` Commento: “${esc(rv.comment)}”`:''}</p>${act}</div>`}
 function tabReports(e){
-  const bv=role!=='client',cd=role==='cyberdefence',ph=phase(e),list=bv?e.reports:pubs(e);
+  const bv=role!=='client',cd=role==='pentester',ph=phase(e),list=bv?e.reports:pubs(e);
   if(!list.length&&!(cd&&(ph==='reporting'||ph==='running')))return`<div class="note lockbox"><b>Nessun deliverable disponibile.</b> La reportistica viene pubblicata da Bip al termine dell'attività.</div>`;
   if(!mfaOk())return mfaGate();
   let h=`<div class="note" style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><span>🔐 Accesso verificato con 2FA · scade tra ${mfaMins()} min · link monouso (15 min), documenti filigranati, download registrati.</span></div>`;
@@ -659,7 +659,7 @@ function tabReports(e){
   if(pubs(e).length)h+=`<div class="card" style="margin-top:16px"><h2>Riepilogo findings</h2><div style="display:flex;gap:20px;flex-wrap:wrap"><div style="flex:1;min-width:240px"><div class="bars">${[['Critical',1],['High',3],['Medium',7],['Low',5]].map(x=>`<div style="height:${x[1]*13}px"><em>${x[0]} (${x[1]})</em></div>`).join('')}</div><div style="height:22px"></div></div><div style="flex:1;min-width:240px;color:var(--muted);font-size:13px">Dati dimostrativi. Il piano di remediation è nel documento Evidenze.</div></div></div>`;
   return h}
 
-function orgPill(o){return`<span class="pill ${o==='Cliente'?'p-info':o==='Bip Cyberdefence'?'p-ok':'p-mute'}">${esc(o)}</span>`}
+function orgPill(o){return`<span class="pill ${o==='Cliente'?'p-info':o==='Bip Pentester'?'p-ok':'p-mute'}">${esc(o)}</span>`}
 function tabDL(e){
   const w=canWrite(),dom=((e.dl.find(x=>x.org==='Cliente')||{email:''}).email.split('@')[1]||'').toLowerCase();
   const canRm=m=>w&&(role!=='client'||m.org==='Cliente');
@@ -667,14 +667,14 @@ function tabDL(e){
   e.dl.forEach((m,i)=>{const ext=m.org==='Cliente'&&dom&&m.email.split('@')[1].toLowerCase()!==dom;
     h+=`<tr><td><b>${esc(m.name)}</b></td><td>${esc(m.email)}${ext?' '+pill('dominio diverso','warn'):''}</td><td>${esc(m.role)}</td><td>${orgPill(m.org)}</td>${w?`<td style="text-align:right">${canRm(m)?`<button class="btn dng sm" onclick="rmDL('${e.id}',${i})">Rimuovi</button>`:''}</td>`:''}</tr>`});
   h+=`</tbody></table></div>`;
-  if(w)h+=`<div class="card" style="margin-top:16px"><h2>Aggiungi destinatario</h2><div class="fgrid"><div><label for="dl_n">Nome e cognome</label><input type="text" id="dl_n"></div><div><label for="dl_e">Email</label><input type="text" id="dl_e" placeholder="nome@dominio.it"></div><div><label for="dl_r">Ruolo</label><input type="text" id="dl_r" placeholder="es. Referente tecnico"></div>${role==='client'?'':`<div><label for="dl_o">Organizzazione</label><select class="f" id="dl_o"><option>Cliente</option><option>Bip Cybersec</option><option>Bip Cyberdefence</option></select></div>`}</div><div style="margin-top:14px"><button class="btn pri" onclick="addDL('${e.id}')">Aggiungi</button></div></div>`;
+  if(w)h+=`<div class="card" style="margin-top:16px"><h2>Aggiungi destinatario</h2><div class="fgrid"><div><label for="dl_n">Nome e cognome</label><input type="text" id="dl_n"></div><div><label for="dl_e">Email</label><input type="text" id="dl_e" placeholder="nome@dominio.it"></div><div><label for="dl_r">Ruolo</label><input type="text" id="dl_r" placeholder="es. Referente tecnico"></div>${role==='client'?'':`<div><label for="dl_o">Organizzazione</label><select class="f" id="dl_o"><option>Cliente</option><option>Bip PMO</option><option>Bip Pentester</option></select></div>`}</div><div style="margin-top:14px"><button class="btn pri" onclick="addDL('${e.id}')">Aggiungi</button></div></div>`;
   return h}
 
 function tabMail(e){
   if(role==='client'){const ms=e.mails.filter(m=>m.aud==='all');return`<div class="card"><h2>Email ricevute</h2>${ms.length?`<ul class="tl">${[...ms].reverse().map(m=>`<li>${esc(m.s)}<span>${fmt(m.d)}</span></li>`).join('')}</ul>`:'<div class="empty" style="padding:10px">Nessuna email ricevuta per questo engagement.</div>'}</div>`}
   const ctl=canMail(),a=acc(e);
   const when={start:a?'alla data di inizio ('+fmt(a.start)+')':'dopo l\'accettazione della pianificazione',end:a?'alla data di fine ('+fmt(a.end)+')':'dopo l\'accettazione della pianificazione',deliver:'alla pubblicazione dei deliverables'};
-  let h=`<div class="note">${ctl?'Come <b>Cyberdefence</b> controlli l\'invio automatico delle email alla distribution list ('+e.dl.length+' destinatari).':'Le comunicazioni sono gestite da Cyberdefence: tu puoi consultarne lo stato (sola lettura).'}</div><div class="card"><h2>Email automatiche</h2>`;
+  let h=`<div class="note">${ctl?'Come <b>Pentester</b> controlli l\'invio automatico delle email alla distribution list ('+e.dl.length+' destinatari).':'Le comunicazioni sono gestite da Pentester: tu puoi consultarne lo stato (sola lettura).'}</div><div class="card"><h2>Email automatiche</h2>`;
   for(const k of ['start','end','deliver']){
     const m=e.mail[k],M=MAIL_META[k];
     const st=m.sent?pill('Inviata il '+fmt(m.sent),'ok'):m.auto?pill('Programmata: '+when[k],'info'):pill('Invio automatico disattivato','warn');

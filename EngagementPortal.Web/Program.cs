@@ -14,6 +14,8 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 builder.Services.AddSingleton<IDateProvider, SystemDateProvider>();
 builder.Services.AddSingleton<IEngagementRepository,
     InMemoryEngagementRepository>();
+builder.Services.AddSingleton<IClientRepository,
+    InMemoryClientRepository>();
 builder.Services.AddSingleton<EngagementWorkflow>();
 builder.Services.AddSingleton<TodoResolver>();
 builder.Services.AddSingleton<SolicitationService>();
@@ -48,6 +50,145 @@ var api = app.MapGroup("/api");
 api.MapGet("/me", (HttpContext context) =>
     Results.Ok(GetUser(context)));
 
+api.MapGet("/clients", (
+    HttpContext context,
+    IClientRepository clients,
+    IEngagementRepository repository) =>
+{
+    var user = GetUser(context);
+
+    var result = clients.List()
+        .Where(client => user.IsProvider || client.TenantId == user.TenantId)
+        .Select(client => new
+        {
+            client.TenantId,
+            client.Name,
+            client.CreatedDate,
+            client.Users,
+            EngagementCount = repository
+                .List(client.TenantId, crossTenant: false)
+                .Count()
+        });
+
+    return Results.Ok(result);
+});
+
+api.MapPost("/clients", (
+    CreateClientRequest request,
+    HttpContext context,
+    IClientRepository clients) =>
+{
+    var user = GetUser(context);
+
+    if (user.Role != Roles.Manager)
+        return Forbidden();
+
+    var name = request.Name?.Trim();
+    var tenantId = request.TenantId?.Trim();
+
+    if (string.IsNullOrWhiteSpace(name))
+        return Results.BadRequest("Il nome del cliente è obbligatorio.");
+
+    if (tenantId is { Length: > 0 } &&
+        (tenantId.Length < 3 || clients.Exists(tenantId)))
+    {
+        return tenantId.Length < 3
+            ? Results.BadRequest(
+                "L'identificativo del tenant deve avere almeno 3 caratteri.")
+            : Results.Conflict();
+    }
+
+    var account = clients.Add(name, tenantId);
+
+    return Results.Created(
+        $"/api/clients/{account.TenantId}",
+        new
+        {
+            account.TenantId,
+            account.Name,
+            account.CreatedDate,
+            account.Users,
+            EngagementCount = 0
+        });
+});
+
+api.MapPut("/clients/{tenantId}", (
+    string tenantId,
+    RenameClientRequest request,
+    HttpContext context,
+    IClientRepository clients) =>
+{
+    var user = GetUser(context);
+
+    if (user.Role != Roles.Manager)
+        return Forbidden();
+
+    if (string.IsNullOrWhiteSpace(request.Name))
+        return Results.BadRequest("Il nome del cliente è obbligatorio.");
+
+    var account = clients.Rename(tenantId, request.Name);
+
+    return account is null
+        ? Results.NotFound()
+        : Results.Ok(account);
+});
+
+api.MapPost("/clients/{tenantId}/users", (
+    string tenantId,
+    AddClientUserRequest request,
+    HttpContext context,
+    IClientRepository clients) =>
+{
+    var user = GetUser(context);
+
+    if (user.Role != Roles.Manager)
+        return Forbidden();
+
+    var account = clients.Get(tenantId);
+
+    if (account is null)
+        return Results.NotFound();
+
+    var name = request.Name?.Trim();
+    var email = request.Email?.Trim();
+
+    if (string.IsNullOrWhiteSpace(name) ||
+        string.IsNullOrWhiteSpace(email) ||
+        !email.Contains('@') ||
+        !email.Contains('.'))
+    {
+        return Results.BadRequest(
+            "Nome ed email valida sono obbligatori.");
+    }
+
+    if (account.Users.Any(item => string.Equals(
+        item.Email,
+        email,
+        StringComparison.OrdinalIgnoreCase)))
+    {
+        return Results.Conflict();
+    }
+
+    var created = clients.AddUser(tenantId, name, email);
+    return Results.Ok(created);
+});
+
+api.MapDelete("/clients/{tenantId}/users/{userId}", (
+    string tenantId,
+    string userId,
+    HttpContext context,
+    IClientRepository clients) =>
+{
+    var user = GetUser(context);
+
+    if (user.Role != Roles.Manager)
+        return Forbidden();
+
+    return clients.RemoveUser(tenantId, userId)
+        ? Results.NoContent()
+        : Results.NotFound();
+});
+
 api.MapGet("/engagements", (
     HttpContext context,
     IEngagementRepository repository,
@@ -74,7 +215,7 @@ api.MapPost("/engagements", (
 {
     var user = GetUser(context);
 
-    if (user.Role is not (Roles.Cybersec or Roles.Cyberdefence))
+    if (user.Role is not (Roles.PMO or Roles.Manager))
         return Forbidden();
 
     if (string.IsNullOrWhiteSpace(request.Name) ||
@@ -166,7 +307,7 @@ api.MapPost("/engagements/{id}/manleva", async (
         return Results.NotFound();
 
     if (user.Role is not (
-        Roles.Client or Roles.Cybersec or Roles.Cyberdefence))
+        Roles.Client or Roles.PMO))
         return Forbidden();
 
     var request = await ReadBody<DocumentRequest>(context.Request);
@@ -198,7 +339,7 @@ api.MapPost("/engagements/{id}/documento-ingaggio", async (
     if (engagement is null)
         return Results.NotFound();
 
-    if (user.Role is not (Roles.Cybersec or Roles.Cyberdefence))
+    if (user.Role is not Roles.PMO)
         return Forbidden();
 
     var request = await ReadBody<DocumentRequest>(context.Request);
@@ -231,7 +372,7 @@ api.MapPost("/engagements/{id}/order", async (
     if (engagement is null)
         return Results.NotFound();
 
-    if (user.Role is not (Roles.Cybersec or Roles.Cyberdefence))
+    if (user.Role is not Roles.PMO)
         return Forbidden();
 
     var request = await ReadBody<OrderRequest>(context.Request);
@@ -264,7 +405,7 @@ api.MapPost("/engagements/{id}/business-case", async (
     if (engagement is null)
         return Results.NotFound();
 
-    if (user.Role is not (Roles.Cybersec or Roles.Cyberdefence))
+    if (user.Role is not Roles.PMO)
         return Forbidden();
 
     var request = await ReadBody<DocumentRequest>(context.Request);
@@ -312,7 +453,7 @@ api.MapPost("/engagements/{id}/proposals", (
         return Results.NotFound();
 
     if (user.Role is not (
-        Roles.Client or Roles.Cybersec or Roles.Cyberdefence))
+        Roles.Client or Roles.PMO))
         return Forbidden();
 
     if (!engagement.HasManleva || !engagement.OrderConfirmed)
@@ -394,7 +535,7 @@ api.MapPost(
     var canDecide =
         proposal.Status == ProposalStatus.Pending &&
         ((proposal.From == ProposalParty.Client &&
-          user.Role == Roles.Cyberdefence) ||
+          user.Role == Roles.PMO) ||
          (proposal.From == ProposalParty.Provider &&
           user.Role == Roles.Client));
 
@@ -594,7 +735,7 @@ api.MapPost("/engagements/{id}/reports", (
     if (engagement is null)
         return Results.NotFound();
 
-    if (user.Role != Roles.Cyberdefence)
+    if (user.Role != Roles.Pentester)
         return Forbidden();
 
     var name = request.Name?.Trim();
@@ -692,7 +833,7 @@ api.MapPost("/engagements/{id}/review/submit", (
     if (engagement is null)
         return Results.NotFound();
 
-    if (user.Role != Roles.Cyberdefence)
+    if (user.Role != Roles.Pentester)
         return Forbidden();
 
     if (!engagement.Reports.Any(report => !report.Published))
@@ -758,7 +899,7 @@ api.MapPost("/engagements/{id}/reports/publish", (
     if (engagement is null)
         return Results.NotFound();
 
-    if (user.Role != Roles.Cyberdefence ||
+    if (user.Role != Roles.Pentester ||
         engagement.ReviewStatus != ReviewStatus.Approved)
         return Forbidden();
 
@@ -838,8 +979,8 @@ api.MapPost("/engagements/{id}/distribution-list", (
         !email.Contains('.') ||
         organization is not (
             "Cliente" or
-            "Provider Cybersec" or
-            "Provider Cyberdefence"))
+            "Provider PMO" or
+            "Provider Pentester"))
     {
         return Results.BadRequest(
             "Nome, email valida e organizzazione sono obbligatori.");
@@ -945,7 +1086,7 @@ api.MapPost("/engagements/{id}/mails/{type}/toggle", (
     if (engagement is null)
         return Results.NotFound();
 
-    if (user.Role != Roles.Cyberdefence)
+    if (user.Role != Roles.PMO)
         return Forbidden();
 
     switch (type)
@@ -987,7 +1128,7 @@ api.MapPost("/engagements/{id}/mails/{type}/send", (
     if (engagement is null)
         return Results.NotFound();
 
-    if (user.Role != Roles.Cyberdefence)
+    if (user.Role != Roles.PMO)
         return Forbidden();
 
     if (type is not ("start" or "end" or "deliver"))
@@ -1093,7 +1234,7 @@ api.MapPut("/solicitations/rules/{key}", (
 {
     var user = GetUser(context);
 
-    if (user.Role != Roles.Cybersec)
+    if (user.Role != Roles.PMO)
         return Forbidden();
 
     return solicitations.Update(
@@ -1140,7 +1281,7 @@ api.MapPost("/solicitations/{key}/send", (
 {
     var user = GetUser(context);
 
-    if (user.Role != Roles.Cybersec)
+    if (user.Role != Roles.PMO)
         return Forbidden();
 
     var parts = key.Split(':', 2);
@@ -1187,12 +1328,12 @@ static UserContext GetUser(HttpContext context)
 
     if (role is not (
         Roles.Client or
-        Roles.Cybersec or
-        Roles.Cyberdefence or
+        Roles.PMO or
+        Roles.Pentester or
         Roles.Manager or
         Roles.Auditor))
     {
-        role = Roles.Cyberdefence;
+        role = Roles.Pentester;
     }
 
     var tenant = context.Request.Query["tenant"].FirstOrDefault();
@@ -1221,11 +1362,14 @@ static Engagement? Find(
 static IResult Forbidden() =>
     Results.StatusCode(StatusCodes.Status403Forbidden);
 
+// Scrittura sulla distribution list: il cliente gestisce i propri
+// destinatari, PMO coordina l'intera lista. Gli altri profili
+// (Pentester, Manager, Auditor) sono in sola lettura.
 static bool CanWrite(UserContext user) =>
-    user.Role is Roles.Client or Roles.Cybersec or Roles.Cyberdefence;
+    user.Role is Roles.Client or Roles.PMO;
 
 static bool CanSeeCredentials(UserContext user) =>
-    user.Role is Roles.Client or Roles.Cyberdefence;
+    user.Role is Roles.Client or Roles.PMO or Roles.Pentester;
 
 static bool CanEditPreparation(
     Engagement engagement,
@@ -1241,7 +1385,7 @@ static bool CanEditPreparation(
     {
         Roles.Client => phase is EngagementPhase.Prep or
             EngagementPhase.Scheduled,
-        Roles.Cyberdefence => phase is EngagementPhase.Prep or
+        Roles.PMO => phase is EngagementPhase.Prep or
             EngagementPhase.Scheduled or
             EngagementPhase.Running,
         _ => false
@@ -1364,12 +1508,18 @@ static object Detail(
             IsClient = user.Role == Roles.Client,
             IsProvider = user.IsProvider,
             CanWrite = CanWrite(user),
-            CanDecide = user.Role is Roles.Client or Roles.Cyberdefence,
+            CanDecide = user.Role is Roles.Client or Roles.PMO,
             CanCredentials = CanSeeCredentials(user),
-            CanManageMail = user.Role == Roles.Cyberdefence,
-            CanManageSolicitations = user.Role == Roles.Cybersec,
+            CanManageMail = user.Role == Roles.PMO,
+            CanManageSolicitations = user.Role == Roles.PMO,
             CanReview = user.Role == Roles.Manager,
-            CanPublish = user.Role == Roles.Cyberdefence,
+            CanPublish = user.Role == Roles.Pentester,
+            CanUploadManleva = user.Role is Roles.Client or Roles.PMO,
+            CanManageEngagementDocs = user.Role == Roles.PMO,
+            CanPropose = user.Role is Roles.Client or Roles.PMO,
+            CanUploadReports = user.Role == Roles.Pentester,
+            CanManageClients = user.Role == Roles.Manager,
+            CanViewClients = user.IsProvider,
             ReadOnly = user.Role == Roles.Auditor
         }
     };
