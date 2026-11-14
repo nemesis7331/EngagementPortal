@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sezione Utenti e visibilità · proposte</title>
+<style>
+:root{
+  --brand-950:#061d36;--brand-900:#0a2a4d;--brand-700:#0f4275;--brand-600:#0b5fa5;
+  --brand-500:#2a86d8;--brand-100:#e1eefa;--brand-50:#f1f7fc;--accent:#0e9fb5;--accent-soft:#d6f4f8;
+  --ink:#0a1b2e;--muted:#566a80;--muted-2:#78899b;--line:#dfe7ef;--line-soft:#edf2f7;
+  --bg:#f4f7fa;--card:#fff;--surface-2:#f8fafc;
+  --st-action:#b42318;--st-action-bg:#fee4e2;--st-action-border:#fda29b;
+  --st-wait:#7a5b00;--st-wait-bg:#fff8c5;--st-wait-border:#eac54f;
+  --st-progress:#175cd3;--st-progress-bg:#d1e9ff;--st-progress-border:#b2ddff;
+  --st-done:#067647;--st-done-bg:#dcfae6;--st-done-border:#a9efc5;
+  --st-blocked:#475467;--st-blocked-bg:#f2f4f7;--st-blocked-border:#e4e7ec;
+  --radius:14px;--radius-md:10px;--shadow:0 1px 2px rgba(6,29,54,.06),0 6px 20px rgba(6,29,54,.06);
+  --shadow-lg:0 10px 30px rgba(6,29,54,.12);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button{font:inherit;cursor:pointer}
+a{color:var(--brand-600)}
+h1{font-size:30px;line-height:1.15;letter-spacing:-.02em;margin:0 0 8px;color:var(--brand-900)}
+h2{font-size:20px;margin:0;color:var(--brand-900)}
+h3{font-size:15px;margin:0;color:var(--brand-900)}
+p{margin:0}
+.sub{color:var(--muted)}.small{font-size:12.5px;color:var(--muted)}.tiny{font-size:11.5px;color:var(--muted)}
+.wrap{max-width:1220px;margin:0 auto;padding:28px 24px 80px}
+.top{display:flex;align-items:center;gap:14px;padding:14px 24px;background:var(--brand-900);color:#fff}
+.top .logo{width:34px;height:34px;border-radius:10px;background:var(--accent);display:grid;place-items:center;color:var(--brand-950);font-weight:800}
+.top b{font-size:15px}.top .meta{margin-left:auto;font-size:12.5px;color:#bed3e6}
+.intro{padding:34px 0 8px;max-width:1020px}
+.lede{font-size:17px;color:var(--muted);margin:0 0 20px}
+.rulebar{display:flex;align-items:flex-start;gap:12px;background:#fff;border:1px solid var(--line);border-left:3px solid var(--brand-600);border-radius:10px;padding:13px 15px;margin:0 0 20px}
+.rulebar .i{width:30px;height:30px;border-radius:50%;background:var(--brand-100);color:var(--brand-700);display:grid;place-items:center;font-weight:800;flex:none}
+.rulebar b{display:block;font-size:13.5px;color:var(--brand-900)}
+.rulebar span{font-size:12.5px;color:var(--muted)}
+.switcher{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 8px;padding:10px 0}
+.switcher button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 16px;font-weight:650;color:var(--muted);display:flex;align-items:center;gap:8px}
+.switcher button.on{border-color:var(--brand-600);color:var(--brand-700);box-shadow:0 0 0 3px var(--brand-100)}
+.switcher .n{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--brand-100);color:var(--brand-700);font-size:11px;font-weight:800}
+.switcher button.on .n{background:var(--brand-600);color:#fff}
+.proposal{display:none;padding-top:16px}.proposal.active{display:block}
+.prop-head{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap;margin-bottom:4px}
+.tag{font-size:11px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent-soft);background:#fff;padding:4px 10px;border-radius:999px;margin-top:3px}
+.prop-head h2{font-size:24px}
+.prop-desc{max-width:920px;color:var(--muted);margin:5px 0 16px}
+.metrics{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}
+.metric{background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:12.5px;color:var(--muted)}
+.metric b{color:var(--brand-900)}
+.mock{border:1px solid #c9d8e7;border-radius:18px;background:#fbfdff;padding:18px;box-shadow:var(--shadow)}
+.mockbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 2px 12px;border-bottom:1px solid var(--line-soft);margin-bottom:16px}
+.mockbar .dots{display:flex;gap:5px}.mockbar .dots i{display:block;width:9px;height:9px;border-radius:50%;background:#d6e1ec}
+.mockbar .name{font-size:12px;color:var(--muted);font-weight:600}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:650;white-space:nowrap;border:1px solid transparent}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
+.p-action{background:var(--st-action-bg);color:var(--st-action);border-color:var(--st-action-border)}
+.p-wait{background:var(--st-wait-bg);color:var(--st-wait);border-color:var(--st-wait-border)}
+.p-progress{background:var(--st-progress-bg);color:var(--st-progress);border-color:var(--st-progress-border)}
+.p-done{background:var(--st-done-bg);color:var(--st-done);border-color:var(--st-done-border)}
+.p-blocked{background:var(--st-blocked-bg);color:var(--st-blocked);border-color:var(--st-blocked-border)}
+.btn{border:1px solid transparent;border-radius:9px;padding:9px 15px;font-weight:650;font-size:13.5px;display:inline-flex;align-items:center;gap:7px;text-decoration:none}
+.btn.pri{background:var(--brand-600);color:#fff}.btn.pri:hover{background:var(--brand-700)}
+.btn.sec{background:#fff;border-color:var(--line);color:var(--brand-900)}
+.btn.ghost{background:transparent;color:var(--brand-600);padding:6px 4px}
+.btn.sm{padding:5px 10px;font-size:12.5px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.pagehead{display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:14px}
+.pagehead .t{flex:1;min-width:260px}
+.pagehead h3{font-size:22px;line-height:1.2;margin-bottom:3px}
+.pagehead .sub{font-size:13px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.statrow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:12px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:9px;padding:9px 11px}
+.stat b{display:block;font-size:18px;color:var(--brand-900)}
+.stat span{font-size:11px;color:var(--muted)}
+.card2{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;min-width:0}
+.tablewrap{overflow-x:auto;margin:0 -2px;padding:0 2px}
+.tablewrap table{min-width:680px}
+.sec-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.sec-head h3{margin:0}
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.searchbox{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 10px;flex:1;min-width:180px}
+.searchbox input{border:0;outline:0;width:100%;font:inherit;font-size:13px;background:transparent}
+.toolbar .btn{margin-left:auto}
+.tabs2{display:flex;gap:6px;flex-wrap:wrap}
+.tabs2 span{font-size:11.5px;font-weight:650;border:1px solid var(--line);border-radius:999px;padding:4px 10px;background:#fff;color:var(--muted)}
+.tabs2 span.on{border-color:var(--brand-600);background:var(--brand-100);color:var(--brand-700)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:8px 9px;border-bottom:1px solid var(--line-soft);vertical-align:middle}
+th{font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)}
+td b{color:var(--brand-900)}
+tr.hover:hover td{background:var(--surface-2)}
+.user{display:flex;align-items:center;gap:8px;min-width:0}
+.avatar{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--brand-100);color:var(--brand-700);font-size:10.5px;font-weight:800;flex:none}
+.user .nm{display:block;font-size:12.5px;font-weight:650;color:var(--brand-900);line-height:1.2}
+.user .em{display:block;font-size:10.5px;color:var(--muted)}
+.badge{font-size:10px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;padding:2px 7px;border-radius:999px;border:1px solid var(--line);color:var(--muted);background:var(--surface-2)}
+.badge.int{border-color:var(--st-progress-border);background:var(--st-progress-bg);color:var(--st-progress)}
+.badge.ext{border-color:var(--st-wait-border);background:var(--st-wait-bg);color:var(--st-wait)}
+.badge.ok{border-color:var(--st-done-border);background:var(--st-done-bg);color:var(--st-done)}
+.badge.mgr{border-color:var(--accent-soft);background:var(--accent-soft);color:var(--brand-700)}
+.countpill{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);font-size:11px;font-weight:700;color:var(--muted)}
+.split{display:grid;gap:14px;grid-template-columns:minmax(0,1fr) 320px;align-items:start}
+.drawer{border:1px solid var(--brand-100);border-radius:12px;background:linear-gradient(180deg,var(--brand-50),#fff);padding:14px}
+.drawer h3{font-size:14px;margin-bottom:2px}
+.drawer .who{display:flex;align-items:center;gap:9px;margin-bottom:12px}
+.drawer .who .avatar{width:34px;height:34px}
+.drawer .who b{display:block;font-size:14px;color:var(--brand-900)}
+.drawer .who span{display:block;font-size:11.5px;color:var(--muted)}
+.assign{border:1px solid var(--line);border-radius:9px;background:#fff;padding:9px 10px;margin-bottom:8px}
+.assign .h{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:5px}
+.assign .h b{font-size:12.5px;color:var(--brand-900)}
+.assign .h span{font-size:10.5px;color:var(--muted)}
+.assign .list{display:flex;gap:5px;flex-wrap:wrap}
+.chip{font-size:10.5px;border:1px solid var(--line);border-radius:5px;padding:2px 6px;background:var(--surface-2);color:var(--muted)}
+.chip.on{border-color:var(--st-done-border);background:var(--st-done-bg);color:var(--st-done)}
+.visibility{background:#fff;border:1px solid var(--brand-100);border-radius:8px;padding:9px 10px;margin-top:10px;font-size:11.5px;color:var(--muted)}
+.visibility b{color:var(--brand-900)}
+.addline{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.addline select{flex:1;min-width:140px;border:1px solid var(--line);border-radius:7px;padding:7px 9px;font:inherit;font-size:12px;background:#fff}
+.clientgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.clientbox{border:1px solid var(--line);border-radius:10px;background:#fff;padding:11px}
+.clientbox h4{margin:0 0 3px;font-size:13px;color:var(--brand-900)}
+.clientbox .sub{font-size:11px;margin-bottom:8px}
+.clientbox .row{display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid var(--line-soft);font-size:12px}
+.clientbox .row:last-child{border-bottom:0}
+.clientbox .row .end{margin-left:auto}
+.toggle{display:inline-flex;border:1px solid var(--line);border-radius:999px;background:#fff;padding:2px;margin-bottom:8px}
+.toggle span{font-size:10.5px;padding:3px 8px;border-radius:999px;color:var(--muted);font-weight:650}
+.toggle span.on{background:var(--brand-100);color:var(--brand-700)}
+.matrix{overflow:auto;border:1px solid var(--line);border-radius:10px;background:#fff}
+.matrix table{min-width:700px}
+.matrix th:first-child,.matrix td:first-child{position:sticky;left:0;background:#fff;z-index:1}
+.matrix td.cell{text-align:center}
+.matrix td.cell span{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:5px;border:1px solid var(--line);background:var(--surface-2);color:var(--muted);font-size:10px}
+.matrix td.cell span.on{background:var(--st-done-bg);border-color:var(--st-done-border);color:var(--st-done)}
+.matrix .colhead{font-size:10px;line-height:1.2;max-width:82px}
+.matrixnote{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px;font-size:12px;color:var(--muted)}
+.selflist{display:grid;gap:8px}
+.selfrow{border:1px solid var(--line);border-radius:9px;background:#fff;padding:9px 11px;display:flex;gap:10px;align-items:center}
+.selfrow .t{flex:1;min-width:0}
+.selfrow b{display:block;font-size:12.5px;color:var(--brand-900)}
+.selfrow span{display:block;font-size:11px;color:var(--muted)}
+.callouts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:18px 0 0}
+.callout{background:#fff;border:1px solid var(--line);border-radius:10px;padding:11px 12px;font-size:12.5px;color:var(--muted)}
+.callout b{display:block;color:var(--brand-900);font-size:12px;margin-bottom:2px}
+.proscons{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0 0}
+.pc{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:13px}
+.pc h5{margin:0 0 6px;font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:800}
+.pc ul{margin:0;padding-left:18px;color:var(--muted)}
+.pc li{margin-bottom:3px}
+.pc.good ul{color:#196345}.pc.bad ul{color:#8a4b00}
+.compare{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;margin-top:34px;box-shadow:var(--shadow)}
+.compare h2{margin-bottom:4px}.compare p{color:var(--muted);font-size:13px;margin-bottom:14px}
+.reco{margin-top:16px;background:var(--brand-50);border:1px solid var(--brand-100);border-radius:10px;padding:14px;font-size:13.5px;color:var(--brand-800)}
+.reco b{color:var(--brand-900)}
+.tech{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;margin-top:18px;box-shadow:var(--shadow)}
+.tech h2{font-size:18px;margin-bottom:6px}.tech h3{font-size:13.5px;margin:16px 0 7px}
+.tech ul{margin:0;padding-left:18px;color:var(--muted);font-size:13px}.tech li{margin-bottom:4px}
+.tech code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px;background:var(--surface-2);border:1px solid var(--line);border-radius:4px;padding:1px 5px;color:var(--brand-900)}
+.matrix2{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:8px}
+.matrix2 th,.matrix2 td{border:1px solid var(--line-soft);padding:7px 8px;text-align:center}
+.matrix2 td:first-child,.matrix2 th:first-child{text-align:left}
+.matrix2 .yes{color:var(--st-done);font-weight:700}.matrix2 .no{color:var(--muted)}.matrix2 .part{color:var(--st-wait);font-weight:700}
+.decisions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.decision{border:1px solid var(--line);border-radius:9px;padding:10px 12px;background:var(--surface-2);font-size:12.5px;color:var(--muted)}
+.decision b{display:block;color:var(--brand-900);font-size:12.5px;margin-bottom:2px}
+.toast{position:fixed;right:24px;bottom:24px;background:var(--brand-900);color:#fff;padding:11px 16px;border-radius:10px;font-size:13px;box-shadow:var(--shadow-lg);opacity:0;transform:translateY(8px);transition:.2s;pointer-events:none;z-index:100}
+.toast.show{opacity:1;transform:translateY(0)}
+@media(max-width:1000px){.split{grid-template-columns:1fr}.statrow{grid-template-columns:1fr 1fr}.clientgrid{grid-template-columns:1fr}.role-tpl{grid-template-columns:1fr}.callouts{grid-template-columns:1fr}.decisions{grid-template-columns:1fr}}
+@media(max-width:720px){.wrap{padding:20px 14px 70px}.proscons{grid-template-columns:1fr}.statrow{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="logo">EP</div>
+  <div><b>Cyber Engagement Portal</b><div class="tiny" style="color:#9fb9cf">Sezione Utenti e visibilità per assegnazione · proposte</div></div>
+  <div class="meta">Demo · dati ENG-2026-001</div>
+</header>
+
+<main class="wrap">
+  <section class="intro">
+    <h1>Da ruoli demo a utenti con assegnazioni</h1>
+    <p class="lede">
+      La proposta A (squadra per ruoli) può diventare la base di una vera <b>sezione Utenti</b>:
+      ogni persona ha un account e vede solo i <b>clienti/engagement a cui è assegnata</b>.
+      Il <b>Manager</b> vede tutto e amministra gli utenti.
+    </p>
+    <div class="rulebar">
+      <span class="i">◎</span>
+      <div><b>Regola di visibilità proposta</b><span>Manager: tutti i clienti e gli engagement. PMO, Pentester, Auditor e utenti Cliente: solo clienti/engagement assegnati. L'assegnazione è applicata lato API, non solo nascosta in UI.</span></div>
+    </div>
+    <div class="switcher" role="tablist" aria-label="Proposte">
+      <button class="on" data-variant="a" role="tab" aria-selected="true"><span class="n">A</span> Directory + assegnazioni <span class="tiny">· consigliata</span></button>
+      <button data-variant="b" role="tab" aria-selected="false"><span class="n">B</span> Per cliente</button>
+      <button data-variant="c" role="tab" aria-selected="false"><span class="n">C</span> Matrice</button>
+      <button data-variant="d" role="tab" aria-selected="false"><span class="n">D</span> Area personale</button>
+    </div>
+  </section>
+
+  <!-- ================= A ================= -->
+  <section class="proposal active" id="v-a">
+    <div class="prop-head"><span class="tag">Proposta A</span><h2>Sezione Utenti + scheda assegnazioni</h2></div>
+    <p class="prop-desc">
+      Un'unica sezione <b>Utenti</b> per il Manager: elenco di tutte le persone, ruolo, clienti,
+      engagement e stato. Si apre la scheda di una persona e si gestiscono le assegnazioni per
+      <b>cliente</b> e per <b>engagement</b>, con anteprima della visibilità effettiva.
+      Le persone assegnate compaiono automaticamente nella squadra dell'engagement.
+    </p>
+    <div class="metrics"><span class="metric"><b>1 sezione</b> per gestire tutti</span><span class="metric"><b>Cliente + engagement</b></span><span class="metric"><b>Anteprima visibilità</b></span><span class="metric">Manager vede tutto</span></div>
+
+    <div class="mock">
+      <div class="mockbar"><span class="dots"><i></i><i></i><i></i></span><span class="name">utenti · amministrazione · profilo Manager</span></div>
+      <div class="pagehead">
+        <div class="t"><h3>Utenti e accessi</h3><p class="sub">Persone interne del provider e utenti cliente · 12 utenti attivi</p></div>
+        <div class="actions"><button class="btn sec sm" data-toast="Invita utente cliente (demo)">+ Utente cliente</button><button class="btn pri sm" data-toast="Nuovo utente interno (demo)">+ Utente interno</button></div>
+      </div>
+
+      <div class="statrow">
+        <div class="stat"><b>12</b><span>utenti attivi</span></div>
+        <div class="stat"><b>6</b><span>clienti</span></div>
+        <div class="stat"><b>15</b><span>engagement</span></div>
+        <div class="stat"><b>2</b><span>senza assegnazioni</span></div>
+      </div>
+
+      <div class="grid split">
+        <div class="card2">
+          <div class="toolbar">
+            <div class="searchbox"><input placeholder="Cerca utente, email, cliente…" aria-label="Cerca utenti"><span class="tiny">12</span></div>
+            <div class="tabs2"><span class="on">Tutti</span><span>Interni</span><span>Cliente</span></div>
+          </div>
+          <div class="tablewrap">
+          <table>
+            <thead><tr><th>Utente</th><th>Ruolo</th><th>Clienti</th><th>Engagement</th><th>Stato</th><th></th></tr></thead>
+            <tbody>
+              <tr class="hover"><td><div class="user"><span class="avatar">GM</span><span><span class="nm">Giorgio Marino</span><span class="em">giorgio.marino@provider.example</span></span></div></td><td><span class="badge mgr">Manager</span></td><td>Tutti <span class="countpill">6</span></td><td><span class="countpill">15</span></td><td><span class="badge ok">Attivo</span></td><td><button class="btn ghost sm" data-toast="Scheda utente (demo)">Apri</button></td></tr>
+              <tr class="hover"><td><div class="user"><span class="avatar">LF</span><span><span class="nm">Luca Ferri</span><span class="em">luca.ferri@provider.example</span></span></div></td><td><span class="badge int">PMO</span></td><td>Contoso, Fabrikam <span class="countpill">2</span></td><td><span class="countpill">8</span></td><td><span class="badge ok">Attivo</span></td><td><button class="btn ghost sm" data-toast="Scheda utente (demo)">Apri</button></td></tr>
+              <tr class="hover"><td><div class="user"><span class="avatar">SC</span><span><span class="nm">Sara Conti</span><span class="em">sara.conti@provider.example</span></span></div></td><td><span class="badge int">Pentester</span></td><td>Contoso, Nova Bank <span class="countpill">2</span></td><td><span class="countpill">4</span></td><td><span class="badge ok">Attivo</span></td><td><button class="btn ghost sm" data-toast="Scheda utente (demo)">Apri</button></td></tr>
+              <tr class="hover"><td><div class="user"><span class="avatar">EF</span><span><span class="nm">Elena Fabbri</span><span class="em">elena.fabbri@provider.example</span></span></div></td><td><span class="badge int">Pentester</span></td><td>Fabrikam <span class="countpill">1</span></td><td><span class="countpill">2</span></td><td><span class="badge ok">Attivo</span></td><td><button class="btn ghost sm" data-toast="Scheda utente (demo)">Apri</button></td></tr>
+              <tr class="hover"><td><div class="user"><span class="avatar">PG</span><span><span class="nm">Paolo Galli</span><span class="em">paolo.galli@provider.example</span></span></div></td><td><span class="badge">Auditor</span></td><td>Nova Bank <span class="countpill">1</span></td><td><span class="countpill">1</span></td><td><span class="badge ok">Attivo</span></td><td><button class="btn ghost sm" data-toast="Scheda utente (demo)">Apri</button></td></tr>
+              <tr class="hover"><td><div class="user"><span class="avatar">MR</span><span><span class="nm">Marta Rinaldi</span><span class="em">marta.rinaldi@contoso.example</span></span></div></td><td><span class="badge ext">Cliente</span></td><td>Contoso <span class="countpill">1</span></td><td><span class="countpill">3</span></td><td><span class="badge ok">Attivo</span></td><td><button class="btn ghost sm" data-toast="Scheda utente (demo)">Apri</button></td></tr>
+            </tbody>
+          </table>
+          </div>
+        </div>
+
+        <aside class="drawer">
+          <div class="who"><span class="avatar">SC</span><span><b>Sara Conti</b><span>Pentester · Provider</span></span></div>
+          <h3>Assegnazioni</h3>
+          <p class="tiny" style="margin-bottom:9px">La visibilità è l'unione di clienti ed engagement assegnati.</p>
+
+          <div class="assign">
+            <div class="h"><b>Clienti</b><span>2 assegnati</span></div>
+            <div class="list"><span class="chip on">Contoso</span><span class="chip on">Nova Bank</span><span class="chip">+ Aggiungi</span></div>
+            <p class="tiny" style="margin-top:5px">Cliente assegnato = tutti i suoi engagement.</p>
+          </div>
+
+          <div class="assign">
+            <div class="h"><b>Engagement</b><span>4 assegnati</span></div>
+            <div class="list"><span class="chip on">ENG-001</span><span class="chip on">ENG-003</span><span class="chip on">ENG-006</span><span class="chip on">ENG-008</span></div>
+          </div>
+
+          <div class="addline">
+            <select aria-label="Aggiungi assegnazione"><option>Aggiungi cliente…</option><option>Contoso</option><option>Fabrikam</option><option>Nova Bank</option></select>
+            <button class="btn sec sm" data-toast="Cliente assegnato (demo)">Aggiungi</button>
+          </div>
+          <div class="addline">
+            <select aria-label="Aggiungi engagement"><option>Aggiungi engagement…</option><option>ENG-2026-011</option><option>ENG-2026-013</option></select>
+            <button class="btn sec sm" data-toast="Engagement assegnato (demo)">Aggiungi</button>
+          </div>
+
+          <div class="visibility"><b>Visibilità effettiva:</b> 2 clienti, 4 engagement. <br>Ruolo Pentester: vede scope, credenziali e report di quei soli engagement. <b>Non vede i costi</b> e non vede la directory utenti.</div>
+          <button class="btn sec sm" style="width:100%;justify-content:center;margin-top:9px" data-toast="Anteprima come Sara (demo)">Anteprima come Sara</button>
+        </aside>
+      </div>
+    </div>
+
+    <div class="callouts">
+      <div class="callout"><b>1 · Un solo posto</b>Tutti gli utenti e le assegnazioni in una sezione, senza saltare tra clienti ed engagement.</div>
+      <div class="callout"><b>2 · Due livelli</b>Cliente (tutti i suoi engagement) + engagement specifici: si combinano senza duplicazioni.</div>
+      <div class="callout"><b>3 · Manager escluso</b>Il Manager non ha assegnazioni: vede tutto per ruolo e non può essere ristretto per errore.</div>
+    </div>
+    <div class="proscons">
+      <div class="pc good"><h5>Perché funziona</h5><ul><li>Modello centrale, coerente con la squadra per ruoli.</li><li>Anteprima della visibilità prima di salvare.</li><li>Riutilizza la sezione Persone/Team dell'engagement.</li><li>Pronto per ruoli e utenti reali (Entra ID).</li></ul></div>
+      <div class="pc bad"><h5>Da decidere</h5><ul><li>Un utente può avere ruoli diversi su clienti diversi?</li><li>Il cliente vede l'assegnazione dei propri utenti?</li><li>Le assegnazioni hanno una data di fine?</li></ul></div>
+    </div>
+  </section>
+
+  <!-- ================= B ================= -->
+  <section class="proposal" id="v-b">
+    <div class="prop-head"><span class="tag">Proposta B</span><h2>Parti dal cliente: utenti e accessi per cliente</h2></div>
+    <p class="prop-desc">
+      Le assegnazioni si gestiscono dal <b>cliente</b>: si scelgono le persone che lavorano su quel
+      cliente e, per ciascuna, se vedono <b>tutti gli engagement</b> o solo alcuni. Il PMO assegna
+      il proprio team; il Manager vede e amministra tutti i clienti.
+    </p>
+    <div class="metrics"><span class="metric"><b>Contesto cliente</b></span><span class="metric">Tutti / solo alcuni</span><span class="metric">Buono per PMO</span><span class="metric">Meno adatto a team grandi</span></div>
+
+    <div class="mock">
+      <div class="mockbar"><span class="dots"><i></i><i></i><i></i></span><span class="name">cliente Contoso · utenti e accessi · profilo Manager</span></div>
+      <div class="pagehead"><div class="t"><h3>Contoso</h3><p class="sub">4 engagement · 3 utenti interni assegnati · 2 utenti cliente</p></div><div class="actions"><button class="btn pri sm" data-toast="Aggiungi utente al cliente (demo)">+ Aggiungi utente</button></div></div>
+
+      <div class="clientgrid">
+        <div class="clientbox">
+          <h4>Team provider sul cliente</h4>
+          <p class="sub">Chi può vedere questo cliente e i suoi engagement.</p>
+          <div class="row"><span class="avatar" style="width:25px;height:25px">LF</span><span><b>Luca Ferri</b><span class="tiny">PMO</span></span><span class="end"><span class="toggle"><span class="on">Tutti gli engagement</span><span>Solo alcuni</span></span></span></div>
+          <div class="row"><span class="avatar" style="width:25px;height:25px">SC</span><span><b>Sara Conti</b><span class="tiny">Pentester</span></span><span class="end"><span class="toggle"><span class="on">Tutti</span><span>Solo alcuni</span></span></span></div>
+          <div class="row"><span class="avatar" style="width:25px;height:25px">MV</span><span><b>Marco Verdi</b><span class="tiny">Pentester</span></span><span class="end"><span class="toggle"><span>Tutti</span><span class="on">Solo 1</span></span></span></div>
+          <div class="row"><span class="avatar" style="width:25px;height:25px">PG</span><span><b>Paolo Galli</b><span class="tiny">Auditor</span></span><span class="end"><span class="toggle"><span>Tutti</span><span class="on">Solo 2</span></span></span></div>
+        </div>
+
+        <div class="clientbox">
+          <h4>Engagement del cliente</h4>
+          <p class="sub">Le eccezioni rispetto alla visibilità “tutti”.</p>
+          <div class="row"><span><b>ENG-2026-001</b> <span class="tiny">External Penetration Test</span></span><span class="end"><span class="badge ok">4 utenti</span></span></div>
+          <div class="row"><span><b>ENG-2026-003</b> <span class="tiny">Web Application Retest</span></span><span class="end"><span class="badge ok">4 utenti</span></span></div>
+          <div class="row"><span><b>ENG-2026-008</b> <span class="tiny">Payment API Security Review</span></span><span class="end"><span class="badge">3 utenti</span></span></div>
+          <div class="row"><span><b>ENG-2026-015</b> <span class="tiny">Internal Vulnerability Assessment</span></span><span class="end"><span class="badge">2 utenti</span></span></div>
+        </div>
+      </div>
+
+      <div class="card2" style="margin-top:12px">
+        <div class="sec-head"><h3>Dettaglio assegnazione · Marco Verdi</h3><span class="badge int">Pentester</span></div>
+        <p class="small" style="margin-bottom:8px">Marco vede solo l'engagement selezionato, non gli altri tre di Contoso.</p>
+        <div class="list" style="display:flex;gap:5px;flex-wrap:wrap"><span class="chip">ENG-2026-003</span><span class="chip">ENG-2026-008</span><span class="chip on">ENG-2026-001</span><span class="chip">ENG-2026-015</span></div>
+        <div class="visibility" style="margin-top:10px"><b>Visibilità:</b> 1 cliente, 1 engagement. Può aprire documenti, scope e report dell'engagement; non vede gli altri engagement di Contoso.</div>
+      </div>
+    </div>
+
+    <div class="callouts">
+      <div class="callout"><b>1 · Contesto</b>Il PMO parte dal cliente che conosce e assegna il team senza cambiare schermata.</div>
+      <div class="callout"><b>2 · Eccezioni</b>“Tutti gli engagement” è il default; le eccezioni per singolo engagement sono esplicite.</div>
+      <div class="callout"><b>3 · Cliente</b>Anche gli utenti cliente si gestiscono qui, con visibilità sui propri engagement.</div>
+    </div>
+    <div class="proscons">
+      <div class="pc good"><h5>Perché funziona</h5><ul><li>Allineata al lavoro del PMO: un cliente alla volta.</li><li>Riduce le assegnazioni ripetute per ogni engagement.</li><li>Il Manager mantiene la vista globale.</li></ul></div>
+      <div class="pc bad"><h5>Da decidere</h5><ul><li>Un pentester su molti clienti richiede molti passaggi.</li><li>La visibilità “tutti” può essere troppo ampia per i pentester.</li><li>Manca una vista globale delle assegnazioni di una persona.</li></ul></div>
+    </div>
+  </section>
+
+  <!-- ================= C ================= -->
+  <section class="proposal" id="v-c">
+    <div class="prop-head"><span class="tag">Proposta C</span><h2>Matrice utenti × engagement</h2></div>
+    <p class="prop-desc">
+      Per il Manager e i PMO che gestiscono molte persone: una griglia con utenti in riga e
+      engagement in colonna. Si spuntano le assegnazioni e si salva in blocco. Potente, ma va
+      protetta con filtri, conferme e anteprima della visibilità.
+    </p>
+    <div class="metrics"><span class="metric"><b>Bulk</b> su molte righe</span><span class="metric">Filtri</span><span class="metric">Conferma</span><span class="metric">Solo Manager/PMO</span></div>
+
+    <div class="mock">
+      <div class="mockbar"><span class="dots"><i></i><i></i><i></i></span><span class="name">utenti · matrice assegnazioni · profilo Manager</span></div>
+      <div class="toolbar">
+        <div class="searchbox"><input placeholder="Filtra per utente o cliente…" aria-label="Filtra matrice"></div>
+        <select style="border:1px solid var(--line);border-radius:7px;padding:7px 9px;font:inherit;font-size:12px;background:#fff"><option>Tutti i ruoli</option><option>Pentester</option><option>PMO</option><option>Auditor</option></select>
+        <button class="btn sec sm" data-toast="Filtri applicati (demo)">Filtra</button>
+      </div>
+      <div class="matrix">
+        <table>
+          <thead><tr><th>Utente</th><th class="colhead">ENG-001<br>Contoso</th><th class="colhead">ENG-003<br>Contoso</th><th class="colhead">ENG-008<br>Contoso</th><th class="colhead">ENG-006<br>Nova</th><th class="colhead">ENG-009<br>Fabrikam</th><th class="colhead">ENG-015<br>Contoso</th></tr></thead>
+          <tbody>
+            <tr><td><div class="user"><span class="avatar" style="width:24px;height:24px">SC</span><span><span class="nm">Sara Conti</span><span class="em">Pentester</span></span></div></td><td class="cell"><span class="on">✓</span></td><td class="cell"><span class="on">✓</span></td><td class="cell"><span class="on">✓</span></td><td class="cell"><span class="on">✓</span></td><td class="cell"><span>–</span></td><td class="cell"><span>–</span></td></tr>
+            <tr><td><div class="user"><span class="avatar" style="width:24px;height:24px">EF</span><span><span class="nm">Elena Fabbri</span><span class="em">Pentester</span></span></div></td><td class="cell"><span class="on">✓</span></td><td class="cell"><span>–</span></td><td class="cell"><span>–</span></td><td class="cell"><span>–</span></td><td class="cell"><span class="on">✓</span></td><td class="cell"><span>–</span></td></tr>
+            <tr><td><div class="user"><span class="avatar" style="width:24px;height:24px">MV</span><span><span class="nm">Marco Verdi</span><span class="em">Pentester</span></span></div></td><td class="cell"><span class="on">✓</span></td><td class="cell"><span>–</span></td><td class="cell"><span>–</span></td><td class="cell"><span>–</span></td><td class="cell"><span>–</span></td><td class="cell"><span>–</span></td></tr>
+            <tr><td><div class="user"><span class="avatar" style="width:24px;height:24px">LF</span><span><span class="nm">Luca Ferri</span><span class="em">PMO</span></span></div></td><td class="cell"><span class="on">✓</span></td><td class="cell"><span class="on">✓</span></td><td class="cell"><span class="on">✓</span></td><td class="cell"><span>–</span></td><td class="cell"><span>–</span></td><td class="cell"><span class="on">✓</span></td></tr>
+            <tr><td><div class="user"><span class="avatar" style="width:24px;height:24px">PG</span><span><span class="nm">Paolo Galli</span><span class="em">Auditor</span></span></div></td><td class="cell"><span>–</span></td><td class="cell"><span>–</span></td><td class="cell"><span>–</span></td><td class="cell"><span class="on">✓</span></td><td class="cell"><span>–</span></td><td class="cell"><span>–</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="matrixnote"><span class="badge ok">✓ assegnato</span><span><b>18</b> assegnazioni selezionate</span><span style="margin-left:auto"><button class="btn sec sm" data-toast="Modifiche annullate (demo)">Annulla</button> <button class="btn pri sm" data-toast="18 assegnazioni salvate (demo)">Salva assegnazioni</button></span></div>
+    </div>
+
+    <div class="callouts">
+      <div class="callout"><b>1 · Bulk</b>Assegna molte persone a molti engagement in una sola operazione.</div>
+      <div class="callout"><b>2 · Controllo</b>Filtri per ruolo/cliente e conferma prima di salvare evitano errori di massa.</div>
+      <div class="callout"><b>3 · Non è la UI principale</b>È uno strumento operativo per Manager/PMO, non la vista quotidiana.</div>
+    </div>
+    <div class="proscons">
+      <div class="pc good"><h5>Perché funziona</h5><ul><li>Molto efficiente con decine di utenti/engagement.</li><li>Rende visibili i buchi di staffing.</li><li>Si combina con A come vista alternativa.</li></ul></div>
+      <div class="pc bad"><h5>Da decidere</h5><ul><li>Rischio di assegnazioni errate in massa.</li><li>Poco leggibile su mobile.</li><li>Non sostituisce la scheda utente per ruoli e date.</li></ul></div>
+    </div>
+  </section>
+
+  <!-- ================= D ================= -->
+  <section class="proposal" id="v-d">
+    <div class="prop-head"><span class="tag">Proposta D</span><h2>Area personale “Le mie assegnazioni”</h2></div>
+    <p class="prop-desc">
+      Il lato utente della stessa base dati: ogni persona vede solo i clienti/engagement assegnati,
+      con una propria home. Il Manager continua ad avere la sezione Utenti completa. È la vista
+      che rende concreta la regola di visibilità e va abbinata ad A o B.
+    </p>
+    <div class="metrics"><span class="metric"><b>Vista personale</b></span><span class="metric">Solo assegnati</span><span class="metric">Manager invariato</span><span class="metric">Complementare</span></div>
+
+    <div class="mock">
+      <div class="mockbar"><span class="dots"><i></i><i></i><i></i></span><span class="name">home · profilo Sara Conti · Pentester</span></div>
+      <div class="pagehead"><div class="t"><h3>Le mie assegnazioni</h3><p class="sub">Sara Conti · Pentester · 2 clienti · 4 engagement</p></div><span class="pill p-progress">Vista filtrata</span></div>
+
+      <div class="grid split">
+        <div class="card2">
+          <div class="sec-head"><h3>Clienti e engagement</h3><span class="tiny">Vedi solo ciò che ti è assegnato</span></div>
+          <div class="selflist">
+            <div class="selfrow"><span class="avatar">CO</span><span class="t"><b>Contoso</b><span>2 engagement · External Penetration Test, Web Application Retest</span></span><span class="badge int">Cliente</span></div>
+            <div class="selfrow"><span class="avatar">NB</span><span class="t"><b>Nova Bank</b><span>2 engagement · Web Application Penetration Test, Internal Red Team</span></span><span class="badge int">Cliente</span></div>
+            <div class="selfrow"><span class="avatar">FA</span><span class="t"><b>Fabrikam</b><span>Nessun accesso: non sei assegnata</span></span><span class="badge" style="color:var(--muted)">Nascosto</span></div>
+          </div>
+          <div class="visibility" style="margin-top:10px"><b>Perché non vedo Fabrikam?</b> La visibilità è calcolata dalle assegnazioni lato server. Se ti serve, chiedi al PMO o al Manager.</div>
+        </div>
+        <aside class="card2">
+          <h3>La mia attività</h3>
+          <div class="selflist" style="margin-top:9px">
+            <div class="selfrow"><span class="t"><b>ENG-2026-001 · Scope</b><span>Da compilare · Contoso · 20–25 nov</span></span><span class="pill p-action">Da fare</span></div>
+            <div class="selfrow"><span class="t"><b>ENG-2026-003 · Report</b><span>In revisione · Contoso</span></span><span class="pill p-wait">In attesa</span></div>
+            <div class="selfrow"><span class="t"><b>ENG-2026-006 · Completato</b><span>Nova Bank · report pubblicato</span></span><span class="pill p-done">Fatto</span></div>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <div class="callouts">
+      <div class="callout"><b>1 · Chiarezza</b>L'utente capisce subito cosa vede e perché il resto è nascosto.</div>
+      <div class="callout"><b>2 · Coerenza</b>La stessa regola di visibilità si applica a liste, dettagli, todo e API.</div>
+      <div class="callout"><b>3 · Manager</b>Il Manager non usa questa vista: ha sempre “tutti i clienti” e la sezione Utenti.</div>
+    </div>
+    <div class="proscons">
+      <div class="pc good"><h5>Perché funziona</h5><ul><li>Rende la regola di visibilità comprensibile e verificabile.</li><li>Riduce il rumore per PMO, Pentester e Auditor.</li><li>È il complemento naturale di A/B.</li></ul></div>
+      <div class="pc bad"><h5>Da decidere</h5><ul><li>Senza A/B non c'è un modo per gestire le assegnazioni.</li><li>Servono messaggi chiari quando manca un accesso.</li><li>Va previsto un canale per richiedere l'accesso.</li></ul></div>
+    </div>
+  </section>
+
+  <section class="compare">
+    <h2>Confronto rapido</h2>
+    <p>La visibilità è la parte più importante: deve essere applicata dal server, non solo nascosta nella UI.</p>
+    <table>
+      <thead><tr><th></th><th>A · Directory + assegnazioni</th><th>B · Per cliente</th><th>C · Matrice</th><th>D · Area personale</th></tr></thead>
+      <tbody>
+        <tr><td><b>Idea</b></td><td>Un utente, clienti + engagement</td><td>Un cliente, tutti o alcuni</td><td>Bulk su griglia</td><td>Vista dell'utente assegnato</td></tr>
+        <tr><td><b>Punto di forza</b></td><td>Controllo completo, anteprima</td><td>Allineata al PMO</td><td>Efficienza di massa</td><td>Chiarezza per l'utente</td></tr>
+        <tr><td><b>Complessità</b></td><td>Media</td><td>Media</td><td>Media-alta</td><td>Bassa (dipende da A/B)</td></tr>
+        <tr><td><b>Manager</b></td><td>Vede tutti + amministra</td><td>Vede tutti i clienti</td><td>Vede tutti</td><td>Non la usa</td></tr>
+        <tr><td><b>Altri ruoli</b></td><td>Vedono assegnati</td><td>Vedono assegnati</td><td>Solo Manager/PMO</td><td>Vedono assegnati</td></tr>
+        <tr><td><b>Migliore per</b></td><td>Modello centrale</td><td>Portfolio per cliente</td><td>Operazioni in blocco</td><td>UX quotidiana</td></tr>
+      </tbody>
+    </table>
+    <div class="reco"><b>Consiglio:</b> <b>A</b> come modello centrale, <b>B</b> come vista alternativa “per cliente” e <b>C</b> come strumento bulk per il Manager. <b>D</b> è la vista personale che rende visibile la regola. Inizio con A + D: è il percorso più chiaro per arrivare a utenti reali e permessi per assegnazione.</div>
+  </section>
+
+  <section class="tech">
+    <h2>Come implementarla</h2>
+    <p class="sub" style="font-size:13px;margin-bottom:12px">Oggi l'identità è simulata con <code>role</code>/<code>client</code> nei query param. Per la visibilità per assegnazione serve un vero contesto utente.</p>
+
+    <h3>Modello dati</h3>
+    <ul>
+      <li><code>UserAccount</code>: id, nome, email, ruolo (Manager, PMO, Pentester, Auditor), attivo, <code>EntraObjectId</code> opzionale.</li>
+      <li><code>ClientAssignment</code>: userId + clientId + data inizio/fine. Assegna tutti gli engagement del cliente.</li>
+      <li><code>EngagementAssignment</code>: userId + engagementId + ruolo + allocazione + date. Assegna un singolo engagement.</li>
+      <li><code>ClientAccount.Users</code> resta per gli utenti cliente, collegati al cliente; possono avere assegnazioni per singolo engagement.</li>
+      <li>Il <b>Manager</b> non ha assegnazioni: il suo ruolo implica visibilità globale.</li>
+    </ul>
+
+    <h3>Visibilità effettiva</h3>
+    <table class="matrix2">
+      <thead><tr><th>Ruolo</th><th>Clienti</th><th>Engagement</th><th>Costi/BC</th><th>Utenti</th></tr></thead>
+      <tbody>
+        <tr><td>Manager</td><td>Tutti</td><td>Tutti</td><td>Sì</td><td>Amministra</td></tr>
+        <tr><td>PMO</td><td>Assegnati</td><td>Assegnati (o tutti del cliente)</td><td>Sì</td><td>No</td></tr>
+        <tr><td>Pentester</td><td>Solo riferimento</td><td>Assegnati</td><td>No</td><td>No</td></tr>
+        <tr><td>Auditor</td><td>Assegnati</td><td>Assegnati</td><td>No</td><td>No</td></tr>
+        <tr><td>Cliente</td><td>Proprio cliente</td><td>Propri o assegnati</td><td>No</td><td>Solo i propri</td></tr>
+      </tbody>
+    </table>
+
+    <h3>API e filtro obbligatorio</h3>
+    <ul>
+      <li><code>GET /api/users</code> (Manager) · <code>GET /api/users/{id}/assignments</code> · <code>POST/DELETE /api/users/{id}/assignments</code>.</li>
+      <li><code>GET /api/engagements</code>, <code>/api/clients</code>, <code>/api/dashboard/todo</code> e ogni dettaglio devono usare <code>AccessScope(user)</code>.</li>
+      <li><code>AccessScope</code>: Manager → <code>All</code>; altri → unione client assegnati + engagement assegnati.</li>
+      <li>Un accesso non autorizzato restituisce <b>404</b> (non 403), per non rivelare l'esistenza dei dati.</li>
+      <li>Demo: sostituire il selettore “Profilo” con un selettore “Utente demo” (almeno 2 pentester, 1 PMO, 1 Manager, 1 Auditor, 2 utenti cliente).</li>
+    </ul>
+
+    <h3>Rollout consigliato</h3>
+    <ul>
+      <li><b>1. Directory + assegnazioni:</b> seed utenti, sezione Utenti, filtro API per Manager/PMO/Pentester/Auditor.</li>
+      <li><b>2. Utenti cliente:</b> visibilità sui propri engagement, invito e gestione.</li>
+      <li><b>3. Vista per cliente e bulk matrix:</b> produttività per PMO/Manager.</li>
+      <li><b>4. Entra ID:</b> sostituire il selettore demo con l'identità reale e i gruppi; niente role/client nei query param.</li>
+    </ul>
+
+    <div class="decisions">
+      <div class="decision"><b>Un ruolo o più ruoli?</b>Consiglio: un ruolo principale per utente; il ruolo può variare per assegnazione (es. PMO su un cliente, Pentester su un engagement).</div>
+      <div class="decision"><b>Cliente = tutti gli engagement?</b>Sì per PMO/Auditor; per i Pentester meglio engagement singoli, salvo eccezioni esplicite.</div>
+      <div class="decision"><b>Assegnazioni con scadenza?</b>Consiglio: data inizio/fine opzionale, utile per accessi temporanei e audit.</div>
+      <div class="decision"><b>Cosa vede il cliente?</b>Nome e ruolo dei pentester assegnati; mai la directory interna, i costi o le email dei dipendenti.</div>
+    </div>
+  </section>
+</main>
+
+<div class="toast" id="toast"></div>
+<script>
+const toast = document.getElementById('toast'); let t;
+function showToast(msg){toast.textContent=msg;toast.classList.add('show');clearTimeout(t);t=setTimeout(()=>toast.classList.remove('show'),2200);}
+document.querySelectorAll('.switcher button').forEach(btn=>btn.addEventListener('click',()=>{
+  const key=btn.dataset.variant;
+  document.querySelectorAll('.switcher button').forEach(b=>{const on=b===btn;b.classList.toggle('on',on);b.setAttribute('aria-selected',String(on));});
+  document.querySelectorAll('.proposal').forEach(p=>p.classList.toggle('active',p.id==='v-'+key));
+  window.scrollTo({top:0});
+}));
+document.addEventListener('click',e=>{const el=e.target.closest('[data-toast]');if(el){e.preventDefault();showToast(el.dataset.toast);}});
+</script>
+</body>
+</html>

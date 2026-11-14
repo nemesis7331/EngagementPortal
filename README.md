@@ -384,3 +384,5 @@ Aprire `http://localhost:5xxx` (la porta è indicata nel log di avvio).
   in 4 varianti, con profilo demo e visibilità costi solo per PMO/Manager
 - `EngagementPortal.Web/wwwroot/engagement-staffing-proposals.html` — 4 alternative
   per aggiungere persone interne (pentester) all'engagement, con modello dati e API
+- `EngagementPortal.Web/wwwroot/engagement-users-proposals.html` — 4 proposte per
+  la sezione Utenti e la visibilità per assegnazione (Manager vede tutto)
