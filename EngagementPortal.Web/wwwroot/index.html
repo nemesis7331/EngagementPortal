@@ -461,6 +461,103 @@ tr.row.is-done td:first-child{box-shadow:inset 3px 0 var(--st-done)}
   .list-table td{gap:8px}
   .list-table td::before{font-size:var(--fs-xs)}
 }
+/* ====== DETTAGLIO C3 · SPLIT CON CONTESTO ====== */
+.eng-hero{display:flex;align-items:flex-start;gap:18px;flex-wrap:wrap;margin:2px 0 4px}
+.eng-hero-t{flex:1;min-width:260px}
+.eng-hero-t h1{font-size:var(--fs-2xl);line-height:1.2;margin:2px 0 3px}
+.eng-hero-t .sub{font-size:var(--fs-md);color:var(--muted);margin:0}
+.eng-hero-s{display:flex;flex-direction:column;align-items:flex-end;gap:6px;padding-top:4px}
+.eng-hero-s .status-owner{font-size:var(--fs-sm);color:var(--muted);white-space:nowrap}
+.split-detail{display:grid;grid-template-columns:224px minmax(0,1fr) 286px;gap:18px;align-items:start;margin-top:16px}
+.workflow-nav{border:1px solid var(--line);border-radius:var(--radius-lg);background:#fff;overflow:hidden;position:sticky;top:12px;box-shadow:var(--shadow)}
+.wnav-group{padding:10px 12px 6px;font-size:var(--fs-2xs);letter-spacing:.7px;text-transform:uppercase;color:var(--muted);font-weight:800;display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid var(--line-soft)}
+.wnav-group:not(:first-child){border-top:1px solid var(--line);margin-top:2px;padding-top:12px}
+.wnav-btn{display:flex;align-items:flex-start;gap:9px;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line-soft);background:#fff;padding:10px 11px;color:inherit;position:relative}
+.wnav-btn:last-child{border-bottom:0}
+.wnav-btn:hover{background:var(--surface-2)}
+.wnav-btn.on{background:var(--brand-50);box-shadow:inset 3px 0 0 var(--brand-600)}
+.wnav-num{width:21px;height:21px;border-radius:50%;display:grid;place-items:center;font-size:var(--fs-2xs);font-weight:800;background:var(--st-neutral-bg);color:var(--st-neutral);border:1px solid var(--line);flex:none;margin-top:1px}
+.wnav-num svg{width:12px;height:12px}
+.wnav-h{min-width:0;flex:1}
+.wnav-h b{display:block;font-size:var(--fs-sm);color:var(--brand-900);line-height:1.25;font-weight:700}
+.wnav-h span{display:block;font-size:var(--fs-2xs);color:var(--muted);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wnav-btn.s-ok .wnav-num{background:var(--st-done);border-color:var(--st-done);color:#fff}
+.wnav-btn.s-ok .wnav-h b{color:var(--st-done)}
+.wnav-btn.s-todo .wnav-num{background:var(--st-action);border-color:var(--st-action);color:#fff}
+.wnav-btn.s-todo .wnav-h b{color:var(--st-action)}
+.wnav-btn.s-wait .wnav-num{background:var(--st-wait-bg);border-color:var(--st-wait-border);color:var(--st-wait)}
+.wnav-btn.s-wait .wnav-h b{color:var(--st-wait)}
+.wnav-btn.s-progress .wnav-num{background:var(--st-progress-bg);border-color:var(--st-progress-border);color:var(--st-progress)}
+.wnav-btn.s-progress .wnav-h b{color:var(--st-progress)}
+.wnav-btn.s-lock .wnav-num{background:var(--st-neutral-bg);border-color:var(--line);color:var(--st-neutral)}
+.wnav-btn.s-lock .wnav-h b{color:var(--muted)}
+.wnav-btn.extra .wnav-num{background:var(--brand-100);border-color:var(--brand-100);color:var(--brand-700)}
+.wnav-btn.extra .wnav-h b{font-weight:600}
+.work-panel{border:1px solid var(--line);border-radius:var(--radius-lg);background:#fff;overflow:hidden;min-width:0;box-shadow:var(--shadow)}
+.work-panel-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:16px 18px;background:var(--brand-50);border-bottom:1px solid var(--line-soft)}
+.wp-num{width:30px;height:30px;border-radius:50%;background:var(--brand-600);color:#fff;display:grid;place-items:center;font-size:var(--fs-sm);font-weight:800;flex:none}
+.wp-t{flex:1;min-width:180px}
+.wp-kicker{display:block;font-size:var(--fs-2xs);letter-spacing:.7px;text-transform:uppercase;color:var(--brand-700);font-weight:800;margin-bottom:2px}
+.wp-t h2{font-size:var(--fs-xl);margin:0;line-height:1.2}
+.wp-t p{font-size:var(--fs-sm);color:var(--muted);margin:2px 0 0}
+.wp-hint{margin:0;padding:10px 18px 0}
+.work-panel-body{padding:18px}
+.work-panel-body .note:first-child{margin-top:0}
+.work-panel-body > .card + .card{margin-top:16px}
+.work-panel-body .grid.two{grid-template-columns:1fr 1fr}
+.context-rail{display:grid;gap:12px;position:sticky;top:12px}
+.context-rail .note{margin:0}
+.ctx-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius-md);padding:13px 14px;box-shadow:var(--shadow)}
+.ctx-card h3{font-size:var(--fs-2xs);letter-spacing:.7px;text-transform:uppercase;color:var(--muted);font-weight:800;margin:0 0 9px}
+.ctx-person{display:flex;align-items:center;gap:8px;padding:5px 0;min-width:0}
+.ctx-person .avatar{width:27px;height:27px;font-size:var(--fs-2xs);flex:none}
+.ctx-person b{display:block;font-size:var(--fs-sm);color:var(--brand-900);line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ctx-person span span{display:block;font-size:var(--fs-2xs);color:var(--muted)}
+.ctx-kv{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 10px;margin:0;font-size:var(--fs-sm)}
+.ctx-kv dt{color:var(--muted)}
+.ctx-kv dd{margin:0;text-align:right;font-weight:650;color:var(--brand-900);overflow-wrap:anywhere}
+.ctx-legend{margin-top:0;border:1px solid var(--line);border-radius:var(--radius-md);background:#fff;padding:10px 12px}
+.inline-block{border:1px solid var(--line);border-radius:var(--radius-md);padding:13px 14px;background:var(--surface-2);margin-top:14px}
+.inline-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:11px}
+.inline-head h3{font-size:var(--fs-base);margin:0}
+.inline-row{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap}
+.inline-row .field{min-width:200px}
+.inline-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px}
+.inline-actions .hint{margin:0;max-width:520px}
+.detail-table{width:100%;border-collapse:collapse;font-size:var(--fs-md)}
+.detail-table td{padding:9px 0;border-bottom:1px solid var(--line-soft);vertical-align:top}
+.detail-table td:first-child{color:var(--muted);width:34%}
+.detail-table tr:last-child td{border-bottom:0}
+.run-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.run-grid>div{border:1px solid var(--line);border-radius:var(--radius-md);padding:11px;background:var(--surface-2)}
+.run-grid b{display:block;font-size:var(--fs-lg);color:var(--brand-900)}
+.run-grid span{font-size:var(--fs-2xs);color:var(--muted)}
+@media(max-width:1240px){
+  .split-detail{grid-template-columns:200px minmax(0,1fr) 260px}
+}
+@media(max-width:1040px){
+  .split-detail{grid-template-columns:210px minmax(0,1fr)}
+  .context-rail{grid-column:1/-1;grid-template-columns:repeat(4,minmax(0,1fr));position:static}
+  .context-rail>details{grid-column:1/-1}
+}
+@media(max-width:900px){
+  .run-grid{grid-template-columns:1fr 1fr}
+  .work-panel-body .grid.two{grid-template-columns:1fr}
+}
+@media(max-width:760px){
+  .split-detail{grid-template-columns:1fr}
+  .workflow-nav{display:flex;overflow:auto;position:static;border-radius:var(--radius-md)}
+  .wnav-group{display:none}
+  .wnav-btn{min-width:158px;border-bottom:0;border-right:1px solid var(--line-soft);padding:9px 10px}
+  .wnav-h span{white-space:normal}
+  .context-rail{grid-template-columns:1fr}
+  .eng-hero-s{align-items:flex-start}
+}
+@media(max-width:560px){
+  .run-grid{grid-template-columns:1fr}
+  .inline-actions .btn{width:100%}
+  .inline-actions .hint{max-width:none}
+}
 </style>
 </head>
 <body>
@@ -565,9 +662,9 @@ const REVIEW_STATUS = {
 const VISIBILITY = {
   Client: 'scheda tecnica, documento di ingaggio, credenziali fornite e deliverables',
   PMO: 'tutti i file, costi e margine e credenziali',
-  Pentester: 'scheda tecnica, ingaggio, ordine, costi e margine approvati, credenziali e deliverables',
+  Pentester: 'scheda tecnica, ingaggio, ordine, credenziali e deliverables; i dati economici sono riservati a PMO e Manager',
   Manager: 'scheda tecnica, ingaggio, ordine, costi e margine approvati, credenziali (sola lettura) e deliverables',
-  Auditor: 'tutti i file e i dati economici, tranne le credenziali, in sola lettura'
+  Auditor: 'tutti i file, senza dati economici, in sola lettura; le credenziali non sono visibili'
 };
 
 const state = {
@@ -635,6 +732,15 @@ const financialValue = (cost, margin) =>
   cost == null || margin == null || cost === '' || margin === ''
     ? null
     : Number(cost) * (1 + Number(margin) / 100);
+
+function updateFinancialValue(el) {
+  const box = el.closest('.fin');
+  if (!box) return;
+  const cost = Number((box.querySelector('#f_cost') || {}).value || 0);
+  const margin = Number((box.querySelector('#f_margin') || {}).value || 0);
+  const out = box.querySelector('#f_finValue');
+  if (out) out.value = fmtMoney(cost * (1 + margin / 100));
+}
 const today = () => {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -923,7 +1029,7 @@ function backToList() {
 
 async function openEngagement(id) {
   state.view = 'detail';
-  state.tab = 'docs';
+  state.tab = null;
   state.scope = null;
   state.credentials = null;
   state.mailTemplates = null;
@@ -966,7 +1072,7 @@ async function loadDetail(id) {
   try {
     const detail = await api(`/api/engagements/${encodeURIComponent(id)}?` + qs());
     state.detail = detail;
-    if (!state.tab || state.tab === 'docs') state.tab = defaultTab(detail);
+    if (!state.tab) state.tab = defaultTab(detail);
     if (state.tab === 'scope') await loadScope();
     if (state.tab === 'cred') await loadCredentials();
     if (state.tab === 'mail') await loadMailTemplates();
@@ -1609,34 +1715,76 @@ function nextAction(d) {
   return `<div class="note blocked">${readOnly}${esc(message)}</div>`;
 }
 
+const DETAIL_PANELS = {
+  docs: { n:'1', short:'Documenti', group:'Workflow', title:'Documenti e dati economici', desc:'Scheda tecnica, ordine, costi e margine approvati' },
+  scope: { n:'2', short:'Scope', group:'Workflow', title:'Scope', desc:'Perimetro, finestre e referente tecnico' },
+  plan: { n:'3', short:'Pianificazione', group:'Workflow', title:'Pianificazione', desc:'Proposta e approvazione delle date' },
+  cred: { n:'4', short:'Credenziali', group:'Workflow', title:'Credenziali', desc:'Accessi per l\'esecuzione' },
+  run: { n:'5', short:'Esecuzione', group:'Workflow', title:'Esecuzione', desc:'Avanzamento dell\'attività' },
+  reports: { n:'6', short:'Report', group:'Workflow', title:'Report', desc:'Revisione e consegna dei deliverable' },
+  dl: { n:'', short:'Distribution list', group:'Gestione', title:'Distribution list', desc:'Notifiche e invio deliverables' },
+  team: { n:'', short:'Team', group:'Gestione', title:'Team esterno', desc:'Partecipanti al cliente e all\'engagement' },
+  mail: { n:'', short:'Comunicazioni', group:'Gestione', title:'Comunicazioni', desc:'Email automatiche e registro invii' },
+  log: { n:'', short:'Registro', group:'Gestione', title:'Registro attività', desc:'Eventi e audit dell\'engagement' }
+};
+
+function runState(d) {
+  if (d.phase === 'Scheduled' || d.phase === 'Running') return 'progress';
+  if (d.phase === 'Reporting' || d.phase === 'Done') return 'ok';
+  return 'lock';
+}
+
+function runReason(d) {
+  const p = d.engagement.acceptedProposal;
+  if (!p) return 'Si sblocca dopo la conferma delle date';
+  if (d.phase === 'Scheduled') return `Avvio il ${fmt(p.startDate)}`;
+  if (d.phase === 'Running') return `In corso fino al ${fmt(p.endDate)}`;
+  if (d.phase === 'Reporting' || d.phase === 'Done') return 'Concluso';
+  return 'Si sblocca dopo pianificazione e credenziali';
+}
+
+function panelState(d, key) {
+  if (key === 'run') return runState(d);
+  if (key === 'dl' || key === 'team' || key === 'mail' || key === 'log') return 'gestione';
+  return tabState(d, key);
+}
+
+function panelStateLabel(d, key) {
+  if (key === 'run') return d.phase === 'Scheduled' ? 'Pianificato' :
+    d.phase === 'Running' ? 'In corso' :
+    d.phase === 'Reporting' || d.phase === 'Done' ? 'Concluso' : 'Bloccato';
+  const s = panelState(d, key);
+  return s === 'ok' ? 'Completato' : s === 'todo' ? 'Da fare' : s === 'wait' ? 'In attesa' : s === 'lock' ? 'Bloccato' : '';
+}
+
+function panelPillClass(s) {
+  return s === 'ok' ? 'ok' : s === 'todo' ? 'action' : s === 'wait' ? 'wait' : s === 'progress' ? 'progress' : 'blocked';
+}
+
 function renderDetail() {
   const d = state.detail;
   const e = d.engagement;
+  const c = d.capabilities || {};
   const st = statusPill(d);
   const owner = statusOwner(d);
-  const capabilities = d.capabilities || {};
-  const TABS = [['docs', 'Documenti'], ['scope', 'Scope'], ['plan', 'Pianificazione'], ['cred', 'Credenziali'], ['reports', 'Reportistica']];
-  const mailCount = (d.mailLog || []).length;
+  const activeKey = state.tab;
+  const activeMeta = DETAIL_PANELS[activeKey] || DETAIL_PANELS.docs;
+  const activeState = panelState(d, activeKey);
+  const activeReason = tabReason(d, activeKey);
+  const tabHint = activeReason && activeReason !== statusText(d) ? activeReason : '';
   const body = {
     docs: tabDocs,
     plan: tabPlan,
     scope: tabScope,
     cred: tabCred,
+    run: tabRun,
     reports: tabReports,
     dl: tabDl,
     team: tabTeam,
     mail: tabMail,
     log: tabLog
-  }[state.tab] || tabDocs;
-  const activeReason = tabReason(d, state.tab);
-  // Se il motivo dello stato coincide con l'azione già mostrata nel
-  // riquadro in alto, evitiamo di ripeterlo sotto i tab.
-  const tabHint = activeReason && activeReason !== statusText(d)
-    ? activeReason
-    : '';
-  const step = Math.max(0, Math.min(Number(d.stepIndex) || 0, STEPS.length));
-  const stepDone = step >= STEPS.length;
-  const stepCount = stepDone ? 'Completato' : `${step + 1}/${STEPS.length}`;
+  }[activeKey] || tabDocs;
+
   const prep = d.preparationAlert;
   const prepText = prep
     ? [
@@ -1651,65 +1799,114 @@ function renderDetail() {
   const period = e.acceptedProposal
     ? `${fmt(e.acceptedProposal.startDate)} – ${fmt(e.acceptedProposal.endDate)}`
     : 'Da definire';
-  const extra = [
+  const pending = (e.proposals || []).find(p => p.status === 'Pending');
+
+  const steps = ['docs', 'scope', 'plan', 'cred', 'run', 'reports'];
+  const stepNav = steps.map(key => {
+    const s = panelState(d, key);
+    const meta = DETAIL_PANELS[key];
+    const reason = key === 'run' ? runReason(d) : tabReason(d, key);
+    return `<button class="wnav-btn s-${s} ${state.tab === key ? 'on' : ''}" data-act="tab" data-tab="${key}" title="${esc(reason || panelStateLabel(d, key))}">
+      <span class="wnav-num">${s === 'ok' ? '✓' : meta.n}</span>
+      <span class="wnav-h"><b>${esc(meta.short)}</b><span>${esc(reason || panelStateLabel(d, key))}</span></span>
+    </button>`;
+  }).join('');
+
+  const extras = [
     ['dl', 'i-users', 'Distribution list', (d.distributionEffective || d.distributionList || []).length],
     ['team', 'i-team', 'Team', (d.teamEffective || []).length],
-    ['mail', 'i-mail', isClient() ? 'Email ricevute' : 'Comunicazioni', mailCount],
+    ['mail', 'i-mail', isClient() ? 'Email ricevute' : 'Comunicazioni', (d.mailLog || []).length],
     ['log', 'i-list', 'Registro', (d.audit || []).length]
   ];
+  const extraNav = extras.map(([key, icon, label, count]) => `
+    <button class="wnav-btn extra ${state.tab === key ? 'on' : ''}" data-act="tab" data-tab="${key}" title="${esc(label)} · ${count}">
+      <span class="wnav-num"><svg aria-hidden="true"><use href="#${icon}"></use></svg></span>
+      <span class="wnav-h"><b>${esc(label)}</b><span>${count}</span></span>
+    </button>`).join('');
+
+  const statePill = activeState === 'gestione'
+    ? ''
+    : `<span class="pill p-${panelPillClass(activeState)}">${esc(panelStateLabel(d, activeKey))}</span>`;
 
   $('#app').innerHTML = `
     <button class="crumb" data-act="list">← Tutti gli engagement</button>
-    <div class="workspace">
-      <aside class="aside">
-        <div class="card side">
-          <p class="side-kicker">${esc(e.id)} · ${esc(typeLabel(e.type))}</p>
-          <h1 class="side-title">${esc(e.name)}</h1>
-          <div class="side-status">${pill(st)}${owner ? `<span class="status-owner">In attesa di <b>${esc(owner)}</b></span>` : ''}</div>
-          ${prep ? `<div class="side-alert"><b>Preparazione in ritardo</b><span>${esc(prepText)}</span></div>` : ''}
-          <div class="divider divider--steps"></div>
-          <h3>Avanzamento <span class="side-count">${stepCount}</span></h3>
-          ${vstepper(step)}
-          ${cprogress(step)}
-          <div class="divider"></div>
-          <h3>Riepilogo</h3>
-          <dl class="kv">
-            <dt>Cliente</dt><dd><span class="client-cell" style="justify-content:flex-end">${clientAvatar(clientFor(e))}<span>${esc(e.clientName)}</span></span></dd>
-            <dt>Responsabile</dt><dd>${esc(e.owner)}</dd>
-            <dt>Periodo</dt><dd>${period}</dd>
-            ${isClient() ? '' : `<dt>Ordine</dt><dd>${e.orderConfirmed ? esc(e.orderRef || 'Ricevuto') : 'Non ricevuto'}</dd>`}
-            ${capabilities.canViewFinancials ? `<dt>Costi</dt><dd>${e.cost != null ? fmtMoney(e.cost) : '–'}</dd>
-            <dt>Margine</dt><dd>${e.margin != null ? fmtPercent(e.margin) : '–'}</dd>
-            <dt>Approvazione</dt><dd>${e.financialsApproved ? 'Approvato' : e.financialsDone ? 'In attesa' : '–'}</dd>` : ''}
-          </dl>
-          <div class="divider"></div>
-          <div class="chips side-chips">
-            ${extra.map(([key, icon, label, count]) => `<button class="chipb ${state.tab === key ? 'on' : ''}" data-act="tab" data-tab="${key}"><svg class="chip-ico" aria-hidden="true"><use href="#${icon}"></use></svg>${esc(label)} <span class="cnt">${count}</span></button>`).join('')}
+    <div class="eng-hero">
+      <div class="eng-hero-t">
+        <p class="side-kicker">${esc(e.id)} · ${esc(typeLabel(e.type))}</p>
+        <h1>${esc(e.name)}</h1>
+        <p class="sub">${esc(e.clientName)} · ${esc(e.owner)} · creato il ${fmt(e.createdDate)}</p>
+      </div>
+      <div class="eng-hero-s">
+        ${pill(st)}
+        ${owner ? `<span class="status-owner">In attesa di <b>${esc(owner)}</b></span>` : ''}
+      </div>
+    </div>
+    ${prep ? `<div class="note waiting" style="margin:12px 0 0"><b>Preparazione in ritardo.</b> ${esc(prepText)}.</div>` : ''}
+    <div class="split-detail">
+      <nav class="workflow-nav" aria-label="Workflow e gestione">
+        <div class="wnav-group">Workflow <span>${Math.min(6, Math.max(0, Number(d.stepIndex) || 0) + 1)}/6</span></div>
+        ${stepNav}
+        <div class="wnav-group">Gestione</div>
+        ${extraNav}
+      </nav>
+      <section class="work-panel">
+        <header class="work-panel-head">
+          <span class="wp-num">${activeMeta.n || '•'}</span>
+          <div class="wp-t">
+            <span class="wp-kicker">${esc(activeMeta.group)}${activeMeta.n ? ` · Passo ${activeMeta.n} di 6` : ''}</span>
+            <h2>${esc(activeMeta.title)}</h2>
+            <p>${esc(activeMeta.desc)}</p>
           </div>
-          <details class="side-legend">
-            <summary>Cosa significano i simboli?</summary>
-            <div class="lg">
-              <span><b class="g-action">!</b> Da gestire</span>
-              <span><b class="g-wait">…</b> In attesa di altri</span>
-              <span><b class="g-progress">▶</b> In corso</span>
-              <span><b class="g-done">✓</b> Completato</span>
-              <span><b class="g-blocked"><svg aria-hidden="true"><use href="#i-lock"></use></svg></b> Bloccato</span>
-            </div>
-          </details>
+          ${statePill}
+        </header>
+        ${tabHint ? `<p class="hint wp-hint">${esc(tabHint)}</p>` : ''}
+        <div class="work-panel-body">
+          ${body(d)}
         </div>
-      </aside>
-      <section class="main-col">
-        ${nextAction(d)}
-        <div class="tabs" role="tablist">
-          ${TABS.map(([key, label]) => {
-            const s = tabState(d, key);
-            const reason = tabReason(d, key);
-            return `<button role="tab" aria-selected="${state.tab === key}" class="tab s-${s} ${state.tab === key ? 'on' : ''}" data-act="tab" data-tab="${key}" title="${esc(reason || '')}" aria-label="${esc(label + (reason ? ': ' + reason : ''))}">${label}${s === 'lock' ? ' <span class="lock" aria-label="bloccato"><svg aria-hidden="true"><use href="#i-lock"></use></svg></span>' : ''}</button>`;
-          }).join('')}
-        </div>
-        ${tabHint ? `<p class="hint" style="margin:-8px 0 14px">${esc(tabHint)}</p>` : ''}
-        ${body(d)}
       </section>
+      <aside class="context-rail">
+        ${nextAction(d)}
+        <div class="ctx-card">
+          <h3>Persone</h3>
+          <div class="ctx-person"><span class="avatar">${esc(initialsOf(e.clientName))}</span><span><b>${esc(e.clientName)}</b><span>Cliente</span></span></div>
+          <div class="ctx-person"><span class="avatar">${esc(initialsOf(e.owner))}</span><span><b>${esc(e.owner)}</b><span>Responsabile</span></span></div>
+        </div>
+        <div class="ctx-card">
+          <h3>Date</h3>
+          <dl class="ctx-kv">
+            <dt>Periodo</dt><dd>${esc(period)}</dd>
+            ${pending ? `<dt>Proposta</dt><dd>${fmt(pending.startDate)} → ${fmt(pending.endDate)}</dd>` : ''}
+            <dt>Creazione</dt><dd>${fmt(e.createdDate)}</dd>
+          </dl>
+        </div>
+        ${c.canViewFinancials ? `<div class="ctx-card">
+          <h3>Economia</h3>
+          <dl class="ctx-kv">
+            <dt>Costo</dt><dd>${e.cost != null ? fmtMoney(e.cost) : '–'}</dd>
+            <dt>Margine</dt><dd>${e.margin != null ? fmtPercent(e.margin) : '–'}</dd>
+            <dt>Valore</dt><dd>${fmtMoney(financialValue(e.cost, e.margin))}</dd>
+            <dt>Approvazione</dt><dd>${e.financialsApproved ? 'Approvato' : e.financialsDone ? 'In attesa' : '–'}</dd>
+          </dl>
+        </div>` : ''}
+        <div class="ctx-card">
+          <h3>Riferimenti</h3>
+          <dl class="ctx-kv">
+            <dt>Codice</dt><dd>${esc(e.id)}</dd>
+            <dt>Tipo</dt><dd>${esc(typeLabel(e.type))}</dd>
+            ${!isClient() ? `<dt>Ordine</dt><dd>${e.orderConfirmed ? esc(e.orderRef || 'Ricevuto') : 'Non ricevuto'}</dd>` : ''}
+          </dl>
+        </div>
+        <details class="side-legend ctx-legend">
+          <summary>Cosa significano i simboli?</summary>
+          <div class="lg">
+            <span><b class="g-action">!</b> Da gestire</span>
+            <span><b class="g-wait">…</b> In attesa di altri</span>
+            <span><b class="g-progress">▶</b> In corso</span>
+            <span><b class="g-done">✓</b> Completato</span>
+            <span><b class="g-blocked"><svg aria-hidden="true"><use href="#i-lock"></use></svg></b> Bloccato</span>
+          </div>
+        </details>
+      </aside>
     </div>`;
 }
 
@@ -1764,13 +1961,23 @@ function tabDocs(d) {
         : pill(['Non disponibile', 'mute']));
 
   if (!isClient()) {
-    html += docRow('PO', 'Ordine',
-      e.orderConfirmed ? `Ricevuto · ${esc(e.orderRef || '')}` : 'In attesa di registrazione',
-      e.orderConfirmed
-        ? pill(['Ricevuto', 'ok'])
-        : canDocs
-          ? `<button class="btn acc sm" data-act="register-order">Registra ordine ricevuto</button>`
-          : pill(['In attesa ordine', 'warn']));
+    if (canDocs) {
+      html += `<div class="inline-block">
+        <div class="inline-head"><h3>Ordine</h3>${e.orderConfirmed
+          ? pill(['Ricevuto', 'ok'])
+          : pill(['Da registrare', 'warn'])}</div>
+        <div class="inline-row">
+          <div class="field" style="flex:1"><label for="f_orderRef">Riferimento ordine</label>
+            <input type="text" id="f_orderRef" value="${esc(e.orderRef || '')}" placeholder="es. PO-2026-0142"></div>
+          <button class="btn ${e.orderConfirmed ? 'sec' : 'pri'}" data-act="save-order">${e.orderConfirmed ? 'Aggiorna' : 'Registra ordine'}</button>
+        </div>
+        <p class="hint">Il PMO registra l'ordine ricevuto dal cliente.</p>
+      </div>`;
+    } else {
+      html += docRow('PO', 'Ordine',
+        e.orderConfirmed ? `Ricevuto · ${esc(e.orderRef || '')}` : 'In attesa di registrazione',
+        e.orderConfirmed ? pill(['Ricevuto', 'ok']) : pill(['In attesa ordine', 'warn']));
+    }
 
     if (c.canViewFinancials) {
       const finDone = !!e.financialsDone && e.cost != null && e.margin != null;
@@ -1778,33 +1985,36 @@ function tabDocs(d) {
       const canEditFin = !!c.canEditFinancials;
       const canApproveFin = !!c.canApproveFinancials;
       const finTotal = finDone ? financialValue(e.cost, e.margin) : null;
-      const finEdit = canEditFin
-        ? '<button class="btn sec sm" data-act="edit-financials">Modifica</button>'
-        : '';
+      const finState = finApproved
+        ? pill(['Approvato', 'ok'])
+        : finDone ? pill(['In attesa di approvazione', 'wait']) : pill(['Da compilare', 'warn']);
 
-      let finSubtitle;
-      let finAction;
-
-      if (!finDone) {
-        finSubtitle = 'Da compilare da PMO o Manager nella prima fase';
-        finAction = canEditFin
-          ? '<button class="btn pri sm" data-act="edit-financials">Compila</button>'
-          : pill(['Da completare', 'warn']);
-      } else if (!finApproved) {
-        finSubtitle = `Costo ${fmtMoney(e.cost)} · margine ${fmtPercent(e.margin)} · valore ${fmtMoney(finTotal)} · in attesa di approvazione del Manager`;
-        finAction = canApproveFin
-          ? `<span class="decision-group"><button class="decide yes sm" data-act="approve-financials">Approva</button>${finEdit}</span>`
-          : canEditFin
-            ? finEdit
-            : pill(['In attesa di approvazione', 'wait']);
+      if (canEditFin) {
+        html += `<div class="inline-block fin">
+          <div class="inline-head"><h3>Costi e margine</h3><span class="pill p-progress">solo PMO/Manager</span>${finState}</div>
+          <div class="fgrid">
+            <div><label for="f_cost">Costo (€)</label><input type="number" id="f_cost" min="0" value="${e.cost != null ? e.cost : ''}" placeholder="0" oninput="updateFinancialValue(this)"></div>
+            <div><label for="f_margin">Margine (%)</label><input type="number" id="f_margin" min="0" max="100" value="${e.margin != null ? e.margin : 46}" oninput="updateFinancialValue(this)"></div>
+            <div><label for="f_finValue">Valore attività</label><input id="f_finValue" value="${fmtMoney(finTotal)}" readonly></div>
+            <div><label for="f_finApproval">Approvazione</label><input id="f_finApproval" value="${finApproved ? `Approvato${e.financialsApprovedDate ? ' il ' + fmt(e.financialsApprovedDate) : ''}` : finDone ? 'In attesa del Manager' : 'Da compilare'}" readonly></div>
+          </div>
+          <div class="inline-actions">
+            <button class="btn pri" data-act="save-financials-inline">Salva dati economici</button>
+            ${canApproveFin ? '<button class="btn acc" data-act="approve-financials">Approva</button>' : ''}
+            <span class="hint">Valore = costo + margine%. Le modifiche del PMO richiedono l'approvazione del Manager.</span>
+          </div>
+        </div>`;
       } else {
-        finSubtitle = `Costo ${fmtMoney(e.cost)} · margine ${fmtPercent(e.margin)} · valore ${fmtMoney(finTotal)} · approvato dal Manager${e.financialsApprovedDate ? ` il ${fmt(e.financialsApprovedDate)}` : ''}`;
-        finAction = canEditFin
-          ? finEdit
-          : pill(['Approvato', 'ok']);
+        html += `<div class="inline-block">
+          <div class="inline-head"><h3>Costi e margine</h3>${finState}</div>
+          <dl class="ctx-kv" style="grid-template-columns:auto minmax(0,1fr);max-width:420px">
+            <dt>Costo</dt><dd>${e.cost != null ? fmtMoney(e.cost) : '–'}</dd>
+            <dt>Margine</dt><dd>${e.margin != null ? fmtPercent(e.margin) : '–'}</dd>
+            <dt>Valore</dt><dd>${fmtMoney(financialValue(e.cost, e.margin))}</dd>
+            <dt>Approvazione</dt><dd>${finApproved ? 'Approvato' : finDone ? 'In attesa' : '–'}</dd>
+          </dl>
+        </div>`;
       }
-
-      html += docRow('EUR', 'Costi e margine', finSubtitle, finAction);
     }
   }
 
@@ -1932,31 +2142,31 @@ function tabScope(d) {
   }
 
   const info = state.scope;
-  if (!info) return `<div class="card"><h2>Scope</h2><p class="sub">Caricamento…</p></div>`;
+  if (!info) return `<div class="card"><p class="sub">Caricamento…</p></div>`;
   const s = info.scope || {};
-  const editing = isEditing('scope');
 
-  if (s.done && !editing) {
-    return `<div class="card"><h2>Scope ${pill(['Fornito', 'ok'])}</h2>
-      <p class="sub">Fornito da ${esc(authorOf(s))} il ${fmt(s.date)}.</p>
-      <table style="font-size:var(--fs-base)">${[
+  if (!info.canEdit) {
+    if (!s.done) {
+      return `<div class="note waiting">In attesa che lo scope venga fornito dal cliente.</div>`;
+    }
+    return `<div class="card">
+      <p class="sub">Fornito da ${esc(authorOf(s))} il ${fmt(s.date)} · sola lettura per il tuo profilo.</p>
+      <table class="detail-table">${[
         ['Target (hostname / URL)', s.host],
         ['Indirizzi / range IP', s.ipRange || '–'],
         ['Fuori scope', s.outOfScope || '–'],
         ['Finestra oraria e vincoli', s.window || '–'],
         ['Referente tecnico', s.contact],
         ['Note', s.notes || '–']
-      ].map(r => `<tr><td style="padding:9px 0;color:var(--muted);width:32%">${r[0]}</td><td><b>${esc(r[1])}</b></td></tr>`).join('')}
+      ].map(r => `<tr><td>${r[0]}</td><td><b>${esc(r[1])}</b></td></tr>`).join('')}
       </table>
-      ${info.canEdit ? `<div style="margin-top:14px"><button class="btn sec sm" data-act="start-edit" data-key="scope">Modifica</button></div>` : ''}
     </div>`;
   }
 
-  if (!info.canEdit) {
-    return `<div class="note ${s.done ? 'blocked' : 'waiting'}">${s.done ? 'Lo scope non è più modificabile.' : 'In attesa che lo scope venga fornito dal cliente.'}</div>`;
-  }
-
-  return `<div class="card"><h2>${s.done ? 'Modifica scope' : 'Compila lo scope'}</h2>
+  return `<div class="card">
+    <p class="sub">${s.done
+      ? `Fornito da ${esc(authorOf(s))} il ${fmt(s.date)}. Puoi modificare i valori e salvare.`
+      : 'Compila perimetro, finestre e referente. I campi sono già attivi.'}</p>
     ${!e.acceptedProposal ? '<div class="note progress">La pianificazione non è ancora confermata: puoi compilare lo scope già ora, resterà valido.</div>' : ''}
     ${!isClient() ? '<div class="note">Stai compilando <b>per conto del cliente</b>.</div>' : ''}
     <div class="fgrid">
@@ -1967,9 +2177,9 @@ function tabScope(d) {
       <div><label for="f_contact">Referente tecnico*</label><input type="text" id="f_contact" value="${esc(s.contact || '')}" placeholder="Nome, telefono"></div>
       <div class="full"><label for="f_notes">Note</label><textarea id="f_notes" rows="3">${esc(s.notes || '')}</textarea></div>
     </div>
-    <div style="margin-top:16px;display:flex;gap:10px">
+    <div class="inline-actions">
       <button class="btn pri" data-act="save-scope">Salva scope</button>
-      ${s.done ? '<button class="btn sec" data-act="cancel-edit" data-key="scope">Annulla</button>' : ''}
+      <span class="hint">Salva prima di cambiare sezione: i campi non vengono inviati in automatico.</span>
     </div>
   </div>`;
 }
@@ -1981,34 +2191,32 @@ function tabCred(d) {
   }
 
   const info = state.credentials;
-  if (!info) return `<div class="card"><h2>Credenziali</h2><p class="sub">Caricamento…</p></div>`;
+  if (!info) return `<div class="card"><p class="sub">Caricamento…</p></div>`;
   if (!info.credentials) {
     return `<div class="note lockbox"><b>Accesso non consentito.</b> Le credenziali non sono visibili al profilo ${esc(ROLE_LABEL[state.role])}.</div>`;
   }
 
   const c = info.credentials;
-  const editing = isEditing('cred');
 
-  if (c.done && !editing) {
-    return `<div class="card"><h2>Credenziali ${pill(['Fornite', 'ok'])}</h2>
-      <p class="sub">Fornite da ${esc(authorOf(c))} il ${fmt(c.date)}. Le password non sono conservate nel portale.</p>
-      <table style="font-size:var(--fs-base)">${[
+  if (!info.canEdit) {
+    if (!c.done) {
+      return `<div class="note waiting">Credenziali non ancora fornite: in attesa del cliente.</div>`;
+    }
+    return `<div class="card">
+      <p class="sub">Fornite da ${esc(authorOf(c))} il ${fmt(c.date)} · sola lettura per il tuo profilo.</p>
+      <table class="detail-table">${[
         ['VPN', c.vpn],
         ['Utenze di test', c.users],
         ['Metodo di consegna dei segreti', c.deliveryMethod],
         ['Note', c.notes || '–']
-      ].map(r => `<tr><td style="padding:9px 0;color:var(--muted);width:32%">${r[0]}</td><td><b>${esc(r[1])}</b></td></tr>`).join('')}
+      ].map(r => `<tr><td>${r[0]}</td><td><b>${esc(r[1])}</b></td></tr>`).join('')}
       </table>
-      ${info.canEdit ? `<div style="margin-top:14px"><button class="btn sec sm" data-act="start-edit" data-key="cred">Modifica</button></div>` : ''}
     </div>`;
   }
 
-  if (!info.canEdit) {
-    return `<div class="note ${c.done ? 'blocked' : 'waiting'}">${c.done ? 'Le credenziali non sono più modificabili.' : 'Credenziali non ancora fornite: in attesa del cliente.'}</div>`;
-  }
-
   const options = ['Vault aziendale', 'File cifrato (password su canale separato)', 'Altro (concordato con Pentester)'];
-  return `<div class="card"><h2>${c.done ? 'Modifica credenziali' : 'Fornisci le credenziali'}</h2>
+  return `<div class="card">
+    <p class="sub">${c.done ? `Fornite da ${esc(authorOf(c))} il ${fmt(c.date)}. Puoi aggiornarle e salvare.` : 'Indica come verranno consegnati gli accessi: le password non vengono conservate.'}</p>
     ${!e.acceptedProposal ? '<div class="note progress">La pianificazione non è ancora confermata: puoi fornirle già ora, resteranno valide.</div>' : ''}
     <div class="note">Non scrivere password in questo modulo: indica solo dove e come verranno consegnate.</div>
     ${state.role === 'PMO' ? '<div class="note">Stai compilando come PMO <b>per conto del cliente</b>.</div>' : ''}
@@ -2022,9 +2230,9 @@ function tabCred(d) {
         </select></div>
       <div class="full"><label for="f_credNotes">Note</label><textarea id="f_credNotes" rows="3">${esc(c.notes || '')}</textarea></div>
     </div>
-    <div style="margin-top:16px;display:flex;gap:10px">
+    <div class="inline-actions">
       <button class="btn pri" data-act="save-credentials">Salva credenziali</button>
-      ${c.done ? '<button class="btn sec" data-act="cancel-edit" data-key="cred">Annulla</button>' : ''}
+      <span class="hint">Salva prima di cambiare sezione.</span>
     </div>
   </div>`;
 }
@@ -2053,6 +2261,44 @@ function reviewCard(d) {
   return `<div class="card" style="margin-bottom:16px"><h2>Revisione del manager ${pill(status)}</h2>
     <p class="sub" style="margin-bottom:${action ? 12 : 0}px">I deliverables non arrivano al cliente finché il manager non li approva.</p>
     ${action}</div>`;
+}
+
+function tabRun(d) {
+  const e = d.engagement;
+  const p = e.acceptedProposal;
+  if (!p) {
+    return `<div class="note lockbox"><b>Esecuzione non ancora pianificata.</b> Si apre quando le date sono confermate e la preparazione (scope e credenziali) è completa.</div>`;
+  }
+
+  const phase = d.phase;
+  const daysToStart = Math.round((Date.parse(p.startDate) - Date.parse(today())) / 86400000);
+  const started = phase === 'Running' || phase === 'Reporting' || phase === 'Done';
+  const ended = phase === 'Reporting' || phase === 'Done';
+  const stateLabel = ended ? 'Concluso' : started ? 'In corso' : 'Pianificato';
+  const statePill = ended ? pill(['Concluso', 'ok']) : started ? pill(['In corso', 'info']) : pill(['Pianificato', 'wait']);
+  const startText = started ? fmt(p.startDate) : daysToStart > 0 ? `tra ${daysToStart} ${daysToStart === 1 ? 'giorno' : 'giorni'}` : 'oggi';
+  const team = (d.teamEffective || []).length;
+  const prep = d.preparationAlert;
+  const prepMissing = prep && (prep.missing || []).length
+    ? prep.missing.map(m => m === 'scope' ? 'scope' : 'credenziali').join(' e ')
+    : '';
+
+  return `<div class="card">
+    <p class="sub">Periodo ${fmt(p.startDate)} → ${fmt(p.endDate)} · ${startText} · ${statePill}.</p>
+    <div class="run-grid">
+      <div><b>${esc(stateLabel)}</b><span>stato attività</span></div>
+      <div><b>${fmt(p.endDate)}</b><span>fine prevista</span></div>
+      <div><b>${team}</b><span>partecipanti esterni</span></div>
+      <div><b>${(e.reports || []).length}</b><span>deliverable</span></div>
+    </div>
+    ${prepMissing ? `<div class="note waiting" style="margin-top:14px"><b>Preparazione incompleta:</b> mancano ${esc(prepMissing)}. L'avvio potrebbe slittare.</div>` : ''}
+    <table class="detail-table" style="margin-top:14px">
+      <tr><td>Responsabile</td><td><b>${esc(e.owner)}</b></td></tr>
+      <tr><td>Cliente</td><td><b>${esc(e.clientName)}</b></td></tr>
+      <tr><td>Finestra concordata</td><td><b>${fmt(p.startDate)} → ${fmt(p.endDate)}</b></td></tr>
+      <tr><td>Stato</td><td><b>${esc(stateLabel)}</b></td></tr>
+    </table>
+  </div>`;
 }
 
 function tabReports(d) {
@@ -2822,6 +3068,40 @@ const actions = {
     } catch (error) { toast(error.message); }
   },
 
+  'save-order': async () => {
+    const el = $('#f_orderRef');
+    const ref = el ? el.value.trim() : '';
+    if (!ref) { toast('Inserisci il riferimento ordine'); return; }
+    try {
+      await api(`/api/engagements/${engagedId()}/order?` + qs(), { method: 'POST', body: JSON.stringify({ ref }) });
+      toast('Ordine registrato');
+      await refreshDetail();
+    } catch (error) { toast(error.message); }
+  },
+
+  'save-financials-inline': async () => {
+    const costEl = $('#f_cost');
+    const marginEl = $('#f_margin');
+    const cost = Number(costEl && costEl.value);
+    const margin = Number(marginEl && marginEl.value);
+    if (!costEl || !marginEl || costEl.value === '' || marginEl.value === '' ||
+        !Number.isFinite(cost) || !Number.isFinite(margin) ||
+        cost < 0 || margin < 0 || margin > 100) {
+      toast('Inserisci un costo valido e un margine tra 0 e 100%');
+      return;
+    }
+    try {
+      const result = await api(`/api/engagements/${engagedId()}/financials?` + qs(), {
+        method: 'PUT',
+        body: JSON.stringify({ cost, margin })
+      });
+      toast(result && result.financialsApproved
+        ? 'Costi e margine salvati e approvati'
+        : 'Costi e margine salvati: in attesa di approvazione del Manager');
+      await refreshDetail();
+    } catch (error) { toast(error.message); }
+  },
+
   'edit-financials': async () => {
     const e = state.detail.engagement;
     const v = await ask({
@@ -3198,7 +3478,7 @@ const busyActions = new Set([
   'new-client', 'rename-client', 'add-client-user', 'remove-client-user',
   'add-client-dl', 'remove-client-dl', 'invite-client-team', 'remove-client-team',
   'new-engagement', 'save-rule', 'send-solicitation', 'upload-manleva',
-  'upload-ingaggio', 'register-order', 'edit-financials', 'approve-financials', 'propose', 'reschedule',
+  'upload-ingaggio', 'register-order', 'save-order', 'edit-financials', 'save-financials-inline', 'approve-financials', 'propose', 'reschedule',
   'decide', 'save-scope', 'save-credentials', 'upload-report',
   'download-report', 'submit-review', 'review-decide', 'publish', 'add-dl',
   'remove-dl', 'invite-team', 'remove-team', 'toggle-mail', 'send-mail', 'export-log', 'retry-list',

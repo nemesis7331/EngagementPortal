@@ -303,7 +303,11 @@ raggiungibile.
 ## Interfaccia
 
 Aprendo l'applicazione (`/`) si usa la SPA completa: dashboard, dettaglio
-engagement, stepper del workflow, gestione clienti e tutte le schede operative.
+engagement, gestione clienti e tutte le schede operative.
+Il dettaglio usa lo **split editor C3**: workflow a sinistra come navigazione,
+pannello operativo al centro con **editing inline** (niente modali “Modifica”)
+e colonna di contesto a destra con prossimo passo, persone, date ed economia.
+Costi e margine sono visibili solo a PMO e Manager.
 Il selettore profilo/cliente in alto permette di provare i diversi profili (demo).
 
 > Nota: l'identità è simulata tramite parametri `role`/`client` per rendere la
