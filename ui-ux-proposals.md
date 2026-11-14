@@ -466,5 +466,52 @@ profili; la C se serve una vista di pipeline.
   passa a 340/360 px e il workspace del dettaglio a 360/380 px. La pagina
   clienti passa a 2 colonne oltre 1100 px e a 3 oltre 2000 px.
 
+---
+
+## 11. Design system: tipografia e componenti
+
+**Font**
+
+- Un solo stack: `Inter`, con fallback `Segoe UI`/`system-ui`. Inter viene
+  caricato da Google Fonts (pesi 400/600/700/800); se la rete non è disponibile
+  il portale resta leggibile con il font di sistema.
+- `font-variant-numeric: tabular-nums` sul `body`: date, codici e contatori
+  restano allineati nelle tabelle.
+- Smoothing e `text-rendering: optimizeLegibility` attivi.
+
+**Scala tipografica** (token `--fs-*`)
+
+| Token | Valore | Uso |
+|---|---|---|
+| `--fs-2xs` | 10.5 px | micro etichette, tag |
+| `--fs-xs` | 11.5 px | tabelle, meta, note |
+| `--fs-sm` | 12.5 px | testi secondari, pill, stato |
+| `--fs-md` | 13.5 px | controlli, testi compatti |
+| `--fs-base` | 14.5 px | testo corrente |
+| `--fs-lg` | 17 px | titoli di sezione |
+| `--fs-xl` | 19 px | titolo sidebar e logo |
+| `--fs-2xl` | 22 px | h1 su schermi stretti |
+| `--fs-3xl` | 26 px | h1 |
+| `--fs-stat` | 24 px | numeri delle tessere |
+
+Pesi: `400/600/700/800` (token `--fw-*`). Tracking: `--tracking-caps: .06em`
+solo per le etichette maiuscole. Line-height: `1.5` per il testo, `1.25` per i
+titoli.
+
+**Raggi** (token `--radius-*`): 6 / 8 / 10 / 12 / 14 / pillola. Card e modale a
+14 px, superfici compatte a 12, bottoni e input a 10, icone e badge a 6–8.
+
+**Colori secondari** (token): `--line-soft`, `--line-strong`, `--surface-2/3`,
+`--row-action/wait/done`, `--skeleton-a/b`, `--muted-2`, `--st-wait-strong`.
+Ombre: `--shadow`, `--shadow-xs`, `--shadow-lg`; overlay modale `--overlay`.
+
+**Icone**: set SVG unico (stile Bootstrap Icons) per le azioni e i tab; rimossi
+gli emoji (👥 ✉️ 📋 🔒) sostituiti da `i-users`, `i-mail`, `i-list`, `i-lock`.
+I badge testuali `SCH/ING/PO/BC/CRED/RPT` restano come etichette compatte.
+
+**Pulizia**: rimossi CSS e funzioni non più usati dopo il passaggio alla
+variante B (`.kpis`, `.filters`, `.legend`, `.section-label`,
+`.status-detail`, `statusCell`, `delayCell`).
+
 
 
