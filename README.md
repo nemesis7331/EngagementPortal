@@ -51,7 +51,9 @@ App Service a ogni push su `main`.
 - **Homepage**: quattro tessere che sono anche filtri (da gestire, in attesa di
   altri, a rischio avvio, prossimo avvio), colonna **Da gestire ora** con CTA
   diretta, attese in evidenza e tabella compatta con la **fase del workflow**
-  (barra a 6 passi + nome), ricerca su tutti i campi, filtro e ordinamento.
+  (barra a 6 passi + nome), ricerca su tutti i campi, filtro azzerabile con
+  **× Azzera filtri** e **colonne ordinabili** (click sull'intestazione, con
+  indicatore di direzione).
 - **Responsive**: layout da 320 px ai monitor ultra-wide. Il contenuto cresce
   fino a 1680 px; la tabella engagement diventa a schede sotto 820 px, l'header
   si compatta sotto 760 px e le card dei clienti passano a 2–3 colonne sui
@@ -315,7 +317,7 @@ pannello operativo al centro con **editing inline** (niente modali “Modifica�
 e colonna di contesto a destra con prossimo passo, persone, date ed economia.
 La lista **Persone** è interattiva: click su una persona per aprire il team,
 `+` per invitare e `×` per rimuovere (secondo i permessi). Costi e margine sono
-visibili solo a PMO e Manager.
+visibili solo a PMO e Manager e restano **compressi di default** nel dettaglio.
 Il selettore profilo/cliente in alto permette di provare i diversi profili (demo).
 
 > Nota: l'identità è simulata tramite parametri `role`/`client` per rendere la

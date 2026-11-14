@@ -365,6 +365,10 @@ tr.row.is-done td:first-child{box-shadow:inset 3px 0 var(--st-done)}
 .home-toolbar select{background:#fff;border:1px solid var(--line);border-radius:var(--radius-pill);padding:8px 11px;font:inherit;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--brand-900)}
 .listcard{padding:6px 8px}
 .list-compact th{padding:8px 8px}
+.th-sort{border:0;background:none;padding:0;font:inherit;font-size:var(--fs-xs);letter-spacing:var(--tracking-caps);text-transform:uppercase;color:var(--muted);font-weight:700;display:inline-flex;align-items:center;gap:4px;cursor:pointer;border-radius:4px}
+.th-sort:hover,.th-sort.on{color:var(--brand-700)}
+.sort-arrow{font-size:9px;line-height:1}
+.toolbar-reset{white-space:nowrap}
 .list-compact td{padding:9px 8px}
 .phase{display:grid;gap:3px}
 .phase-name{font-size:var(--fs-2xs);line-height:1.1;color:var(--muted);max-width:92px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -534,6 +538,22 @@ tr.row.is-done td:first-child{box-shadow:inset 3px 0 var(--st-done)}
 .inline-row .field{min-width:200px}
 .inline-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px}
 .inline-actions .hint{margin:0;max-width:520px}
+.inline-block.bc-collapse{padding:0;overflow:hidden}
+.bc-summary{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 14px;cursor:pointer;list-style:none}
+.bc-summary::-webkit-details-marker{display:none}
+.bc-summary:hover{background:var(--brand-50)}
+.bc-summary-title{display:flex;align-items:center;gap:8px;flex:1;min-width:180px}
+.bc-summary-title b{font-size:var(--fs-base);color:var(--brand-900)}
+.bc-summary-right{display:flex;align-items:center;gap:8px;margin-left:auto}
+.bc-open,.econ-open{font-size:var(--fs-xs);font-weight:700;color:var(--brand-600)}
+.bc-close,.econ-close{display:none;font-size:var(--fs-xs);font-weight:700;color:var(--brand-600)}
+.bc-collapse[open] .bc-open,.econ-collapse[open] .econ-open{display:none}
+.bc-collapse[open] .bc-close,.econ-collapse[open] .econ-close{display:inline}
+.bc-content{padding:0 14px 14px}
+.econ-collapse>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;list-style:none}
+.econ-collapse>summary::-webkit-details-marker{display:none}
+.econ-collapse>summary h3{margin:0}
+.econ-collapse[open]>summary{margin-bottom:9px}
 .detail-table{width:100%;border-collapse:collapse;font-size:var(--fs-md)}
 .detail-table td{padding:9px 0;border-bottom:1px solid var(--line-soft);vertical-align:top}
 .detail-table td:first-child{color:var(--muted);width:34%}
@@ -686,6 +706,8 @@ const state = {
   listFilter: 'all',
   listQuery: '',
   listSort: 'priority',
+  listColumn: 'engagement',
+  listDir: 'asc',
   loading: false,
   error: null,
   list: [],
@@ -1422,6 +1444,46 @@ function searchableRow(e) {
   ].join(' '));
 }
 
+const LIST_COLUMNS = {
+  engagement: 'Engagement',
+  client: 'Cliente',
+  phase: 'Fase',
+  status: 'Stato',
+  delay: 'Ritardo',
+  period: 'Periodo'
+};
+
+function compareColumn(a, b, column) {
+  const kindRank = { action: 0, waiting: 1, progress: 2, blocked: 3, neutral: 4, done: 5 };
+  if (column === 'phase') {
+    return (Number(a.stepIndex) || 0) - (Number(b.stepIndex) || 0);
+  }
+  if (column === 'status') {
+    const ra = kindRank[(actionState(a) || {}).kind] ?? 9;
+    const rb = kindRank[(actionState(b) || {}).kind] ?? 9;
+    if (ra !== rb) return ra - rb;
+    return statusPill(a)[0].localeCompare(statusPill(b)[0], 'it');
+  }
+  if (column === 'delay') {
+    const da = a.preparationAlert ? Number(a.preparationAlert.daysToStart) : null;
+    const db = b.preparationAlert ? Number(b.preparationAlert.daysToStart) : null;
+    if (da === null && db === null) return 0;
+    if (da === null) return 1;
+    if (db === null) return -1;
+    return da - db;
+  }
+  if (column === 'period') {
+    if (!a.periodStart && !b.periodStart) return 0;
+    if (!a.periodStart) return 1;
+    if (!b.periodStart) return -1;
+    return a.periodStart.localeCompare(b.periodStart);
+  }
+  if (column === 'client') {
+    return String(a.clientName || '').localeCompare(String(b.clientName || ''), 'it');
+  }
+  return String(a.name || '').localeCompare(String(b.name || ''), 'it');
+}
+
 function sortEngagements(list) {
   const rank = { action: 0, waiting: 1, progress: 2, blocked: 3, neutral: 4, done: 5 };
   const priority = (a, b) => {
@@ -1432,6 +1494,10 @@ function sortEngagements(list) {
   };
   const mode = state.listSort || 'priority';
   return list.slice().sort((a, b) => {
+    if (mode === 'column') {
+      const dir = state.listDir === 'desc' ? -1 : 1;
+      return compareColumn(a, b, state.listColumn || 'engagement') * dir || priority(a, b);
+    }
     if (mode === 'start') {
       // "Avvio più vicino": prima gli avvii futuri (dal più vicino), poi
       // quelli già passati (dal più recente), infine chi non ha date.
@@ -1478,6 +1544,7 @@ function skeletonRows(count) {
 function renderList() {
   const all = state.list;
   const data = filteredList();
+  const hasFilters = state.listFilter !== 'all' || state.listQuery.trim() !== '';
   const todo = sortEngagements(all.filter(e => (actionState(e) || {}).kind === 'action'));
   const waiting = sortEngagements(all.filter(e => (actionState(e) || {}).kind === 'waiting'));
   const atRisk = all.filter(e => e.preparationAlert);
@@ -1549,8 +1616,19 @@ function renderList() {
   ];
   const sortOptions = [
     ['priority', 'Priorità'], ['start', 'Avvio più vicino'],
-    ['client', 'Cliente'], ['name', 'Nome']
+    ['client', 'Cliente'], ['name', 'Nome'],
+    ['column', `Colonna: ${LIST_COLUMNS[state.listColumn] || LIST_COLUMNS.engagement}`]
   ];
+
+  const sortHead = (key, label) => {
+    const active = state.listSort === 'column' && (state.listColumn || 'engagement') === key;
+    const dir = active ? state.listDir : 'asc';
+    return `<th scope="col" aria-sort="${active ? (dir === 'desc' ? 'descending' : 'ascending') : 'none'}">
+      <button class="th-sort ${active ? 'on' : ''}" data-act="sort-column" data-column="${key}" title="Ordina per ${label}">
+        ${label}${active ? `<span class="sort-arrow" aria-hidden="true">${dir === 'desc' ? '▼' : '▲'}</span>` : ''}
+      </button>
+    </th>`;
+  };
 
   const empty = state.listQuery || state.listFilter !== 'all'
     ? `<div class="empty">Nessun engagement in questo filtro. <button class="btn sec sm" data-act="clear-filter" style="margin-left:8px">Azzera filtri</button></div>`
@@ -1562,7 +1640,7 @@ function renderList() {
       ? skeletonRows(4)
       : `<div class="card listcard"><table class="list-table list-compact">
           <caption class="sr-only">Elenco engagement con fase del workflow, stato e proprietario dell'azione</caption>
-          <thead><tr><th scope="col">Engagement</th>${isClient() ? '' : '<th scope="col">Cliente</th>'}<th scope="col">Fase</th><th scope="col">Stato</th><th scope="col">Ritardo</th><th scope="col">Periodo</th></tr></thead>
+          <thead><tr>${sortHead('engagement', 'Engagement')}${isClient() ? '' : sortHead('client', 'Cliente')}${sortHead('phase', 'Fase')}${sortHead('status', 'Stato')}${sortHead('delay', 'Ritardo')}${sortHead('period', 'Periodo')}</tr></thead>
           <tbody>${rows || `<tr><td colspan="${isClient() ? 5 : 6}">${empty}</td></tr>`}</tbody>
         </table></div>`;
 
@@ -1609,6 +1687,7 @@ function renderList() {
           <select data-change="list-sort" aria-label="Ordina engagement">
             ${sortOptions.map(([k, l]) => `<option value="${k}" ${state.listSort === k ? 'selected' : ''}>Ordina: ${l}</option>`).join('')}
           </select>
+          ${hasFilters ? `<button class="btn sec sm toolbar-reset" data-act="clear-filter" title="Rimuovi ricerca e filtro">× Azzera filtri</button>` : ''}
         </div>
         ${content}
       </section>
@@ -1932,13 +2011,15 @@ function renderDetail() {
           </dl>
         </div>
         ${c.canViewFinancials ? `<div class="ctx-card">
-          <h3>Economia</h3>
-          <dl class="ctx-kv">
-            <dt>Costo</dt><dd>${e.cost != null ? fmtMoney(e.cost) : '–'}</dd>
-            <dt>Margine</dt><dd>${e.margin != null ? fmtPercent(e.margin) : '–'}</dd>
-            <dt>Ricavo</dt><dd>${fmtMoney(financialValue(e.cost, e.margin))}</dd>
-            <dt>Approvazione</dt><dd>${e.financialsApproved ? 'Approvato' : e.financialsDone ? 'In attesa' : '–'}</dd>
-          </dl>
+          <details class="econ-collapse">
+            <summary><h3>Economia</h3><span class="econ-open">Mostra</span><span class="econ-close">Nascondi</span></summary>
+            <dl class="ctx-kv">
+              <dt>Costo</dt><dd>${e.cost != null ? fmtMoney(e.cost) : '–'}</dd>
+              <dt>Margine</dt><dd>${e.margin != null ? fmtPercent(e.margin) : '–'}</dd>
+              <dt>Ricavo</dt><dd>${fmtMoney(financialValue(e.cost, e.margin))}</dd>
+              <dt>Approvazione</dt><dd>${e.financialsApproved ? 'Approvato' : e.financialsDone ? 'In attesa' : '–'}</dd>
+            </dl>
+          </details>
         </div>` : ''}
         <div class="ctx-card">
           <h3>Riferimenti</h3>
@@ -2033,30 +2114,40 @@ function tabDocs(d) {
         : finDone ? pill(['In attesa di approvazione', 'wait']) : pill(['Da compilare', 'warn']);
 
       if (canEditFin) {
-        html += `<div class="inline-block fin">
-          <div class="inline-head"><h3>Costi e margine</h3><span class="pill p-progress">solo PMO/Manager</span>${finState}</div>
-          <div class="fgrid">
-            <div><label for="f_cost">Costo (€)</label><input type="number" id="f_cost" min="0" value="${e.cost != null ? e.cost : ''}" placeholder="0" oninput="updateFinancialValue(this)"></div>
-            <div><label for="f_margin">Margine (%)</label><input type="number" id="f_margin" min="0" max="100" value="${e.margin != null ? e.margin : 46}" oninput="updateFinancialValue(this)"></div>
-            <div><label for="f_finValue">Ricavo</label><input id="f_finValue" value="${fmtMoney(finTotal)}" readonly></div>
-            <div><label for="f_finApproval">Approvazione</label><input id="f_finApproval" value="${finApproved ? `Approvato${e.financialsApprovedDate ? ' il ' + fmt(e.financialsApprovedDate) : ''}` : finDone ? 'In attesa del Manager' : 'Da compilare'}" readonly></div>
+        html += `<details class="inline-block fin bc-collapse">
+          <summary class="bc-summary">
+            <span class="bc-summary-title"><b>Costi e margine</b><span class="pill p-progress">solo PMO/Manager</span></span>
+            <span class="bc-summary-right">${finState}<span class="bc-open">Apri</span><span class="bc-close">Chiudi</span></span>
+          </summary>
+          <div class="bc-content">
+            <div class="fgrid">
+              <div><label for="f_cost">Costo (€)</label><input type="number" id="f_cost" min="0" value="${e.cost != null ? e.cost : ''}" placeholder="0" oninput="updateFinancialValue(this)"></div>
+              <div><label for="f_margin">Margine (%)</label><input type="number" id="f_margin" min="0" max="100" value="${e.margin != null ? e.margin : 46}" oninput="updateFinancialValue(this)"></div>
+              <div><label for="f_finValue">Ricavo</label><input id="f_finValue" value="${fmtMoney(finTotal)}" readonly></div>
+              <div><label for="f_finApproval">Approvazione</label><input id="f_finApproval" value="${finApproved ? `Approvato${e.financialsApprovedDate ? ' il ' + fmt(e.financialsApprovedDate) : ''}` : finDone ? 'In attesa del Manager' : 'Da compilare'}" readonly></div>
+            </div>
+            <div class="inline-actions">
+              <button class="btn pri" data-act="save-financials-inline">Salva dati economici</button>
+              ${canApproveFin ? '<button class="btn acc" data-act="approve-financials">Approva</button>' : ''}
+              <span class="hint">Ricavo = costo + margine%. Le modifiche del PMO richiedono l'approvazione del Manager.</span>
+            </div>
           </div>
-          <div class="inline-actions">
-            <button class="btn pri" data-act="save-financials-inline">Salva dati economici</button>
-            ${canApproveFin ? '<button class="btn acc" data-act="approve-financials">Approva</button>' : ''}
-            <span class="hint">Ricavo = costo + margine%. Le modifiche del PMO richiedono l'approvazione del Manager.</span>
-          </div>
-        </div>`;
+        </details>`;
       } else {
-        html += `<div class="inline-block">
-          <div class="inline-head"><h3>Costi e margine</h3>${finState}</div>
-          <dl class="ctx-kv" style="grid-template-columns:auto minmax(0,1fr);max-width:420px">
-            <dt>Costo</dt><dd>${e.cost != null ? fmtMoney(e.cost) : '–'}</dd>
-            <dt>Margine</dt><dd>${e.margin != null ? fmtPercent(e.margin) : '–'}</dd>
-            <dt>Ricavo</dt><dd>${fmtMoney(financialValue(e.cost, e.margin))}</dd>
-            <dt>Approvazione</dt><dd>${finApproved ? 'Approvato' : finDone ? 'In attesa' : '–'}</dd>
-          </dl>
-        </div>`;
+        html += `<details class="inline-block bc-collapse">
+          <summary class="bc-summary">
+            <span class="bc-summary-title"><b>Costi e margine</b></span>
+            <span class="bc-summary-right">${finState}<span class="bc-open">Apri</span><span class="bc-close">Chiudi</span></span>
+          </summary>
+          <div class="bc-content">
+            <dl class="ctx-kv" style="grid-template-columns:auto minmax(0,1fr);max-width:420px">
+              <dt>Costo</dt><dd>${e.cost != null ? fmtMoney(e.cost) : '–'}</dd>
+              <dt>Margine</dt><dd>${e.margin != null ? fmtPercent(e.margin) : '–'}</dd>
+              <dt>Ricavo</dt><dd>${fmtMoney(financialValue(e.cost, e.margin))}</dd>
+              <dt>Approvazione</dt><dd>${finApproved ? 'Approvato' : finDone ? 'In attesa' : '–'}</dd>
+            </dl>
+          </div>
+        </details>`;
       }
     }
   }
@@ -3001,6 +3092,17 @@ const actions = {
     state.listFilter = el.dataset.filter || 'all';
     renderList();
   },
+  'sort-column': el => {
+    const column = el.dataset.column || 'engagement';
+    if (state.listSort === 'column' && state.listColumn === column) {
+      state.listDir = state.listDir === 'asc' ? 'desc' : 'asc';
+    } else {
+      state.listColumn = column;
+      state.listDir = 'asc';
+    }
+    state.listSort = 'column';
+    renderList();
+  },
   'clear-filter': () => {
     state.listFilter = 'all';
     state.listQuery = '';
@@ -3610,6 +3712,10 @@ document.addEventListener('change', event => {
   }
   if (kind === 'list-sort') {
     state.listSort = el.value || 'priority';
+    if (state.listSort === 'column' && !state.listColumn) {
+      state.listColumn = 'engagement';
+      state.listDir = 'asc';
+    }
     renderList();
   }
   if (kind === 'mail-template-scope') {
