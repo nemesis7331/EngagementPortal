@@ -16,7 +16,7 @@ public sealed class TeamTests
         HasManleva = true,
         OrderConfirmed = true,
         Cost = 12000m,
-        Margin = 4800m,
+        Margin = 46m,
         FinancialsApproved = true
     };
 

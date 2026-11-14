@@ -621,6 +621,20 @@ const fmtMoney = n => {
     maximumFractionDigits: 2
   }).format(value);
 };
+const fmtPercent = n => {
+  if (n == null || n === '') return '–';
+  const value = Number(n);
+  if (Number.isNaN(value)) return '–';
+  return `${new Intl.NumberFormat('it-IT', {
+    maximumFractionDigits: 2
+  }).format(value)}%`;
+};
+// Il margine è una percentuale sul costo: il valore dell'attività è
+// costo + margine.
+const financialValue = (cost, margin) =>
+  cost == null || margin == null || cost === '' || margin === ''
+    ? null
+    : Number(cost) * (1 + Number(margin) / 100);
 const today = () => {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -773,7 +787,7 @@ function ask({ title, text, fields = [], ok = 'Conferma', danger = false }) {
               .map(o => `<option value="${esc(o[0])}" ${o[0] === (f.value || (f.options[0] || [])[0]) ? 'selected' : ''}>${esc(o[1])}</option>`)
               .join('')}</select>`
           : `<input type="${esc(f.type || 'text')}" id="m_${esc(f.id)}" value="${esc(f.value || '')}"
-               placeholder="${esc(f.ph || '')}" ${f.min ? `min="${esc(f.min)}"` : ''}>`;
+               placeholder="${esc(f.ph || '')}" ${f.min ? `min="${esc(f.min)}"` : ''} ${f.max ? `max="${esc(f.max)}"` : ''}>`;
       return `<div class="${f.half ? '' : 'full'}">
         <label for="m_${esc(f.id)}">${esc(f.label)}</label>${control}</div>`;
     }).join('');
@@ -1664,7 +1678,7 @@ function renderDetail() {
             <dt>Periodo</dt><dd>${period}</dd>
             ${isClient() ? '' : `<dt>Ordine</dt><dd>${e.orderConfirmed ? esc(e.orderRef || 'Ricevuto') : 'Non ricevuto'}</dd>
             <dt>Costi</dt><dd>${e.cost != null ? fmtMoney(e.cost) : '–'}</dd>
-            <dt>Margine</dt><dd>${e.margin != null ? fmtMoney(e.margin) : '–'}</dd>
+            <dt>Margine</dt><dd>${e.margin != null ? fmtPercent(e.margin) : '–'}</dd>
             <dt>Approvazione</dt><dd>${e.financialsApproved ? 'Approvato' : e.financialsDone ? 'In attesa' : '–'}</dd>`}
           </dl>
           <div class="divider"></div>
@@ -1761,7 +1775,7 @@ function tabDocs(d) {
     const finApproved = !!e.financialsApproved;
     const canEditFin = !!c.canEditFinancials;
     const canApproveFin = !!c.canApproveFinancials;
-    const finTotal = finDone ? Number(e.cost) + Number(e.margin) : null;
+    const finTotal = finDone ? financialValue(e.cost, e.margin) : null;
     const finEdit = canEditFin
       ? '<button class="btn sec sm" data-act="edit-financials">Modifica</button>'
       : '';
@@ -1775,14 +1789,14 @@ function tabDocs(d) {
         ? '<button class="btn pri sm" data-act="edit-financials">Compila</button>'
         : pill(['Da completare', 'warn']);
     } else if (!finApproved) {
-      finSubtitle = `Costo ${fmtMoney(e.cost)} · margine ${fmtMoney(e.margin)} · valore ${fmtMoney(finTotal)} · in attesa di approvazione del Manager`;
+      finSubtitle = `Costo ${fmtMoney(e.cost)} · margine ${fmtPercent(e.margin)} · valore ${fmtMoney(finTotal)} · in attesa di approvazione del Manager`;
       finAction = canApproveFin
         ? `<span class="decision-group"><button class="decide yes sm" data-act="approve-financials">Approva</button>${finEdit}</span>`
         : canEditFin
           ? finEdit
           : pill(['In attesa di approvazione', 'wait']);
     } else {
-      finSubtitle = `Costo ${fmtMoney(e.cost)} · margine ${fmtMoney(e.margin)} · valore ${fmtMoney(finTotal)} · approvato dal Manager${e.financialsApprovedDate ? ` il ${fmt(e.financialsApprovedDate)}` : ''}`;
+      finSubtitle = `Costo ${fmtMoney(e.cost)} · margine ${fmtPercent(e.margin)} · valore ${fmtMoney(finTotal)} · approvato dal Manager${e.financialsApprovedDate ? ` il ${fmt(e.financialsApprovedDate)}` : ''}`;
       finAction = canEditFin
         ? finEdit
         : pill(['Approvato', 'ok']);
@@ -2813,15 +2827,16 @@ const actions = {
       ok: 'Salva',
       fields: [
         { id: 'cost', label: 'Costo (€)*', type: 'number', min: '0', value: e.cost != null ? String(e.cost) : '' },
-        { id: 'margin', label: 'Margine (€)*', type: 'number', value: e.margin != null ? String(e.margin) : '' }
+        { id: 'margin', label: 'Margine (%)*', type: 'number', min: '0', max: '100', value: e.margin != null ? String(e.margin) : '46' }
       ]
     });
     if (!v) return;
     const cost = Number(v.cost);
     const margin = Number(v.margin);
     if (v.cost === '' || v.margin === '' ||
-        !Number.isFinite(cost) || !Number.isFinite(margin) || cost < 0) {
-      toast('Inserisci costo e margine validi');
+        !Number.isFinite(cost) || !Number.isFinite(margin) ||
+        cost < 0 || margin < 0 || margin > 100) {
+      toast('Inserisci un costo valido e un margine tra 0 e 100%');
       return;
     }
     try {
@@ -2838,10 +2853,10 @@ const actions = {
 
   'approve-financials': async () => {
     const e = state.detail.engagement;
-    const total = Number(e.cost) + Number(e.margin);
+    const total = financialValue(e.cost, e.margin);
     const v = await ask({
       title: 'Approvare costi e margine?',
-      text: `Costo ${fmtMoney(e.cost)} · margine ${fmtMoney(e.margin)} · valore ${fmtMoney(total)}.`,
+      text: `Costo ${fmtMoney(e.cost)} · margine ${fmtPercent(e.margin)} · valore ${fmtMoney(total)}.`,
       ok: 'Approva'
     });
     if (!v) return;

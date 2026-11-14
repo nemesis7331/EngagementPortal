@@ -187,6 +187,7 @@ public sealed class Engagement
     public string? DocumentoIngaggioFile { get; set; }
     public string? OrderRef { get; set; }
     public decimal? Cost { get; set; }
+    /// <summary>Margine percentuale sul costo (0-100).</summary>
     public decimal? Margin { get; set; }
     public bool FinancialsApproved { get; set; }
     public string? FinancialsSetByRole { get; set; }

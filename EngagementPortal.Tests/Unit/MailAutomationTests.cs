@@ -35,7 +35,7 @@ public sealed class MailAutomationTests
             HasManleva = true,
             OrderConfirmed = true,
             Cost = 12000m,
-            Margin = 4800m,
+            Margin = 46m,
             FinancialsApproved = true,
             ScopeDone = true,
             CredentialsDone = true

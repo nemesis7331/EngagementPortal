@@ -680,6 +680,10 @@ api.MapPut("/engagements/{id}/financials", (
     if (request.Cost < 0)
         return Results.BadRequest("Il costo non può essere negativo.");
 
+    if (request.Margin is < 0 or > 100)
+        return Results.BadRequest(
+            "Il margine è una percentuale tra 0 e 100.");
+
     if (!CanEditFinancials(engagement, user, workflow))
     {
         return Results.BadRequest(

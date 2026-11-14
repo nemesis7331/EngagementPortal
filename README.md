@@ -21,7 +21,7 @@ App Service a ogni push su `main`.
   Gli inviti sono aperti a tutti i profili tranne l'Auditor; rimuovono il
   Manager (tutti) e il Cliente (solo organizzazione `Cliente`).
 - **Documenti**: scheda tecnica con manleva, documento di ingaggio, ordine,
-  **costi e margine** dell'attività.
+  **costi e margine** dell'attività (margine in percentuale sul costo).
 - **Scope**: perimetro tecnico, obiettivi e finestre dell'attività.
 - **Pianificazione**: proposte di date, accettazione/rifiuto, richiesta di
   riprogrammazione, durata massima 60 giorni. Per Cliente e PMO, se sono passati
@@ -135,7 +135,9 @@ riporta esattamente i controlli applicati dalle API.
 - Manleva: `POST /api/engagements/{id}/manleva` consente Cliente e PMO.
 - Documento di ingaggio e ordine: solo PMO.
 - Costi e margine: `PUT /api/engagements/{id}/financials` consente PMO e Manager
-  nella prima fase. Se li inserisce il PMO restano **in attesa di approvazione**
+  nella prima fase. Il margine è una **percentuale tra 0 e 100** (default nel form
+  **46%**); il valore dell'attività mostrato in UI è costo + margine%. Se i dati
+  li inserisce il PMO restano **in attesa di approvazione**
   (`POST /financials/approve`, solo Manager); se li inserisce il Manager sono
   approvati contestualmente. Il primo passo si completa con manleva, ordine,
   costi e margine **approvati**.
@@ -196,10 +198,10 @@ L'applicazione ha due modalità:
 > termina all'avvio (fail-fast): meglio un errore evidente che un fallback
 > silenzioso su dati volatili.
 
-> I costi e il margine sono obbligatori e devono essere **approvati** per
-> chiudere la prima fase: gli engagement esistenti privi di questi valori o
-> dell'approvazione restano in fase **Docs** finché PMO o Manager non li
-> inseriscono e il Manager non li approva.
+> I costi e il margine (percentuale) sono obbligatori e devono essere
+> **approvati** per chiudere la prima fase: gli engagement esistenti privi di
+> questi valori o dell'approvazione restano in fase **Docs** finché PMO o Manager
+> non li inseriscono e il Manager non li approva.
 
 Con Azure SQL vengono create due tabelle:
 
@@ -241,8 +243,9 @@ Northwind Traders) e copre tutti i passi del workflow:
 | Reporting | ENG-2026-003 / 011 | revisione Manager in attesa / modifiche richieste |
 | Concluso | ENG-2026-006 / 015 | deliverable pubblicato al cliente (015 è di Contoso, così il profilo Cliente vede un report scaricabile) |
 
-Costi e margine sono valorizzati e approvati per tutti gli engagement tranne
-quelli usati per mostrare il primo passo e l'attesa di approvazione. Target
+Costi e margine (margine al **46%**) sono valorizzati e approvati per tutti gli
+engagement tranne quelli usati per mostrare il primo passo e l'attesa di
+approvazione. Target
 (`*.example`, `10.x`), credenziali e riferimenti ai segreti (`kv://demo/...`)
 sono inventati.
 

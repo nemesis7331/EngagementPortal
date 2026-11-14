@@ -46,7 +46,7 @@ public sealed class SqlRepositoryTests
         HasManleva = true,
         OrderConfirmed = true,
         Cost = 12000m,
-        Margin = 4800m,
+        Margin = 46m,
         FinancialsApproved = true,
         Scope = new ScopeData
         {

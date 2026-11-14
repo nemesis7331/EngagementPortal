@@ -76,7 +76,7 @@ public static class SeedData
             "External Penetration Test", EngagementType.PenetrationTest, 6);
 
         Docs(engagement, "PO-2026-0142");
-        Financials(engagement, 12000m, 4800m);
+        Financials(engagement, 12000m, 46m);
         Distribution(engagement);
         Proposal(engagement, "P-001", Today.AddDays(7), Today.AddDays(12),
             ProposalStatus.Pending, note: "Finestra proposta dal team PMO");
@@ -105,7 +105,7 @@ public static class SeedData
             "Web Application Retest", EngagementType.PenetrationTest, 25);
 
         Docs(engagement, "PO-2026-0107");
-        Financials(engagement, 9000m, 3600m);
+        Financials(engagement, 9000m, 46m);
         Scope(engagement,
             "app.contoso.example", "10.20.30.0/24",
             "Ambienti di produzione", "Lun-Ven 20:00-06:00",
@@ -135,7 +135,7 @@ public static class SeedData
             "Internal Red Team", EngagementType.RedTeam, 12);
 
         Docs(engagement, "PO-2026-0188");
-        Financials(engagement, 18000m, 7200m);
+        Financials(engagement, 18000m, 46m);
         Scope(engagement,
             "redteam.novabank.example", "10.40.0.0/16",
             "Sistemi di pagamento", "Sempre attivo",
@@ -158,7 +158,7 @@ public static class SeedData
             "Cloud Security Assessment", EngagementType.CloudSecurity, 4);
 
         Docs(engagement, "PO-2026-0201");
-        Financials(engagement, 15000m, 6000m);
+        Financials(engagement, 15000m, 46m);
         Scope(engagement,
             "cloud.orion.example", "Sottoscrizioni Azure",
             "Ambiente di produzione", "Lun-Ven 09:00-18:00",
@@ -183,7 +183,7 @@ public static class SeedData
             EngagementType.PenetrationTest, 40);
 
         Docs(engagement, "PO-2026-0091");
-        Financials(engagement, 20000m, 8000m);
+        Financials(engagement, 20000m, 46m);
         Scope(engagement,
             "portal.novabank.example", "10.50.10.0/24",
             "App mobile", "Lun-Ven 20:00-06:00",
@@ -213,7 +213,7 @@ public static class SeedData
             EngagementType.VulnerabilityAssessment, 45);
 
         Docs(engagement, "PO-2026-0088");
-        Financials(engagement, 7000m, 2800m);
+        Financials(engagement, 7000m, 46m);
         Scope(engagement,
             "intranet.contoso.example", "10.20.50.0/24",
             "Sistemi di produzione", "Lun-Ven 20:00-06:00",
@@ -242,7 +242,7 @@ public static class SeedData
             "Cloud Configuration Review", EngagementType.CloudSecurity, 5);
 
         Docs(engagement, "PO-2026-0197");
-        Financials(engagement, 11000m, 4400m);
+        Financials(engagement, 11000m, 46m);
         Distribution(engagement);
         Proposal(engagement, "P-007", Today.AddDays(9), Today.AddDays(19),
             ProposalStatus.Accepted);
@@ -258,7 +258,7 @@ public static class SeedData
             "Payment API Security Review", EngagementType.CodeReview, 8);
 
         Docs(engagement, "PO-2026-0164");
-        Financials(engagement, 14000m, 5600m);
+        Financials(engagement, 14000m, 46m);
         Scope(engagement,
             "pay-api.contoso.example", "10.20.40.0/24",
             "Produzione", "Lun-Ven 21:00-06:00",
@@ -280,7 +280,7 @@ public static class SeedData
             EngagementType.PenetrationTest, 3);
 
         Docs(engagement, "PO-2026-0210");
-        Financials(engagement, 16000m, 6400m);
+        Financials(engagement, 16000m, 46m);
         Scope(engagement,
             "mobile.fabrikam.example", "10.30.0.0/16",
             "Backend core", "Sempre attivo",
@@ -300,7 +300,7 @@ public static class SeedData
             EngagementType.VulnerabilityAssessment, 15);
 
         Docs(engagement, "PO-2026-0177");
-        Financials(engagement, 24000m, 9600m);
+        Financials(engagement, 24000m, 46m);
         Scope(engagement,
             "scada.orion.example", "10.60.0.0/16",
             "Sistemi di controllo", "Notturno 22:00-06:00",
@@ -326,7 +326,7 @@ public static class SeedData
             EngagementType.VulnerabilityAssessment, 20);
 
         Docs(engagement, "PO-2026-0129");
-        Financials(engagement, 13000m, 5200m);
+        Financials(engagement, 13000m, 46m);
         Scope(engagement,
             "thirdparty.novabank.example", "10.50.20.0/24",
             "Dati di produzione", "Lun-Ven 09:00-18:00",
@@ -360,7 +360,7 @@ public static class SeedData
             EngagementType.CloudSecurity, 2);
 
         Docs(engagement, "PO-2026-0215");
-        Financials(engagement, 10000m, 4000m,
+        Financials(engagement, 10000m, 46m,
             approved: false,
             setByRole: Roles.PMO,
             setBy: "Luca Ferri");
@@ -377,7 +377,7 @@ public static class SeedData
             "E-commerce Red Team", EngagementType.RedTeam, 10);
 
         Docs(engagement, "PO-2026-0194");
-        Financials(engagement, 30000m, 12000m);
+        Financials(engagement, 30000m, 46m);
         Scope(engagement,
             "shop.tailspin.example", "10.90.0.0/16",
             "Pagamenti", "Lun-Ven 22:00-06:00",
@@ -402,7 +402,7 @@ public static class SeedData
             EngagementType.VulnerabilityAssessment, 18);
 
         Docs(engagement, "PO-2026-0151");
-        Financials(engagement, 28000m, 11200m);
+        Financials(engagement, 28000m, 46m);
         Scope(engagement,
             "sap.northwind.example", "10.80.0.0/16",
             "Sistemi finanziari", "Lun-Ven 20:00-06:00",
@@ -498,13 +498,13 @@ public static class SeedData
     private static void Financials(
         Engagement engagement,
         decimal cost,
-        decimal margin,
+        decimal marginPercent,
         bool approved = true,
         string setByRole = Roles.Manager,
         string setBy = "Giorgio Marino")
     {
         engagement.Cost = cost;
-        engagement.Margin = margin;
+        engagement.Margin = marginPercent;
         engagement.FinancialsApproved = approved;
         engagement.FinancialsSetByRole = setByRole;
         engagement.FinancialsSetBy = setBy;
