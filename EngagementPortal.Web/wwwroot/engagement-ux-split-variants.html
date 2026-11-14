@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Split editor · 4 varianti</title>
+<style>
+:root{
+  --brand-950:#061d36;--brand-900:#0a2a4d;--brand-700:#0f4275;--brand-600:#0b5fa5;
+  --brand-500:#2a86d8;--brand-100:#e1eefa;--brand-50:#f1f7fc;--accent:#0e9fb5;--accent-soft:#d6f4f8;
+  --ink:#0a1b2e;--muted:#566a80;--muted-2:#78899b;--line:#dfe7ef;--line-soft:#edf2f7;
+  --bg:#f4f7fa;--card:#fff;--surface-2:#f8fafc;
+  --st-action:#b42318;--st-action-bg:#fee4e2;--st-action-border:#fda29b;
+  --st-wait:#7a5b00;--st-wait-bg:#fff8c5;--st-wait-border:#eac54f;
+  --st-progress:#175cd3;--st-progress-bg:#d1e9ff;--st-progress-border:#b2ddff;
+  --st-done:#067647;--st-done-bg:#dcfae6;--st-done-border:#a9efc5;
+  --st-blocked:#475467;--st-blocked-bg:#f2f4f7;--st-blocked-border:#e4e7ec;
+  --radius:14px;--radius-md:10px;--radius-sm:8px;
+  --shadow:0 1px 2px rgba(6,29,54,.06),0 6px 20px rgba(6,29,54,.06);
+  --shadow-lg:0 10px 30px rgba(6,29,54,.12);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button,select,input,textarea{font:inherit}
+button{cursor:pointer}
+a{color:var(--brand-600)}
+h1{font-size:30px;line-height:1.15;letter-spacing:-.02em;margin:0 0 8px;color:var(--brand-900)}
+h2{font-size:20px;margin:0;color:var(--brand-900);letter-spacing:-.01em}
+h3{font-size:15px;margin:0;color:var(--brand-900)}
+h4{font-size:14px;margin:0;color:var(--brand-900)}
+p{margin:0}
+.sub{color:var(--muted)}
+.small{font-size:12.5px;color:var(--muted)}
+.tiny{font-size:11.5px;color:var(--muted)}
+.wrap{max-width:1240px;margin:0 auto;padding:28px 24px 80px}
+.top{display:flex;align-items:center;gap:14px;padding:14px 24px;background:var(--brand-900);color:#fff}
+.top .logo{width:34px;height:34px;border-radius:10px;background:var(--accent);display:grid;place-items:center;color:var(--brand-950);font-weight:800}
+.top b{font-size:15px}
+.top .meta{margin-left:auto;font-size:12.5px;color:#bed3e6}
+.intro{padding:34px 0 8px;max-width:1020px}
+.lede{font-size:17px;color:var(--muted);margin:0 0 20px}
+.rulebar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:#fff;border:1px solid var(--brand-100);border-left:3px solid var(--brand-600);border-radius:10px;padding:12px 15px;margin:0 0 22px}
+.rulebar .ico{width:32px;height:32px;border-radius:50%;background:var(--brand-100);color:var(--brand-700);display:grid;place-items:center;font-weight:800;flex:none}
+.rulebar .t{flex:1;min-width:250px}
+.rulebar b{display:block;color:var(--brand-900);font-size:13.5px}
+.rulebar span{font-size:12.5px;color:var(--muted)}
+.rulebar .state{font-size:12px;font-weight:650;border-radius:999px;padding:5px 10px;border:1px solid var(--line);color:var(--muted);background:var(--surface-2)}
+.rulebar .state.ok{border-color:var(--st-done-border);background:var(--st-done-bg);color:var(--st-done)}
+.rulebar .state.no{border-color:var(--st-wait-border);background:var(--st-wait-bg);color:var(--st-wait)}
+.rolebar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:18px;box-shadow:var(--shadow)}
+.rolebar label{font-size:12px;font-weight:700;color:var(--brand-900)}
+.rolebar select{border:1px solid #cfdae6;border-radius:8px;padding:7px 10px;background:#fff;color:var(--ink);min-width:150px}
+.rolebar .sep{width:1px;height:22px;background:var(--line);margin:0 4px}
+.rolebar .hint{font-size:12px;color:var(--muted)}
+.switcher{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 8px;padding:10px 0}
+.switcher button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 16px;font-weight:650;color:var(--muted);display:flex;align-items:center;gap:8px}
+.switcher button.on{border-color:var(--brand-600);color:var(--brand-700);box-shadow:0 0 0 3px var(--brand-100)}
+.switcher .n{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--brand-100);color:var(--brand-700);font-size:11px;font-weight:800}
+.switcher button.on .n{background:var(--brand-600);color:#fff}
+.variant{display:none;padding-top:16px}
+.variant.active{display:block}
+.prop-head{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap;margin-bottom:4px}
+.tag{font-size:11px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent-soft);background:#fff;padding:4px 10px;border-radius:999px;margin-top:3px}
+.prop-head h2{font-size:24px}
+.prop-desc{max-width:880px;color:var(--muted);margin:5px 0 14px}
+.metrics{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}
+.metric{background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:12.5px;color:var(--muted)}
+.metric b{color:var(--brand-900)}
+.mock{border:1px solid #c9d8e7;border-radius:18px;background:#fbfdff;padding:18px;box-shadow:var(--shadow)}
+.mockbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 2px 12px;border-bottom:1px solid var(--line-soft);margin-bottom:16px}
+.mockbar .dots{display:flex;gap:5px}
+.mockbar .dots i{display:block;width:9px;height:9px;border-radius:50%;background:#d6e1ec}
+.mockbar .name{font-size:12px;color:var(--muted);font-weight:600}
+.crumbs{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted);margin-bottom:10px}
+.crumbs b{color:var(--brand-700)}
+.enghead{display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:14px}
+.enghead .t{flex:1;min-width:240px}
+.enghead h3{font-size:22px;line-height:1.2;margin-bottom:3px}
+.enghead .sub{font-size:13px}
+.enghead .actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:650;white-space:nowrap;border:1px solid transparent}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
+.p-action{background:var(--st-action-bg);color:var(--st-action);border-color:var(--st-action-border)}
+.p-wait{background:var(--st-wait-bg);color:var(--st-wait);border-color:var(--st-wait-border)}
+.p-progress{background:var(--st-progress-bg);color:var(--st-progress);border-color:var(--st-progress-border)}
+.p-done{background:var(--st-done-bg);color:var(--st-done);border-color:var(--st-done-border)}
+.p-blocked{background:var(--st-blocked-bg);color:var(--st-blocked);border-color:var(--st-blocked-border)}
+.btn{border:1px solid transparent;border-radius:9px;padding:9px 15px;font-weight:650;font-size:13.5px;display:inline-flex;align-items:center;gap:7px;text-decoration:none}
+.btn.pri{background:var(--brand-600);color:#fff}
+.btn.pri:hover{background:var(--brand-700)}
+.btn.sec{background:#fff;border-color:var(--line);color:var(--brand-900)}
+.btn.ghost{background:transparent;color:var(--brand-600);padding:6px 4px}
+.btn.sm{padding:5px 10px;font-size:12.5px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.split{display:grid;gap:16px;align-items:start}
+.split.c1{grid-template-columns:252px minmax(0,1fr)}
+.split.c2{grid-template-columns:190px minmax(0,1fr)}
+.split.c3{grid-template-columns:216px minmax(0,1fr) 268px}
+.split.c4{grid-template-columns:66px minmax(0,1fr)}
+
+/* rail */
+.vrail{border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden;position:sticky;top:58px}
+.vhead{padding:12px 13px;border-bottom:1px solid var(--line-soft);font-size:10.5px;letter-spacing:.7px;text-transform:uppercase;color:var(--muted);font-weight:800;display:flex;justify-content:space-between;gap:8px}
+.vstep{display:flex;gap:10px;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line-soft);background:#fff;padding:11px 12px;align-items:flex-start;color:inherit}
+.vstep:last-child{border-bottom:0}
+.vstep:hover{background:var(--surface-2)}
+.vstep.on{background:var(--brand-50);box-shadow:inset 3px 0 0 var(--brand-600)}
+.vstep .num{width:21px;height:21px;border-radius:50%;display:grid;place-items:center;font-size:10px;font-weight:800;background:var(--st-blocked-bg);color:var(--st-blocked);border:1px solid var(--line);flex:none;margin-top:1px}
+.vstep.done .num{background:var(--st-done);border-color:var(--st-done);color:#fff}
+.vstep.on .num{background:var(--brand-600);border-color:var(--brand-600);color:#fff}
+.vstep.wait .num{background:var(--st-wait-bg);border-color:var(--st-wait-border);color:var(--st-wait)}
+.vstep .h{min-width:0;flex:1}
+.vstep b{display:block;font-size:12.5px;color:var(--brand-900);line-height:1.25}
+.vstep span{display:block;font-size:10.5px;color:var(--muted);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vstep.wait b{color:var(--st-wait)}
+.vstep.locked{background:var(--surface-2);color:var(--muted)}
+.split.c2 .vstep{padding:9px 10px}
+.split.c2 .vstep span{font-size:10px}
+.split.c2 .vhead{padding:10px 10px}
+.split.c4 .vrail{position:sticky;top:58px}
+.split.c4 .vhead{display:none}
+.vstep.icon{display:grid;place-items:center;padding:12px 4px;position:relative}
+.vstep.icon .num{width:28px;height:28px;font-size:11px;margin:0}
+.vstep.icon .h{display:none}
+.vstep.icon.on::before{content:"";position:absolute;left:0;top:8px;bottom:8px;width:3px;border-radius:0 3px 3px 0;background:var(--brand-600)}
+.vstep.icon .dot{position:absolute;right:9px;top:9px;width:6px;height:6px;border-radius:50%;background:var(--line)}
+.vstep.icon.done .dot{background:var(--st-done)}
+.vstep.icon.wait .dot{background:var(--st-wait-border)}
+
+/* panel */
+.vpanel{border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden;min-width:0}
+.vpanel-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:16px 18px;border-bottom:1px solid var(--line-soft);background:var(--brand-50)}
+.vpanel-head .step{font-size:10.5px;letter-spacing:.6px;text-transform:uppercase;color:var(--brand-700);font-weight:800}
+.vpanel-head h4{margin:0;font-size:19px;color:var(--brand-900);line-height:1.2}
+.vpanel-head .sub{font-size:12.5px;color:var(--muted);margin-top:2px}
+.vpanel-head .right{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.vpanel-body{padding:18px}
+.split.c2 .vpanel-head{padding:12px 16px;background:#fff;border-bottom:1px solid var(--line-soft)}
+.split.c2 .vpanel-head h4{font-size:17px}
+.split.c2 .vpanel-body{padding:15px 16px}
+.split.c4 .vpanel-head{padding:14px 18px;position:sticky;top:0;z-index:5}
+.split.c4 .vpanel{max-width:900px}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:14px 16px}
+.field{display:grid;gap:5px;min-width:0}
+.field.full{grid-column:1/-1}
+.field label{font-size:12px;font-weight:700;color:var(--brand-900)}
+.field .hint{font-size:11.5px;color:var(--muted);line-height:1.35}
+.input{width:100%;border:1px solid #cfdae6;border-radius:8px;background:#fff;padding:9px 11px;font-size:14px;color:var(--ink);min-height:40px}
+textarea.input{min-height:75px;resize:vertical}
+.input:focus{outline:2px solid var(--brand-500);outline-offset:-1px;border-color:var(--brand-500)}
+.input[readonly]{background:var(--surface-2);color:var(--muted)}
+.split.c2 .input{padding:8px 10px;font-size:13.5px;min-height:37px}
+.split.c4 .input{padding:11px 12px;font-size:15px;min-height:44px}
+.split.c4 .field label{font-size:12.5px}
+.formfoot{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding-top:15px;margin-top:16px;border-top:1px solid var(--line-soft)}
+.formfoot .right{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.savehint{font-size:12px;color:var(--st-done);display:none;align-items:center;gap:5px}
+.savehint.show{display:inline-flex}
+.locknote{font-size:12px;color:var(--muted);background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:7px 10px;display:inline-flex;gap:6px;align-items:center}
+.docrow{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:9px;padding:9px 11px;background:#fff;font-size:13px;margin-bottom:8px}
+.docrow .fmt{width:32px;height:32px;border-radius:7px;background:var(--brand-100);color:var(--brand-700);display:grid;place-items:center;font-size:10px;font-weight:800;flex:none}
+.docrow .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.docrow a{font-size:12px;font-weight:650;text-decoration:none;white-space:nowrap}
+.docrow .status{margin-left:auto}
+.bc{margin-top:18px;border:1px solid var(--brand-100);border-radius:10px;background:linear-gradient(180deg,var(--brand-50),#fff);padding:14px}
+.bc-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:11px}
+.bc-head h4{font-size:14px}
+.bc-head .tagline{font-size:11px;color:var(--brand-700);background:#fff;border:1px solid var(--brand-100);padding:2px 7px;border-radius:999px;font-weight:650}
+.bc .fields{padding:0}
+.bc .formfoot{padding-top:12px;margin-top:12px}
+.proposal{border:1px solid var(--line);border-radius:10px;padding:13px 14px;background:var(--surface-2)}
+.proposal .topline{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.proposal .dates{font-size:17px;font-weight:700;color:var(--brand-900)}
+.proposal .meta{font-size:12px;color:var(--muted);margin-top:3px}
+.proposal .note{font-size:12.5px;color:var(--muted);margin-top:8px}
+.history{margin-top:14px;border-top:1px solid var(--line-soft);padding-top:12px}
+.history h5{font-size:11px;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin:0 0 8px;font-weight:800}
+.hitem{display:flex;align-items:center;gap:10px;padding:7px 0;font-size:12.5px;border-bottom:1px solid var(--line-soft)}
+.hitem:last-child{border-bottom:0}
+.hitem .st{margin-left:auto}
+.rep{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:9px;padding:10px 11px;margin-bottom:8px;font-size:13px}
+.rep .fmt{width:32px;height:32px;border-radius:7px;background:var(--brand-100);color:var(--brand-700);display:grid;place-items:center;font-size:10px;font-weight:800;flex:none}
+.rep .t{flex:1;min-width:0}
+.rep .t b{display:block;font-size:13px;color:var(--brand-900)}
+.rep .t span{font-size:11.5px;color:var(--muted)}
+.kpi{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+.kpi div{background:var(--surface-2);border:1px solid var(--line);border-radius:9px;padding:10px}
+.kpi b{display:block;font-size:16px;color:var(--brand-900)}
+.kpi span{font-size:11px;color:var(--muted)}
+
+/* context */
+.ctx{display:grid;gap:12px;position:sticky;top:58px}
+.railcard{background:#fff;border:1px solid var(--line);border-radius:10px;padding:13px}
+.railcard.next{border-left:3px solid var(--st-action)}
+.railcard h5{margin:0 0 7px;font-size:10.5px;letter-spacing:.7px;text-transform:uppercase;color:var(--muted);font-weight:800}
+.railcard .big{font-size:14.5px;font-weight:700;color:var(--brand-900);line-height:1.3}
+.railcard .btn{margin-top:9px;width:100%;justify-content:center}
+.kv{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 10px;margin:0;font-size:12px}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;text-align:right;font-weight:650;color:var(--brand-900)}
+.people{display:grid;gap:8px}
+.person{display:flex;align-items:center;gap:7px;min-width:0}
+.avatar{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--brand-100);color:var(--brand-700);font-size:10px;font-weight:800;flex:none}
+.person .nm{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;font-weight:600}
+.person .rl{display:block;font-size:10.5px;color:var(--muted)}
+
+.callouts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:18px 0 0}
+.callout{background:#fff;border:1px solid var(--line);border-radius:10px;padding:11px 12px;font-size:12.5px;color:var(--muted)}
+.callout b{display:block;color:var(--brand-900);font-size:12px;margin-bottom:2px}
+.proscons{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0 0}
+.pc{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:13px}
+.pc h5{margin:0 0 6px;font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:800}
+.pc ul{margin:0;padding-left:18px;color:var(--muted)}
+.pc li{margin-bottom:3px}
+.pc.good ul{color:#196345}
+.pc.bad ul{color:#8a4b00}
+.compare{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;margin-top:34px;box-shadow:var(--shadow)}
+.compare h2{margin-bottom:4px}
+.compare p{color:var(--muted);font-size:13px;margin-bottom:14px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)}
+td b{color:var(--brand-900)}
+.reco{margin-top:16px;background:var(--brand-50);border:1px solid var(--brand-100);border-radius:10px;padding:14px;font-size:13.5px;color:var(--brand-800)}
+.reco b{color:var(--brand-900)}
+.toast{position:fixed;right:24px;bottom:24px;background:var(--brand-900);color:#fff;padding:11px 16px;border-radius:10px;font-size:13px;box-shadow:var(--shadow-lg);opacity:0;transform:translateY(8px);transition:.2s;pointer-events:none;z-index:100}
+.toast.show{opacity:1;transform:translateY(0)}
+@media(max-width:1100px){
+  .split.c3{grid-template-columns:200px minmax(0,1fr)}
+  .split.c3 .ctx{grid-column:1/-1;grid-template-columns:repeat(4,minmax(0,1fr));position:static}
+}
+@media(max-width:900px){
+  .split.c1,.split.c2{grid-template-columns:190px minmax(0,1fr)}
+  .callouts{grid-template-columns:1fr}
+  .split.c3 .ctx{grid-template-columns:1fr 1fr}
+}
+@media(max-width:720px){
+  .wrap{padding:20px 14px 70px}
+  .split.c1,.split.c2,.split.c3,.split.c4{grid-template-columns:1fr}
+  .vrail{display:flex;overflow:auto;position:static}
+  .vstep{min-width:170px;border-bottom:0;border-right:1px solid var(--line-soft)}
+  .vstep.icon{min-width:54px}
+  .vstep.icon .h{display:none}
+  .fields{grid-template-columns:1fr}
+  .field.full{grid-column:auto}
+  .proscons{grid-template-columns:1fr}
+  .prose{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body data-role="PMO">
+<header class="top">
+  <div class="logo">EP</div>
+  <div><b>Cyber Engagement Portal</b><div class="tiny" style="color:#9fb9cf">Split editor · 4 varianti per la revisione</div></div>
+  <div class="meta">ENG-2026-001 · dati demo</div>
+</header>
+
+<main class="wrap">
+  <section class="intro">
+    <h1>Split editor, quattro modi di farlo bene</h1>
+    <p class="lede">
+      La proposta C è piaciuta: workflow a sinistra, pannello di lavoro a destra, campi sempre in modifica.
+      Qui la trovi <b>corretta e resa interattiva</b> in quattro varianti. Cambia profilo in alto: i campi
+      economici compaiono <b>solo per Manager e PMO</b>.
+    </p>
+
+    <div class="rulebar">
+      <span class="ico">€</span>
+      <div class="t"><b>Costi e margine (business case)</b><span>Visibili ed editabili solo da Manager e PMO. Cliente, Pentester e Auditor non vedono né i valori né i campi.</span></div>
+      <span class="state" id="ruleState">Profilo PMO · campi visibili</span>
+    </div>
+
+    <div class="rolebar">
+      <label for="roleSelect">Profilo demo</label>
+      <select id="roleSelect" aria-label="Profilo demo">
+        <option value="PMO" selected>PMO</option>
+        <option value="Manager">Manager</option>
+        <option value="Client">Cliente</option>
+        <option value="Pentester">Pentester</option>
+        <option value="Auditor">Auditor</option>
+      </select>
+      <span class="sep"></span>
+      <span class="hint" id="roleHint">Costi e margine visibili. Puoi modificare le sezioni.</span>
+    </div>
+  </section>
+
+  <div class="switcher" role="tablist" aria-label="Varianti split editor">
+    <button class="on" data-variant="c1" role="tab" aria-selected="true"><span class="n">C1</span> Classico</button>
+    <button data-variant="c2" role="tab" aria-selected="false"><span class="n">C2</span> Compatto</button>
+    <button data-variant="c3" role="tab" aria-selected="false"><span class="n">C3</span> Con contesto</button>
+    <button data-variant="c4" role="tab" aria-selected="false"><span class="n">C4</span> Focus</button>
+  </div>
+
+  <section class="variant active" id="v-c1" data-variant="c1" aria-label="Variante C1 Classico"></section>
+  <section class="variant" id="v-c2" data-variant="c2" aria-label="Variante C2 Compatto"></section>
+  <section class="variant" id="v-c3" data-variant="c3" aria-label="Variante C3 Con contesto"></section>
+  <section class="variant" id="v-c4" data-variant="c4" aria-label="Variante C4 Focus"></section>
+
+  <section class="compare">
+    <h2>Confronto rapido</h2>
+    <p>Tutte e quattro usano gli stessi dati, gli stessi 6 passi e gli stessi endpoint. Cambia il rapporto tra spazio, contesto e densità.</p>
+    <table>
+      <thead><tr><th></th><th>C1 · Classico</th><th>C2 · Compatto</th><th>C3 · Con contesto</th><th>C4 · Focus</th></tr></thead>
+      <tbody>
+        <tr><td><b>Rail</b></td><td>252 px, nome + stato</td><td>190 px, molto denso</td><td>216 px + colonna contesto</td><td>66 px, sole icone</td></tr>
+        <tr><td><b>Larghezza form</b></td><td>Buona</td><td>Massima</td><td>Ridotta dal contesto</td><td>Massima, 900 px max</td></tr>
+        <tr><td><b>Click per compilare</b></td><td>1 cambio passo / 0 apri / 1 salva</td><td>1 / 0 / 1</td><td>1 / 0 / 1</td><td>1 / 0 / 1</td></tr>
+        <tr><td><b>Contesto sempre visibile</b></td><td>No</td><td>No</td><td>Sì (persone, date, economia)</td><td>No, massimo focus sui campi</td></tr>
+        <tr><td><b>Migliore per</b></td><td>Uso misto</td><td>PMO operativo</td><td>Manager/PMO che decide</td><td>Compilazione intensa</td></tr>
+        <tr><td><b>Mobile</b></td><td>Buona</td><td>Buona</td><td>Contesto sotto il form</td><td>Rail a icone scorrevole</td></tr>
+      </tbody>
+    </table>
+    <div class="reco"><b>Consiglio:</b> <b>C1</b> come default desktop, <b>C2</b> per chi lavora tutti i giorni sulle pratiche, <b>C3</b> per Manager che devono vedere persone/date/economia mentre approvano, <b>C4</b> per la compilazione da zero (scope e credenziali). Tutte nascondono il BC ai profili non autorizzati.</div>
+  </section>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const ROLE_LABEL = { PMO:'PMO', Manager:'Manager', Client:'Cliente', Pentester:'Pentester', Auditor:'Auditor' };
+const FIN_ROLES = ['PMO','Manager'];
+const state = { selected: 'scope', role: 'PMO' };
+
+const STEPS = [
+  { key:'docs', n:'1', title:'Documenti e dati economici', short:'Documenti', state:'done', label:'Completato', summary:'Manleva · PO-2026-0142' },
+  { key:'scope', n:'2', title:'Scope', short:'Scope', state:'current', label:'Da compilare', summary:'target · referente · finestra' },
+  { key:'plan', n:'3', title:'Pianificazione', short:'Pianificazione', state:'wait', label:'In attesa Manager', summary:'20 → 25 nov' },
+  { key:'cred', n:'4', title:'Credenziali', short:'Credenziali', state:'todo', label:'Da compilare', summary:'VPN e utenze' },
+  { key:'run', n:'5', title:'Esecuzione', short:'Esecuzione', state:'locked', label:'Bloccato', summary:'dal 20 nov' },
+  { key:'rep', n:'6', title:'Report', short:'Report', state:'locked', label:'Bloccato', summary:'dopo l’esecuzione' }
+];
+
+const toastEl = document.getElementById('toast');
+let toastTimer;
+function showToast(msg){
+  toastEl.textContent = msg;
+  toastEl.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2200);
+}
+function canSeeFin(){ return FIN_ROLES.includes(state.role); }
+function isReadOnly(){ return state.role === 'Auditor'; }
+function stepByKey(key){ return STEPS.find(s => s.key === key) || STEPS[1]; }
+function selectedStep(){ return stepByKey(state.selected); }
+
+function pillClass(step){
+  if (step.state === 'done') return 'p-done';
+  if (step.state === 'wait') return 'p-wait';
+  if (step.state === 'locked') return 'p-blocked';
+  return 'p-action';
+}
+function stepStateLabel(step){ return step.label; }
+
+function headerHTML(){
+  return `
+    <div class="crumbs"><span>Tutti gli engagement</span><span>/</span><b>External Penetration Test</b></div>
+    <div class="enghead">
+      <div class="t">
+        <h3>External Penetration Test</h3>
+        <p class="sub">ENG-2026-001 · Contoso · Penetration Test · responsabile Sara Conti</p>
+      </div>
+      <div class="actions">
+        <span class="pill p-action">Da fare · Scope</span>
+        <button class="btn sec sm" data-toast="Report aperti (demo)">Report</button>
+      </div>
+    </div>`;
+}
+
+function railHTML(variant){
+  const icon = variant === 'c4';
+  const compact = variant === 'c2';
+  return `<nav class="vrail" aria-label="Workflow">
+    <div class="vhead"><span>Workflow</span><span>2 / 6</span></div>
+    ${STEPS.map(s => `
+      <button class="vstep ${s.state === 'current' ? 'on' : ''} ${s.state === 'done' ? 'done' : ''} ${s.state === 'wait' ? 'wait' : ''} ${s.state === 'locked' ? 'locked' : ''} ${icon ? 'icon' : ''}"
+        data-step="${s.key}" title="${s.n} · ${s.title} · ${stepStateLabel(s)}" aria-label="Passo ${s.n}: ${s.title} (${stepStateLabel(s)})">
+        <span class="num">${s.state === 'done' ? '✓' : s.n}</span>
+        ${icon ? `<span class="dot"></span>` : `
+          <span class="h"><b>${compact ? s.short : s.title}</b><span>${compact ? stepStateLabel(s) : s.summary || stepStateLabel(s)}</span></span>`}
+      </button>`).join('')}
+  </nav>`;
+}
+
+function docsBody(){
+  const fin = canSeeFin() ? `
+    <div class="bc">
+      <div class="bc-head"><h4>Dati economici</h4><span class="tagline">visibili solo a PMO e Manager</span><span class="pill p-done" style="margin-left:auto">Approvato</span></div>
+      <div class="fields">
+        <div class="field"><label>Costo (€)</label><input class="input" type="number" value="12000" ${isReadOnly() ? 'readonly' : ''}></div>
+        <div class="field"><label>Margine (%)</label><input class="input" type="number" value="46" min="0" max="100" ${isReadOnly() ? 'readonly' : ''}></div>
+        <div class="field"><label>Valore attività</label><input class="input" value="17.520,00 €" readonly></div>
+        <div class="field"><label>Approvazione</label><input class="input" value="Giorgio Marino · 14/11/2026" readonly></div>
+      </div>
+      ${isReadOnly() ? '' : `<div class="formfoot"><span class="tiny">Modificare i valori riporta la voce in attesa di approvazione del Manager.</span><div class="right"><button class="btn sec" data-save>Salva bozza</button><button class="btn pri" data-save>Salva e richiedi approvazione</button></div></div>`}
+    </div>` : '';
+
+  return `
+    <div class="docrow"><span class="fmt">SCH</span><span class="nm">ENG-2026-001-manleva.txt</span><a href="#" data-toast="File aperto (demo)">Apri</a><span class="status pill p-done">Firmato</span></div>
+    <div class="docrow"><span class="fmt">ING</span><span class="nm">ENG-2026-001-ingaggio.txt</span><a href="#" data-toast="File aperto (demo)">Apri</a><span class="status pill p-done">Disponibile</span></div>
+    <div class="docrow"><span class="fmt">PO</span><span class="nm">Ordine PO-2026-0142</span><span class="status pill p-done">Ricevuto</span></div>
+    ${fin}
+    <div class="formfoot"><span class="tiny">Manleva e ordine sono già completi. Puoi consultare i file senza cambiare sezione.</span><div class="right">${isReadOnly() ? '<span class="locknote">Sola lettura · Auditor</span>' : '<span class="savehint" data-saved>✓ Salvato ora</span><button class="btn sec" data-save>Salva bozza</button>'}</div></div>`;
+}
+
+function scopeBody(){
+  return `
+    <div class="fields">
+      <div class="field"><label>Target (hostname / URL)</label><input class="input" value="app.contoso.example" ${isReadOnly() ? 'readonly' : ''}><span class="hint">Il campo è già attivo: nessun click per entrare in modifica.</span></div>
+      <div class="field"><label>Indirizzi / range IP</label><input class="input" value="10.20.30.0/24" ${isReadOnly() ? 'readonly' : ''}></div>
+      <div class="field"><label>Fuori scope</label><input class="input" value="Ambienti di produzione" ${isReadOnly() ? 'readonly' : ''}></div>
+      <div class="field"><label>Finestra oraria</label><input class="input" value="Lun–Ven 20:00–06:00" ${isReadOnly() ? 'readonly' : ''}></div>
+      <div class="field"><label>Referente tecnico</label><input class="input" type="email" value="security@contoso.example" ${isReadOnly() ? 'readonly' : ''}></div>
+      <div class="field"><label>Note e vincoli</label><textarea class="input" ${isReadOnly() ? 'readonly' : ''}>Retest dopo remediation; nessun test su dati reali.</textarea></div>
+    </div>
+    <div class="formfoot">
+      <span class="tiny">Visibile a cliente e PMO. Salvataggio esplicito, niente perdita di dati.</span>
+      <div class="right">${isReadOnly()
+        ? '<span class="locknote">Sola lettura · Auditor</span>'
+        : '<span class="savehint" data-saved>✓ Salvato ora</span><button class="btn sec" data-save>Salva bozza</button><button class="btn pri" data-save data-complete="1">Salva e completa</button>'}</div>
+    </div>`;
+}
+
+function planBody(){
+  return `
+    <div class="proposal">
+      <div class="topline">
+        <span class="dates">20/11/2026 → 25/11/2026</span>
+        <span class="pill p-wait">In attesa Manager</span>
+      </div>
+      <div class="meta">Proposta del PMO · Luca Ferri · inviata il 14/11/2026</div>
+      <div class="note">Finestra compatibile con la manutenzione del cliente. Decide Giorgio Marino.</div>
+      <div style="margin-top:10px"><button class="btn sec sm" data-toast="Promemoria inviato al Manager (demo)">Sollecita il Manager</button></div>
+    </div>
+    <div class="history">
+      <h5>Storico</h5>
+      <div class="hitem"><span>14/11/2026 · proposta PMO</span><span class="st pill p-wait">In attesa</span></div>
+      <div class="hitem"><span>20/11/2026 → 25/11/2026</span><span class="st tiny">5 giorni</span></div>
+    </div>`;
+}
+
+function credBody(){
+  return `
+    <div class="fields">
+      <div class="field"><label>VPN</label><input class="input" value="VPN-CONTOSO-01" ${isReadOnly() ? 'readonly' : ''}></div>
+      <div class="field"><label>Utenze</label><input class="input" value="2 utenze di test" ${isReadOnly() ? 'readonly' : ''}></div>
+      <div class="field"><label>Metodo di consegna</label><select class="input" ${isReadOnly() ? 'disabled' : ''}><option>Azure Key Vault</option><option>File cifrato</option><option>Canale separato</option></select></div>
+      <div class="field"><label>Riferimento segreto</label><input class="input" value="kv://demo/eng-001" ${isReadOnly() ? 'readonly' : ''}></div>
+    </div>
+    <div class="formfoot"><span class="tiny">Le password non vengono mai salvate nel portale.</span><div class="right">${isReadOnly() ? '<span class="locknote">Sola lettura · Auditor</span>' : '<span class="savehint" data-saved>✓ Salvato ora</span><button class="btn sec" data-save>Salva bozza</button><button class="btn pri" data-save>Salva e conferma</button>'}</div></div>`;
+}
+
+function runBody(){
+  return `
+    <div class="proposal">
+      <div class="topline"><span class="dates">20/11/2026 → 25/11/2026</span><span class="pill p-progress">Pianificato</span></div>
+      <div class="meta">Avvio tra 6 giorni · esecuzione di 5 giorni · referente Sara Conti</div>
+    </div>
+    <div class="kpi">
+      <div><b>3/3</b><span>preparazione</span></div>
+      <div><b>2</b><span>partecipanti esterni</span></div>
+      <div><b>0</b><span>deliverable</span></div>
+    </div>
+    <div class="formfoot"><span class="tiny">L'esecuzione si apre automaticamente il 20/11/2026. Non servono azioni.</span></div>`;
+}
+
+function repBody(){
+  return `
+    <div class="rep"><span class="fmt">TXT</span><span class="t"><b>Report_ENG-2026-001_finale.txt</b><span>Bozza · 14/11/2026 · 2 KB</span></span><span class="pill p-blocked">Bozza</span></div>
+    <div class="formfoot"><span class="tiny">Il report diventa disponibile dopo l'esecuzione e la revisione del Manager.</span><div class="right"><button class="btn sec" disabled>Scarica</button></div></div>`;
+}
+
+function stepBody(key){
+  if (key === 'docs') return docsBody();
+  if (key === 'scope') return scopeBody();
+  if (key === 'plan') return planBody();
+  if (key === 'cred') return credBody();
+  if (key === 'run') return runBody();
+  return repBody();
+}
+
+function panelHTML(){
+  const s = selectedStep();
+  const ro = isReadOnly();
+  return `<section class="vpanel">
+    <div class="vpanel-head">
+      <div>
+        <span class="step">Passo ${s.n} di 6</span>
+        <h4>${s.title}</h4>
+        <div class="sub">${s.summary || s.label} · profilo ${ROLE_LABEL[state.role]}${ro ? ' · sola lettura' : ''}</div>
+      </div>
+      <div class="right">
+        <span class="pill ${pillClass(s)}">${stepStateLabel(s)}</span>
+        ${ro ? '' : `<button class="btn sec sm" data-toast="Cronologia modifiche (demo)">Cronologia</button>`}
+      </div>
+    </div>
+    <div class="vpanel-body">${stepBody(s.key)}</div>
+  </section>`;
+}
+
+function contextHTML(){
+  const economy = canSeeFin() ? `
+    <div class="railcard">
+      <h5>Economia <span class="tiny">solo PMO/Manager</span></h5>
+      <dl class="kv"><dt>Costo</dt><dd>12.000 €</dd><dt>Margine</dt><dd>46%</dd><dt>Valore</dt><dd>17.520 €</dd><dt>Stato</dt><dd style="color:var(--st-done)">Approvato</dd></dl>
+    </div>` : '';
+  return `<aside class="ctx">
+    <div class="railcard next">
+      <h5>Prossimo passo</h5>
+      <div class="big">Compila lo Scope</div>
+      <p class="small" style="margin-top:4px">Mancano target, referente e finestra. Sblocca l'esecuzione.</p>
+      <button class="btn pri sm" data-step="scope">Compila ora</button>
+    </div>
+    <div class="railcard">
+      <h5>Persone</h5>
+      <div class="people">
+        <div class="person"><span class="avatar">SC</span><span><span class="nm">Sara Conti</span><span class="rl">Pentester</span></span></div>
+        <div class="person"><span class="avatar">LF</span><span><span class="nm">Luca Ferri</span><span class="rl">PMO</span></span></div>
+        <div class="person"><span class="avatar">MR</span><span><span class="nm">Marta Rinaldi</span><span class="rl">Cliente</span></span></div>
+      </div>
+    </div>
+    <div class="railcard">
+      <h5>Date</h5>
+      <dl class="kv"><dt>Proposta</dt><dd>20 → 25 nov</dd><dt>Approvazione</dt><dd>Manager</dd></dl>
+    </div>
+    ${economy}
+  </aside>`;
+}
+
+function variantInfo(variant){
+  if (variant === 'c1') return {
+    title:'C1 · Classico',
+    desc:'Il rail del workflow a 252 px e il pannello di lavoro. È la proposta C originale, ora con il cambio passo funzionante, i campi inline e il salvataggio visibile.'
+  };
+  if (variant === 'c2') return {
+    title:'C2 · Compatto',
+    desc:'Rail a 190 px, header più denso e campi leggermente più compatti: più larghezza utile al form. Pensato per il PMO che compila molte pratiche al giorno.'
+  };
+  if (variant === 'c3') return {
+    title:'C3 · Con contesto',
+    desc:'Tre colonne: workflow, form e contesto. Persone, date ed economia restano accanto ai campi, senza dover cambiare sezione. L’economia compare solo per PMO e Manager.'
+  };
+  return {
+    title:'C4 · Focus',
+    desc:'Rail ridotto a icone e form largo fino a 900 px, con campi più grandi. Massima leggibilità e zero rumore mentre si compila.'
+  };
+}
+
+function shell(variant){
+  const info = variantInfo(variant);
+  return `
+    <div class="prop-head"><span class="tag">Split editor</span><h2>${info.title}</h2></div>
+    <p class="prop-desc">${info.desc}</p>
+    <div class="metrics">
+      <span class="metric"><b>1 click</b> per cambiare passo</span>
+      <span class="metric"><b>0 click</b> per entrare in modifica</span>
+      <span class="metric"><b>1 click</b> per salvare</span>
+      <span class="metric"><b>BC</b> solo PMO/Manager</span>
+    </div>
+    <div class="mock">
+      <div class="mockbar"><span class="dots"><i></i><i></i><i></i></span><span class="name">engagement · ${variant.toUpperCase()} · profilo ${ROLE_LABEL[state.role]}</span></div>
+      ${headerHTML()}
+      <div class="split ${variant}">
+        ${railHTML(variant)}
+        ${panelHTML()}
+        ${variant === 'c3' ? contextHTML() : ''}
+      </div>
+    </div>
+    <div class="callouts">
+      <div class="callout"><b>1 · Fix del rail</b>Ogni passo cambia davvero il pannello: niente più click che mostrano solo un toast.</div>
+      <div class="callout"><b>2 · Niente modali</b>I campi sono già attivi nel pannello; il salvataggio è esplicito e visibile.</div>
+      <div class="callout"><b>3 · Ruoli</b>Cambia profilo: il business case sparisce per Cliente, Pentester e Auditor. L’Auditor è in sola lettura.</div>
+    </div>
+    <div class="proscons">
+      <div class="pc good"><h5>Punti di forza</h5><ul>
+        <li>Il workflow è la navigazione: non è più decorativo.</li>
+        <li>Un solo pannello, campi grandi e una sola azione primaria.</li>
+        <li>Il prossimo passo è chiaro senza leggere tutta la pagina.</li>
+      </ul></div>
+      <div class="pc bad"><h5>Da valutare</h5><ul>
+        <li>Un click per cambiare sezione rispetto a 0 dello scroll continuo.</li>
+        <li>Su schermi piccoli il rail diventa orizzontale o a icone.</li>
+      </ul></div>
+    </div>`;
+}
+
+function mount(variant){
+  const root = document.getElementById('v-' + variant);
+  root.innerHTML = shell(variant);
+}
+
+function renderAll(){
+  ['c1','c2','c3','c4'].forEach(mount);
+  document.body.dataset.role = state.role;
+  const rule = document.getElementById('ruleState');
+  const hint = document.getElementById('roleHint');
+  if (canSeeFin()) {
+    rule.className = 'state ok';
+    rule.textContent = 'Profilo ' + ROLE_LABEL[state.role] + ' · campi visibili';
+    hint.textContent = 'Costi e margine visibili. ' + (isReadOnly() ? 'Sola lettura.' : 'Puoi modificare le sezioni.');
+  } else {
+    rule.className = 'state no';
+    rule.textContent = 'Profilo ' + ROLE_LABEL[state.role] + ' · campi nascosti';
+    hint.textContent = 'I dati economici sono riservati a PMO e Manager. ' + (isReadOnly() ? 'Sola lettura.' : '');
+  }
+}
+
+function updateRole(){
+  state.role = document.getElementById('roleSelect').value;
+  renderAll();
+}
+
+/* tabs */
+document.querySelectorAll('.switcher [data-variant]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const key = btn.dataset.variant;
+    document.querySelectorAll('.switcher [data-variant]').forEach(b => {
+      b.classList.toggle('on', b === btn);
+      b.setAttribute('aria-selected', String(b === btn));
+    });
+    document.querySelectorAll('.variant').forEach(v => v.classList.toggle('active', v.dataset.variant === key));
+    window.scrollTo({ top: 0 });
+  });
+});
+
+document.getElementById('roleSelect').addEventListener('change', updateRole);
+
+/* delegated actions inside the mocks */
+document.addEventListener('click', event => {
+  const stepBtn = event.target.closest('[data-step]');
+  if (stepBtn) {
+    event.preventDefault();
+    state.selected = stepBtn.dataset.step;
+    renderAll();
+    const active = document.querySelector('.variant.active');
+    if (active) active.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    return;
+  }
+  const save = event.target.closest('[data-save]');
+  if (save) {
+    event.preventDefault();
+    const panel = save.closest('.vpanel, .bc');
+    const hint = panel && panel.querySelector('[data-saved]');
+    if (hint) {
+      hint.classList.add('show');
+      setTimeout(() => hint.classList.remove('show'), 2600);
+    }
+    showToast(save.dataset.complete ? 'Sezione completata (demo)' : 'Bozza salvata (demo)');
+    return;
+  }
+  const action = event.target.closest('[data-toast]');
+  if (action) {
+    event.preventDefault();
+    showToast(action.dataset.toast);
+  }
+});
+
+renderAll();
+</script>
+</body>
+</html>

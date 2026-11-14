@@ -113,6 +113,13 @@ public sealed class EngagementWorkflow(IDateProvider clock)
         phase == EngagementPhase.Docs &&
         role is Roles.PMO or Roles.Manager;
 
+    /// <summary>
+    /// Costi e margine sono visibili solo a PMO e Manager: gli altri profili
+    /// non ricevono i campi economici nemmeno in lettura.
+    /// </summary>
+    public static bool CanViewFinancials(string role) =>
+        role is Roles.PMO or Roles.Manager;
+
     public static bool CanApproveFinancials(
         Engagement engagement,
         string role,

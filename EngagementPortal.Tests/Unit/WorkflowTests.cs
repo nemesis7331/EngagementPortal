@@ -375,6 +375,16 @@ public class WorkflowTests
     }
 
     [Fact]
+    public void Financials_AreVisibleOnlyToPmoAndManager()
+    {
+        Assert.True(EngagementWorkflow.CanViewFinancials(Roles.PMO));
+        Assert.True(EngagementWorkflow.CanViewFinancials(Roles.Manager));
+        Assert.False(EngagementWorkflow.CanViewFinancials(Roles.Client));
+        Assert.False(EngagementWorkflow.CanViewFinancials(Roles.Pentester));
+        Assert.False(EngagementWorkflow.CanViewFinancials(Roles.Auditor));
+    }
+
+    [Fact]
     public void Todo_Manager_ApprovesFinancials()
     {
         var engagement = NewEngagement();

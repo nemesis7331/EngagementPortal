@@ -1568,7 +1568,7 @@ function nextAction(d) {
       const missingDocs = [
         !e.hasManleva ? 'scheda tecnica firmata dal cliente' : '',
         !e.orderConfirmed ? 'registrazione dell\'ordine da parte del PMO' : '',
-        !isClient() && !e.financialsDone ? 'costi e margine (PMO o Manager)' : '',
+        !isClient() && d.capabilities && d.capabilities.canViewFinancials && !e.financialsDone ? 'costi e margine (PMO o Manager)' : '',
         e.financialsDone && !e.financialsApproved ? 'approvazione di costi e margine (Manager)' : ''
       ].filter(Boolean);
       message = (missingDocs.length
@@ -1614,6 +1614,7 @@ function renderDetail() {
   const e = d.engagement;
   const st = statusPill(d);
   const owner = statusOwner(d);
+  const capabilities = d.capabilities || {};
   const TABS = [['docs', 'Documenti'], ['scope', 'Scope'], ['plan', 'Pianificazione'], ['cred', 'Credenziali'], ['reports', 'Reportistica']];
   const mailCount = (d.mailLog || []).length;
   const body = {
@@ -1676,10 +1677,10 @@ function renderDetail() {
             <dt>Cliente</dt><dd><span class="client-cell" style="justify-content:flex-end">${clientAvatar(clientFor(e))}<span>${esc(e.clientName)}</span></span></dd>
             <dt>Responsabile</dt><dd>${esc(e.owner)}</dd>
             <dt>Periodo</dt><dd>${period}</dd>
-            ${isClient() ? '' : `<dt>Ordine</dt><dd>${e.orderConfirmed ? esc(e.orderRef || 'Ricevuto') : 'Non ricevuto'}</dd>
-            <dt>Costi</dt><dd>${e.cost != null ? fmtMoney(e.cost) : '–'}</dd>
+            ${isClient() ? '' : `<dt>Ordine</dt><dd>${e.orderConfirmed ? esc(e.orderRef || 'Ricevuto') : 'Non ricevuto'}</dd>`}
+            ${capabilities.canViewFinancials ? `<dt>Costi</dt><dd>${e.cost != null ? fmtMoney(e.cost) : '–'}</dd>
             <dt>Margine</dt><dd>${e.margin != null ? fmtPercent(e.margin) : '–'}</dd>
-            <dt>Approvazione</dt><dd>${e.financialsApproved ? 'Approvato' : e.financialsDone ? 'In attesa' : '–'}</dd>`}
+            <dt>Approvazione</dt><dd>${e.financialsApproved ? 'Approvato' : e.financialsDone ? 'In attesa' : '–'}</dd>` : ''}
           </dl>
           <div class="divider"></div>
           <div class="chips side-chips">
@@ -1771,38 +1772,40 @@ function tabDocs(d) {
           ? `<button class="btn acc sm" data-act="register-order">Registra ordine ricevuto</button>`
           : pill(['In attesa ordine', 'warn']));
 
-    const finDone = !!e.financialsDone && e.cost != null && e.margin != null;
-    const finApproved = !!e.financialsApproved;
-    const canEditFin = !!c.canEditFinancials;
-    const canApproveFin = !!c.canApproveFinancials;
-    const finTotal = finDone ? financialValue(e.cost, e.margin) : null;
-    const finEdit = canEditFin
-      ? '<button class="btn sec sm" data-act="edit-financials">Modifica</button>'
-      : '';
+    if (c.canViewFinancials) {
+      const finDone = !!e.financialsDone && e.cost != null && e.margin != null;
+      const finApproved = !!e.financialsApproved;
+      const canEditFin = !!c.canEditFinancials;
+      const canApproveFin = !!c.canApproveFinancials;
+      const finTotal = finDone ? financialValue(e.cost, e.margin) : null;
+      const finEdit = canEditFin
+        ? '<button class="btn sec sm" data-act="edit-financials">Modifica</button>'
+        : '';
 
-    let finSubtitle;
-    let finAction;
+      let finSubtitle;
+      let finAction;
 
-    if (!finDone) {
-      finSubtitle = 'Da compilare da PMO o Manager nella prima fase';
-      finAction = canEditFin
-        ? '<button class="btn pri sm" data-act="edit-financials">Compila</button>'
-        : pill(['Da completare', 'warn']);
-    } else if (!finApproved) {
-      finSubtitle = `Costo ${fmtMoney(e.cost)} · margine ${fmtPercent(e.margin)} · valore ${fmtMoney(finTotal)} · in attesa di approvazione del Manager`;
-      finAction = canApproveFin
-        ? `<span class="decision-group"><button class="decide yes sm" data-act="approve-financials">Approva</button>${finEdit}</span>`
-        : canEditFin
+      if (!finDone) {
+        finSubtitle = 'Da compilare da PMO o Manager nella prima fase';
+        finAction = canEditFin
+          ? '<button class="btn pri sm" data-act="edit-financials">Compila</button>'
+          : pill(['Da completare', 'warn']);
+      } else if (!finApproved) {
+        finSubtitle = `Costo ${fmtMoney(e.cost)} · margine ${fmtPercent(e.margin)} · valore ${fmtMoney(finTotal)} · in attesa di approvazione del Manager`;
+        finAction = canApproveFin
+          ? `<span class="decision-group"><button class="decide yes sm" data-act="approve-financials">Approva</button>${finEdit}</span>`
+          : canEditFin
+            ? finEdit
+            : pill(['In attesa di approvazione', 'wait']);
+      } else {
+        finSubtitle = `Costo ${fmtMoney(e.cost)} · margine ${fmtPercent(e.margin)} · valore ${fmtMoney(finTotal)} · approvato dal Manager${e.financialsApprovedDate ? ` il ${fmt(e.financialsApprovedDate)}` : ''}`;
+        finAction = canEditFin
           ? finEdit
-          : pill(['In attesa di approvazione', 'wait']);
-    } else {
-      finSubtitle = `Costo ${fmtMoney(e.cost)} · margine ${fmtPercent(e.margin)} · valore ${fmtMoney(finTotal)} · approvato dal Manager${e.financialsApprovedDate ? ` il ${fmt(e.financialsApprovedDate)}` : ''}`;
-      finAction = canEditFin
-        ? finEdit
-        : pill(['Approvato', 'ok']);
-    }
+          : pill(['Approvato', 'ok']);
+      }
 
-    html += docRow('EUR', 'Costi e margine', finSubtitle, finAction);
+      html += docRow('EUR', 'Costi e margine', finSubtitle, finAction);
+    }
   }
 
   if (canCreds) {

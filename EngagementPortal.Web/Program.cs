@@ -2231,6 +2231,8 @@ static object Detail(
         ? engagement.Reports.Where(report => report.Published).ToList()
         : engagement.Reports.ToList();
 
+    var canViewFinancials = EngagementWorkflow.CanViewFinancials(user.Role);
+
     var mailLog = user.Role == Roles.Client
         ? engagement.MailLog
             .Where(entry => entry.Visibility == "All")
@@ -2255,27 +2257,23 @@ static object Detail(
                 ? null
                 : engagement.OrderRef,
             engagement.DocumentoIngaggioFile,
-            Cost = user.Role == Roles.Client
-                ? null
-                : engagement.Cost,
-            Margin = user.Role == Roles.Client
-                ? null
-                : engagement.Margin,
+            Cost = canViewFinancials ? engagement.Cost : null,
+            Margin = canViewFinancials ? engagement.Margin : null,
             FinancialsDone = engagement.FinancialsDone,
             FinancialsApproved = engagement.FinancialsApproved,
             FinancialsPending = engagement.FinancialsPending,
-            FinancialsSetByRole = user.Role == Roles.Client
-                ? null
-                : engagement.FinancialsSetByRole,
-            FinancialsSetBy = user.Role == Roles.Client
-                ? null
-                : engagement.FinancialsSetBy,
-            FinancialsApprovedBy = user.Role == Roles.Client
-                ? null
-                : engagement.FinancialsApprovedBy,
-            FinancialsApprovedDate = user.Role == Roles.Client
-                ? null
-                : engagement.FinancialsApprovedDate,
+            FinancialsSetByRole = canViewFinancials
+                ? engagement.FinancialsSetByRole
+                : null,
+            FinancialsSetBy = canViewFinancials
+                ? engagement.FinancialsSetBy
+                : null,
+            FinancialsApprovedBy = canViewFinancials
+                ? engagement.FinancialsApprovedBy
+                : null,
+            FinancialsApprovedDate = canViewFinancials
+                ? engagement.FinancialsApprovedDate
+                : null,
             engagement.ScopeDone,
             engagement.CredentialsDone,
             ReviewStatus = engagement.ReviewStatus,
@@ -2356,6 +2354,7 @@ static object Detail(
                 engagement, user, workflow),
             CanEditFinancials = CanEditFinancials(
                 engagement, user, workflow),
+            CanViewFinancials = canViewFinancials,
             CanApproveFinancials = CanApproveFinancials(
                 engagement, user, workflow),
             CanInviteTeam = Team.CanInvite(user.Role),

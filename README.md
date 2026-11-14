@@ -364,3 +364,5 @@ Aprire `http://localhost:5xxx` (la porta è indicata nel log di avvio).
 - `improvement.md` — piano di evoluzione
 - `EngagementPortal.Web/wwwroot/engagement-ux-proposals.html` — tre proposte
   navigabili per il layout del dettaglio engagement (inline editing e workflow)
+- `EngagementPortal.Web/wwwroot/engagement-ux-split-variants.html` — split editor
+  in 4 varianti, con profilo demo e visibilità costi solo per PMO/Manager
