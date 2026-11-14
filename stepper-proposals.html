@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Barra di avanzamento — proposte</title>
+<style>
+  :root{
+    --brand-950:#061d36; --brand-900:#0a2a4d; --brand-700:#0f4275;
+    --brand-600:#0b5fa5; --brand-500:#2a86d8; --brand-100:#e1eefa;
+    --brand-50:#f1f7fc;
+    --accent:#0e9fb5; --accent-soft:#d6f4f8;
+    --ink:#0a1b2e; --muted:#566a80; --line:#dfe7ef; --bg:#f4f7fa; --card:#fff;
+    --st-action:#b42318; --st-action-bg:#fee4e2;
+    --st-wait:#7a5b00; --st-wait-bg:#fff8c5;
+    --st-done:#067647; --st-done-bg:#dcfae6;
+    --radius:14px;
+    --shadow:0 1px 2px rgba(6,29,54,.06),0 6px 20px rgba(6,29,54,.06);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 "Segoe UI",system-ui,-apple-system,sans-serif}
+  .wrap{max-width:1000px;margin:0 auto;padding:30px 24px 60px}
+  h1{font-size:26px;margin:0 0 6px;color:var(--brand-950)}
+  .lead{color:var(--muted);margin:0 0 6px;max-width:70ch}
+  .meta{display:flex;gap:10px;flex-wrap:wrap;align-items:center;color:var(--muted);font-size:12.5px;margin-bottom:26px}
+  .meta .v{background:var(--brand-100);color:var(--brand-700);border-radius:999px;padding:3px 10px;font-weight:600}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px 24px;margin-bottom:20px}
+  .head{display:flex;gap:14px;align-items:flex-start;margin-bottom:20px}
+  .tag{flex:none;width:30px;height:30px;border-radius:9px;background:var(--brand-900);color:#fff;display:grid;place-items:center;font-weight:800;font-size:14px}
+  .head h2{font-size:16.5px;margin:0 0 2px;color:var(--brand-900)}
+  .head p{margin:0;color:var(--muted);font-size:13px;max-width:76ch}
+  .demo{border:1px dashed #cfdae6;border-radius:12px;padding:22px 20px;background:linear-gradient(180deg,#fbfdff,#fff)}
+  .demo + .note{margin-top:12px}
+  .ctx{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+  .ctx b{font-size:14.5px}
+  .ctx span{color:var(--muted);font-size:12.5px}
+  .pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600;background:var(--st-wait-bg);color:var(--st-wait);border:1px solid #eac54f}
+  .pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+  .note{font-size:12.5px;color:var(--muted);display:flex;gap:8px;align-items:flex-start}
+  .note b{color:var(--ink)}
+  .pc{display:grid;grid-template-columns:1fr 1fr;gap:8px 20px;margin-top:14px;font-size:12.5px;color:var(--muted)}
+  .pc div{display:flex;gap:7px;align-items:flex-start}
+  .pc .up{color:var(--st-done);font-weight:800}
+  .pc .down{color:var(--st-action);font-weight:800}
+  .icon{width:20px;height:20px;flex:none}
+  .icon.sm{width:16px;height:16px}
+  .icon.xs{width:14px;height:14px}
+
+  /* ---------- A · attuale ---------- */
+  .stepA{display:grid;grid-template-columns:repeat(5,1fr);list-style:none;margin:0;padding:0}
+  .stepA li{position:relative;text-align:center;padding:0 6px}
+  .stepA li::before{content:"";position:absolute;top:17px;left:-50%;width:100%;height:3px;background:var(--line)}
+  .stepA li:first-child::before{display:none}
+  .stepA li.done::before,.stepA li.cur::before{background:var(--accent)}
+  .stepA .dot{position:relative;z-index:1;width:36px;height:36px;border-radius:50%;margin:0 auto 8px;display:grid;place-items:center;background:#fff;border:3px solid var(--line);font-weight:700;color:var(--muted);font-size:13px}
+  .stepA li.done .dot{background:var(--accent);border-color:var(--accent);color:var(--brand-950)}
+  .stepA li.cur .dot{border-color:var(--brand-500);color:var(--brand-600);box-shadow:0 0 0 5px var(--brand-100)}
+  .stepA b{display:block;font-size:12.5px;color:var(--brand-900)}
+  .stepA span{font-size:11px;color:var(--muted)}
+
+  /* ---------- B · rail con icone ---------- */
+  .rail{position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:0;padding-top:6px}
+  .rail .track{position:absolute;left:10%;right:10%;top:25px;height:3px;background:var(--line);border-radius:2px;z-index:0}
+  .rail .fill{height:100%;width:50%;background:var(--accent);border-radius:2px}
+  .rail .node{position:relative;z-index:1;text-align:center;padding:0 4px}
+  .rail .dot{position:relative;width:40px;height:40px;border-radius:50%;margin:0 auto 10px;display:grid;place-items:center;background:#fff;border:2px solid var(--line);color:#94a3b3}
+  .rail .node.done .dot{background:var(--accent);border-color:var(--accent);color:var(--brand-950)}
+  .rail .node.cur .dot{border-color:var(--brand-500);color:var(--brand-600);box-shadow:0 0 0 5px var(--brand-100)}
+  .rail .node.future .dot{background:#fff}
+  .rail .badge{position:absolute;right:-3px;bottom:-3px;width:16px;height:16px;border-radius:50%;background:var(--st-done);color:#fff;display:grid;place-items:center;border:2px solid #fff}
+  .rail .node b{display:block;font-size:12.5px;color:var(--brand-900);line-height:1.25}
+  .rail .node.future b{color:var(--muted)}
+  .rail .node span{display:block;font-size:11px;color:var(--muted);line-height:1.3;margin-top:2px}
+  .rail .node.cur span{color:var(--brand-600);font-weight:600}
+  .counter{display:flex;justify-content:flex-end;align-items:center;gap:6px;font-size:12px;color:var(--muted);margin-top:14px}
+  .counter b{color:var(--brand-900)}
+
+  /* ---------- C · segmenti ---------- */
+  .segbar{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+  .seg{display:flex;align-items:center;gap:7px;padding:10px 12px;border-radius:10px;font-size:12.5px;font-weight:600;border:1px solid var(--line);background:#f7fafc;color:var(--muted);white-space:nowrap;overflow:hidden}
+  .seg span{overflow:hidden;text-overflow:ellipsis}
+  .seg.done{background:var(--accent-soft);border-color:#b9e6ee;color:var(--brand-900)}
+  .seg.cur{background:#fff;border-color:var(--brand-500);color:var(--brand-600);box-shadow:0 0 0 3px var(--brand-100)}
+  .seg .icon{color:inherit}
+  .segbar + .counter{margin-top:12px}
+
+  /* ---------- D · timeline ---------- */
+  .timeline{list-style:none;margin:0;padding:0;max-width:520px}
+  .timeline li{display:flex;gap:14px;position:relative;padding-bottom:18px}
+  .timeline li:last-child{padding-bottom:0}
+  .timeline li::before{content:"";position:absolute;left:15px;top:34px;bottom:0;width:2px;background:var(--line)}
+  .timeline li.done::before{background:var(--accent)}
+  .timeline li:last-child::before{display:none}
+  .timeline .dot{width:32px;height:32px;border-radius:50%;flex:none;display:grid;place-items:center;background:#fff;border:2px solid var(--line);color:#94a3b3;position:relative;z-index:1}
+  .timeline li.done .dot{background:var(--accent);border-color:var(--accent);color:var(--brand-950)}
+  .timeline li.cur .dot{border-color:var(--brand-500);color:var(--brand-600);box-shadow:0 0 0 4px var(--brand-100)}
+  .timeline .txt{padding-top:4px}
+  .timeline .txt b{display:block;font-size:13px;color:var(--brand-900)}
+  .timeline .txt span{font-size:12px;color:var(--muted)}
+  .timeline li.future .txt b{color:var(--muted)}
+
+  /* ---------- E · barra con tappe ---------- */
+  .bars{max-width:640px}
+  .bars .top{display:flex;justify-content:space-between;gap:12px;align-items:baseline;margin-bottom:20px}
+  .bars .top b{font-size:13px;color:var(--brand-900)}
+  .bars .top span{font-size:12px;color:var(--muted)}
+  .bars .track{position:relative;height:6px;background:var(--line);border-radius:999px;margin:0 11px}
+  .bars .fill{position:absolute;inset:0 auto 0 0;width:50%;background:var(--accent);border-radius:999px}
+  .bars .tick{position:absolute;top:50%;transform:translate(-50%,-50%);width:22px;height:22px;border-radius:50%;background:#fff;border:2px solid var(--line);display:grid;place-items:center;color:#94a3b3}
+  .bars .tick.done{background:var(--accent);border-color:var(--accent);color:var(--brand-950)}
+  .bars .tick.cur{border-color:var(--brand-500);color:var(--brand-600);box-shadow:0 0 0 4px var(--brand-100)}
+  .bars .tick .icon{width:11px;height:11px}
+  .bars .labels{display:grid;grid-template-columns:repeat(5,1fr);margin-top:14px;font-size:11px;color:var(--muted)}
+  .bars .labels span{text-align:center;padding:0 2px;line-height:1.25}
+  .bars .labels span:first-child{text-align:left}
+  .bars .labels span:last-child{text-align:right}
+  .bars .labels .cur{color:var(--brand-600);font-weight:700}
+
+  .rec{background:var(--brand-900);color:#fff;border-radius:var(--radius);padding:22px 24px;margin-top:26px}
+  .rec h2{margin:0 0 8px;font-size:16px}
+  .rec p{margin:0 0 8px;color:#cfe0f2;font-size:13px;max-width:80ch}
+  .rec ul{margin:6px 0 0;padding-left:18px;font-size:13px;color:#e6eef8}
+  .rec li{margin-bottom:4px}
+  @media(max-width:720px){
+    .pc{grid-template-columns:1fr}
+    .segbar{grid-template-columns:repeat(5,minmax(0,1fr))}
+    .seg{justify-content:center;padding:10px 6px}
+    .seg span{display:none}
+    .rail .node span{display:none}
+  }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-doc" viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/><path d="M10 12h5M10 16h5"/></symbol>
+    <symbol id="i-cal" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></symbol>
+    <symbol id="i-key" viewBox="0 0 24 24"><circle cx="9" cy="9" r="4"/><path d="M12 12l7 7M16 16l2-2M18 18l2-2"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M10 8.5l6 3.5-6 3.5z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20h16"/><path d="M7 20v-6M12 20v-10M17 20v-4"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></symbol>
+  </defs>
+</svg>
+
+<div class="wrap">
+  <h1>Barra di avanzamento — proposte</h1>
+  <p class="lead">Anteprima statica delle alternative per lo stepper del dettaglio engagement. Nessuna modifica all'applicazione: il file serve solo a confrontare le opzioni.</p>
+  <div class="meta">
+    <span class="v">Palette attuale</span>
+    <span class="v">Stato di esempio: passo 3 di 5</span>
+    <span class="v">Icone SVG inline</span>
+  </div>
+
+  <div class="card">
+    <div class="head">
+      <span class="tag">A</span>
+      <div><h2>Attuale — numeri e linea</h2>
+        <p>Quello che c'è oggi: cerchi numerati, tratto continuo e etichetta su due righe. È chiaro ma non comunica il tipo di attività.</p></div>
+    </div>
+    <div class="demo">
+      <div class="ctx"><div><b>External Penetration Test</b><br><span>ENG-2026-001 · Penetration Test · Contoso</span></div><span class="pill">Preparazione in corso</span></div>
+      <ol class="stepA">
+        <li class="done"><div class="dot">✓</div><div><b>Scheda tecnica + Ordine</b><span>Scheda tecnica con manleva e ordine</span></div></li>
+        <li class="done"><div class="dot">✓</div><div><b>Pianificazione</b><span>Proposta e accettazione</span></div></li>
+        <li class="cur"><div class="dot">3</div><div><b>Scope e credenziali</b><span>Dati di accesso e perimetro</span></div></li>
+        <li><div class="dot">4</div><div><b>Esecuzione</b><span>Attività in corso</span></div></li>
+        <li><div class="dot">5</div><div><b>Report</b><span>Revisione e consegna</span></div></li>
+      </ol>
+    </div>
+    <div class="pc">
+      <div><span class="up">+</span><span>Numeri leggibili, ordine esplicito, nessuna ambiguità.</span></div>
+      <div><span class="down">−</span><span>Non dice cosa si fa in ogni fase: serve leggere il sottotitolo.</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="head">
+      <span class="tag">B</span>
+      <div><h2>Rail con icone <span style="color:var(--st-done);font-size:12px;font-weight:700">consigliata</span></h2>
+        <p>Le icone identificano la fase a colpo d'occhio; il tratto colorato misura l'avanzamento. Il passo corrente ha un alone e il conteggio "3 di 5".</p></div>
+    </div>
+    <div class="demo">
+      <div class="ctx"><div><b>External Penetration Test</b><br><span>ENG-2026-001 · Penetration Test · Contoso</span></div><span class="pill">Preparazione in corso</span></div>
+      <div class="rail">
+        <div class="track"><div class="fill"></div></div>
+        <div class="node done"><div class="dot"><svg class="icon"><use href="#i-doc"/></svg><span class="badge"><svg class="icon xs"><use href="#i-check"/></svg></span></div><b>Documenti</b><span>Scheda e ordine</span></div>
+        <div class="node done"><div class="dot"><svg class="icon"><use href="#i-cal"/></svg><span class="badge"><svg class="icon xs"><use href="#i-check"/></svg></span></div><b>Pianificazione</b><span>Date concordate</span></div>
+        <div class="node cur"><div class="dot"><svg class="icon"><use href="#i-key"/></svg></div><b>Scope e credenziali</b><span>Passo corrente</span></div>
+        <div class="node future"><div class="dot"><svg class="icon"><use href="#i-play"/></svg></div><b>Esecuzione</b><span>Attività in corso</span></div>
+        <div class="node future"><div class="dot"><svg class="icon"><use href="#i-chart"/></svg></div><b>Report</b><span>Revisione e consegna</span></div>
+      </div>
+      <div class="counter">Passo <b>3</b> di 5</div>
+    </div>
+    <div class="pc">
+      <div><span class="up">+</span><span>Riconoscibile senza leggere; il tipo di fase resta visibile anche su schermi piccoli.</span></div>
+      <div><span class="down">−</span><span>Più spazio verticale dell'attuale; le icone devono restare coerenti in tutta l'app.</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="head">
+      <span class="tag">C</span>
+      <div><h2>Segmenti con icone</h2>
+        <p>Una barra a segmenti compatti: ogni fase è una tessera con icona ed etichetta breve. Ideale subito sopra le tab, dove lo spazio è poco.</p></div>
+    </div>
+    <div class="demo">
+      <div class="ctx"><div><b>External Penetration Test</b><br><span>ENG-2026-001 · Penetration Test · Contoso</span></div><span class="pill">Preparazione in corso</span></div>
+      <div class="segbar">
+        <div class="seg done"><svg class="icon sm"><use href="#i-check"/></svg><span>Documenti</span></div>
+        <div class="seg done"><svg class="icon sm"><use href="#i-check"/></svg><span>Pianificazione</span></div>
+        <div class="seg cur"><svg class="icon sm"><use href="#i-key"/></svg><span>Scope e credenziali</span></div>
+        <div class="seg"><svg class="icon sm"><use href="#i-play"/></svg><span>Esecuzione</span></div>
+        <div class="seg"><svg class="icon sm"><use href="#i-chart"/></svg><span>Report</span></div>
+      </div>
+      <div class="counter">Passo <b>3</b> di 5</div>
+    </div>
+    <div class="pc">
+      <div><span class="up">+</span><span>Molto compatta, ottima su mobile e nelle liste dense.</span></div>
+      <div><span class="down">−</span><span>Meno solenne: non dà la sensazione di "percorso" come il rail.</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="head">
+      <span class="tag">D</span>
+      <div><h2>Timeline verticale</h2>
+        <p>La stessa informazione in verticale, con icona, titolo e descrizione. Utile su mobile o in una colonna laterale del dettaglio.</p></div>
+    </div>
+    <div class="demo">
+      <div class="ctx"><div><b>External Penetration Test</b><br><span>ENG-2026-001 · Penetration Test · Contoso</span></div><span class="pill">Preparazione in corso</span></div>
+      <ul class="timeline">
+        <li class="done"><span class="dot"><svg class="icon sm"><use href="#i-check"/></svg></span><div class="txt"><b>Documenti</b><span>Scheda tecnica e ordine ricevuti</span></div></li>
+        <li class="done"><span class="dot"><svg class="icon sm"><use href="#i-check"/></svg></span><div class="txt"><b>Pianificazione</b><span>Date concordate</span></div></li>
+        <li class="cur"><span class="dot"><svg class="icon sm"><use href="#i-key"/></svg></span><div class="txt"><b>Scope e credenziali</b><span>Passo corrente · in attesa del cliente</span></div></li>
+        <li class="future"><span class="dot"><svg class="icon sm"><use href="#i-play"/></svg></span><div class="txt"><b>Esecuzione</b><span>Attività in corso</span></div></li>
+        <li class="future"><span class="dot"><svg class="icon sm"><use href="#i-chart"/></svg></span><div class="txt"><b>Report</b><span>Revisione e consegna</span></div></li>
+      </ul>
+    </div>
+    <div class="pc">
+      <div><span class="up">+</span><span>Leggibile, accessibile e perfetta su mobile; spazio per dettagli e date.</span></div>
+      <div><span class="down">−</span><span>Occupa molto spazio in alto nel dettaglio desktop.</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="head">
+      <span class="tag">E</span>
+      <div><h2>Barra con tappe</h2>
+        <p>Una barra sottile con cinque tappe icona: il massimo della compattezza. Il nome del passo corrente sta sopra, le etichette sotto in piccolo.</p></div>
+    </div>
+    <div class="demo">
+      <div class="ctx"><div><b>External Penetration Test</b><br><span>ENG-2026-001 · Penetration Test · Contoso</span></div><span class="pill">Preparazione in corso</span></div>
+      <div class="bars">
+        <div class="top"><b>Scope e credenziali</b><span>Passo 3 di 5</span></div>
+        <div class="track">
+          <div class="fill"></div>
+          <span class="tick done" style="left:0"><svg class="icon"><use href="#i-check"/></svg></span>
+          <span class="tick done" style="left:25%"><svg class="icon"><use href="#i-check"/></svg></span>
+          <span class="tick cur" style="left:50%"><svg class="icon"><use href="#i-key"/></svg></span>
+          <span class="tick" style="left:75%"><svg class="icon"><use href="#i-play"/></svg></span>
+          <span class="tick" style="left:100%"><svg class="icon"><use href="#i-chart"/></svg></span>
+        </div>
+        <div class="labels">
+          <span>Documenti</span><span>Pianificazione</span><span class="cur">Scope e credenziali</span><span>Esecuzione</span><span>Report</span>
+        </div>
+      </div>
+    </div>
+    <div class="pc">
+      <div><span class="up">+</span><span>Compatta e precisa; ottima come riepilogo persistente nell'header del dettaglio.</span></div>
+      <div><span class="down">−</span><span>Le etichette lunghe vanno accorciate o nascoste su schermi piccoli.</span></div>
+    </div>
+  </div>
+
+  <div class="rec">
+    <h2>Raccomandazione</h2>
+    <p>Usare <b>B (rail con icone)</b> nel dettaglio desktop e <b>C (segmenti)</b> sotto i 760 px, dove il rail perderebbe le descrizioni. <b>E</b> è la scelta migliore se lo stepper deve restare visibile durante lo scroll.</p>
+    <ul>
+      <li>Stati: completato con icona + check, corrente con alone e testo "Passo 3 di 5", futuri in grigio.</li>
+      <li>Mai solo colore: ogni tappa ha icona e testo; il corrente ha <code>aria-current="step"</code>.</li>
+      <li>Il tratto colorato misura l'avanzamento reale, non il numero di passi completati.</li>
+      <li>Le icone restano le stesse in lista, dettaglio e notifiche, per creare un linguaggio comune.</li>
+    </ul>
+  </div>
+</div>
+</body>
+</html>

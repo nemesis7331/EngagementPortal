@@ -1412,28 +1412,16 @@ static bool CanWrite(UserContext user) =>
     user.Role is Roles.Client or Roles.PMO;
 
 static bool CanSeeCredentials(UserContext user) =>
-    user.Role is Roles.Client or Roles.PMO or Roles.Pentester;
+    EngagementWorkflow.CanSeeCredentials(user.Role);
 
 static bool CanEditPreparation(
     Engagement engagement,
     UserContext user,
-    EngagementWorkflow workflow)
-{
-    if (engagement.AcceptedProposal is null)
-        return false;
-
-    var phase = workflow.Resolve(engagement);
-
-    return user.Role switch
-    {
-        Roles.Client => phase is EngagementPhase.Prep or
-            EngagementPhase.Scheduled,
-        Roles.PMO => phase is EngagementPhase.Prep or
-            EngagementPhase.Scheduled or
-            EngagementPhase.Running,
-        _ => false
-    };
-}
+    EngagementWorkflow workflow) =>
+    EngagementWorkflow.CanEditPreparation(
+        engagement,
+        user.Role,
+        workflow.Resolve(engagement));
 
 static object Summary(
     Engagement engagement,
@@ -1454,6 +1442,10 @@ static object Summary(
         Phase = phase,
         StepIndex = EngagementWorkflow.StepIndex(phase),
         Todo = todos.Resolve(engagement, user.Role),
+        ActionState = todos.ResolveAction(
+            engagement,
+            user.Role,
+            clock.Today),
         PeriodStart = engagement.AcceptedProposal?.StartDate,
         PeriodEnd = engagement.AcceptedProposal?.EndDate,
         ReportCount = user.Role == Roles.Client
@@ -1518,6 +1510,11 @@ static object Detail(
         Phase = phase,
         StepIndex = EngagementWorkflow.StepIndex(phase),
         Todo = todos.Resolve(engagement, user.Role),
+        ActionState = todos.ResolveAction(
+            engagement,
+            user.Role,
+            clock.Today),
+        TabStates = todos.ResolveTabs(engagement, user.Role, phase),
         Audit = VisibleAudit(engagement, user),
         Scope = engagement.Scope,
         Credentials = CanSeeCredentials(user)

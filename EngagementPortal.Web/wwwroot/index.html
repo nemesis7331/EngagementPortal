@@ -10,20 +10,25 @@
   --brand-950:#061d36;
   --brand-900:#0a2a4d;
   --brand-700:#0f4275;
-  --brand-600:#0d63b5;
+  --brand-600:#0b5fa5;
   --brand-500:#2a86d8;
   --brand-100:#e1eefa;
   --brand-50:#f1f7fc;
-  --accent:#19c3d6;
+  --accent:#0e9fb5;
   --accent-soft:#d6f4f8;
   --ink:#0a1b2e;
   --muted:#566a80;
   --line:#dfe7ef;
   --bg:#f4f7fa;
   --card:#ffffff;
-  --ok:#0b7a55; --ok-bg:#def7ec;
-  --warn:#8a5a00; --warn-bg:#fef3c7;
-  --err:#d1344a; --err-bg:#fde8ec;
+  /* Token semantici di stato: il colore descrive chi deve agire. */
+  --st-action:#b42318;   --st-action-bg:#fee4e2;   --st-action-border:#fda29b;
+  --st-wait:#7a5b00;     --st-wait-bg:#fff8c5;     --st-wait-border:#eac54f;
+  --st-progress:#175cd3; --st-progress-bg:#d1e9ff; --st-progress-border:#b2ddff;
+  --st-done:#067647;     --st-done-bg:#dcfae6;     --st-done-border:#a9efc5;
+  --st-blocked:#475467;  --st-blocked-bg:#f2f4f7;  --st-blocked-border:#e4e7ec;
+  --st-neutral:#475467;  --st-neutral-bg:#f2f4f7;  --st-neutral-border:#e4e7ec;
+  --st-negative:#b42318; --st-negative-bg:#fee4e2; --st-negative-border:#fda29b;
   --radius:14px;
   --shadow:0 1px 2px rgba(6,29,54,.06),0 6px 20px rgba(6,29,54,.06);
 }
@@ -37,11 +42,9 @@ header{background:linear-gradient(100deg,var(--brand-950),var(--brand-900) 60%,v
 .logo i{width:30px;height:30px;border-radius:9px;background:var(--accent);display:grid;place-items:center;color:var(--brand-950);font-style:normal;font-weight:800}
 .logo small{display:block;font-weight:400;font-size:11px;opacity:.7;letter-spacing:.4px;text-transform:uppercase}
 .spacer{flex:1}
-.roleSw{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);padding:5px 6px 5px 12px;border-radius:999px;font-size:12.5px}
-.roleSw select{background:#fff;color:var(--ink);border:0;border-radius:999px;padding:6px 12px;font:inherit;font-weight:600}
 .user{display:flex;align-items:center;gap:10px;font-size:13px}
 .avatar{width:34px;height:34px;border-radius:50%;background:var(--brand-500);display:grid;place-items:center;font-weight:700}
-.demo-banner{background:var(--warn-bg);color:#7a5200;text-align:center;font-size:12px;padding:5px}
+.demo-banner{background:var(--st-wait-bg);color:var(--st-wait);text-align:center;font-size:12px;padding:5px}
 /* Layout */
 main{max-width:1200px;margin:24px auto 60px;padding:0 24px}
 h1{font-size:26px;margin:0 0 4px;color:var(--brand-900)}
@@ -50,11 +53,19 @@ h2{font-size:17px;margin:0 0 12px;color:var(--brand-900)}
 .crumb{color:var(--brand-600);background:none;border:0;padding:0;margin-bottom:10px;font-weight:600}
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px}
 .grid{display:grid;gap:16px}
-.kpis{grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin-bottom:22px}
+.kpis{grid-template-columns:repeat(5,minmax(0,1fr));margin-bottom:22px}
+@media(max-width:1000px){.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:700px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:480px){.kpis{grid-template-columns:1fr}}
 .kpi b{display:block;font-size:28px;color:var(--brand-900);line-height:1.1}
 .kpi span{color:var(--muted);font-size:13px}
 .kpi{border-left:4px solid var(--brand-500)}
-.kpi.a{border-left-color:var(--accent)} .kpi.w{border-left-color:#f0b429}
+.kpi.action{border-left-color:var(--st-action)} .kpi.wait{border-left-color:var(--st-wait)}
+.kpi.progress{border-left-color:var(--st-progress)} .kpi.done{border-left-color:var(--st-done)}
+.kpi.action b{color:var(--st-action)} .kpi.wait b{color:var(--st-wait)}
+.kpi.progress b{color:var(--st-progress)} .kpi.done b{color:var(--st-done)}
+.kpi.zero{border-left-color:var(--st-neutral-border)}
+.kpi.zero b{color:var(--muted)}
 /* table */
 table{width:100%;border-collapse:collapse}
 th{text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);padding:10px 12px;border-bottom:1px solid var(--line)}
@@ -64,19 +75,22 @@ tr.row:hover{background:var(--brand-50)}
 tr:last-child td{border-bottom:0}
 .name b{display:block;color:var(--brand-900)} .name span{color:var(--muted);font-size:12.5px}
 /* pills */
-.pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap}
-.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
-.p-ok{background:var(--ok-bg);color:var(--ok)} .p-warn{background:var(--warn-bg);color:var(--warn)}
-.p-err{background:var(--err-bg);color:var(--err)} .p-info{background:var(--brand-100);color:var(--brand-600)}
-.p-mute{background:#eceff6;color:var(--muted)}
-.p-prog{background:#d6f4f8;color:#0a6f7c}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap;border:1px solid transparent}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
+.p-done,.p-ok{background:var(--st-done-bg);color:var(--st-done);border-color:var(--st-done-border)}
+.p-wait,.p-warn{background:var(--st-wait-bg);color:var(--st-wait);border-color:var(--st-wait-border)}
+.p-action{background:var(--st-action-bg);color:var(--st-action);border-color:var(--st-action-border)}
+.p-negative,.p-err{background:var(--st-negative-bg);color:var(--st-negative);border-color:var(--st-negative-border)}
+.p-progress,.p-info{background:var(--st-progress-bg);color:var(--st-progress);border-color:var(--st-progress-border)}
+.p-blocked,.p-neutral,.p-mute{background:var(--st-neutral-bg);color:var(--st-neutral);border-color:var(--st-neutral-border)}
+.p-prog{background:var(--st-progress-bg);color:var(--st-progress);border-color:var(--st-progress-border)}
 .mini{display:flex;gap:4px}.mini i{width:22px;height:6px;border-radius:3px;background:var(--line)}.mini i.on{background:var(--accent)}.mini i.cur{background:var(--brand-500)}
 /* buttons */
 .btn{border:1px solid transparent;border-radius:10px;padding:9px 16px;font-weight:600;transition:.15s}
 .btn.pri{background:var(--brand-600);color:#fff}.btn.pri:hover{background:var(--brand-700)}
 .btn.acc{background:var(--accent);color:var(--brand-950)}.btn.acc:hover{filter:brightness(.95)}
 .btn.sec{background:#fff;border-color:var(--line);color:var(--brand-900)}.btn.sec:hover{border-color:var(--brand-500)}
-.btn.dng{background:#fff;border-color:var(--err-bg);color:var(--err)}
+.btn.dng{background:#fff;border-color:var(--st-negative-border);color:var(--st-negative)}
 .btn.sm{padding:5px 11px;font-size:13px}
 .btn[disabled]{opacity:.45;cursor:not-allowed}
 /* stepper */
@@ -102,7 +116,7 @@ tr:last-child td{border-bottom:0}
 .ico{width:42px;height:42px;border-radius:10px;background:var(--brand-100);color:var(--brand-600);display:grid;place-items:center;font-weight:800;font-size:12px}
 .doc .t{flex:1}.doc .t b{display:block}.doc .t span{font-size:12.5px;color:var(--muted)}
 .note{background:var(--brand-50);border:1px solid var(--brand-100);border-radius:10px;padding:12px 14px;color:var(--brand-700);font-size:13.5px;margin-bottom:16px}
-.note.lockbox{background:#f1f3f8;border-color:var(--line);color:var(--muted)}
+.note.lockbox{background:var(--st-blocked-bg);border-color:var(--st-blocked-border);color:var(--st-blocked)}
 label{display:block;font-size:12.5px;font-weight:600;margin-bottom:5px;color:var(--brand-900)}
 input[type=text],input[type=date],textarea,select.f,#modal select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font:inherit;background:#fff}
 input:focus,textarea:focus,select:focus{outline:2px solid var(--brand-500);outline-offset:-1px}
@@ -123,14 +137,24 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--brand-500);outli
 .mailc{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;padding:16px 0;border-bottom:1px solid var(--line)}.mailc:last-child{border-bottom:0}.mailc .t{flex:1;min-width:240px}.mailc .t b{display:block;color:var(--brand-900)}.mailc .t span{color:var(--muted);font-size:12.5px;display:block}.mailc .ctl{display:flex;flex-direction:column;gap:10px;align-items:flex-end}
 /* stato schede */
 .tab::before{content:"";display:inline-block;min-width:16px;height:16px;line-height:16px;border-radius:50%;margin-right:7px;font-size:11px;font-weight:800;text-align:center;vertical-align:1px}
-.tab.s-ok::before{content:"✓";background:var(--ok);color:#fff}.tab.s-todo::before{content:"!";background:#f0b429;color:#3b2a00}.tab.s-wait::before{content:"…";background:var(--brand-100);color:var(--brand-600)}.tab.s-lock::before,.tab.s-none::before{display:none}
-.tab.s-ok,.tab.s-ok.on{color:var(--ok)}.tab.s-todo,.tab.s-todo.on{color:var(--warn)}.tab.s-wait,.tab.s-wait.on{color:var(--brand-600)}.tab.s-lock,.tab.s-lock.on{color:#667689}
-.tab.s-ok.on{border-bottom-color:var(--ok)}.tab.s-todo.on{border-bottom-color:#f0b429}.tab.s-wait.on{border-bottom-color:var(--brand-600)}.tab.s-lock.on{border-bottom-color:#667689}
+.tab.s-ok::before{content:"✓";background:var(--st-done);color:#fff}
+.tab.s-todo::before{content:"!";background:var(--st-action);color:#fff}
+.tab.s-wait::before{content:"…";background:var(--st-wait-bg);color:var(--st-wait);border:1px solid var(--st-wait-border)}
+.tab.s-lock::before,.tab.s-none::before{display:none}
+.tab.s-ok,.tab.s-ok.on{color:var(--st-done)}
+.tab.s-todo,.tab.s-todo.on{color:var(--st-action)}
+.tab.s-wait,.tab.s-wait.on{color:var(--st-wait)}
+.tab.s-lock,.tab.s-lock.on{color:var(--st-blocked)}
+.tab.s-ok.on{border-bottom-color:var(--st-done)}
+.tab.s-todo.on{border-bottom-color:var(--st-action)}
+.tab.s-wait.on{border-bottom-color:var(--st-wait)}
+.tab.s-lock.on{border-bottom-color:var(--st-blocked)}
 .chips{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 18px}.chipb{display:inline-flex;gap:6px;align-items:center;border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 14px;font:inherit;font-size:13px;font-weight:600;color:var(--muted)}.chipb:hover{border-color:var(--brand-500)}.chipb.on{border-color:var(--brand-600);color:var(--brand-600);box-shadow:0 0 0 2px var(--brand-100)}
+.chips.secondary{margin:-4px 0 16px}.chips.secondary .chipb{padding:5px 11px;font-size:12.5px;background:var(--brand-50);color:var(--brand-700);border-color:var(--brand-100)}.chips.secondary .chipb.on{background:#fff;border-color:var(--brand-600);color:var(--brand-600)}
 .cnt{display:inline-block;min-width:20px;padding:0 6px;border-radius:999px;background:#eceff6;color:var(--muted);font-size:12px;font-weight:700;text-align:center}.chipb.on .cnt{background:var(--brand-100);color:var(--brand-600)}
 .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:-8px 0 18px}.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
 @media(max-width:820px){
-  .tab.s-ok{background:var(--ok-bg);border-color:#b7ebd3}.tab.s-todo{background:var(--warn-bg);border-color:#f3d48a}.tab.s-wait{background:var(--brand-50);border-color:var(--brand-100)}.tab.s-lock{background:#f1f3f8}
+  .tab.s-ok{background:var(--st-done-bg);border-color:var(--st-done-border)}.tab.s-todo{background:var(--st-action-bg);border-color:var(--st-action-border)}.tab.s-wait{background:var(--st-wait-bg);border-color:var(--st-wait-border)}.tab.s-lock{background:var(--st-blocked-bg)}
   .tabs{flex-wrap:wrap;overflow:visible;border-bottom:0;gap:8px;margin:18px 0 14px}
   .tab{border:1px solid var(--line);border-radius:999px;padding:7px 13px;background:#fff;font-size:13px}
   .tab.on{box-shadow:0 0 0 2px var(--brand-600);font-weight:700}
@@ -142,7 +166,7 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--brand-500);outli
   .doc{flex-wrap:wrap}.doc .t{min-width:60%}
   .mailc .ctl{align-items:flex-start}
 }
-.legend b{display:inline-block;width:16px;height:16px;line-height:16px;text-align:center;border-radius:50%;font-size:11px;margin-right:6px}.g-ok{background:var(--ok);color:#fff}.g-todo{background:#f0b429;color:#3b2a00}.g-wait{background:var(--brand-100);color:var(--brand-600)}
+.legend b{display:inline-block;width:16px;height:16px;line-height:16px;text-align:center;border-radius:50%;font-size:11px;margin-right:6px}.g-done{background:var(--st-done);color:#fff}.g-action{background:var(--st-action);color:#fff}.g-wait{background:var(--st-wait-bg);color:var(--st-wait);border:1px solid var(--st-wait-border)}.g-progress{background:var(--st-progress-bg);color:var(--st-progress)}.g-blocked{background:var(--st-blocked-bg);color:var(--st-blocked)}
 .badge-kind{background:var(--brand-100);color:var(--brand-700);padding:2px 8px;border-radius:6px;font-size:11px;font-weight:700;margin-left:6px}
 .linkb{background:none;border:0;padding:0;text-align:left;font:inherit;color:inherit;cursor:pointer}
 .seg{display:inline-flex;background:#e9eef5;border-radius:999px;padding:4px;margin-bottom:18px}.seg button{border:0;background:none;padding:7px 16px;border-radius:999px;font-weight:600;color:var(--muted)}.seg button.on{background:#fff;color:var(--brand-900);box-shadow:var(--shadow)}
@@ -152,6 +176,69 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 #toast.show{transform:translate(-50%,0);opacity:1}
 .hint{color:var(--muted);font-size:12.5px;margin:0}
 .empty{text-align:center;color:var(--muted);padding:26px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+/* note semantiche */
+.note.action{background:var(--st-action-bg);border-color:var(--st-action-border);color:var(--st-action)}
+.note.waiting{background:var(--st-wait-bg);border-color:var(--st-wait-border);color:var(--st-wait)}
+.note.progress{background:var(--st-progress-bg);border-color:var(--st-progress-border);color:var(--st-progress)}
+.note.done{background:var(--st-done-bg);border-color:var(--st-done-border);color:var(--st-done)}
+.note.blocked{background:var(--st-blocked-bg);border-color:var(--st-blocked-border);color:var(--st-blocked)}
+.note-head{display:flex;align-items:center;gap:8px;font-weight:700;margin-bottom:4px}
+.note-ico{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:800;background:currentColor;color:#fff;flex:none}
+.note.action .note-ico{background:var(--st-action)}
+.note.waiting .note-ico{background:var(--st-wait)}
+.note.progress .note-ico{background:var(--st-progress)}
+.note.done .note-ico{background:var(--st-done)}
+.note.blocked .note-ico{background:var(--st-blocked)}
+/* stato in lista */
+.status-cell{display:flex;flex-direction:column;gap:3px;align-items:flex-start}
+.status-detail{font-size:12.5px;color:var(--ink);max-width:280px;line-height:1.35}
+.status-owner{font-size:12px;color:var(--muted)}
+.status-age{font-size:11.5px;color:var(--st-wait);font-weight:700}
+.status-age.overdue{color:#8a4b00}
+.status-age.late{color:var(--st-action)}
+tr.row.is-action{background:#fffafa}
+tr.row.is-waiting{background:#fffdf5}
+tr.row.is-done{background:#fbfffc}
+tr.row.is-action td:first-child{box-shadow:inset 3px 0 var(--st-action)}
+tr.row.is-waiting td:first-child{box-shadow:inset 3px 0 var(--st-wait)}
+tr.row.is-done td:first-child{box-shadow:inset 3px 0 var(--st-done)}
+/* filtri lista */
+.filters{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:0 0 16px}
+.filters .search{flex:1;min-width:220px;max-width:360px}
+.filters .search input{margin:0}
+.filters .chipb{cursor:pointer}
+/* skeleton */
+.skeleton{background:linear-gradient(90deg,#eef3f8 25%,#f7fafc 37%,#eef3f8 63%);background-size:400% 100%;animation:sk 1.2s ease infinite;border-radius:8px;height:14px}
+@keyframes sk{0%{background-position:100% 50%}100%{background-position:0 50%}}
+/* busy */
+.btn.busy{pointer-events:none;opacity:.8}
+.btn.busy::after{content:"";display:inline-block;width:12px;height:12px;margin-left:8px;border:2px solid var(--brand-600);border-right-color:transparent;border-radius:50%;animation:spin .7s linear infinite;vertical-align:-2px}
+.btn.pri.busy::after{border-color:#fff;border-right-color:transparent}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* chrome demo */
+.demo-switch{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);padding:5px 6px;border-radius:999px;font-size:12px;flex-wrap:wrap}
+.demo-switch .demo-tag{background:rgba(255,255,255,.16);color:#fff;border-radius:999px;padding:3px 9px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase}
+.demo-switch label{display:flex;align-items:center;gap:6px;margin:0;color:rgba(255,255,255,.78);font-weight:600}
+.demo-switch select{background:#fff;color:var(--ink);border:0;border-radius:999px;padding:5px 10px;font:inherit;font-weight:600}
+.section-label{font-size:11px;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);font-weight:700;margin:18px 0 8px}
+.errorbox{background:var(--st-negative-bg);border:1px solid var(--st-negative-border);color:var(--st-negative);border-radius:10px;padding:14px 16px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+/* lista come card su mobile */
+@media(max-width:760px){
+  .list-table thead{display:none}
+  .list-table,.list-table tbody,.list-table tr,.list-table td{display:block;width:100%}
+  .list-table tr{border:1px solid var(--line);border-radius:12px;margin-bottom:12px;padding:10px 12px;background:#fff}
+  .list-table td{border:0;padding:6px 0;display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+  .list-table td::before{content:attr(data-label);color:var(--muted);font-size:12px;font-weight:600;flex:none}
+  .list-table td:first-child{display:block;padding-bottom:2px}
+  .list-table td:first-child::before{display:none}
+  .list-table td:last-child{text-align:left}
+  tr.row.is-action td:first-child,tr.row.is-waiting td:first-child,tr.row.is-done td:first-child{box-shadow:none}
+  .list-table tr.row.is-action{border-left:4px solid var(--st-action)}
+  .list-table tr.row.is-waiting{border-left:4px solid var(--st-wait)}
+  .list-table tr.row.is-done{border-left:4px solid var(--st-done)}
+  .status-detail{max-width:100%}
+}
 </style>
 </head>
 <body>
@@ -159,15 +246,18 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   <div class="hwrap">
     <div class="logo"><i>CE</i><div>Cyber Engagement Portal<small>Area clienti</small></div></div>
     <div class="spacer"></div>
-    <div class="roleSw">Visualizza come
-      <select id="role" aria-label="Profilo demo"></select>
-    </div>
-    <div class="roleSw">Tenant
-      <select id="tenant" aria-label="Tenant demo"></select>
+    <div class="demo-switch" role="group" aria-label="Modalità demo">
+      <span class="demo-tag">Demo</span>
+      <label for="role">Profilo
+        <select id="role" aria-label="Profilo demo"></select>
+      </label>
+      <label for="tenant">Tenant
+        <select id="tenant" aria-label="Tenant demo"></select>
+      </label>
     </div>
     <div class="user"><div class="avatar" id="av">–</div><div><div id="uname" style="font-weight:600"></div><div id="urole" style="opacity:.7;font-size:12px"></div></div></div>
   </div>
-  <div class="demo-banner">Ambiente dimostrativo – dati fittizi, i dati si azzerano al riavvio</div>
+  <div class="demo-banner">Modalità demo · dati fittizi · i dati si azzerano al riavvio</div>
 </header>
 
 <main id="app" tabindex="-1"></main>
@@ -230,17 +320,17 @@ const MAIL_META = {
   deliver: { t: 'Consegna deliverables', subj: 'Consegna deliverables', desc: 'Notifica la disponibilità dei report e degli altri deliverables.' }
 };
 const PROPOSAL_STATUS = {
-  Pending: ['In attesa', 'warn'],
-  Accepted: ['Accettata', 'ok'],
-  Rejected: ['Rifiutata', 'err'],
-  Superseded: ['Sostituita', 'mute'],
-  Replaced: ['Superata', 'mute']
+  Pending: ['In attesa', 'wait'],
+  Accepted: ['Accettata', 'done'],
+  Rejected: ['Rifiutata', 'negative'],
+  Superseded: ['Sostituita', 'neutral'],
+  Replaced: ['Superata', 'neutral']
 };
 const REVIEW_STATUS = {
-  None: ['Non inviata', 'mute'],
-  Pending: ['In attesa del manager', 'warn'],
-  Approved: ['Approvata', 'ok'],
-  Changes: ['Modifiche richieste', 'err']
+  None: ['Non inviata', 'neutral'],
+  Pending: ['In attesa del manager', 'wait'],
+  Approved: ['Approvata', 'done'],
+  Changes: ['Modifiche richieste', 'negative']
 };
 const VISIBILITY = {
   Client: 'scheda tecnica, documento di ingaggio, credenziali fornite e deliverables',
@@ -255,6 +345,10 @@ const state = {
   tenant: localStorage.getItem('cep.tenant') || 'tenant-provider',
   view: 'list',
   listTab: 'eng',
+  listFilter: 'all',
+  listQuery: '',
+  loading: false,
+  error: null,
   list: [],
   clients: [],
   detail: null,
@@ -296,8 +390,29 @@ const canManageClients = () => state.role === 'Manager';
 const tenantName = t => (state.clients.find(c => c.tenantId === t) || {}).name
   || (TENANTS.find(x => x[0] === t) || [t, t])[1];
 const pill = ([text, cls]) => `<span class="pill p-${cls}">${esc(text)}</span>`;
-const reviewLabel = s => REVIEW_STATUS[s] || [s, 'mute'];
-const proposalLabel = s => PROPOSAL_STATUS[s] || [s, 'mute'];
+function reviewLabel(s) {
+  if (s === 'Pending') {
+    return state.role === 'Manager'
+      ? ['Da fare: approva', 'action']
+      : ['In attesa del manager', 'wait'];
+  }
+  if (s === 'Changes') {
+    return state.role === 'Pentester'
+      ? ['Da fare: correggi', 'action']
+      : ['Modifiche richieste', 'negative'];
+  }
+  return REVIEW_STATUS[s] || [s, 'neutral'];
+}
+
+function proposalLabel(p) {
+  if (typeof p === 'string') return PROPOSAL_STATUS[p] || [p, 'neutral'];
+  if (p.status === 'Pending') {
+    return canDecideProposal(p)
+      ? ['Da decidere', 'action']
+      : ['In attesa', 'wait'];
+  }
+  return PROPOSAL_STATUS[p.status] || [p.status, 'neutral'];
+}
 
 function toast(msg) {
   const t = $('#toast');
@@ -363,6 +478,7 @@ function pickFile(accept) {
 /* ====== MODALE ====== */
 function ask({ title, text, fields = [], ok = 'Conferma', danger = false }) {
   return new Promise(resolve => {
+    const opener = document.activeElement;
     const fieldsHtml = fields.map(f => {
       const control = f.area
         ? `<textarea id="m_${esc(f.id)}" rows="3" placeholder="${esc(f.ph || '')}"></textarea>`
@@ -392,6 +508,7 @@ function ask({ title, text, fields = [], ok = 'Conferma', danger = false }) {
       $('#modal').classList.remove('show');
       $('#modal').innerHTML = '';
       document.removeEventListener('keydown', onKey);
+      if (opener && opener.isConnected && opener.focus) opener.focus();
       resolve(value);
     };
     const confirm = () => {
@@ -408,6 +525,7 @@ function ask({ title, text, fields = [], ok = 'Conferma', danger = false }) {
     $('#modal').querySelector('[data-modal="ok"]').onclick = confirm;
     const first = fields[0] && $('#m_' + fields[0].id);
     if (first) setTimeout(() => first.focus(), 30);
+    else setTimeout(() => $('#modal').querySelector('[data-modal="ok"]').focus(), 30);
   });
 }
 
@@ -501,28 +619,42 @@ async function setTab(tab) {
 
 /* ====== DATI ====== */
 async function loadList() {
+  state.loading = true;
+  state.error = null;
+  if (!state.list.length) render();
   try {
     state.list = await api('/api/engagements?' + qs());
     if (!isClient()) await loadSolicitations();
     else { state.rules = []; state.due = []; }
-    render();
   } catch (error) {
+    state.error = error.message;
     toast(error.message);
+  } finally {
+    state.loading = false;
+    render();
   }
 }
 
 async function loadDetail(id) {
+  state.loading = true;
+  state.error = null;
   try {
     const detail = await api(`/api/engagements/${encodeURIComponent(id)}?` + qs());
     state.detail = detail;
     if (!state.tab || state.tab === 'docs') state.tab = defaultTab(detail);
     if (state.tab === 'scope') await loadScope();
     if (state.tab === 'cred') await loadCredentials();
-    render();
   } catch (error) {
+    state.error = error.message;
     toast(error.message);
-    backToList();
+    state.view = 'list';
+    state.detail = null;
+    state.loading = false;
+    await loadList();
+    return;
   }
+  state.loading = false;
+  render();
 }
 
 async function refreshDetail() {
@@ -565,39 +697,84 @@ async function loadClients() {
 }
 
 /* ====== STATI WORKFLOW ====== */
-function listStatus(e) {
-  switch (e.phase) {
-    case 'Docs': return ['In attesa documenti', 'warn'];
-    case 'Planning': return e.pendingProposal ? ['Proposta da valutare', 'info'] : ['Da pianificare', 'warn'];
-    case 'Prep': return ['Preparazione in corso', 'warn'];
-    case 'Scheduled': return [`Pianificato dal ${fmt(e.periodStart)}`, 'info'];
-    case 'Running': return ['In esecuzione', 'info'];
-    case 'Reporting': return ['Report in progress', 'prog'];
-    case 'Done': return ['Completato', 'ok'];
-    default: return [e.phase, 'mute'];
+// La UI non ricalcola lo stato: legge actionState/tabStates dal server.
+function actionState(e) {
+  return e && e.actionState ? e.actionState : null;
+}
+
+function statusPill(e) {
+  const s = actionState(e);
+  if (!s) return ['Stato non disponibile', 'neutral'];
+  switch (s.kind) {
+    case 'action': return ['Da fare', 'action'];
+    case 'waiting': return ['In attesa', 'wait'];
+    case 'progress': return ['In corso', 'progress'];
+    case 'done': return ['Completato', 'done'];
+    case 'blocked': return ['Bloccato', 'blocked'];
+    default: return [s.label || 'Stato non disponibile', 'neutral'];
   }
 }
 
-function detailStatus(d) {
-  const e = d.engagement;
-  const pending = (e.proposals || []).some(p => p.status === 'Pending');
-  switch (d.phase) {
-    case 'Docs': return ['In attesa documenti', 'warn'];
-    case 'Planning': return pending ? ['Proposta da valutare', 'info'] : ['Da pianificare', 'warn'];
-    case 'Prep': return ['Preparazione in corso', 'warn'];
-    case 'Scheduled': return [`Pianificato dal ${fmt(e.acceptedProposal?.startDate)}`, 'info'];
-    case 'Running': return ['In esecuzione', 'info'];
-    case 'Reporting':
-      if (e.reviewStatus === 'Pending') return ['Report in revisione', 'prog'];
-      if (e.reviewStatus === 'Approved') return ['Report approvato – da pubblicare', 'prog'];
-      if (e.reviewStatus === 'Changes') return ['Report: modifiche richieste', 'prog'];
-      return ['Report in progress', 'prog'];
-    case 'Done': return ['Completato', 'ok'];
-    default: return [d.phase, 'mute'];
+function statusText(e) {
+  const s = actionState(e);
+  return s && s.label ? s.label : '';
+}
+
+function statusOwner(e) {
+  const s = actionState(e);
+  return s && s.kind === 'waiting' && s.ownerLabel ? s.ownerLabel : '';
+}
+
+function daysSince(date) {
+  if (!date) return null;
+  const d = new Date(String(date).substring(0, 10) + 'T00:00:00');
+  if (Number.isNaN(d.getTime())) return null;
+  const now = new Date(today() + 'T00:00:00');
+  return Math.max(0, Math.round((now - d) / 86400000));
+}
+
+function statusAge(e) {
+  const s = actionState(e);
+  if (!s || (s.kind !== 'action' && s.kind !== 'waiting')) return '';
+  const n = daysSince(s.since);
+  if (n === null || n < 1) return '';
+  const label = n === 1 ? 'da 1 giorno' : `da ${n} giorni`;
+  if (s.kind === 'action') {
+    return `<span class="status-age late">${label}</span>`;
   }
+  return `<span class="status-age ${n >= 5 ? 'overdue' : ''}">${label}</span>`;
+}
+
+function statusCell(e, withAction) {
+  const s = actionState(e);
+  const owner = statusOwner(e);
+  const quick = withAction && s && s.kind === 'action' && s.targetTab
+    ? `<button class="btn sec sm" data-act="open-action" data-id="${esc(e.id)}" data-tab="${esc(s.targetTab)}">Apri</button>`
+    : '';
+  return `<div class="status-cell">${pill(statusPill(e))}
+    ${statusText(e) ? `<span class="status-detail">${esc(statusText(e))}</span>` : ''}
+    ${owner ? `<span class="status-owner">In attesa di: ${esc(owner)}</span>` : ''}
+    ${statusAge(e)}${quick}</div>`;
+}
+
+function rowClass(e) {
+  const s = actionState(e);
+  return s ? ` is-${s.kind}` : '';
 }
 
 function tabState(d, k) {
+  const t = d && d.tabStates ? d.tabStates[k] : null;
+  if (t) return t.state;
+  return legacyTabState(d, k);
+}
+
+function tabReason(d, k) {
+  const t = d && d.tabStates ? d.tabStates[k] : null;
+  return t && t.reason ? t.reason : '';
+}
+
+// Fallback per compatibilità con un backend precedente.
+function legacyTabState(d, k) {
   const e = d.engagement;
   const c = d.capabilities || {};
   const pending = (e.proposals || []).some(p => p.status === 'Pending');
@@ -613,12 +790,12 @@ function tabState(d, k) {
     return e.acceptedProposal ? 'ok' : 'wait';
   }
   if (k === 'scope') {
-    if (!e.acceptedProposal) return 'lock';
+    if (!e.hasManleva || !e.orderConfirmed) return 'lock';
     if (d.scope && d.scope.done) return 'ok';
     return canEditPreparation(d) ? 'todo' : 'wait';
   }
   if (k === 'cred') {
-    if (!e.acceptedProposal || !c.canCredentials) return 'lock';
+    if (!e.hasManleva || !e.orderConfirmed || !c.canCredentials) return 'lock';
     if (d.credentials && d.credentials.done) return 'ok';
     return canEditPreparation(d) ? 'todo' : 'wait';
   }
@@ -636,11 +813,12 @@ function defaultTab(d) {
 }
 
 function canEditPreparation(d) {
-  if (!d.engagement.acceptedProposal) return false;
+  const e = d.engagement;
+  if (!e.hasManleva || !e.orderConfirmed) return false;
   if (state.role === 'Client')
-    return d.phase === 'Prep' || d.phase === 'Scheduled';
+    return d.phase === 'Planning' || d.phase === 'Prep' || d.phase === 'Scheduled';
   if (state.role === 'PMO')
-    return d.phase === 'Prep' || d.phase === 'Scheduled' || d.phase === 'Running';
+    return d.phase === 'Planning' || d.phase === 'Prep' || d.phase === 'Scheduled' || d.phase === 'Running';
   return false;
 }
 
@@ -683,12 +861,46 @@ function listTabs() {
   </div>`;
 }
 
+function filteredList() {
+  const query = state.listQuery.trim().toLowerCase();
+  const match = e => {
+    const s = actionState(e);
+    const kind = s ? s.kind : 'neutral';
+    if (state.listFilter === 'action' && kind !== 'action') return false;
+    if (state.listFilter === 'waiting' && kind !== 'waiting') return false;
+    if (state.listFilter === 'progress' && kind !== 'progress') return false;
+    if (state.listFilter === 'done' && kind !== 'done') return false;
+    if (!query) return true;
+    return [e.name, e.id, e.clientName, typeLabel(e.type), s && s.label]
+      .join(' ').toLowerCase().includes(query);
+  };
+  const rank = { action: 0, waiting: 1, progress: 2, blocked: 3, neutral: 4, done: 5 };
+  return state.list
+    .filter(match)
+    .sort((a, b) => {
+      const ra = rank[(actionState(a) || {}).kind] ?? 9;
+      const rb = rank[(actionState(b) || {}).kind] ?? 9;
+      if (ra !== rb) return ra - rb;
+      const da = a.periodStart || '9999-12-31';
+      const db = b.periodStart || '9999-12-31';
+      return da.localeCompare(db);
+    });
+}
+
+function skeletonRows(count) {
+  return `<div class="card" style="padding:18px">${Array.from({ length: count || 4 })
+    .map(() => '<div class="skeleton" style="margin-bottom:14px"></div>')
+    .join('')}</div>`;
+}
+
 function renderList() {
-  const data = state.list;
-  const active = data.filter(e => e.phase !== 'Done').length;
-  const todo = data.filter(e => e.todo).length;
-  const done = data.filter(e => e.phase === 'Done').length;
-  const next = data
+  const all = state.list;
+  const data = filteredList();
+  const active = all.filter(e => e.phase !== 'Done').length;
+  const todo = all.filter(e => (actionState(e) || {}).kind === 'action').length;
+  const waiting = all.filter(e => (actionState(e) || {}).kind === 'waiting').length;
+  const done = all.filter(e => e.phase === 'Done').length;
+  const next = all
     .filter(e => e.periodStart && e.periodStart >= today())
     .sort((a, b) => a.periodStart.localeCompare(b.periodStart))[0];
   const who = isClient() ? `Engagement di ${esc(tenantLabel(state.tenant))}` : 'Tutti i clienti';
@@ -700,34 +912,65 @@ function renderList() {
       : '';
 
   const rows = data.map(e => {
-    const st = listStatus(e);
     const a = e.periodStart;
-    return `<tr class="row" data-act="open" data-id="${esc(e.id)}">
-      <td class="name"><button class="linkb" data-act="open" data-id="${esc(e.id)}"><b>${esc(e.name)}</b></button>
-        <span>${esc(e.id)}${e.todo ? ' · <b style="color:var(--warn)">azione richiesta</b>' : ''}</span></td>
-      ${isClient() ? '' : `<td>${esc(e.clientName)}</td>`}
-      <td>${esc(typeLabel(e.type))}</td>
-      <td>${mini(e.stepIndex)}</td>
-      <td>${pill(st)}</td>
-      <td>${a ? `${fmt(a)} – ${fmt(e.periodEnd)}` : '<span style="color:var(--muted)">Da definire</span>'}</td>
+    return `<tr class="row${rowClass(e)}" data-act="open" data-id="${esc(e.id)}">
+      <td class="name" data-label="Engagement"><button class="linkb" data-act="open" data-id="${esc(e.id)}"><b>${esc(e.name)}</b></button>
+        <span>${esc(e.id)}</span></td>
+      ${isClient() ? '' : `<td data-label="Cliente">${esc(e.clientName)}</td>`}
+      <td data-label="Tipologia">${esc(typeLabel(e.type))}</td>
+      <td data-label="Avanzamento">${mini(e.stepIndex)}</td>
+      <td data-label="Stato">${statusCell(e, true)}</td>
+      <td data-label="Periodo">${a ? `${fmt(a)} – ${fmt(e.periodEnd)}` : '<span style="color:var(--muted)">Da definire</span>'}</td>
     </tr>`;
   }).join('');
 
+  const filterButton = (key, label, count) =>
+    `<button class="chipb ${state.listFilter === key ? 'on' : ''}" data-act="list-filter" data-filter="${key}" aria-pressed="${state.listFilter === key}">${label} <span class="cnt">${count}</span></button>`;
+
+  const empty = state.listQuery || state.listFilter !== 'all'
+    ? `<div class="empty">Nessun engagement in questo filtro. <button class="btn sec sm" data-act="clear-filter" style="margin-left:8px">Azzera filtri</button></div>`
+    : `<div class="empty">Nessun engagement visibile per questo profilo e tenant.</div>`;
+
+  const content = state.error
+    ? `<div class="errorbox"><span><b>Impossibile caricare gli engagement.</b> ${esc(state.error)}</span><button class="btn sec sm" data-act="retry-list">Riprova</button></div>`
+    : state.loading && !all.length
+      ? skeletonRows(4)
+      : `<div class="card" style="padding:8px 8px"><table class="list-table">
+          <caption class="sr-only">Elenco engagement con stato e proprietario dell'azione</caption>
+          <thead><tr><th scope="col">Engagement</th>${isClient() ? '' : '<th scope="col">Cliente</th>'}<th scope="col">Tipologia</th><th scope="col">Avanzamento</th><th scope="col">Stato</th><th scope="col">Periodo</th></tr></thead>
+          <tbody>${rows || `<tr><td colspan="${isClient() ? 5 : 6}">${empty}</td></tr>`}</tbody>
+        </table></div>`;
+
   $('#app').innerHTML = `
     <h1>I miei engagement</h1>
-    <p class="sub">${who} · aggiornato al ${fmt(today())}</p>
+    <p class="sub">${who} · aggiornato al ${fmt(today())}${todo ? ` · <b style="color:var(--st-action)">${todo} da fare</b>` : ''}</p>
     ${listTabs()}
     <div class="grid kpis">
       <div class="card kpi"><b>${active}</b><span>Engagement attivi</span></div>
-      <div class="card kpi w"><b>${todo}</b><span>Richiedono un'azione da te</span></div>
-      <div class="card kpi a"><b>${next ? fmt(next.periodStart) : '–'}</b><span>Prossima attività pianificata</span></div>
-      <div class="card kpi"><b>${done}</b><span>Completati con report</span></div>
+      <div class="card kpi action ${todo ? '' : 'zero'}"><b>${todo}</b><span>Da fare (a te)</span></div>
+      <div class="card kpi wait ${waiting ? '' : 'zero'}"><b>${waiting}</b><span>In attesa di altri</span></div>
+      <div class="card kpi done ${done ? '' : 'zero'}"><b>${done}</b><span>Completati</span></div>
+      <div class="card kpi progress"><b>${next ? fmt(next.periodStart) : '–'}</b><span>Prossima attività</span></div>
     </div>
     ${createButton}
-    <div class="card" style="padding:8px 8px"><table>
-      <thead><tr><th>Engagement</th>${isClient() ? '' : '<th>Cliente</th>'}<th>Tipologia</th><th>Avanzamento</th><th>Stato</th><th>Periodo</th></tr></thead>
-      <tbody>${rows || `<tr><td colspan="${isClient() ? 5 : 6}" class="empty">Nessun engagement visibile per questo profilo e tenant.</td></tr>`}</tbody>
-    </table></div>`;
+    <div class="filters">
+      <div class="chips" role="group" aria-label="Filtra engagement" style="margin:0">
+        ${filterButton('all', 'Tutti', all.length)}
+        ${filterButton('action', 'Da fare', todo)}
+        ${filterButton('waiting', 'In attesa', waiting)}
+        ${filterButton('progress', 'In corso', all.filter(e => (actionState(e) || {}).kind === 'progress').length)}
+        ${filterButton('done', 'Completati', done)}
+      </div>
+      <div class="search"><input type="search" id="list-search" value="${esc(state.listQuery)}" placeholder="Cerca engagement…" aria-label="Cerca per nome, cliente o codice"></div>
+    </div>
+    <div class="legend" aria-label="Legenda degli stati">
+      <span><b class="g-action">!</b> Da fare (a te)</span>
+      <span><b class="g-wait">…</b> In attesa di altri</span>
+      <span><b class="g-progress">▶</b> In corso</span>
+      <span><b class="g-done">✓</b> Completato</span>
+      <span><b class="g-blocked">🔒</b> Bloccato</span>
+    </div>
+    ${content}`;
 }
 
 /* ====== SOLLECITI ====== */
@@ -751,7 +994,7 @@ function renderSolicitations() {
         <td class="name"><b>${esc(item.engagementId)}</b><span>${esc(item.clientName)}</span></td>
         <td>${esc(item.label)}</td>
         <td>${item.days} giorni (soglia ${item.thresholdDays})</td>
-        <td>${pill(['Da inviare', 'warn'])}</td>
+        <td>${pill(editable ? ['Da inviare', 'action'] : ['Da inviare', 'wait'])}</td>
         <td style="text-align:right">${editable
           ? `<button class="btn sec sm" data-act="send-solicitation" data-key="${esc(item.key)}">Invia ora</button>`
           : ''}</td>
@@ -771,7 +1014,19 @@ function renderSolicitations() {
 /* ====== DETTAGLIO ====== */
 function nextAction(d) {
   const e = d.engagement;
-  if (d.todo) {
+  const s = d.actionState;
+
+  if (s) {
+    const icons = { action: '!', waiting: '…', progress: '▶', done: '✓', blocked: '🔒', neutral: '·' };
+    const head = s.kind === 'action'
+      ? 'Azione richiesta a te'
+      : s.kind === 'waiting'
+        ? `In attesa di ${s.ownerLabel || 'altri'}`
+        : s.kind === 'done'
+          ? 'Completato'
+          : s.kind === 'blocked'
+            ? 'Bloccato'
+            : 'In corso';
     const labels = {
       docs: 'Vai ai documenti',
       plan: 'Vai alla pianificazione',
@@ -779,10 +1034,17 @@ function nextAction(d) {
       cred: 'Compila le credenziali',
       reports: 'Vai ai report'
     };
-    return `<div class="note"><b>Azione richiesta:</b> ${esc(d.todo.action)}
-      <button class="btn pri sm" style="margin-left:8px" data-act="tab" data-tab="${esc(d.todo.targetTab)}">${esc(labels[d.todo.targetTab] || 'Apri')}</button></div>`;
+    const button = s.kind === 'action' && s.targetTab
+      ? `<button class="btn pri sm" style="margin-left:8px" data-act="tab" data-tab="${esc(s.targetTab)}">${esc(labels[s.targetTab] || 'Apri')}</button>`
+      : '';
+    return `<div class="note ${s.kind}">
+      <div class="note-head"><span class="note-ico">${icons[s.kind] || '·'}</span>${esc(head)}</div>
+      ${s.label ? `<div>${esc(s.label)}${button}</div>` : ''}
+      ${statusAge(d)}
+    </div>`;
   }
 
+  // Fallback per un backend senza actionState.
   const accepted = e.acceptedProposal;
   const pending = (e.proposals || []).find(p => p.status === 'Pending');
   let message = '';
@@ -816,18 +1078,18 @@ function nextAction(d) {
         : `Attività conclusa il ${fmt(accepted?.endDate)}: i deliverables sono in redazione.`;
       break;
     case 'Done':
-      return '<div class="note" style="background:var(--ok-bg);border-color:#b7ebd3;color:var(--ok)">Engagement completato. I deliverables sono disponibili nella scheda Reportistica.</div>';
+      return '<div class="note done"><div class="note-head"><span class="note-ico">✓</span>Completato</div>Engagement completato. I deliverables sono disponibili nella scheda Reportistica.</div>';
   }
   if (pending && pending.kind === 'resched' && d.phase !== 'Planning') {
     message += ` Richiesta di riprogrammazione ${fmt(pending.startDate)} → ${fmt(pending.endDate)} in attesa di decisione ${pending.from === 'Client' ? 'di PMO' : 'del cliente'}.`;
   }
   const readOnly = state.role === 'Auditor' ? '<b>Profilo Auditor</b>: sola lettura. ' : '';
-  return `<div class="note lockbox">${readOnly}${esc(message)}</div>`;
+  return `<div class="note blocked">${readOnly}${esc(message)}</div>`;
 }
 
 function renderOverview(d) {
   const e = d.engagement;
-  const st = detailStatus(d);
+  const st = statusPill(d);
   const audit = (d.audit || []).slice()
     .sort((a, b) => String(b.date).localeCompare(String(a.date)))
     .slice(0, 5);
@@ -862,7 +1124,8 @@ function renderOverview(d) {
 function renderDetail() {
   const d = state.detail;
   const e = d.engagement;
-  const st = detailStatus(d);
+  const st = statusPill(d);
+  const owner = statusOwner(d);
   const TABS = [['docs', 'Documenti'], ['plan', 'Pianificazione'], ['scope', 'Scope'], ['cred', 'Credenziali'], ['reports', 'Reportistica']];
   const mailCount = isClient() ? (d.mailLog || []).length : (d.mailLog || []).length;
   const body = {
@@ -875,29 +1138,36 @@ function renderDetail() {
     mail: tabMail,
     log: tabLog
   }[state.tab] || tabDocs;
+  const activeReason = tabReason(d, state.tab);
 
   $('#app').innerHTML = `
     <button class="crumb" data-act="list">← Tutti gli engagement</button>
     <div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:flex-start">
       <div><h1>${esc(e.name)}</h1>
         <p class="sub" style="margin-bottom:14px">${esc(e.id)} · ${esc(typeLabel(e.type))} · ${esc(e.clientName)}</p></div>
-      ${pill(st)}
+      <div style="text-align:right">${pill(st)}
+        ${owner ? `<div class="status-owner" style="margin-top:6px">In attesa di: <b>${esc(owner)}</b></div>` : ''}
+      </div>
     </div>
     <div class="card">${stepper(d.stepIndex)}</div>
     <div style="margin-top:16px">${renderOverview(d)}</div>
     <div class="tabs" role="tablist">
       ${TABS.map(([key, label]) => {
         const s = tabState(d, key);
-        return `<button role="tab" aria-selected="${state.tab === key}" class="tab s-${s} ${state.tab === key ? 'on' : ''}" data-act="tab" data-tab="${key}">${label}${s === 'lock' ? ' <span class="lock" aria-label="bloccato">🔒</span>' : ''}</button>`;
+        const reason = tabReason(d, key);
+        return `<button role="tab" aria-selected="${state.tab === key}" class="tab s-${s} ${state.tab === key ? 'on' : ''}" data-act="tab" data-tab="${key}" title="${esc(reason || '')}" aria-label="${esc(label + (reason ? ': ' + reason : ''))}">${label}${s === 'lock' ? ' <span class="lock" aria-label="bloccato">🔒</span>' : ''}</button>`;
       }).join('')}
     </div>
+    ${activeReason ? `<p class="hint" style="margin:-8px 0 14px">${esc(activeReason)}</p>` : ''}
     <div class="legend">
-      <span><b class="g-ok">✓</b> Completato</span>
-      <span><b class="g-todo">!</b> Azione richiesta</span>
+      <span><b class="g-action">!</b> Da fare (a te)</span>
       <span><b class="g-wait">…</b> In attesa di altri</span>
-      <span>🔒 Bloccato / non disponibile</span>
+      <span><b class="g-progress">▶</b> In corso</span>
+      <span><b class="g-done">✓</b> Completato</span>
+      <span><b class="g-blocked">🔒</b> Bloccato</span>
     </div>
-    <div class="chips">
+    <div class="section-label">Altro</div>
+    <div class="chips secondary">
       <button class="chipb ${state.tab === 'dl' ? 'on' : ''}" data-act="tab" data-tab="dl">👥 Distribution list <span class="cnt">${(d.distributionList || []).length}</span></button>
       <button class="chipb ${state.tab === 'mail' ? 'on' : ''}" data-act="tab" data-tab="mail">✉️ ${isClient() ? 'Email ricevute' : 'Comunicazioni'} <span class="cnt">${mailCount}</span></button>
       <button class="chipb ${state.tab === 'log' ? 'on' : ''}" data-act="tab" data-tab="log">📋 Registro <span class="cnt">${(d.audit || []).length}</span></button>
@@ -1003,7 +1273,7 @@ function tabPlan(d) {
 
   const list = (e.proposals || []).length
     ? [...e.proposals].reverse().map(p => {
-        const status = proposalLabel(p.status);
+        const status = proposalLabel(p);
         return `<div class="prop">
           <div class="d">
             <b>${fmt(p.startDate)} → ${fmt(p.endDate)}</b>
@@ -1031,7 +1301,7 @@ function tabPlan(d) {
       action = `<div style="margin-top:14px"><button class="btn sec" data-act="reschedule">Richiedi riprogrammazione</button></div>`;
     }
     right = `<h2>Pianificazione confermata</h2>
-      <div class="note" style="background:var(--ok-bg);border-color:#b7ebd3;color:var(--ok)">
+      <div class="note done">
         <b>${fmt(accepted.startDate)} → ${fmt(accepted.endDate)}</b><br>
         Confermata${accepted.from === 'Client' ? ' da PMO' : ' dal cliente'}.</div>${action}`;
   } else if (!canPropose) {
@@ -1051,7 +1321,9 @@ function tabPlan(d) {
         : 'Invia proposta al cliente'}</button></div>`;
   }
 
-  return `<div class="grid two" style="align-items:start">
+  return `${!accepted && canEditPreparation(d)
+    ? '<div class="note progress">Puoi già compilare <b>scope</b> e <b>credenziali</b>: non serve attendere la conferma delle date.</div>'
+    : ''}<div class="grid two" style="align-items:start">
     <div class="card"><h2>Proposte e richieste</h2>${list}</div>
     <div class="card">${right}</div>
   </div>`;
@@ -1067,8 +1339,8 @@ function authorOf(x) {
 
 function tabScope(d) {
   const e = d.engagement;
-  if (!e.acceptedProposal) {
-    return `<div class="note lockbox"><b>Sezione bloccata.</b> Lo scope si compila dopo l'accettazione della pianificazione.</div>`;
+  if (!e.hasManleva || !e.orderConfirmed) {
+    return `<div class="note lockbox"><b>Sezione bloccata.</b> Lo scope si sblocca dopo la firma della manleva e la registrazione dell'ordine.</div>`;
   }
 
   const info = state.scope;
@@ -1093,10 +1365,11 @@ function tabScope(d) {
   }
 
   if (!info.canEdit) {
-    return `<div class="note lockbox">${s.done ? 'Lo scope non è più modificabile.' : 'In attesa che lo scope venga fornito dal cliente.'}</div>`;
+    return `<div class="note ${s.done ? 'blocked' : 'waiting'}">${s.done ? 'Lo scope non è più modificabile.' : 'In attesa che lo scope venga fornito dal cliente.'}</div>`;
   }
 
   return `<div class="card"><h2>${s.done ? 'Modifica scope' : 'Compila lo scope'}</h2>
+    ${!e.acceptedProposal ? '<div class="note progress">La pianificazione non è ancora confermata: puoi compilare lo scope già ora, resterà valido.</div>' : ''}
     ${!isClient() ? '<div class="note">Stai compilando <b>per conto del cliente</b>.</div>' : ''}
     <div class="fgrid">
       <div><label for="f_host">Target (hostname / URL)*</label><input type="text" id="f_host" value="${esc(s.host || '')}" placeholder="es. api-uat.cliente.it"></div>
@@ -1115,8 +1388,8 @@ function tabScope(d) {
 
 function tabCred(d) {
   const e = d.engagement;
-  if (!e.acceptedProposal) {
-    return `<div class="note lockbox"><b>Sezione bloccata.</b> Le credenziali si forniscono dopo l'accettazione della pianificazione.</div>`;
+  if (!e.hasManleva || !e.orderConfirmed) {
+    return `<div class="note lockbox"><b>Sezione bloccata.</b> Le credenziali si sbloccano dopo la firma della manleva e la registrazione dell'ordine.</div>`;
   }
 
   const info = state.credentials;
@@ -1143,11 +1416,12 @@ function tabCred(d) {
   }
 
   if (!info.canEdit) {
-    return `<div class="note lockbox">${c.done ? 'Le credenziali non sono più modificabili.' : 'Credenziali non ancora fornite.'}</div>`;
+    return `<div class="note ${c.done ? 'blocked' : 'waiting'}">${c.done ? 'Le credenziali non sono più modificabili.' : 'Credenziali non ancora fornite: in attesa del cliente.'}</div>`;
   }
 
   const options = ['Vault aziendale', 'File cifrato (password su canale separato)', 'Altro (concordato con Pentester)'];
   return `<div class="card"><h2>${c.done ? 'Modifica credenziali' : 'Fornisci le credenziali'}</h2>
+    ${!e.acceptedProposal ? '<div class="note progress">La pianificazione non è ancora confermata: puoi fornirle già ora, resteranno valide.</div>' : ''}
     <div class="note">Non scrivere password in questo modulo: indica solo dove e come verranno consegnate.</div>
     ${state.role === 'PMO' ? '<div class="note">Stai compilando come PMO <b>per conto del cliente</b>.</div>' : ''}
     <div class="fgrid">
@@ -1239,7 +1513,7 @@ function tabReports(d) {
 }
 
 function orgPill(org) {
-  return `<span class="pill ${org === 'Cliente' ? 'p-info' : org === 'Provider Pentester' ? 'p-ok' : 'p-mute'}">${esc(org)}</span>`;
+  return `<span class="pill ${org === 'Cliente' ? 'p-progress' : org === 'Provider Pentester' ? 'p-done' : 'p-neutral'}">${esc(org)}</span>`;
 }
 
 function tabDl(d) {
@@ -1315,7 +1589,7 @@ function tabMail(d) {
     const status = sentEntry
       ? pill([`Inviata il ${fmtTime(sentEntry.date)}`, 'ok'])
       : auto ? pill([`Programmata: ${when[key]}`, 'info'])
-        : pill(['Invio automatico disattivato', 'warn']);
+        : pill(['Invio automatico disattivato', 'neutral']);
     return `<div class="mailc">
       <div class="t"><b>${esc(meta.t)}</b><span>${esc(meta.desc)}</span>
         <span>Oggetto: [${esc(e.id)}] ${esc(meta.subj)}</span>
@@ -1520,6 +1794,20 @@ const actions = {
     } catch (error) { toast(error.message); }
   },
   open: el => openEngagement(el.dataset.id),
+  'open-action': async el => {
+    await openEngagement(el.dataset.id);
+    if (state.detail && el.dataset.tab) await setTab(el.dataset.tab);
+  },
+  'list-filter': el => {
+    state.listFilter = el.dataset.filter || 'all';
+    renderList();
+  },
+  'clear-filter': () => {
+    state.listFilter = 'all';
+    state.listQuery = '';
+    renderList();
+  },
+  'retry-list': () => loadList(),
   tab: el => setTab(el.dataset.tab),
   'list-tab': el => {
     state.listTab = el.dataset.tab;
@@ -1795,6 +2083,12 @@ const actions = {
   },
 
   publish: async () => {
+    const ok = await ask({
+      title: 'Pubblica al cliente',
+      text: 'I deliverables saranno visibili al cliente e l\'engagement risulterà completato. L\'operazione non è reversibile.',
+      ok: 'Pubblica'
+    });
+    if (!ok) return;
     try {
       const result = await api(`/api/engagements/${engagedId()}/reports/publish?` + qs(), { method: 'POST' });
       toast(`Deliverables pubblicati${result && result.published ? ` (${result.published})` : ''}`);
@@ -1851,13 +2145,48 @@ const actions = {
 };
 
 /* ====== EVENTI ====== */
+const busyActions = new Set([
+  'new-client', 'rename-client', 'add-client-user', 'remove-client-user',
+  'new-engagement', 'save-rule', 'send-solicitation', 'upload-manleva',
+  'upload-ingaggio', 'register-order', 'upload-bc', 'propose', 'reschedule',
+  'decide', 'save-scope', 'save-credentials', 'upload-report',
+  'download-report', 'submit-review', 'review-decide', 'publish', 'add-dl',
+  'remove-dl', 'toggle-mail', 'send-mail', 'export-log', 'retry-list'
+]);
+
 document.addEventListener('click', event => {
   const el = event.target.closest('[data-act]');
   if (!el) return;
   const action = actions[el.dataset.act];
-  if (action) {
-    event.preventDefault();
-    Promise.resolve(action(el)).catch(error => toast(error.message));
+  if (!action) return;
+  event.preventDefault();
+  const isButton = el.tagName === 'BUTTON';
+  const shouldBusy = isButton && busyActions.has(el.dataset.act);
+  if (shouldBusy) {
+    el.classList.add('busy');
+    el.disabled = true;
+    el.setAttribute('aria-busy', 'true');
+  }
+  Promise.resolve(action(el))
+    .catch(error => toast(error.message))
+    .finally(() => {
+      if (shouldBusy && el.isConnected) {
+        el.classList.remove('busy');
+        el.disabled = false;
+        el.removeAttribute('aria-busy');
+      }
+    });
+});
+
+document.addEventListener('input', event => {
+  if (event.target.id !== 'list-search') return;
+  state.listQuery = event.target.value;
+  renderList();
+  const input = $('#list-search');
+  if (input) {
+    input.focus();
+    const end = input.value.length;
+    input.setSelectionRange(end, end);
   }
 });
 
