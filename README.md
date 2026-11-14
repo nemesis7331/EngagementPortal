@@ -36,6 +36,14 @@ App Service a ogni push su `main`.
 - **Registro audit**: visibilità differenziata per profilo, esportazione CSV.
 - **Dashboard**: endpoint `/api/dashboard/todo` con la prossima azione per ogni
   engagement e profilo.
+- **Homepage**: quattro tessere che sono anche filtri (da gestire, in attesa di
+  altri, a rischio avvio, prossimo avvio), colonna **Da gestire ora** con CTA
+  diretta, attese in evidenza e tabella compatta con la **fase del workflow**
+  (barra a 6 passi + nome), ricerca su tutti i campi, filtro e ordinamento.
+- **Responsive**: layout da 320 px ai monitor ultra-wide. Il contenuto cresce
+  fino a 1680 px; la tabella engagement diventa a schede sotto 820 px, l'header
+  si compatta sotto 760 px e le card dei clienti passano a 2–3 colonne sui
+  monitor larghi.
 
 ## Ruoli e permessi (RACI)
 

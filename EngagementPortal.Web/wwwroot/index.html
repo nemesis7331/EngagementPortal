@@ -29,7 +29,10 @@
   --st-blocked:#475467;  --st-blocked-bg:#f2f4f7;  --st-blocked-border:#e4e7ec;
   --st-neutral:#475467;  --st-neutral-bg:#f2f4f7;  --st-neutral-border:#e4e7ec;
   --st-negative:#b42318; --st-negative-bg:#fee4e2; --st-negative-border:#fda29b;
+  /* rischio preparazione: distinto dal rosso "da gestire" */
+  --st-risk:#9a3412; --st-risk-bg:#fff4e5; --st-risk-border:#f3b27a;
   --radius:14px;
+  --page-max:1200px;
   --shadow:0 1px 2px rgba(6,29,54,.06),0 6px 20px rgba(6,29,54,.06);
 }
 *{box-sizing:border-box}
@@ -37,7 +40,7 @@ body{margin:0;font-family:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,
 button{font:inherit;cursor:pointer}
 /* Header */
 header{background:linear-gradient(100deg,var(--brand-950),var(--brand-900) 60%,var(--brand-700));color:#fff;position:sticky;top:0;z-index:20}
-.hwrap{max-width:1200px;margin:auto;padding:12px 24px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.hwrap{max-width:var(--page-max);margin:auto;padding:12px 24px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
 .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;letter-spacing:.2px}
 .logo i{width:30px;height:30px;border-radius:9px;background:var(--accent);display:grid;place-items:center;color:var(--brand-950);font-style:normal;font-weight:800}
 .logo small{display:block;font-weight:400;font-size:11px;opacity:.7;letter-spacing:.4px;text-transform:uppercase}
@@ -46,7 +49,7 @@ header{background:linear-gradient(100deg,var(--brand-950),var(--brand-900) 60%,v
 .avatar{width:34px;height:34px;border-radius:50%;background:var(--brand-500);display:grid;place-items:center;font-weight:700}
 .demo-banner{background:var(--st-wait-bg);color:var(--st-wait);text-align:center;font-size:12px;padding:5px}
 /* Layout */
-main{max-width:1200px;margin:24px auto 60px;padding:0 24px}
+main{max-width:var(--page-max);margin:24px auto 60px;padding:0 24px}
 h1{font-size:26px;margin:0 0 4px;color:var(--brand-900)}
 h2{font-size:17px;margin:0 0 12px;color:var(--brand-900)}
 .sub{color:var(--muted);margin:0 0 22px}
@@ -283,6 +286,61 @@ tr.row.is-done td:first-child{box-shadow:inset 3px 0 var(--st-done)}
 .filters .search input{margin:0;padding-left:38px;border-radius:999px;font-size:13.5px}
 .filters .search-ico{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:16px;height:16px;fill:var(--muted);pointer-events:none}
 .filters .chipb{cursor:pointer}
+/* ====== HOMEPAGE: azione prima (variante B) ====== */
+.headrow{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.head-acts{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:16px 0}
+.tile{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;text-align:left;border-left:4px solid var(--brand-500);display:block;color:inherit;font:inherit}
+.tile b{display:block;font-size:24px;line-height:1.1;color:var(--brand-900)}
+.tile span{font-size:12px;color:var(--muted)}
+.tile.a{border-left-color:var(--st-action)}.tile.a b{color:var(--st-action)}
+.tile.w{border-left-color:var(--st-wait)}.tile.w b{color:var(--st-wait)}
+.tile.r{border-left-color:var(--st-risk)}.tile.r b{color:var(--st-risk)}
+.tile[data-act]:hover{border-color:var(--brand-500)}
+.tile[data-act]{cursor:pointer}
+.tile.on{box-shadow:0 0 0 2px var(--brand-100);border-color:var(--brand-500)}
+.home-cols{display:grid;grid-template-columns:300px minmax(0,1fr);gap:16px;align-items:start}
+.home-side{display:grid;gap:14px;min-width:0}
+.home-main{min-width:0}
+.colhead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 8px;flex-wrap:wrap}
+.colhead h2{margin:0;font-size:16px;display:flex;align-items:center;gap:8px}
+.colhead .cnt{background:#eceff6;color:var(--muted);font-size:11.5px}
+.colhead .cnt.c-action{background:var(--st-action-bg);color:var(--st-action)}
+.colhead .cnt.c-wait{background:var(--st-wait-bg);color:var(--st-wait)}
+.sideblock{padding:14px 16px}
+.focus-card{display:grid;gap:5px;border:1px solid var(--line);border-left:3px solid var(--st-action);border-radius:11px;padding:10px 12px;background:#fff;margin-bottom:8px}
+.focus-card:last-of-type{margin-bottom:0}
+.fcard-top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.fcard-top b{font-size:13px;line-height:1.3;color:var(--brand-900)}
+.fcard-meta{font-size:11.5px;color:var(--muted);overflow-wrap:anywhere}
+.fcard-action{display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:12.5px;font-weight:600;color:var(--st-action);flex-wrap:wrap}
+.wlist{display:grid}
+.wrow{display:flex;gap:9px;align-items:center;width:100%;background:none;border:0;border-bottom:1px solid #eef2f7;padding:8px 0;text-align:left}
+.wrow:last-child{border-bottom:0}
+.wtt{flex:1;min-width:0}
+.wtt b{display:block;font-size:12.5px;color:var(--brand-900);font-weight:600;line-height:1.3}
+.wtt span{display:block;font-size:11px;color:var(--muted);overflow-wrap:anywhere}
+.home-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.home-toolbar .search{flex:1;min-width:180px;max-width:none;position:relative}
+.home-toolbar .search input{width:100%;margin:0;padding:9px 12px 9px 38px;border-radius:999px;font-size:13.5px}
+.home-toolbar .search-ico{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:16px;height:16px;fill:var(--muted);pointer-events:none}
+.home-toolbar select{background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 11px;font:inherit;font-size:12.5px;font-weight:600;color:var(--brand-900)}
+.listcard{padding:6px 8px}
+.list-compact th{padding:8px 8px}
+.list-compact td{padding:9px 8px}
+.phase{display:grid;gap:3px}
+.phase-name{font-size:10.5px;line-height:1.1;color:var(--muted);max-width:92px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mini i{width:10px;height:6px}
+.rowname b{display:block;font-size:13.5px;line-height:1.3;color:var(--brand-900);font-weight:600}
+.rowmeta{display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:11px;color:var(--muted);margin-top:1px}
+.kind{background:var(--brand-50);border:1px solid var(--brand-100);color:var(--brand-700);border-radius:5px;padding:0 5px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+.status-mini{gap:1px}
+.status-mini .status-owner,.status-mini .status-age{font-size:11px}
+.delay-sm{padding:2px 7px;font-size:11px}
+.period{font-size:12px;color:var(--brand-900);white-space:nowrap}
+@media(max-width:1199px){.home-cols{grid-template-columns:1fr}.home-side{grid-template-columns:1fr 1fr}.home-side .sideblock{height:100%}}
+@media(max-width:900px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.home-side{grid-template-columns:1fr}}
 /* skeleton */
 .skeleton{background:linear-gradient(90deg,#eef3f8 25%,#f7fafc 37%,#eef3f8 63%);background-size:400% 100%;animation:sk 1.2s ease infinite;border-radius:8px;height:14px}
 @keyframes sk{0%{background-position:100% 50%}100%{background-position:0 50%}}
@@ -298,8 +356,11 @@ tr.row.is-done td:first-child{box-shadow:inset 3px 0 var(--st-done)}
 .demo-switch select{background:#fff;color:var(--ink);border:0;border-radius:999px;padding:5px 10px;font:inherit;font-weight:600}
 .section-label{font-size:11px;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);font-weight:700;margin:18px 0 8px}
 .errorbox{background:var(--st-negative-bg);border:1px solid var(--st-negative-border);color:var(--st-negative);border-radius:10px;padding:14px 16px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.client-grid{display:grid;grid-template-columns:1fr;gap:16px}
+@media(min-width:1100px){.client-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(min-width:2000px){.client-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 /* lista come card su mobile */
-@media(max-width:760px){
+@media(max-width:820px){
   .list-table thead{display:none}
   .list-table,.list-table tbody,.list-table tr,.list-table td{display:block;width:100%}
   .list-table tr{border:1px solid var(--line);border-radius:12px;margin-bottom:12px;padding:10px 12px;background:#fff}
@@ -313,6 +374,57 @@ tr.row.is-done td:first-child{box-shadow:inset 3px 0 var(--st-done)}
   .list-table tr.row.is-waiting{border-left:4px solid var(--st-wait)}
   .list-table tr.row.is-done{border-left:4px solid var(--st-done)}
   .status-detail{max-width:100%}
+}
+/* ====== RESPONSIVE: monitor larghi ====== */
+@media(min-width:1440px){
+  :root{--page-max:1360px}
+  .home-cols{grid-template-columns:340px minmax(0,1fr)}
+  .workspace{grid-template-columns:360px minmax(0,1fr)}
+}
+@media(min-width:1800px){
+  :root{--page-max:1520px}
+  .home-cols{grid-template-columns:360px minmax(0,1fr)}
+  .workspace{grid-template-columns:380px minmax(0,1fr)}
+  .list-compact td{padding:11px 12px}
+  .list-compact th{padding:9px 12px}
+  .tile b{font-size:26px}
+}
+@media(min-width:2200px){
+  :root{--page-max:1680px}
+}
+/* ====== RESPONSIVE: schermi piccoli ====== */
+@media(max-width:760px){
+  .hwrap{padding:8px 14px;gap:8px}
+  .logo{order:1;font-size:15px;gap:8px}
+  .logo small{display:none}
+  .logo i{width:26px;height:26px;border-radius:8px;font-size:11px}
+  .spacer{display:none}
+  .user{order:2;margin-left:auto;gap:7px}
+  .avatar{width:30px;height:30px;font-size:12px}
+  .demo-switch{order:3;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:6px;border-radius:12px;flex-wrap:nowrap}
+  .demo-switch .demo-tag{display:none}
+  .demo-switch label{display:grid;gap:2px;min-width:0;font-size:10px;color:rgba(255,255,255,.62)}
+  .demo-switch select{width:100%;min-width:0;padding:5px 8px;font-size:11px}
+  .demo-banner{font-size:11px;padding:4px 10px}
+}
+@media(max-width:560px){
+  .head-acts{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .head-acts .btn{width:100%}
+  .tile b{font-size:21px}
+  .home-toolbar select{flex:1;min-width:0}
+}
+@media(max-width:380px){
+  .user .avatar{display:none}
+  #uname{max-width:92px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  #urole{display:none}
+  .logo{font-size:13.5px;gap:6px}
+  .tile b{font-size:22px}
+  .side-title{font-size:17px}
+  .tabs{gap:6px;margin:14px 0 12px}
+  .tab{padding:6px 10px;font-size:12px}
+  .list-table tr{padding:9px 10px}
+  .list-table td{gap:8px}
+  .list-table td::before{font-size:11px}
 }
 </style>
 </head>
@@ -426,6 +538,7 @@ const state = {
   listTab: 'eng',
   listFilter: 'all',
   listQuery: '',
+  listSort: 'priority',
   loading: false,
   error: null,
   list: [],
@@ -920,6 +1033,57 @@ function delayCell(e) {
   return `<span class="delay" title="${esc(title)}">${esc(when)} · ${esc(labels)}</span>`;
 }
 
+// Varianti compatte per la tabella della homepage (variante B).
+function delayCellCompact(e) {
+  const a = e && e.preparationAlert;
+  if (!a) return '<span class="delay-none" aria-hidden="true">–</span>';
+
+  const days = Number(a.daysToStart) || 0;
+  const label = days > 0
+    ? `${days} gg`
+    : days === 0 ? 'oggi' : `${Math.abs(days)} gg fa`;
+  const full = (a.missing || [])
+    .map(m => m === 'scope' ? 'Scope' : 'Credenziali')
+    .join(' e ');
+  const title = `${full} non completati: ${days > 0
+    ? `mancano ${days} giorni all'avvio`
+    : days < 0 ? `l'avvio è già avvenuto da ${Math.abs(days)} giorni` : 'l\'avvio è oggi'}.`;
+
+  return `<span class="delay delay-sm" title="${esc(title)}">${esc(label)}</span>`;
+}
+
+function delayBadge(e) {
+  const a = e && e.preparationAlert;
+  if (!a) return '';
+
+  const days = Number(a.daysToStart) || 0;
+  const text = days > 0
+    ? `${days} gg all'avvio`
+    : days === 0 ? 'avvio oggi' : 'avvio superato';
+
+  return `<span class="delay delay-sm">${esc(text)}</span>`;
+}
+
+// Fase del workflow in poco spazio: barra a 6 segmenti + nome del passo.
+function phaseCell(e) {
+  const raw = Number(e.stepIndex) || 0;
+  const index = Math.max(0, Math.min(raw, STEPS.length - 1));
+  const done = raw >= STEPS.length;
+  const name = done ? 'Completato' : STEPS[index][0];
+  const title = done
+    ? 'Workflow completato'
+    : `Passo ${index + 1} di ${STEPS.length}: ${STEPS[index][0]} — ${STEPS[index][1]}`;
+
+  return `<span class="phase" title="${esc(title)}">${mini(raw)}<span class="phase-name">${esc(name)}</span></span>`;
+}
+
+function statusCellCompact(e) {
+  const owner = statusOwner(e);
+  return `<div class="status-cell status-mini">${pill(statusPill(e))}
+    ${owner ? `<span class="status-owner">${esc(owner)}</span>` : ''}
+    ${statusAge(e)}</div>`;
+}
+
 function rowClass(e) {
   const s = actionState(e);
   return s ? ` is-${s.kind}` : '';
@@ -1048,18 +1212,55 @@ const normText = v => String(v == null ? '' : v)
 // nome, codice, cliente, tipologia, passo, stato, responsabile, periodo e ritardo.
 function searchableRow(e) {
   const s = actionState(e);
-  const step = STEPS[Math.max(0, Math.min(Number(e.stepIndex) || 0, STEPS.length - 1))];
+  const raw = Number(e.stepIndex) || 0;
+  const step = raw >= STEPS.length
+    ? ['Completato', 'Workflow completato']
+    : STEPS[Math.max(0, Math.min(raw, STEPS.length - 1))];
   const alert = e.preparationAlert;
+  const age = s && s.since ? daysSince(s.since) : null;
   return normText([
     e.name, e.id, e.clientName, typeLabel(e.type),
     s ? s.label : '', s ? s.kind : '', statusOwner(e),
     statusPill(e).join(' '),
+    age ? `da ${age} giorni` : '',
     step ? `${step[0]} ${step[1]}` : '',
     e.periodStart
       ? `${fmt(e.periodStart)} ${fmt(e.periodEnd)} ${e.periodStart} ${e.periodEnd}`
       : 'da definire',
-    alert ? `ritardo ${(alert.missing || []).join(' ')} ${alert.daysToStart}` : ''
+    alert
+      ? `ritardo ${(alert.missing || []).join(' ')} ${alert.daysToStart} gg ${alert.daysToStart} giorni`
+      : ''
   ].join(' '));
+}
+
+function sortEngagements(list) {
+  const rank = { action: 0, waiting: 1, progress: 2, blocked: 3, neutral: 4, done: 5 };
+  const priority = (a, b) => {
+    const ra = rank[(actionState(a) || {}).kind] ?? 9;
+    const rb = rank[(actionState(b) || {}).kind] ?? 9;
+    if (ra !== rb) return ra - rb;
+    return (a.periodStart || '9999-12-31').localeCompare(b.periodStart || '9999-12-31');
+  };
+  const mode = state.listSort || 'priority';
+  return list.slice().sort((a, b) => {
+    if (mode === 'start') {
+      // "Avvio più vicino": prima gli avvii futuri (dal più vicino), poi
+      // quelli già passati (dal più recente), infine chi non ha date.
+      const group = e => !e.periodStart ? 2 : e.periodStart >= today() ? 0 : 1;
+      const diff = group(a) - group(b);
+      if (diff) return diff;
+      if (group(a) === 0) return a.periodStart.localeCompare(b.periodStart) || priority(a, b);
+      if (group(a) === 1) return b.periodStart.localeCompare(a.periodStart) || priority(a, b);
+      return priority(a, b);
+    }
+    if (mode === 'client') {
+      return a.clientName.localeCompare(b.clientName, 'it') || priority(a, b);
+    }
+    if (mode === 'name') {
+      return a.name.localeCompare(b.name, 'it');
+    }
+    return priority(a, b);
+  });
 }
 
 function filteredList() {
@@ -1071,21 +1272,12 @@ function filteredList() {
     if (state.listFilter === 'waiting' && kind !== 'waiting') return false;
     if (state.listFilter === 'progress' && kind !== 'progress') return false;
     if (state.listFilter === 'done' && kind !== 'done') return false;
+    if (state.listFilter === 'risk' && !e.preparationAlert) return false;
     if (!terms.length) return true;
     const haystack = searchableRow(e);
     return terms.every(term => haystack.includes(term));
   };
-  const rank = { action: 0, waiting: 1, progress: 2, blocked: 3, neutral: 4, done: 5 };
-  return state.list
-    .filter(match)
-    .sort((a, b) => {
-      const ra = rank[(actionState(a) || {}).kind] ?? 9;
-      const rb = rank[(actionState(b) || {}).kind] ?? 9;
-      if (ra !== rb) return ra - rb;
-      const da = a.periodStart || '9999-12-31';
-      const db = b.periodStart || '9999-12-31';
-      return da.localeCompare(db);
-    });
+  return sortEngagements(state.list.filter(match));
 }
 
 function skeletonRows(count) {
@@ -1097,10 +1289,9 @@ function skeletonRows(count) {
 function renderList() {
   const all = state.list;
   const data = filteredList();
-  const active = all.filter(e => e.phase !== 'Done').length;
-  const todo = all.filter(e => (actionState(e) || {}).kind === 'action').length;
-  const waiting = all.filter(e => (actionState(e) || {}).kind === 'waiting').length;
-  const done = all.filter(e => e.phase === 'Done').length;
+  const todo = sortEngagements(all.filter(e => (actionState(e) || {}).kind === 'action'));
+  const waiting = sortEngagements(all.filter(e => (actionState(e) || {}).kind === 'waiting'));
+  const atRisk = all.filter(e => e.preparationAlert);
   const next = all
     .filter(e => e.periodStart && e.periodStart >= today())
     .sort((a, b) => a.periodStart.localeCompare(b.periodStart))[0];
@@ -1108,28 +1299,63 @@ function renderList() {
     ? `Engagement di ${esc(clientLabel(state.clientId))}`
     : (isClient() ? 'Il tuo cliente' : 'Tutti i clienti');
 
-  const createButton = canCreateEngagement()
-    ? `<div style="margin-bottom:16px;display:flex;gap:10px;flex-wrap:wrap"><button class="btn pri" data-act="new-engagement">+ Nuovo engagement</button><button class="btn sec" data-act="clients">Clienti e utenze</button></div>`
+  const headActions = canCreateEngagement()
+    ? `<button class="btn sec" data-act="clients">Clienti e utenze</button><button class="btn pri" data-act="new-engagement">+ Nuovo engagement</button>`
     : isInternalRole()
-      ? `<div style="margin-bottom:16px"><button class="btn sec" data-act="clients">Clienti e utenze</button></div>`
+      ? `<button class="btn sec" data-act="clients">Clienti e utenze</button>`
       : '';
 
+  const tile = (key, cls, count, label) =>
+    `<button class="tile ${cls} ${state.listFilter === key ? 'on' : ''}" data-act="list-filter" data-filter="${key}" aria-pressed="${state.listFilter === key}"><b>${count}</b><span>${label}</span></button>`;
+
+  const cta = {
+    docs: 'Apri i documenti',
+    plan: 'Vai alla pianificazione',
+    scope: 'Compila lo scope',
+    cred: 'Compila le credenziali',
+    reports: 'Vai ai report'
+  };
+
+  const focus = todo.slice(0, 4).map(e => {
+    const s = actionState(e) || {};
+    return `<div class="focus-card">
+      <b>${esc(e.name)}</b>
+      <div class="fcard-meta">${esc(e.clientName)} · ${esc(e.id)} · ${esc(typeLabel(e.type))}</div>
+      <div class="fcard-action"><span>${esc(s.label || 'Da gestire')}</span>${e.preparationAlert ? delayBadge(e) : statusAge(e)}</div>
+      <div><button class="btn pri sm" data-act="open-action" data-id="${esc(e.id)}" data-tab="${esc(s.targetTab || 'docs')}">${esc(cta[s.targetTab] || 'Apri')}</button></div>
+    </div>`;
+  }).join('');
+
+  const waitingRows = waiting.slice(0, 4).map(e => {
+    const s = actionState(e) || {};
+    return `<button class="wrow" data-act="open" data-id="${esc(e.id)}">
+      ${clientAvatar(clientFor(e))}
+      <span class="wtt"><b>${esc(e.name)}</b><span>${esc(s.label || 'In attesa')} · ${esc(statusOwner(e) || 'altri soggetti')}</span></span>
+      ${statusAge(e)}
+    </button>`;
+  }).join('');
+
   const rows = data.map(e => {
-    const a = e.periodStart;
+    const start = e.periodStart;
     return `<tr class="row${rowClass(e)}" data-act="open" data-id="${esc(e.id)}">
-      <td class="name" data-label="Engagement"><button class="linkb" data-act="open" data-id="${esc(e.id)}"><b>${esc(e.name)}</b></button>
-        <span>${esc(e.id)}</span></td>
+      <td data-label="Engagement"><button class="linkb rowname" data-act="open" data-id="${esc(e.id)}"><b>${esc(e.name)}</b></button>
+        <span class="rowmeta">${esc(e.id)} <span class="kind">${esc(typeLabel(e.type))}</span></span></td>
       ${isClient() ? '' : `<td data-label="Cliente"><span class="client-cell">${clientAvatar(clientFor(e))}<span>${esc(e.clientName)}</span></span></td>`}
-      <td data-label="Tipologia">${esc(typeLabel(e.type))}</td>
-      <td data-label="Avanzamento">${mini(e.stepIndex)}</td>
-      <td data-label="Stato">${statusCell(e, true)}</td>
-      <td data-label="Periodo">${a ? `${fmt(a)} – ${fmt(e.periodEnd)}` : '<span style="color:var(--muted)">Da definire</span>'}</td>
-      <td data-label="Ritardo">${delayCell(e)}</td>
+      <td data-label="Fase">${phaseCell(e)}</td>
+      <td data-label="Stato">${statusCellCompact(e)}</td>
+      <td data-label="Ritardo">${delayCellCompact(e)}</td>
+      <td data-label="Periodo">${start ? `<span class="period">${fmt(start)} – ${fmt(e.periodEnd)}</span>` : '<span style="color:var(--muted)">Da definire</span>'}</td>
     </tr>`;
   }).join('');
 
-  const filterButton = (key, label, count) =>
-    `<button class="chipb ${state.listFilter === key ? 'on' : ''}" data-act="list-filter" data-filter="${key}" aria-pressed="${state.listFilter === key}">${label} <span class="cnt">${count}</span></button>`;
+  const filterOptions = [
+    ['all', 'Tutti'], ['action', 'Da gestire'], ['waiting', 'In attesa'],
+    ['progress', 'In corso'], ['done', 'Completati'], ['risk', 'A rischio']
+  ];
+  const sortOptions = [
+    ['priority', 'Priorità'], ['start', 'Avvio più vicino'],
+    ['client', 'Cliente'], ['name', 'Nome']
+  ];
 
   const empty = state.listQuery || state.listFilter !== 'all'
     ? `<div class="empty">Nessun engagement in questo filtro. <button class="btn sec sm" data-act="clear-filter" style="margin-left:8px">Azzera filtri</button></div>`
@@ -1139,45 +1365,59 @@ function renderList() {
     ? `<div class="errorbox"><span><b>Impossibile caricare gli engagement.</b> ${esc(state.error)}</span><button class="btn sec sm" data-act="retry-list">Riprova</button></div>`
     : state.loading && !all.length
       ? skeletonRows(4)
-      : `<div class="card" style="padding:8px 8px"><table class="list-table">
-          <caption class="sr-only">Elenco engagement con stato e proprietario dell'azione</caption>
-          <thead><tr><th scope="col">Engagement</th>${isClient() ? '' : '<th scope="col">Cliente</th>'}<th scope="col">Tipologia</th><th scope="col">Avanzamento</th><th scope="col">Stato</th><th scope="col">Periodo</th><th scope="col">Ritardo</th></tr></thead>
-          <tbody>${rows || `<tr><td colspan="${isClient() ? 6 : 7}">${empty}</td></tr>`}</tbody>
+      : `<div class="card listcard"><table class="list-table list-compact">
+          <caption class="sr-only">Elenco engagement con fase del workflow, stato e proprietario dell'azione</caption>
+          <thead><tr><th scope="col">Engagement</th>${isClient() ? '' : '<th scope="col">Cliente</th>'}<th scope="col">Fase</th><th scope="col">Stato</th><th scope="col">Ritardo</th><th scope="col">Periodo</th></tr></thead>
+          <tbody>${rows || `<tr><td colspan="${isClient() ? 5 : 6}">${empty}</td></tr>`}</tbody>
         </table></div>`;
 
   $('#app').innerHTML = `
-    <h1>I miei engagement</h1>
-    <p class="sub">${who} · aggiornato al ${fmt(today())}${todo ? ` · <b style="color:var(--st-action)">${todo} da gestire</b>` : ''}</p>
-    ${listTabs()}
-    <div class="grid kpis">
-      <div class="card kpi"><b>${active}</b><span>Engagement attivi</span></div>
-      <div class="card kpi action ${todo ? '' : 'zero'}"><b>${todo}</b><span>Da gestire</span></div>
-      <div class="card kpi wait ${waiting ? '' : 'zero'}"><b>${waiting}</b><span>In attesa di altri</span></div>
-      <div class="card kpi done ${done ? '' : 'zero'}"><b>${done}</b><span>Completati</span></div>
-      <div class="card kpi progress"><b>${next ? fmt(next.periodStart) : '–'}</b><span>Prossima attività</span></div>
-    </div>
-    ${createButton}
-    <div class="filters">
-      <div class="chips" role="group" aria-label="Filtra engagement" style="margin:0">
-        ${filterButton('all', 'Tutti', all.length)}
-        ${filterButton('action', 'Da gestire', todo)}
-        ${filterButton('waiting', 'In attesa', waiting)}
-        ${filterButton('progress', 'In corso', all.filter(e => (actionState(e) || {}).kind === 'progress').length)}
-        ${filterButton('done', 'Completati', done)}
+    <div class="headrow">
+      <div>
+        <h1>I miei engagement</h1>
+        <p class="sub" style="margin-bottom:0">${who} · aggiornato al ${fmt(today())}</p>
       </div>
-      <div class="search">
-        <svg class="search-ico" aria-hidden="true"><use href="#i-search"></use></svg>
-        <input type="search" id="list-search" value="${esc(state.listQuery)}" placeholder="Cerca in tutti i campi…" aria-label="Cerca per nome, codice, cliente, tipologia, avanzamento, stato, periodo o ritardo">
-      </div>
+      <div class="head-acts">${headActions}</div>
     </div>
-    <div class="legend" aria-label="Legenda degli stati">
-      <span><b class="g-action">!</b> Da gestire</span>
-      <span><b class="g-wait">…</b> In attesa di altri</span>
-      <span><b class="g-progress">▶</b> In corso</span>
-      <span><b class="g-done">✓</b> Completato</span>
-      <span><b class="g-blocked">🔒</b> Bloccato</span>
+    <div class="tiles" role="group" aria-label="Riepilogo e filtri">
+      ${tile('action', 'a', todo.length, 'Da gestire')}
+      ${tile('waiting', 'w', waiting.length, 'In attesa di altri')}
+      ${tile('risk', 'r', atRisk.length, 'A rischio avvio')}
+      <div class="tile n" title="${next ? esc(`${fmt(next.periodStart)} · ${next.name}`) : ''}"><b>${next ? fmt(next.periodStart).slice(0, 5) : '–'}</b><span>Prossimo avvio</span></div>
     </div>
-    ${content}`;
+    <div class="home-cols">
+      <section class="home-side">
+        <div class="card sideblock">
+          <div class="colhead"><h2>Da gestire ora</h2><span class="cnt c-action">${todo.length}</span></div>
+          ${focus || '<div class="empty" style="padding:14px 0">Nessuna azione in carico a te.</div>'}
+          ${todo.length > 4 ? `<button class="linkb" data-act="list-filter" data-filter="action" style="margin-top:8px">Vedi tutte (${todo.length})</button>` : ''}
+        </div>
+        <div class="card sideblock">
+          <div class="colhead"><h2 style="font-size:14px">In attesa di altri</h2><span class="cnt c-wait">${waiting.length}</span></div>
+          ${waitingRows || '<div class="empty" style="padding:12px 0">Nessuna attesa in corso.</div>'}
+          ${waiting.length > 4 ? `<button class="linkb" data-act="list-filter" data-filter="waiting" style="margin-top:8px">Vedi tutte (${waiting.length})</button>` : ''}
+        </div>
+      </section>
+      <section class="home-main">
+        <div class="colhead">
+          <h2>Tutti gli engagement <span class="cnt">${data.length}${data.length !== all.length ? ` di ${all.length}` : ''}</span></h2>
+          ${isClient() ? '' : `<button class="linkb" data-act="list-tab" data-tab="rem">Solleciti automatici · ${state.due.length}</button>`}
+        </div>
+        <div class="home-toolbar">
+          <div class="search">
+            <svg class="search-ico" aria-hidden="true"><use href="#i-search"></use></svg>
+            <input type="search" id="list-search" value="${esc(state.listQuery)}" placeholder="Cerca in tutti i campi…" aria-label="Cerca per nome, codice, cliente, tipologia, fase, stato, periodo o ritardo">
+          </div>
+          <select data-change="list-filter" aria-label="Filtra engagement">
+            ${filterOptions.map(([k, l]) => `<option value="${k}" ${state.listFilter === k ? 'selected' : ''}>${l}</option>`).join('')}
+          </select>
+          <select data-change="list-sort" aria-label="Ordina engagement">
+            ${sortOptions.map(([k, l]) => `<option value="${k}" ${state.listSort === k ? 'selected' : ''}>Ordina: ${l}</option>`).join('')}
+          </select>
+        </div>
+        ${content}
+      </section>
+    </div>`;
 }
 
 /* ====== SOLLECITI ====== */
@@ -1866,12 +2106,12 @@ function renderClients() {
     const users = client.users || [];
     const userRows = users.length
       ? `<ul style="list-style:none;margin:0;padding:0">${users.map(u => `<li style="display:flex;justify-content:space-between;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid #eef2f7">
-          <span><b>${esc(u.name)}</b><br><span style="color:var(--muted);font-size:13px">${esc(u.email)}</span></span>
+          <span><b>${esc(u.name)}</b><br><span style="color:var(--muted);font-size:13px;overflow-wrap:anywhere">${esc(u.email)}</span></span>
           ${manage ? `<button class="btn dng sm" data-act="remove-client-user" data-client="${esc(client.id)}" data-user="${esc(u.id)}">Rimuovi</button>` : ''}
         </li>`).join('')}</ul>`
       : '<div class="empty" style="padding:8px 0">Nessuna utenza associata.</div>';
 
-    return `<div class="card" style="margin-bottom:16px">
+    return `<div class="card client-card">
       <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start">
         <div style="display:flex;gap:12px;align-items:flex-start;min-width:0">
           ${clientAvatar(client, 'lg')}
@@ -1900,7 +2140,9 @@ function renderClients() {
           : 'Elenco in sola lettura: clienti, utenze ed engagement associati.'}</p></div>
       ${manage ? '<button class="btn pri" data-act="new-client">+ Nuovo cliente</button>' : ''}
     </div>
-    ${cards || '<div class="empty">Nessun cliente disponibile.</div>'}`;
+    ${cards
+      ? `<div class="client-grid">${cards}</div>`
+      : '<div class="empty">Nessun cliente disponibile.</div>'}`;
 }
 
 /* ====== RENDER ====== */
@@ -2424,6 +2666,14 @@ document.addEventListener('change', event => {
   if (kind === 'log-author') {
     state.logAuthor = el.value;
     render();
+  }
+  if (kind === 'list-filter') {
+    state.listFilter = el.value || 'all';
+    renderList();
+  }
+  if (kind === 'list-sort') {
+    state.listSort = el.value || 'priority';
+    renderList();
   }
 });
 

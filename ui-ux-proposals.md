@@ -411,7 +411,60 @@ mockup `detail-layout-proposals.html`; è stata **implementata la variante C**.
   (`minmax(0,1fr)`), quindi anche i nomi lunghi restano leggibili.
 - Sotto i 1000 px la sidebar si impila sopra il contenuto: la lista verticale
   lascerebbe troppo spazio vuoto, quindi viene sostituita da una barra
-  segmentata compatta con "Passo 4 di 5" e il nome del passo corrente.
-- Il contatore "4/5" in testata all'avanzamento indica la posizione nella fase,
+  segmentata compatta con "Passo 4 di 6" e il nome del passo corrente.
+- Il contatore "4/6" in testata all'avanzamento indica la posizione nella fase,
   non le fasi completate.
+
+---
+
+## 10. Homepage: layout implementato (variante B, azione prima)
+
+La lista engagement ripeteva i conteggi in tre punti (card KPI, chip di filtro,
+legenda), con cinque card KPI che spingevano la tabella a metà pagina. È stata
+**implementata la variante B**, con l'aggiunta della colonna **Fase**. Le
+varianti A e C restano nel mockup `homepage-proposals.html`.
+
+**Com'è fatta ora**
+
+- Testata con titolo, perimetro, azioni (Clienti e utenze, Nuovo engagement).
+- Quattro tessere che sono anche filtri: **Da gestire**, **In attesa di altri**,
+  **A rischio avvio**, **Prossimo avvio** (data).
+- Due colonne (300 px + resto; sotto i 1200 px si impilano):
+  - **Da gestire ora**: fino a 4 card con nome, cliente/codice/tipologia,
+    azione richiesta, giorni di attesa o allerta di ritardo e CTA diretta alla
+    scheda giusta ("Compila lo scope", "Apri i documenti", …).
+  - **In attesa di altri**: elenco compatto con responsabile e giorni.
+  - **Tutti gli engagement**: tabella compatta con ricerca, filtro e
+    ordinamento nella toolbar e "Solleciti automatici" come link con badge.
+- Colonna **Fase** compatta: barra a 6 segmenti più il nome del passo corrente
+  (circa 100 px), con tooltip "Passo N di 6: nome — descrizione". Il passo
+  completato mostra "Completato".
+- La legenda è stata rimossa: gli stati sono scritti nelle righe.
+
+**Scelte di dettaglio**
+
+- La tabella usa Stato compatto: pill, responsabile (solo per le attese) e
+  giorni; l'azione estesa vive nelle card "Da gestire ora".
+- La tipologia è un tag sotto il codice, per liberare la colonna Cliente.
+- Il filtro "A rischio" usa `preparationAlert` (scope/credenziali mancanti a
+  due settimane dall'avvio), la stessa fonte della colonna Ritardo.
+- Ordinamento: priorità (default), avvio più vicino, cliente, nome.
+
+**Perché B**: mette in cima ciò che richiede un intervento e lascia la tabella
+come consultazione completa; le tessere sostituiscono KPI, chip e legenda con
+una sola riga. La A resta più adatta se si vuole una home identica per tutti i
+profili; la C se serve una vista di pipeline.
+
+**Responsive**
+
+- Sotto i 1200 px le due colonne si impilano; sotto i 900 px le tessere vanno
+  su 2 colonne e sotto i 700 la colonna sinistra si allinea in verticale.
+- Sotto gli 820 px la tabella diventa una lista di schede (`data-label`); sotto
+  i 760 l'header si compatta (logo + utente, selettori demo a tutta larghezza) e
+  sotto i 380 spariscono avatar e ruolo per guadagnare una riga.
+- Su monitor larghi il contenuto cresce a 1360/1520/1680 px; la colonna sinistra
+  passa a 340/360 px e il workspace del dettaglio a 360/380 px. La pagina
+  clienti passa a 2 colonne oltre 1100 px e a 3 oltre 2000 px.
+
+
 

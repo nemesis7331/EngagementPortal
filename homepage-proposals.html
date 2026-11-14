@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Homepage · proposte di layout</title>
+<style>
+:root{
+  --brand-950:#061d36;--brand-900:#0a2a4d;--brand-700:#0f4275;--brand-600:#0b5fa5;
+  --brand-500:#2a86d8;--brand-100:#e1eefa;--brand-50:#f1f7fc;--accent:#0e9fb5;--accent-soft:#d6f4f8;
+  --ink:#0a1b2e;--muted:#566a80;--line:#dfe7ef;--bg:#f4f7fa;--card:#fff;
+  --st-action:#b42318;--st-action-bg:#fee4e2;--st-action-border:#fda29b;
+  --st-wait:#7a5b00;--st-wait-bg:#fff8c5;--st-wait-border:#eac54f;
+  --st-progress:#175cd3;--st-progress-bg:#d1e9ff;--st-progress-border:#b2ddff;
+  --st-done:#067647;--st-done-bg:#dcfae6;--st-done-border:#a9efc5;
+  --st-blocked:#475467;--st-blocked-bg:#f2f4f7;--st-blocked-border:#e4e7ec;
+  --radius:14px;--shadow:0 1px 2px rgba(6,29,54,.06),0 6px 20px rgba(6,29,54,.06);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:14.5px;line-height:1.5}
+button{font:inherit;cursor:pointer}
+h1{font-size:26px;margin:0 0 4px;color:var(--brand-900)}
+h2{font-size:17px;margin:0 0 12px;color:var(--brand-900)}
+h3{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:16px 0 8px}
+.sub{color:var(--muted);margin:0 0 18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:999px;font-size:11.5px;font-weight:600;white-space:nowrap;border:1px solid transparent}
+.pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;flex:none}
+.p-action{background:var(--st-action-bg);color:var(--st-action);border-color:var(--st-action-border)}
+.p-wait{background:var(--st-wait-bg);color:var(--st-wait);border-color:var(--st-wait-border)}
+.p-progress{background:var(--st-progress-bg);color:var(--st-progress);border-color:var(--st-progress-border)}
+.p-done{background:var(--st-done-bg);color:var(--st-done);border-color:var(--st-done-border)}
+.btn{border:1px solid transparent;border-radius:10px;padding:9px 16px;font-weight:600;background:none}
+.btn.pri{background:var(--brand-600);color:#fff}
+.btn.sec{background:#fff;border-color:var(--line);color:var(--brand-900)}
+.btn.sm{padding:5px 11px;font-size:13px}
+.linkb{background:none;border:0;padding:0;color:var(--brand-600);font-weight:600;font-size:13px}
+
+/* ---- pagina di presentazione ---- */
+.wrap{max-width:1180px;margin:0 auto;padding:30px 24px 80px}
+.mast{display:flex;gap:14px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+.mast .logo{width:38px;height:38px;border-radius:11px;background:var(--accent);display:grid;place-items:center;color:var(--brand-950);font-weight:800}
+.mast .t{flex:1;min-width:260px}
+.mast h1{font-size:28px;margin:0 0 6px}
+.mast p{margin:0;color:var(--muted);max-width:760px}
+.nav{position:sticky;top:0;z-index:20;display:flex;gap:8px;flex-wrap:wrap;background:rgba(244,247,250,.94);backdrop-filter:blur(8px);padding:12px 0;margin:18px 0 8px;border-bottom:1px solid var(--line)}
+.nav a{text-decoration:none;color:var(--brand-700);background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 13px;font-size:13px;font-weight:600}
+.nav a:hover{border-color:var(--brand-500)}
+.cmp{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;font-size:13px;margin:8px 0 6px}
+.cmp th{background:var(--brand-50);color:var(--brand-900);text-align:left;font-size:11px;letter-spacing:.5px;text-transform:uppercase;padding:10px 12px;border-bottom:1px solid var(--line)}
+.cmp td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.cmp tr:last-child td{border-bottom:0}
+.cmp .rec{background:#f4fcf8}
+.cmp .rec td:first-child{box-shadow:inset 3px 0 var(--st-done)}
+.tag{font-size:10.5px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent-soft);background:#fff;padding:3px 9px;border-radius:999px;vertical-align:3px}
+.tag.rec{color:var(--st-done);border-color:var(--st-done-border);background:var(--st-done-bg)}
+.cost{font-size:12px;color:var(--muted);vertical-align:3px}
+.variant{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:38px 0 8px}
+.variant h2{font-size:21px;margin:0}
+.lead{color:var(--muted);margin:0 0 12px;max-width:860px}
+.pros{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 0 16px}
+.pros div{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--muted)}
+.pros b{color:var(--brand-900);display:block;margin-bottom:2px;font-size:11px;text-transform:uppercase;letter-spacing:.4px}
+.pros .bad{border-color:var(--st-wait-border);background:#fffdf5}
+.preview{border:1px solid var(--line);border-radius:16px;background:#fff;box-shadow:var(--shadow);overflow:hidden;margin:0 0 10px}
+.chrome{display:flex;align-items:center;gap:7px;background:#eef3f8;border-bottom:1px solid var(--line);padding:8px 12px;font-size:11.5px;color:var(--muted)}
+.chrome i{width:9px;height:9px;border-radius:50%;background:#cfdae6}
+.chrome .url{margin-left:8px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:3px 10px}
+.app{padding:22px}
+
+/* ---- chrome dell'app ---- */
+.apptop{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:linear-gradient(100deg,var(--brand-950),var(--brand-900) 60%,var(--brand-700));color:#fff;border-radius:10px;padding:10px 14px;margin-bottom:18px}
+.apptop .lg{width:28px;height:28px;border-radius:8px;background:var(--accent);display:grid;place-items:center;color:var(--brand-950);font-weight:800;font-size:12px}
+.apptop b{font-size:14px}
+.apptop small{display:block;font-size:10px;opacity:.7;text-transform:uppercase;letter-spacing:.4px}
+.apptop .sp{flex:1}
+.uchip{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.1);border-radius:999px;padding:4px 10px;font-size:11.5px}
+.uchip i{width:22px;height:22px;border-radius:50%;background:var(--brand-500);display:grid;place-items:center;font-style:normal;font-weight:700;font-size:10px}
+.uchip span{opacity:.75;font-size:11px}
+.app .sub{margin-bottom:14px}
+.headrow{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.headrow .acts{display:flex;gap:8px;align-items:center}
+
+/* ---- A ---- */
+.strip{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:14px;padding:8px 10px;margin:0 0 12px}
+.fbtn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:600;color:var(--muted)}
+.fbtn.on{border-color:var(--brand-600);color:var(--brand-600);box-shadow:0 0 0 2px var(--brand-100)}
+.cnt{display:inline-block;min-width:19px;padding:0 6px;border-radius:999px;background:#eceff6;color:var(--muted);font-size:11px;font-weight:700;text-align:center}
+.fbtn.on .cnt{background:var(--brand-100);color:var(--brand-600)}
+.next{margin-left:auto;display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);padding-right:4px}
+.next b{color:var(--brand-900)}
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.search{position:relative;flex:1;min-width:220px;max-width:420px}
+.search input{width:100%;border:1px solid var(--line);border-radius:999px;padding:9px 12px 9px 36px;font:inherit;font-size:13px;background:#fff}
+.search::before{content:"⌕";position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:17px;line-height:1}
+.sel{border:1px solid var(--line);border-radius:999px;background:#fff;padding:8px 12px;font:inherit;font-size:12.5px;color:var(--brand-900);font-weight:600}
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);padding:8px 10px;border-bottom:1px solid var(--line);font-weight:700;white-space:nowrap}
+.tbl th .sort{color:var(--brand-600);font-size:10px}
+.tbl td{padding:11px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:0}
+.tbl tbody tr:hover{background:var(--brand-50)}
+.rowact{background:#fffafa}
+.rowact td:first-child{box-shadow:inset 3px 0 var(--st-action)}
+.rowwait{background:#fffdf5}
+.rowwait td:first-child{box-shadow:inset 3px 0 var(--st-wait)}
+.name{display:flex;gap:10px;align-items:center;min-width:0}
+.name .tt{min-width:0}
+.name b{display:block;color:var(--brand-900);font-size:13.5px;line-height:1.3}
+.name .meta{display:flex;gap:7px;align-items:center;flex-wrap:wrap;color:var(--muted);font-size:11.5px;margin-top:1px}
+.kind{background:var(--brand-50);border:1px solid var(--brand-100);color:var(--brand-700);border-radius:6px;padding:0 5px;font-size:10.5px;font-weight:700;letter-spacing:.3px;text-transform:uppercase}
+.av{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;font-size:10px;font-weight:800;background:var(--brand-50);border:1px solid var(--brand-100);color:var(--brand-700);flex:none}
+.av.f{background:#fdf4ff;border-color:#f0d9f5;color:#8a3fa0}
+.av.n{background:#f1f7fc;border-color:#d5e6f5;color:#0b5fa5}
+.av.o{background:#f0fbfa;border-color:#cdeeea;color:#0b7f74}
+.mini{display:flex;gap:3px}
+.mini i{width:15px;height:5px;border-radius:3px;background:var(--line)}
+.mini i.on{background:var(--accent)}
+.mini i.cur{background:var(--brand-500)}
+.st{display:grid;gap:1px;min-width:180px}
+.st .l{font-size:12.5px;line-height:1.3;color:var(--ink)}
+.st .o{font-size:11px;color:var(--muted)}
+.st .age{font-size:11px;font-weight:700;color:var(--st-wait)}
+.st .age.late{color:var(--st-action)}
+.period{font-size:12px;color:var(--brand-900);white-space:nowrap}
+.period small{display:block;color:var(--muted);font-size:10.5px;font-weight:400}
+.delay{border:1px solid var(--st-action-border);color:var(--st-negative);background:#fff;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:600;white-space:nowrap;display:inline-block}
+.none{color:var(--muted)}
+.go{width:28px;height:28px;border-radius:8px;border:1px solid var(--line);background:#fff;color:var(--brand-600);display:grid;place-items:center;font-size:14px;font-weight:700}
+.legendline{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin-top:10px}
+.legendline b{display:inline-block;width:14px;height:14px;line-height:14px;text-align:center;border-radius:50%;font-size:9.5px;margin-right:5px;background:var(--st-action);color:#fff}
+
+/* ---- B ---- */
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.tile{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;border-left:4px solid var(--brand-500)}
+.tile b{display:block;font-size:23px;line-height:1.1;color:var(--brand-900)}
+.tile span{font-size:11.5px;color:var(--muted)}
+.tile.a{border-left-color:var(--st-action)}.tile.a b{color:var(--st-action)}
+.tile.w{border-left-color:var(--st-wait)}.tile.w b{color:var(--st-wait)}
+.tile.p{border-left-color:var(--st-progress)}.tile.p b{color:var(--st-progress)}
+.tile.d{border-left-color:var(--st-done)}.tile.d b{color:var(--st-done)}
+.twocol{display:grid;grid-template-columns:360px minmax(0,1fr);gap:14px;align-items:start}
+.colhead{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}
+.colhead h2{margin:0;font-size:16px}
+.colhead .cnt{background:var(--st-action-bg);color:var(--st-action)}
+.focus{display:grid;gap:8px}
+.fcard{border:1px solid var(--line);border-left:3px solid var(--st-action);border-radius:11px;padding:10px 12px;background:#fff;display:grid;gap:4px}
+.fcard .topline{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.fcard b{font-size:13.5px;color:var(--brand-900);line-height:1.3}
+.fcard .meta{font-size:11.5px;color:var(--muted)}
+.fcard .action{font-size:12.5px;font-weight:600;color:var(--st-action);display:flex;justify-content:space-between;gap:8px;align-items:center;margin-top:2px}
+.wlist{display:grid;gap:6px}
+.wrow{display:flex;gap:9px;align-items:center;padding:7px 0;border-bottom:1px solid #eef2f7;font-size:12.5px}
+.wrow:last-child{border-bottom:0}
+.wrow .who{color:var(--muted);font-size:11.5px}
+.wrow .tt{flex:1;min-width:0}
+.wrow b{display:block;color:var(--brand-900);font-size:12.5px;font-weight:600}
+.compact .tbl td{padding:9px 8px}
+.compact .tbl th{padding:7px 8px}
+
+/* ---- C ---- */
+.boardbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.bcol{background:#eef3f8;border:1px solid var(--line);border-radius:13px;padding:9px;min-height:260px}
+.bcol header{display:flex;justify-content:space-between;align-items:center;padding:2px 4px 8px;font-size:12px;font-weight:700;color:var(--brand-900);text-transform:uppercase;letter-spacing:.4px}
+.bcol header .cnt{background:#fff;color:var(--muted);border:1px solid var(--line)}
+.bcol.a header{color:var(--st-action)}
+.bcol.w header{color:var(--st-wait)}
+.bcol.p header{color:var(--st-progress)}
+.bcol.d header{color:var(--st-done)}
+.kcard{background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 10px;margin-bottom:8px;box-shadow:0 1px 1px rgba(6,29,54,.05)}
+.kcard .kt{display:flex;gap:8px;align-items:flex-start}
+.kcard b{display:block;font-size:12.5px;color:var(--brand-900);line-height:1.3}
+.kcard .meta{font-size:11px;color:var(--muted);margin-top:1px}
+.kcard .foot{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-top:7px;flex-wrap:wrap}
+.kcard .action{font-size:11.5px;font-weight:600;color:var(--st-action)}
+.kcard .age{font-size:10.5px;color:var(--muted)}
+.kcard .bar{display:flex;gap:2px;margin-top:7px}
+.kcard .bar i{height:4px;flex:1;border-radius:2px;background:var(--line)}
+.kcard .bar i.on{background:var(--accent)}
+.kcard .bar i.cur{background:var(--brand-500)}
+.footnote{font-size:12px;color:var(--muted);margin:10px 0 0}
+.footnote b{color:var(--brand-900)}
+.tscroll{overflow-x:auto}
+
+/* ---- responsive della pagina ---- */
+@media(max-width:900px){
+  .pros{grid-template-columns:1fr}
+  .twocol{grid-template-columns:1fr}
+  .board{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .tiles{grid-template-columns:repeat(2,1fr)}
+  .app{padding:14px}
+}
+@media(max-width:640px){
+  .wrap{padding:20px 14px 60px}
+  .tbl thead{display:none}
+  .tbl,.tbl tbody,.tbl tr,.tbl td{display:block;width:100%}
+  .tbl tr{border:1px solid var(--line);border-radius:11px;margin-bottom:9px;padding:8px 10px}
+  .tbl td{border:0;padding:4px 0;display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+  .tbl td::before{content:attr(data-l);color:var(--muted);font-size:11px;font-weight:600;flex:none}
+  .tbl td:first-child{display:block}
+  .tbl td:first-child::before{display:none}
+  .board{grid-template-columns:1fr}
+  .next{display:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="mast">
+    <div class="logo">CE</div>
+    <div class="t">
+      <h1>Homepage · proposte di layout</h1>
+      <p>Tre modi per rendere la lista engagement più utile: meno spazio sprecato sopra la tabella, un solo linguaggio per i filtri e le priorità in evidenza. Dati e stati sono quelli della demo attuale (7 engagement). Il mockup è statico: serve a confrontare le alternative. <b>La variante B è stata implementata</b>, con l'aggiunta nella tabella della colonna <b>Fase</b> (barra a 6 segmenti + nome del passo).</p>
+    </div>
+  </div>
+
+  <nav class="nav">
+    <a href="#oggi">Oggi</a>
+    <a href="#a">A · Toolbar compatto</a>
+    <a href="#b">B · Azione prima</a>
+    <a href="#c">C · Board per stato</a>
+    <a href="#comuni">Ritocchi comuni</a>
+  </nav>
+
+  <section id="oggi" class="card" style="margin-top:18px">
+    <h2>Perché cambiarla</h2>
+    <div class="pros">
+      <div><b>Ridondanza</b>Gli stessi conteggi compaiono tre volte: card KPI, chip di filtro e legenda. Tre modi per dire “Da gestire”.</div>
+      <div><b>Spazio sopra la tabella</b>Cinque card KPI + azioni + filtri + legenda spingono la prima riga a metà pagina, soprattutto con 5 card su due righe sotto i 1000 px.</div>
+      <div><b>Gerarchia debole</b>La cella Stato può avere quattro righe; il pulsante “Apri” compete con il click sulla riga e l’avanzamento è una barretta senza etichetta.</div>
+    </div>
+    <p class="footnote">Obiettivo comune: la tabella deve iniziare <b>almeno 180 px più in alto</b> e ogni riga deve dire in un colpo d’occhio <b>cosa manca, a chi e da quanto</b>.</p>
+  </section>
+
+  <div class="tscroll"><table class="cmp">
+    <thead><tr><th>Variante</th><th>Idea</th><th>Spazio recuperato</th><th>Costo</th><th>Quando conviene</th></tr></thead>
+    <tbody>
+      <tr class="rec">
+        <td><b>A · Toolbar compatto</b> <span class="tag rec">consigliata</span></td>
+        <td>Una barra riassuntiva che è anche filtro; via le 5 card e la legenda; ricerca e azioni sulla stessa riga.</td>
+        <td>~180 px</td>
+        <td>S</td>
+        <td>Subito: migliora tutti i profili senza cambiare il flusso.</td>
+      </tr>
+      <tr>
+        <td><b>B · Azione prima</b> <span class="tag rec">implementata</span></td>
+        <td>Colonna “Da gestire ora” con le azioni e CTA, tabella completa a destra.</td>
+        <td>~60 px, ma focus netto</td>
+        <td>M</td>
+        <td>Se PMO/Manager usano la home come lista di lavoro quotidiana.</td>
+      </tr>
+      <tr>
+        <td><b>C · Board per stato</b></td>
+        <td>Quattro colonne (Da gestire, In attesa, In corso, Completati) con card compatte.</td>
+        <td>0</td>
+        <td>L</td>
+        <td>Se serve una vista di pipeline e il team ragiona per stati.</td>
+      </tr>
+    </tbody>
+  </table></div>
+  <p class="footnote">Costo: S ≈ mezza giornata, M ≈ 1–1,5 giorni, L ≈ 2–3 giorni (inclusi test e responsive).</p>
+
+  <!-- ===================== A ===================== -->
+  <section id="a">
+    <div class="variant">
+      <h2>A · Toolbar compatto</h2>
+      <span class="tag rec">consigliata</span>
+      <span class="cost">Costo S · solo UI</span>
+    </div>
+    <p class="lead">Le card KPI diventano una <b>barra di stato cliccabile</b>: i numeri sono i filtri. La legenda sparisce (gli stati sono già scritti nelle righe) e la ricerca sale accanto alle azioni. La tabella resta quella di oggi, ma più densa e con colonne ordinabili.</p>
+    <div class="pros">
+      <div><b>Vantaggi</b>Un solo posto per conteggi e filtri; la tabella parte subito; su mobile la barra scorre invece di impilare 5 card.</div>
+      <div><b>Contro</b>Si perde il colpo d’occhio “a card” dei numeri; richiede di spostare “Clienti e utenze” in secondo piano.</div>
+      <div class="bad"><b>Da decidere</b>“Prossima attività” resta un chip nella barra (non una card) oppure diventa una riga “Oggi” sopra la tabella.</div>
+    </div>
+
+    <div class="preview">
+      <div class="chrome"><i></i><i></i><i></i><span class="url">localhost:5199 · PMO · Tutti i clienti</span></div>
+      <div class="app">
+        <div class="apptop">
+          <div class="lg">CE</div>
+          <div><b>Cyber Engagement Portal</b><small>Demo</small></div>
+          <div class="sp"></div>
+          <div class="uchip"><i>LF</i>Luca Ferri <span>· PMO</span></div>
+        </div>
+
+        <div class="headrow">
+          <div>
+            <h1>I miei engagement</h1>
+            <p class="sub" style="margin-bottom:0">Tutti i clienti · aggiornato al 14/11/2026 · <b style="color:var(--st-action)">2 da gestire</b></p>
+          </div>
+          <div class="acts">
+            <button class="btn sec sm">Clienti e utenze</button>
+            <button class="btn pri sm">+ Nuovo engagement</button>
+          </div>
+        </div>
+
+        <div class="strip" style="margin-top:14px">
+          <button class="fbtn on">Tutti <span class="cnt">7</span></button>
+          <button class="fbtn">Da gestire <span class="cnt">2</span></button>
+          <button class="fbtn">In attesa <span class="cnt">2</span></button>
+          <button class="fbtn">In corso <span class="cnt">2</span></button>
+          <button class="fbtn">Completati <span class="cnt">1</span></button>
+          <span class="next">Prossimo avvio <b>21/11</b> · Cloud Security Assessment</span>
+        </div>
+
+        <div class="toolbar">
+          <div class="search"><input value="" placeholder="Cerca in tutti i campi…"></div>
+          <select class="sel"><option>Ordina: priorità</option><option>Avvio più vicino</option><option>Cliente</option><option>Codice</option></select>
+          <button class="linkb">Solleciti automatici · 3</button>
+        </div>
+
+        <div class="tscroll"><table class="tbl">
+          <thead><tr>
+            <th>Engagement</th><th>Cliente</th><th>Avanzamento</th><th>Stato <span class="sort">▾</span></th><th>Periodo <span class="sort">▴</span></th><th>Ritardo</th><th></th>
+          </tr></thead>
+          <tbody>
+            <tr class="rowact">
+              <td><div class="name"><span class="av">CO</span><div class="tt"><b>External Penetration Test</b><div class="meta"><span>ENG-2026-001</span><span class="kind">Pen test</span></div></div></div></td>
+              <td><div class="name"><span class="av">CO</span><span style="font-size:12.5px">Contoso</span></div></td>
+              <td><div class="mini"><i class="on"></i><i class="cur"></i><i></i><i></i><i></i><i></i></div></td>
+              <td><div class="st"><span class="pill p-action">Da gestire</span><span class="l">Compila lo scope</span><span class="age late">da 9 giorni</span></div></td>
+              <td><div class="period">Da definire<small>proposta in attesa</small></div></td>
+              <td><span class="none">–</span></td>
+              <td><button class="go" aria-label="Apri">›</button></td>
+            </tr>
+            <tr class="rowwait">
+              <td><div class="name"><span class="av f">FA</span><div class="tt"><b>Cloud Security Review</b><div class="meta"><span>ENG-2026-002</span><span class="kind">Cloud</span></div></div></div></td>
+              <td><div class="name"><span class="av f">FA</span><span style="font-size:12.5px">Fabrikam</span></div></td>
+              <td><div class="mini"><i class="cur"></i><i></i><i></i><i></i><i></i><i></i></div></td>
+              <td><div class="st"><span class="pill p-wait">In attesa</span><span class="l">Firma della manleva</span><span class="o">In attesa di Cliente</span><span class="age">da 9 giorni</span></div></td>
+              <td><div class="period">Da definire</div></td>
+              <td><span class="none">–</span></td>
+              <td><button class="go" aria-label="Apri">›</button></td>
+            </tr>
+            <tr class="rowwait">
+              <td><div class="name"><span class="av">CO</span><div class="tt"><b>Web Application Retest</b><div class="meta"><span>ENG-2026-003</span><span class="kind">Pen test</span></div></div></div></td>
+              <td><div class="name"><span class="av">CO</span><span style="font-size:12.5px">Contoso</span></div></td>
+              <td><div class="mini"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="cur"></i></div></td>
+              <td><div class="st"><span class="pill p-wait">In attesa</span><span class="l">Revisione del manager</span><span class="o">In attesa di Manager</span><span class="age">da 5 giorni</span></div></td>
+              <td><div class="period">05/11 – 10/11</div></td>
+              <td><span class="none">–</span></td>
+              <td><button class="go" aria-label="Apri">›</button></td>
+            </tr>
+            <tr>
+              <td><div class="name"><span class="av n">NB</span><div class="tt"><b>Internal Red Team</b><div class="meta"><span>ENG-2026-004</span><span class="kind">Red team</span></div></div></div></td>
+              <td><div class="name"><span class="av n">NB</span><span style="font-size:12.5px">Nova Bank</span></div></td>
+              <td><div class="mini"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="cur"></i><i></i></div></td>
+              <td><div class="st"><span class="pill p-progress">In corso</span><span class="l">In esecuzione</span></div></td>
+              <td><div class="period">11/11 – 18/11</div></td>
+              <td><span class="none">–</span></td>
+              <td><button class="go" aria-label="Apri">›</button></td>
+            </tr>
+            <tr>
+              <td><div class="name"><span class="av o">OE</span><div class="tt"><b>Cloud Security Assessment</b><div class="meta"><span>ENG-2026-005</span><span class="kind">Cloud</span></div></div></div></td>
+              <td><div class="name"><span class="av o">OE</span><span style="font-size:12.5px">Orion Energia</span></div></td>
+              <td><div class="mini"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="cur"></i><i></i></div></td>
+              <td><div class="st"><span class="pill p-progress">In corso</span><span class="l">Pianificato dal 21/11</span></div></td>
+              <td><div class="period">21/11 – 01/12</div></td>
+              <td><span class="none">–</span></td>
+              <td><button class="go" aria-label="Apri">›</button></td>
+            </tr>
+            <tr>
+              <td><div class="name"><span class="av n">NB</span><div class="tt"><b>Web Application Penetration Test</b><div class="meta"><span>ENG-2026-006</span><span class="kind">Pen test</span></div></div></div></td>
+              <td><div class="name"><span class="av n">NB</span><span style="font-size:12.5px">Nova Bank</span></div></td>
+              <td><div class="mini"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div></td>
+              <td><div class="st"><span class="pill p-done">Completato</span></div></td>
+              <td><div class="period">15/10 – 25/10</div></td>
+              <td><span class="none">–</span></td>
+              <td><button class="go" aria-label="Apri">›</button></td>
+            </tr>
+            <tr class="rowact">
+              <td><div class="name"><span class="av f">FA</span><div class="tt"><b>Cloud Configuration Review</b><div class="meta"><span>ENG-2026-007</span><span class="kind">Cloud</span></div></div></div></td>
+              <td><div class="name"><span class="av f">FA</span><span style="font-size:12.5px">Fabrikam</span></div></td>
+              <td><div class="mini"><i class="on"></i><i class="cur"></i><i></i><i></i><i></i><i></i></div></td>
+              <td><div class="st"><span class="pill p-action">Da gestire</span><span class="l">Compila lo scope</span><span class="o">anche credenziali</span><span class="age">da 5 giorni</span></div></td>
+              <td><div class="period">23/11 – 03/12</div></td>
+              <td><span class="delay">9 gg all'avvio · Scope + Cred.</span></td>
+              <td><button class="go" aria-label="Apri">›</button></td>
+            </tr>
+          </tbody>
+        </table></div>
+        <div class="legendline"><span><b>!</b>Da gestire</span><span><b style="background:var(--st-wait-bg);color:var(--st-wait);border:1px solid var(--st-wait-border)">…</b>In attesa</span><span><b style="background:var(--st-progress-bg);color:var(--st-progress)">▶</b>In corso</span><span><b style="background:var(--st-done);color:#fff">✓</b>Completato</span></div>
+      </div>
+    </div>
+    <p class="footnote">Nota: la legenda qui resta come promemoria del mapping, ma nella proposta A verrebbe <b>rimossa</b> (o spostata nel pannello di dettaglio, dove è già).</p>
+  </section>
+
+  <!-- ===================== B ===================== -->
+  <section id="b">
+    <div class="variant">
+      <h2>B · Azione prima</h2>
+      <span class="tag rec">implementata</span>
+      <span class="cost">Costo M · UI + nuova composizione</span>
+    </div>
+    <p class="lead">La home risponde prima alla domanda “cosa devo fare adesso?”: una colonna con le azioni assegnate a te e, accanto, l’elenco completo in forma compatta. Le attese restano visibili ma in secondo piano. Nella versione implementata la tabella aggiunge la colonna <b>Fase</b>: barra a 6 segmenti + nome del passo corrente, circa 100 px.</p>
+    <div class="pros">
+      <div><b>Vantaggi</b>Zero ricerca: le 1–3 azioni del giorno sono in cima, con CTA diretta. La tabella a destra resta per consultazione e confronto.</div>
+      <div><b>Contro</b>Più densa da leggere; su schermi sotto i 1100 px la colonna va sopra e allunga la pagina. Richiede di gestire bene i casi “nessuna azione”.</div>
+      <div class="bad"><b>Da decidere</b>Se mostrare anche “In attesa di altri” sotto le azioni (come nel mockup) o lasciarlo solo nella tabella.</div>
+    </div>
+
+    <div class="preview">
+      <div class="chrome"><i></i><i></i><i></i><span class="url">localhost:5199 · PMO · Tutti i clienti</span></div>
+      <div class="app">
+        <div class="apptop">
+          <div class="lg">CE</div>
+          <div><b>Cyber Engagement Portal</b><small>Demo</small></div>
+          <div class="sp"></div>
+          <div class="uchip"><i>LF</i>Luca Ferri <span>· PMO</span></div>
+        </div>
+        <div class="headrow">
+          <div>
+            <h1>I miei engagement</h1>
+            <p class="sub" style="margin-bottom:0">Tutti i clienti · aggiornato al 14/11/2026</p>
+          </div>
+          <div class="acts">
+            <button class="btn sec sm">Clienti e utenze</button>
+            <button class="btn pri sm">+ Nuovo engagement</button>
+          </div>
+        </div>
+
+        <div class="tiles" style="margin-top:14px">
+          <div class="tile a"><b>2</b><span>Da gestire</span></div>
+          <div class="tile w"><b>2</b><span>In attesa di altri</span></div>
+          <div class="tile p"><b>1</b><span>A rischio avvio</span></div>
+          <div class="tile"><b>21/11</b><span>Prossimo avvio</span></div>
+        </div>
+
+        <div class="twocol">
+          <div>
+            <div class="colhead"><h2>Da gestire ora</h2><span class="cnt">2</span></div>
+            <div class="focus">
+              <div class="fcard">
+                <div class="topline"><b>Cloud Configuration Review</b><span class="pill p-action">Da gestire</span></div>
+                <div class="meta">Fabrikam · ENG-2026-007 · Cloud Security</div>
+                <div class="action"><span>Compila lo scope (e le credenziali)</span><em style="font-style:normal;font-size:11px;color:var(--st-negative)">9 gg all'avvio</em></div>
+                <div><button class="btn pri sm" style="margin-top:4px">Apri e compila</button></div>
+              </div>
+              <div class="fcard">
+                <div class="topline"><b>External Penetration Test</b><span class="pill p-action">Da gestire</span></div>
+                <div class="meta">Contoso · ENG-2026-001 · Penetration Test</div>
+                <div class="action"><span>Compila lo scope</span><em style="font-style:normal;font-size:11px;color:var(--muted)">da 9 giorni</em></div>
+                <div><button class="btn sec sm" style="margin-top:4px">Apri</button></div>
+              </div>
+            </div>
+
+            <div class="colhead" style="margin-top:18px"><h2 style="font-size:14px">In attesa di altri</h2><span class="cnt" style="background:var(--st-wait-bg);color:var(--st-wait)">2</span></div>
+            <div class="card" style="padding:10px 12px;border-radius:12px">
+              <div class="wlist">
+                <div class="wrow"><span class="av f">FA</span><div class="tt"><b>Cloud Security Review</b><span class="who">Firma manleva · Cliente</span></div><span style="font-size:11px;color:var(--muted)">9 gg</span></div>
+                <div class="wrow"><span class="av">CO</span><div class="tt"><b>Web Application Retest</b><span class="who">Revisione · Manager</span></div><span style="font-size:11px;color:var(--muted)">5 gg</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="colhead">
+              <h2>Tutti gli engagement <span class="cnt" style="background:#eceff6;color:var(--muted)">7</span></h2>
+              <button class="linkb">Solleciti · 3</button>
+            </div>
+            <div class="toolbar" style="margin-bottom:8px">
+              <div class="search" style="max-width:none"><input placeholder="Cerca in tutti i campi…"></div>
+              <select class="sel"><option>Ordina: priorità</option><option>Avvio</option></select>
+            </div>
+            <div class="card compact" style="padding:4px 10px">
+              <div class="tscroll"><table class="tbl">
+                <thead><tr><th>Engagement</th><th>Cliente</th><th>Stato</th><th>Periodo</th></tr></thead>
+                <tbody>
+                  <tr class="rowact"><td><div class="name"><span class="av f">FA</span><div class="tt"><b>Cloud Configuration Review</b><div class="meta"><span>ENG-2026-007</span></div></div></div></td><td style="font-size:12.5px">Fabrikam</td><td><span class="pill p-action">Da gestire</span></td><td class="period">23/11 – 03/12</td></tr>
+                  <tr class="rowact"><td><div class="name"><span class="av">CO</span><div class="tt"><b>External Penetration Test</b><div class="meta"><span>ENG-2026-001</span></div></div></div></td><td style="font-size:12.5px">Contoso</td><td><span class="pill p-action">Da gestire</span></td><td class="period">Da definire</td></tr>
+                  <tr class="rowwait"><td><div class="name"><span class="av f">FA</span><div class="tt"><b>Cloud Security Review</b><div class="meta"><span>ENG-2026-002</span></div></div></div></td><td style="font-size:12.5px">Fabrikam</td><td><span class="pill p-wait">In attesa</span></td><td class="period">Da definire</td></tr>
+                  <tr class="rowwait"><td><div class="name"><span class="av">CO</span><div class="tt"><b>Web Application Retest</b><div class="meta"><span>ENG-2026-003</span></div></div></div></td><td style="font-size:12.5px">Contoso</td><td><span class="pill p-wait">In attesa</span></td><td class="period">05/11 – 10/11</td></tr>
+                  <tr><td><div class="name"><span class="av n">NB</span><div class="tt"><b>Internal Red Team</b><div class="meta"><span>ENG-2026-004</span></div></div></div></td><td style="font-size:12.5px">Nova Bank</td><td><span class="pill p-progress">In corso</span></td><td class="period">11/11 – 18/11</td></tr>
+                  <tr><td><div class="name"><span class="av o">OE</span><div class="tt"><b>Cloud Security Assessment</b><div class="meta"><span>ENG-2026-005</span></div></div></div></td><td style="font-size:12.5px">Orion Energia</td><td><span class="pill p-progress">In corso</span></td><td class="period">21/11 – 01/12</td></tr>
+                  <tr><td><div class="name"><span class="av n">NB</span><div class="tt"><b>Web Application Penetration Test</b><div class="meta"><span>ENG-2026-006</span></div></div></div></td><td style="font-size:12.5px">Nova Bank</td><td><span class="pill p-done">Completato</span></td><td class="period">15/10 – 25/10</td></tr>
+                </tbody>
+              </table></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== C ===================== -->
+  <section id="c">
+    <div class="variant">
+      <h2>C · Board per stato</h2>
+      <span class="cost">Costo L · nuova vista + responsive</span>
+    </div>
+    <p class="lead">Quattro colonne corrispondenti ai filtri di oggi, con card compatte. La pipeline si legge da sinistra a destra; il filtro diventa un tap sulla colonna. Con lo stesso componente si può raggruppare per fase del workflow invece che per stato.</p>
+    <div class="pros">
+      <div><b>Vantaggi</b>Ottima visione d’insieme di dove sono bloccati gli engagement; i conteggi sono impliciti; buon punto di partenza per drag&drop futuro.</div>
+      <div><b>Contro</b>Meno adatta a confrontare date e codice; con molti engagement le colonne diventano lunghe; su mobile diventa una sequenza di sezioni.</div>
+      <div class="bad"><b>Da decidere</b>Griglia a 4 colonne (stati) o a 6 (fasi del workflow)? La seconda racconta meglio il processo ma è più larga.</div>
+    </div>
+
+    <div class="preview">
+      <div class="chrome"><i></i><i></i><i></i><span class="url">localhost:5199 · PMO · Tutti i clienti</span></div>
+      <div class="app">
+        <div class="apptop">
+          <div class="lg">CE</div>
+          <div><b>Cyber Engagement Portal</b><small>Demo</small></div>
+          <div class="sp"></div>
+          <div class="uchip"><i>LF</i>Luca Ferri <span>· PMO</span></div>
+        </div>
+        <div class="headrow">
+          <div>
+            <h1>I miei engagement</h1>
+            <p class="sub" style="margin-bottom:0">Tutti i clienti · aggiornato al 14/11/2026</p>
+          </div>
+          <div class="acts">
+            <button class="btn sec sm">Clienti e utenze</button>
+            <button class="btn pri sm">+ Nuovo engagement</button>
+          </div>
+        </div>
+
+        <div class="boardbar" style="margin-top:14px">
+          <div class="search" style="max-width:420px"><input placeholder="Cerca in tutti i campi…"></div>
+          <button class="fbtn on">Tutti <span class="cnt">7</span></button>
+          <button class="linkb" style="margin-left:auto">Solleciti automatici · 3</button>
+        </div>
+
+        <div class="board">
+          <section class="bcol a">
+            <header>Da gestire <span class="cnt">2</span></header>
+            <div class="kcard">
+              <div class="kt"><span class="av f">FA</span><div><b>Cloud Configuration Review</b><div class="meta">Fabrikam · ENG-2026-007</div></div></div>
+              <div class="bar"><i class="on"></i><i class="cur"></i><i></i><i></i><i></i><i></i></div>
+              <div class="foot"><span class="action">Compila lo scope</span><span class="age">da 5 gg</span></div>
+              <div class="foot"><span class="delay">9 gg all'avvio · Scope + Cred.</span><span class="age">›</span></div>
+            </div>
+            <div class="kcard">
+              <div class="kt"><span class="av">CO</span><div><b>External Penetration Test</b><div class="meta">Contoso · ENG-2026-001</div></div></div>
+              <div class="bar"><i class="on"></i><i class="cur"></i><i></i><i></i><i></i><i></i></div>
+              <div class="foot"><span class="action">Compila lo scope</span><span class="age">da 9 gg</span></div>
+            </div>
+          </section>
+          <section class="bcol w">
+            <header>In attesa <span class="cnt">2</span></header>
+            <div class="kcard">
+              <div class="kt"><span class="av f">FA</span><div><b>Cloud Security Review</b><div class="meta">Fabrikam · ENG-2026-002</div></div></div>
+              <div class="bar"><i class="cur"></i><i></i><i></i><i></i><i></i><i></i></div>
+              <div class="foot"><span class="action" style="color:var(--st-wait)">Firma della manleva</span><span class="age">da 9 gg</span></div>
+              <div class="foot"><span class="age">In attesa di Cliente</span></div>
+            </div>
+            <div class="kcard">
+              <div class="kt"><span class="av">CO</span><div><b>Web Application Retest</b><div class="meta">Contoso · ENG-2026-003</div></div></div>
+              <div class="bar"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="cur"></i></div>
+              <div class="foot"><span class="action" style="color:var(--st-wait)">Revisione del manager</span><span class="age">da 5 gg</span></div>
+              <div class="foot"><span class="age">In attesa di Manager</span></div>
+            </div>
+          </section>
+          <section class="bcol p">
+            <header>In corso <span class="cnt">2</span></header>
+            <div class="kcard">
+              <div class="kt"><span class="av n">NB</span><div><b>Internal Red Team</b><div class="meta">Nova Bank · ENG-2026-004</div></div></div>
+              <div class="bar"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="cur"></i><i></i></div>
+              <div class="foot"><span class="action" style="color:var(--st-progress)">In esecuzione</span><span class="age">11/11 – 18/11</span></div>
+            </div>
+            <div class="kcard">
+              <div class="kt"><span class="av o">OE</span><div><b>Cloud Security Assessment</b><div class="meta">Orion Energia · ENG-2026-005</div></div></div>
+              <div class="bar"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="cur"></i><i></i></div>
+              <div class="foot"><span class="action" style="color:var(--st-progress)">Pianificato dal 21/11</span></div>
+            </div>
+          </section>
+          <section class="bcol d">
+            <header>Completati <span class="cnt">1</span></header>
+            <div class="kcard">
+              <div class="kt"><span class="av n">NB</span><div><b>Web Application Penetration Test</b><div class="meta">Nova Bank · ENG-2026-006</div></div></div>
+              <div class="bar"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div>
+              <div class="foot"><span class="action" style="color:var(--st-done)">Completato</span><span class="age">15/10 – 25/10</span></div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== COMUNI ===================== -->
+  <section id="comuni">
+    <div class="variant"><h2>Ritocchi comuni a tutte le varianti</h2><span class="cost">Micro-interventi, costo S</span></div>
+    <div class="pros">
+      <div><b>Riga più leggibile</b>Stato su tre livelli: pill, una riga di azione, una riga di contesto (chi/da quanto). Il pulsante “Apri” diventa un chevron a destra, visibile su hover e focus.</div>
+      <div><b>Tipologia sotto il nome</b>La colonna “Tipologia” costa ~120 px per un dato che serve di rado: diventa un tag sotto il codice, e libera spazio per Cliente e Ritardo.</div>
+      <div><b>Colonne ordinabili</b>Header cliccabili su Stato, Periodo e Ritardo, con indicatore ▴/▾ e ordinamento mantenuto nell’URL/`localStorage`.</div>
+      <div><b>Solleciti come link</b>Il tab “Solleciti automatici” esce dalla barra principale: diventa un link con badge nella toolbar (sono una vista secondaria).</div>
+      <div><b>“Prossima attività” non è un KPI</b>È un dato di calendario: meglio un chip “Prossimo avvio 21/11 · Cloud Security Assessment” che una card identica ai contatori.</div>
+      <div><b>Mobile</b>La barra dei filtri scorre in orizzontale; ogni riga-card mostra solo nome, cliente, stato e ritardo; i dettagli secondari restano nel dettaglio.</div>
+    </div>
+    <p class="footnote">Tutti i ritocchi sono compatibili con la variante scelta. Se si parte dalla A, si possono fare in due passaggi: prima la barra e la rimozione di KPI/legenda, poi le colonne ordinabili e la riga compatta.</p>
+  </section>
+
+</div>
+</body>
+</html>
