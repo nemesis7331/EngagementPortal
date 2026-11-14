@@ -1,8 +1,15 @@
+using System.Text.Json.Serialization;
 using EngagementPortal.Web.Domain;
 using EngagementPortal.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddProblemDetails();
+builder.Services.ConfigureHttpJsonOptions(options =>
+    options.SerializerOptions.Converters.Add(
+        new JsonStringEnumConverter()));
+
+builder.Services.AddSingleton<IDateProvider, SystemDateProvider>();
 builder.Services.AddSingleton<IEngagementRepository,
     InMemoryEngagementRepository>();
 builder.Services.AddSingleton<EngagementWorkflow>();
@@ -10,7 +17,25 @@ builder.Services.AddSingleton<TodoResolver>();
 
 var app = builder.Build();
 
+app.UseExceptionHandler();
 app.UseHttpsRedirection();
+
+app.MapGet("/health", () => Results.Ok(new
+{
+    status = "ok",
+    service = "Cyber Engagement Portal",
+    version = typeof(Program).Assembly
+        .GetName().Version?.ToString() ?? "unknown",
+    time = DateTimeOffset.UtcNow
+}));
+
+app.MapGet("/health/ready", (IEngagementRepository repository) =>
+    Results.Ok(new
+    {
+        status = "ready",
+        storage = "in-memory",
+        engagements = repository.List(string.Empty, true).Count()
+    }));
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
@@ -157,7 +182,8 @@ api.MapPost("/engagements/{id}/manleva", (
         return Results.NotFound();
 
     if (user.Role is not (Roles.Client or Roles.Cybersec))
-        return Results.Forbid();
+        return Results.StatusCode(
+            StatusCodes.Status403Forbidden);
 
     engagement.HasManleva = true;
     engagement.AddAudit(
@@ -186,7 +212,8 @@ api.MapPost("/engagements/{id}/order", (
 
     if (user.Role is not (
         Roles.Cybersec or Roles.Cyberdefence))
-        return Results.Forbid();
+        return Results.StatusCode(
+            StatusCodes.Status403Forbidden);
 
     engagement.OrderConfirmed = true;
     engagement.AddAudit(
@@ -204,7 +231,8 @@ api.MapPost("/engagements/{id}/proposals", (
     string id,
     CreateProposalRequest request,
     HttpContext context,
-    IEngagementRepository repository) =>
+    IEngagementRepository repository,
+    IDateProvider clock) =>
 {
     var user = GetUser(context);
     var engagement = repository.Get(
@@ -219,14 +247,15 @@ api.MapPost("/engagements/{id}/proposals", (
         Roles.Client or
         Roles.Cybersec or
         Roles.Cyberdefence))
-        return Results.Forbid();
+        return Results.StatusCode(
+            StatusCodes.Status403Forbidden);
 
     if (!engagement.HasManleva ||
         !engagement.OrderConfirmed)
         return Results.BadRequest(
             "Planning is locked until the manleva and order are complete.");
 
-    var today = DateOnly.FromDateTime(DateTime.UtcNow);
+    var today = clock.Today;
     var duration =
         request.EndDate.DayNumber -
         request.StartDate.DayNumber;
@@ -300,7 +329,8 @@ api.MapPost(
           user.Role == Roles.Client));
 
     if (!canDecide)
-        return Results.Forbid();
+        return Results.StatusCode(
+            StatusCodes.Status403Forbidden);
 
     proposal.Status = request.Accept
         ? ProposalStatus.Accepted
@@ -338,7 +368,8 @@ api.MapPut("/engagements/{id}/preparation", (
 
     if (user.Role is not (
         Roles.Client or Roles.Cyberdefence))
-        return Results.Forbid();
+        return Results.StatusCode(
+            StatusCodes.Status403Forbidden);
 
     if (engagement.AcceptedProposal is null)
         return Results.BadRequest(
@@ -378,7 +409,8 @@ api.MapPost("/engagements/{id}/reports", (
         return Results.NotFound();
 
     if (user.Role!= Roles.Cyberdefence)
-        return Results.Forbid();
+        return Results.StatusCode(
+            StatusCodes.Status403Forbidden);
 
     engagement.Reports.Add(new ReportFile(
         $"R-{Guid.NewGuid():N}"[..10],
@@ -416,7 +448,8 @@ api.MapPost("/engagements/{id}/review/submit", (
 
     if (user.Role!= Roles.Cyberdefence ||
         engagement.Reports.Count == 0)
-        return Results.Forbid();
+        return Results.StatusCode(
+            StatusCodes.Status403Forbidden);
 
     engagement.ReviewStatus = ReviewStatus.Pending;
     repository.Save(engagement);
@@ -441,7 +474,8 @@ api.MapPost("/engagements/{id}/review/decide", (
 
     if (user.Role!= Roles.Manager ||
         engagement.ReviewStatus!= ReviewStatus.Pending)
-        return Results.Forbid();
+        return Results.StatusCode(
+            StatusCodes.Status403Forbidden);
 
     engagement.ReviewStatus = request.Approve
         ? ReviewStatus.Approved
@@ -475,7 +509,8 @@ api.MapPost("/engagements/{id}/reports/publish", (
 
     if (user.Role!= Roles.Cyberdefence ||
         engagement.ReviewStatus!= ReviewStatus.Approved)
-        return Results.Forbid();
+        return Results.StatusCode(
+            StatusCodes.Status403Forbidden);
 
     for (var index = 0;
          index < engagement.Reports.Count;

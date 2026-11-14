@@ -79,10 +79,13 @@ jobs:
           APP_URL: https://cyber-engagement-demo-hecxdgbqevh2awar.westus3-01.azurewebsites.net
         run: |
           for attempt in {1..12}; do
-            if response=$(curl --fail --silent --show-error \
+            if health=$(curl --fail --silent --show-error \
+              "$APP_URL/health") &&
+              printf '%s' "$health" | jq -e '.status == "ok"' >/dev/null &&
+              response=$(curl --fail --silent --show-error \
               "$APP_URL/api/engagements?role=Cyberdefence&tenant=tenant-provider") &&
               printf '%s' "$response" | jq -e 'type == "array"' >/dev/null; then
-              echo "Cyber Engagement Portal API is responding."
+              echo "Cyber Engagement Portal is responding."
               exit 0
             fi
 
