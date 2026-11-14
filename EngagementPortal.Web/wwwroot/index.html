@@ -82,7 +82,7 @@
 body{margin:0;font-family:var(--font-sans);background:var(--bg);color:var(--ink);font-size:var(--fs-base);line-height:var(--lh-base);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;font-variant-numeric:tabular-nums}
 button{font:inherit;cursor:pointer}
 /* Header */
-header{background:linear-gradient(100deg,var(--brand-950),var(--brand-900) 60%,var(--brand-700));color:#fff;position:sticky;top:0;z-index:20}
+body > header{background:linear-gradient(100deg,var(--brand-950),var(--brand-900) 60%,var(--brand-700));color:#fff;position:sticky;top:0;z-index:20}
 .hwrap{max-width:var(--page-max);margin:auto;padding:12px 24px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
 .logo{display:flex;align-items:center;gap:10px;font-weight:var(--fw-bold);font-size:var(--fs-xl);letter-spacing:0}
 .logo i{width:30px;height:30px;border-radius:var(--radius-md);background:var(--accent);display:grid;place-items:center;color:var(--brand-950);font-style:normal;font-weight:var(--fw-black)}
@@ -504,7 +504,6 @@ tr.row.is-done td:first-child{box-shadow:inset 3px 0 var(--st-done)}
 .wp-kicker{display:block;font-size:var(--fs-2xs);letter-spacing:.7px;text-transform:uppercase;color:var(--brand-700);font-weight:800;margin-bottom:2px}
 .wp-t h2{font-size:var(--fs-xl);margin:0;line-height:1.2}
 .wp-t p{font-size:var(--fs-sm);color:var(--muted);margin:2px 0 0}
-.wp-hint{margin:0;padding:10px 18px 0}
 .work-panel-body{padding:18px}
 .work-panel-body .note:first-child{margin-top:0}
 .work-panel-body > .card + .card{margin-top:16px}
@@ -1816,8 +1815,8 @@ function nextAction(d) {
 }
 
 const DETAIL_PANELS = {
-  docs: { n:'1', short:'Documenti', group:'Workflow', title:'Documenti e dati economici', desc:'Scheda tecnica, ordine, costi e margine approvati' },
-  scope: { n:'2', short:'Scope', group:'Workflow', title:'Scope', desc:'Perimetro, finestre e referente tecnico' },
+  docs: { n:'1', short:'Documenti', group:'Workflow', title:'Documenti e dati economici', desc:'Scheda tecnica, ordine e dati economici' },
+  scope: { n:'2', short:'Scope', group:'Workflow', title:'Scope', desc:'Perimetro, finestre e referente' },
   plan: { n:'3', short:'Pianificazione', group:'Workflow', title:'Pianificazione', desc:'Proposta e approvazione delle date' },
   cred: { n:'4', short:'Credenziali', group:'Workflow', title:'Credenziali', desc:'Accessi per l\'esecuzione' },
   run: { n:'5', short:'Esecuzione', group:'Workflow', title:'Esecuzione', desc:'Avanzamento dell\'attività' },
@@ -1870,8 +1869,6 @@ function renderDetail() {
   const activeKey = state.tab;
   const activeMeta = DETAIL_PANELS[activeKey] || DETAIL_PANELS.docs;
   const activeState = panelState(d, activeKey);
-  const activeReason = tabReason(d, activeKey);
-  const tabHint = activeReason && activeReason !== statusText(d) ? activeReason : '';
   const body = {
     docs: tabDocs,
     plan: tabPlan,
@@ -1905,10 +1902,9 @@ function renderDetail() {
   const stepNav = steps.map(key => {
     const s = panelState(d, key);
     const meta = DETAIL_PANELS[key];
-    const reason = key === 'run' ? runReason(d) : tabReason(d, key);
-    return `<button class="wnav-btn s-${s} ${state.tab === key ? 'on' : ''}" data-act="tab" data-tab="${key}" title="${esc(reason || panelStateLabel(d, key))}">
+    return `<button class="wnav-btn s-${s} ${state.tab === key ? 'on' : ''}" data-act="tab" data-tab="${key}" title="${esc(meta.desc)} · ${esc(panelStateLabel(d, key))}">
       <span class="wnav-num">${s === 'ok' ? '✓' : meta.n}</span>
-      <span class="wnav-h"><b>${esc(meta.short)}</b><span>${esc(reason || panelStateLabel(d, key))}</span></span>
+      <span class="wnav-h"><b>${esc(meta.short)}</b><span>${esc(meta.desc)}</span></span>
     </button>`;
   }).join('');
 
@@ -1990,7 +1986,6 @@ function renderDetail() {
           </div>
           ${statePill}
         </header>
-        ${tabHint ? `<p class="hint wp-hint">${esc(tabHint)}</p>` : ''}
         <div class="work-panel-body">
           ${body(d)}
         </div>
@@ -2012,7 +2007,7 @@ function renderDetail() {
         </div>
         ${c.canViewFinancials ? `<div class="ctx-card">
           <details class="econ-collapse">
-            <summary><h3>Economia</h3><span class="econ-open">Mostra</span><span class="econ-close">Nascondi</span></summary>
+            <summary><h3>Business case</h3><span class="econ-open">Mostra</span><span class="econ-close">Nascondi</span></summary>
             <dl class="ctx-kv">
               <dt>Costo</dt><dd>${e.cost != null ? fmtMoney(e.cost) : '–'}</dd>
               <dt>Margine</dt><dd>${e.margin != null ? fmtPercent(e.margin) : '–'}</dd>
