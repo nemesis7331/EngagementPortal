@@ -1133,14 +1133,6 @@ api.MapPost("/engagements/{id}/reports/{reportId}/download", (
     if (user.Role == Roles.Client && !report.Published)
         return Results.NotFound();
 
-    var content =
-        "Cyber Engagement Portal\n" +
-        $"Engagement: {engagement.Id} - {engagement.Name}\n" +
-        $"Deliverable: {report.Name}\n" +
-        $"Utente: {user.Name} ({user.Role})\n" +
-        $"Generato: {clock.UtcNow:O}\n" +
-        "Link valido 15 minuti. Copia tracciata e filigranata.";
-
     engagement.AddAudit(
         user.Name,
         user.Role,
@@ -1150,14 +1142,135 @@ api.MapPost("/engagements/{id}/reports/{reportId}/download", (
 
     repository.Save(engagement);
 
-    var safeName = string.Concat(
-        Path.GetFileNameWithoutExtension(report.Name)
-            .Split(Path.GetInvalidFileNameChars()));
+    return ReportDownloadFile(
+        engagement,
+        report,
+        user.Name,
+        user.Role,
+        clock,
+        "Link valido 15 minuti. Copia tracciata e filigranata.");
+});
 
-    return Results.File(
-        Encoding.UTF8.GetBytes(content),
-        "text/plain",
-        $"{safeName}.txt");
+api.MapPost("/engagements/{id}/reports/{reportId}/links", (
+    string id,
+    string reportId,
+    HttpContext context,
+    IEngagementRepository repository,
+    IDateProvider clock) =>
+{
+    var user = GetUser(context);
+    var engagement = Find(repository, id, user);
+
+    if (engagement is null)
+        return Results.NotFound();
+
+    if (user.Role is not (Roles.Client or Roles.PMO or Roles.Manager))
+        return Forbidden();
+
+    var report = engagement.Reports
+        .FirstOrDefault(item => item.Id == reportId);
+
+    if (report is null)
+        return Results.NotFound();
+
+    if (!report.Published)
+        return Results.BadRequest(
+            "Si possono generare link solo per i deliverable pubblicati.");
+
+    var now = clock.UtcNow;
+    var link = new ReportDownloadLink
+    {
+        Token = Guid.NewGuid().ToString("N"),
+        ReportId = report.Id,
+        CreatedBy = user.Name,
+        CreatedAt = now,
+        ExpiresAt = now.AddDays(5)
+    };
+
+    engagement.ReportLinks.Add(link);
+    engagement.AddAudit(
+        user.Name,
+        user.Role,
+        $"Link monouso creato per {report.Name}",
+        AuditVisibility.ProviderOnly,
+        "Link di download monouso creato");
+
+    repository.Save(engagement);
+
+    return Results.Ok(new
+    {
+        token = link.Token,
+        link.ReportId,
+        reportName = report.Name,
+        url = $"/api/downloads/{link.Token}",
+        expiresAt = link.ExpiresAt,
+        days = 5
+    });
+});
+
+// Link pubblico monouso: il token è l'unica credenziale. Non richiede
+// autenticazione, scade dopo 5 giorni e si invalida al primo download.
+app.MapGet("/api/downloads/{token}", (
+    string token,
+    IEngagementRepository repository,
+    IDateProvider clock) =>
+{
+    var engagement = repository
+        .List(string.Empty, allClients: true)
+        .FirstOrDefault(item => item.ReportLinks.Any(link =>
+            string.Equals(link.Token, token, StringComparison.Ordinal)));
+
+    if (engagement is null)
+        return Results.NotFound();
+
+    var link = engagement.ReportLinks
+        .FirstOrDefault(item => item.Token == token);
+
+    if (link is null)
+        return Results.NotFound();
+
+    if (link.UsedAt is not null)
+    {
+        return Results.Text(
+            "Link già utilizzato. Richiedine uno nuovo al provider.",
+            "text/plain",
+            Encoding.UTF8,
+            StatusCodes.Status410Gone);
+    }
+
+    if (link.ExpiresAt <= clock.UtcNow)
+    {
+        return Results.Text(
+            "Link scaduto. Richiedine uno nuovo al provider.",
+            "text/plain",
+            Encoding.UTF8,
+            StatusCodes.Status410Gone);
+    }
+
+    var report = engagement.Reports
+        .FirstOrDefault(item => item.Id == link.ReportId);
+
+    if (report is null)
+        return Results.NotFound();
+
+    link.UsedAt = clock.UtcNow;
+
+    engagement.AddAudit(
+        "Link monouso",
+        Roles.PMO,
+        $"Download tramite link monouso: {report.Name}",
+        AuditVisibility.All,
+        $"Download effettuato tramite link monouso: {report.Name}");
+
+    repository.Save(engagement);
+
+    return ReportDownloadFile(
+        engagement,
+        report,
+        "Link monouso",
+        $"creato da {link.CreatedBy}",
+        clock,
+        "Link monouso valido 5 giorni, consumato al primo download.");
 });
 
 api.MapPost("/engagements/{id}/review/submit", (
@@ -2413,6 +2526,32 @@ static object MapReport(ReportFile report) => new
     report.Date,
     report.Published
 };
+
+static IResult ReportDownloadFile(
+    Engagement engagement,
+    ReportFile report,
+    string actor,
+    string role,
+    IDateProvider clock,
+    string note)
+{
+    var content =
+        "Cyber Engagement Portal\n" +
+        $"Engagement: {engagement.Id} - {engagement.Name}\n" +
+        $"Deliverable: {report.Name}\n" +
+        $"Utente: {actor} ({role})\n" +
+        $"Generato: {clock.UtcNow:O}\n" +
+        note;
+
+    var safeName = string.Concat(
+        Path.GetFileNameWithoutExtension(report.Name)
+            .Split(Path.GetInvalidFileNameChars()));
+
+    return Results.File(
+        Encoding.UTF8.GetBytes(content),
+        "text/plain",
+        $"{safeName}.txt");
+}
 
 static async Task<T?> ReadBody<T>(HttpRequest request)
 {

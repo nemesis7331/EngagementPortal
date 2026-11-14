@@ -469,7 +469,7 @@ tr.row.is-done td:first-child{box-shadow:inset 3px 0 var(--st-done)}
 .eng-hero-s{display:flex;flex-direction:column;align-items:flex-end;gap:6px;padding-top:4px}
 .eng-hero-s .status-owner{font-size:var(--fs-sm);color:var(--muted);white-space:nowrap}
 .split-detail{display:grid;grid-template-columns:224px minmax(0,1fr) 286px;gap:18px;align-items:start;margin-top:16px}
-.workflow-nav{border:1px solid var(--line);border-radius:var(--radius-lg);background:#fff;overflow:hidden;position:sticky;top:12px;box-shadow:var(--shadow)}
+.workflow-nav{border:1px solid var(--line);border-radius:var(--radius-lg);background:#fff;overflow:hidden;position:sticky;top:calc(var(--app-header-h,64px) + 12px);z-index:5;box-shadow:var(--shadow)}
 .wnav-group{padding:10px 12px 6px;font-size:var(--fs-2xs);letter-spacing:.7px;text-transform:uppercase;color:var(--muted);font-weight:800;display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid var(--line-soft)}
 .wnav-group:not(:first-child){border-top:1px solid var(--line);margin-top:2px;padding-top:12px}
 .wnav-btn{display:flex;align-items:flex-start;gap:9px;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line-soft);background:#fff;padding:10px 11px;color:inherit;position:relative}
@@ -505,11 +505,21 @@ tr.row.is-done td:first-child{box-shadow:inset 3px 0 var(--st-done)}
 .work-panel-body .note:first-child{margin-top:0}
 .work-panel-body > .card + .card{margin-top:16px}
 .work-panel-body .grid.two{grid-template-columns:1fr 1fr}
-.context-rail{display:grid;gap:12px;position:sticky;top:12px}
+.context-rail{display:grid;gap:12px;position:sticky;top:calc(var(--app-header-h,64px) + 12px);z-index:5}
 .context-rail .note{margin:0}
 .ctx-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius-md);padding:13px 14px;box-shadow:var(--shadow)}
 .ctx-card h3{font-size:var(--fs-2xs);letter-spacing:.7px;text-transform:uppercase;color:var(--muted);font-weight:800;margin:0 0 9px}
-.ctx-person{display:flex;align-items:center;gap:8px;padding:5px 0;min-width:0}
+.ctx-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+.ctx-head h3{margin:0}
+.ctx-add{width:24px;height:24px;border:1px solid var(--line);border-radius:7px;background:#fff;color:var(--brand-700);font-size:16px;line-height:1;display:grid;place-items:center;font-weight:700}
+.ctx-add:hover{background:var(--brand-50);border-color:var(--brand-100)}
+.ctx-person-row{display:flex;align-items:center;gap:2px;min-width:0}
+.ctx-person{display:flex;align-items:center;gap:8px;padding:5px 4px;min-width:0;flex:1;border:0;background:none;text-align:left;border-radius:6px;color:inherit}
+.ctx-person:hover{background:var(--surface-2)}
+.ctx-person-x{width:22px;height:22px;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--muted);font-size:13px;line-height:1;display:grid;place-items:center;flex:none}
+.ctx-person-x:hover{color:var(--st-action);border-color:var(--st-action-border);background:var(--st-action-bg)}
+.ctx-link{margin-top:6px;border:0;background:none;padding:2px 4px;color:var(--brand-600);font-size:var(--fs-sm);font-weight:650;text-align:left}
+.ctx-link:hover{text-decoration:underline}
 .ctx-person .avatar{width:27px;height:27px;font-size:var(--fs-2xs);flex:none}
 .ctx-person b{display:block;font-size:var(--fs-sm);color:var(--brand-900);line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ctx-person span span{display:block;font-size:var(--fs-2xs);color:var(--muted)}
@@ -528,6 +538,7 @@ tr.row.is-done td:first-child{box-shadow:inset 3px 0 var(--st-done)}
 .detail-table td{padding:9px 0;border-bottom:1px solid var(--line-soft);vertical-align:top}
 .detail-table td:first-child{color:var(--muted);width:34%}
 .detail-table tr:last-child td{border-bottom:0}
+.report-actions{display:flex;gap:6px;flex-wrap:wrap;align-items:center;justify-content:flex-end;margin-left:auto}
 .run-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
 .run-grid>div{border:1px solid var(--line);border-radius:var(--radius-md);padding:11px;background:var(--surface-2)}
 .run-grid b{display:block;font-size:var(--fs-lg);color:var(--brand-900)}
@@ -726,7 +737,7 @@ const fmtPercent = n => {
     maximumFractionDigits: 2
   }).format(value)}%`;
 };
-// Il margine è una percentuale sul costo: il valore dell'attività è
+// Il margine è una percentuale sul costo: il ricavo dell'attività è
 // costo + margine.
 const financialValue = (cost, margin) =>
   cost == null || margin == null || cost === '' || margin === ''
@@ -950,7 +961,17 @@ function updateHeader() {
   $('#uname').textContent = name;
   $('#urole').textContent = ROLES[state.role].role;
   $('#av').textContent = av;
+  syncHeaderOffset();
 }
+
+// Il dettaglio usa rail e contesto sticky: l'offset deve seguire l'altezza
+// reale dell'header (che cambia quando va a capo su schermi stretti).
+function syncHeaderOffset() {
+  const header = document.querySelector('header');
+  if (!header) return;
+  document.documentElement.style.setProperty('--app-header-h', `${header.offsetHeight}px`);
+}
+window.addEventListener('resize', syncHeaderOffset);
 
 function fillClientSelect() {
   const select = $('#client');
@@ -1828,6 +1849,37 @@ function renderDetail() {
     ? ''
     : `<span class="pill p-${panelPillClass(activeState)}">${esc(panelStateLabel(d, activeKey))}</span>`;
 
+  const people = [];
+  const seenPeople = new Set();
+  const addPerson = person => {
+    if (!person.name) return;
+    const key = String(person.email || person.name).toLowerCase();
+    if (seenPeople.has(key)) return;
+    seenPeople.add(key);
+    people.push(person);
+  };
+  addPerson({ name: e.clientName, role: 'Cliente', org: 'Cliente' });
+  addPerson({ name: e.owner, role: 'Responsabile', org: 'Provider' });
+  (d.teamEffective || []).forEach(member => addPerson({
+    name: member.name,
+    role: member.role || 'Partecipante',
+    org: member.organization,
+    email: member.email,
+    id: member.id,
+    member: true
+  }));
+  const peopleHtml = people.map(person => {
+    const removable = person.member && c.canRemoveTeam &&
+      (state.role !== 'Client' || person.org === 'Cliente');
+    return `<div class="ctx-person-row">
+      <button class="ctx-person" data-act="tab" data-tab="team" title="Apri il team">
+        <span class="avatar">${esc(initialsOf(person.name))}</span>
+        <span><b>${esc(person.name)}</b><span>${esc(person.role)}${person.org && person.org !== person.role ? ` · ${esc(person.org)}` : ''}</span></span>
+      </button>
+      ${removable ? `<button class="ctx-person-x" data-act="remove-team" data-member="${esc(person.id)}" title="Rimuovi ${esc(person.name)}" aria-label="Rimuovi ${esc(person.name)}">×</button>` : ''}
+    </div>`;
+  }).join('');
+
   $('#app').innerHTML = `
     <button class="crumb" data-act="list">← Tutti gli engagement</button>
     <div class="eng-hero">
@@ -1867,9 +1919,9 @@ function renderDetail() {
       <aside class="context-rail">
         ${nextAction(d)}
         <div class="ctx-card">
-          <h3>Persone</h3>
-          <div class="ctx-person"><span class="avatar">${esc(initialsOf(e.clientName))}</span><span><b>${esc(e.clientName)}</b><span>Cliente</span></span></div>
-          <div class="ctx-person"><span class="avatar">${esc(initialsOf(e.owner))}</span><span><b>${esc(e.owner)}</b><span>Responsabile</span></span></div>
+          <div class="ctx-head"><h3>Persone</h3>${c.canInviteTeam ? `<button class="ctx-add" data-act="invite-team" title="Aggiungi persona" aria-label="Aggiungi persona">+</button>` : ''}</div>
+          ${peopleHtml}
+          <button class="ctx-link" data-act="tab" data-tab="team">Gestisci team →</button>
         </div>
         <div class="ctx-card">
           <h3>Date</h3>
@@ -1884,7 +1936,7 @@ function renderDetail() {
           <dl class="ctx-kv">
             <dt>Costo</dt><dd>${e.cost != null ? fmtMoney(e.cost) : '–'}</dd>
             <dt>Margine</dt><dd>${e.margin != null ? fmtPercent(e.margin) : '–'}</dd>
-            <dt>Valore</dt><dd>${fmtMoney(financialValue(e.cost, e.margin))}</dd>
+            <dt>Ricavo</dt><dd>${fmtMoney(financialValue(e.cost, e.margin))}</dd>
             <dt>Approvazione</dt><dd>${e.financialsApproved ? 'Approvato' : e.financialsDone ? 'In attesa' : '–'}</dd>
           </dl>
         </div>` : ''}
@@ -1896,18 +1948,9 @@ function renderDetail() {
             ${!isClient() ? `<dt>Ordine</dt><dd>${e.orderConfirmed ? esc(e.orderRef || 'Ricevuto') : 'Non ricevuto'}</dd>` : ''}
           </dl>
         </div>
-        <details class="side-legend ctx-legend">
-          <summary>Cosa significano i simboli?</summary>
-          <div class="lg">
-            <span><b class="g-action">!</b> Da gestire</span>
-            <span><b class="g-wait">…</b> In attesa di altri</span>
-            <span><b class="g-progress">▶</b> In corso</span>
-            <span><b class="g-done">✓</b> Completato</span>
-            <span><b class="g-blocked"><svg aria-hidden="true"><use href="#i-lock"></use></svg></b> Bloccato</span>
-          </div>
-        </details>
       </aside>
     </div>`;
+  syncHeaderOffset();
 }
 
 /* ====== SCHEDE ====== */
@@ -1995,13 +2038,13 @@ function tabDocs(d) {
           <div class="fgrid">
             <div><label for="f_cost">Costo (€)</label><input type="number" id="f_cost" min="0" value="${e.cost != null ? e.cost : ''}" placeholder="0" oninput="updateFinancialValue(this)"></div>
             <div><label for="f_margin">Margine (%)</label><input type="number" id="f_margin" min="0" max="100" value="${e.margin != null ? e.margin : 46}" oninput="updateFinancialValue(this)"></div>
-            <div><label for="f_finValue">Valore attività</label><input id="f_finValue" value="${fmtMoney(finTotal)}" readonly></div>
+            <div><label for="f_finValue">Ricavo</label><input id="f_finValue" value="${fmtMoney(finTotal)}" readonly></div>
             <div><label for="f_finApproval">Approvazione</label><input id="f_finApproval" value="${finApproved ? `Approvato${e.financialsApprovedDate ? ' il ' + fmt(e.financialsApprovedDate) : ''}` : finDone ? 'In attesa del Manager' : 'Da compilare'}" readonly></div>
           </div>
           <div class="inline-actions">
             <button class="btn pri" data-act="save-financials-inline">Salva dati economici</button>
             ${canApproveFin ? '<button class="btn acc" data-act="approve-financials">Approva</button>' : ''}
-            <span class="hint">Valore = costo + margine%. Le modifiche del PMO richiedono l'approvazione del Manager.</span>
+            <span class="hint">Ricavo = costo + margine%. Le modifiche del PMO richiedono l'approvazione del Manager.</span>
           </div>
         </div>`;
       } else {
@@ -2010,7 +2053,7 @@ function tabDocs(d) {
           <dl class="ctx-kv" style="grid-template-columns:auto minmax(0,1fr);max-width:420px">
             <dt>Costo</dt><dd>${e.cost != null ? fmtMoney(e.cost) : '–'}</dd>
             <dt>Margine</dt><dd>${e.margin != null ? fmtPercent(e.margin) : '–'}</dd>
-            <dt>Valore</dt><dd>${fmtMoney(financialValue(e.cost, e.margin))}</dd>
+            <dt>Ricavo</dt><dd>${fmtMoney(financialValue(e.cost, e.margin))}</dd>
             <dt>Approvazione</dt><dd>${finApproved ? 'Approvato' : finDone ? 'In attesa' : '–'}</dd>
           </dl>
         </div>`;
@@ -2306,6 +2349,7 @@ function tabReports(d) {
   const c = d.capabilities || {};
   const reports = e.reports || [];
   const published = reports.filter(r => r.published).length;
+  const canLink = ['Client', 'PMO', 'Manager'].includes(state.role);
 
   if (!reports.length && !c.canUploadReports) {
     return '<div class="note lockbox"><b>Nessun deliverable disponibile.</b> La reportistica viene caricata dal Pentester e pubblicata al cliente dopo la revisione del manager.</div>';
@@ -2323,26 +2367,20 @@ function tabReports(d) {
           <div class="t"><b>${esc(r.name)}</b>
             <span>${r.published ? `Pubblicato il ${fmtTime(r.date)}` : `Bozza del ${fmtTime(r.date)}`} · ${fmtSize(r.size)}</span></div>
           ${r.published ? pill(['Pubblicato', 'ok']) : pill(['Bozza', 'mute'])}
-          <button class="btn pri sm" data-act="download-report" data-rid="${esc(r.id)}">Scarica</button>
+          <div class="report-actions">
+            <button class="btn pri sm" data-act="download-report" data-rid="${esc(r.id)}">Scarica</button>
+            ${r.published && canLink
+              ? `<button class="btn sec sm" data-act="create-download-link" data-rid="${esc(r.id)}">Link monouso</button>`
+              : ''}
+          </div>
         </div>`).join('')
       : '<div class="empty">Nessun deliverable disponibile.</div>'
-  }</div>`;
+  }${canLink ? '<p class="hint" style="margin-top:10px">Il link monouso scade dopo 5 giorni e può essere usato una sola volta.</p>' : ''}</div>`;
 
   if (c.canUploadReports) {
     html += `<div class="card" style="margin-top:16px"><h2>Carica deliverables</h2>
       <p class="sub" style="margin-bottom:12px">I file caricati restano in bozza fino all'approvazione del manager. Un nuovo file azzera la revisione.</p>
       <button class="btn sec" data-act="upload-report">Carica file</button></div>`;
-  }
-
-  if (published > 0) {
-    html += `<div class="card" style="margin-top:16px"><h2>Riepilogo findings</h2>
-      <div style="display:flex;gap:20px;flex-wrap:wrap">
-        <div style="flex:1;min-width:240px"><div class="bars">
-          ${[['Critical', 1], ['High', 3], ['Medium', 7], ['Low', 5]].map(x =>
-            `<div style="height:${x[1] * 13}px"><em>${x[0]} (${x[1]})</em></div>`).join('')}
-        </div><div style="height:22px"></div></div>
-        <div style="flex:1;min-width:240px;color:var(--muted);font-size:var(--fs-md)">Dati dimostrativi. Il piano di remediation è nel documento Evidenze.</div>
-      </div></div>`;
   }
 
   return html;
@@ -3139,7 +3177,7 @@ const actions = {
     const total = financialValue(e.cost, e.margin);
     const v = await ask({
       title: 'Approvare costi e margine?',
-      text: `Costo ${fmtMoney(e.cost)} · margine ${fmtPercent(e.margin)} · valore ${fmtMoney(total)}.`,
+      text: `Costo ${fmtMoney(e.cost)} · margine ${fmtPercent(e.margin)} · ricavo ${fmtMoney(total)}.`,
       ok: 'Approva'
     });
     if (!v) return;
@@ -3281,6 +3319,19 @@ const actions = {
   },
 
   'download-report': async el => {
+    if (isClient()) {
+      const verify = await ask({
+        title: 'Verifica in due passaggi',
+        text: 'Placeholder 2FA: in produzione il codice arriva dall\'app authenticator. In questa demo inserisci un codice di 6 cifre qualsiasi per continuare.',
+        ok: 'Verifica e scarica',
+        fields: [{ id: 'code', label: 'Codice 2FA (6 cifre)', ph: '123456' }]
+      });
+      if (!verify) return;
+      if (!/^\d{6}$/.test((verify.code || '').trim())) {
+        toast('Inserisci un codice di 6 cifre');
+        return;
+      }
+    }
     try {
       const response = await fetch(`/api/engagements/${engagedId()}/reports/${encodeURIComponent(el.dataset.rid)}/download?` + qs(), {
         method: 'POST', headers: { 'Content-Type': 'application/json' }
@@ -3289,6 +3340,27 @@ const actions = {
       await downloadResponse(response, 'deliverable.txt');
       toast('Download avviato');
       await refreshDetail();
+    } catch (error) { toast(error.message); }
+  },
+
+  'create-download-link': async el => {
+    try {
+      const result = await api(`/api/engagements/${engagedId()}/reports/${encodeURIComponent(el.dataset.rid)}/links?` + qs(), {
+        method: 'POST'
+      });
+      const url = new URL(result.url, location.origin).href;
+      let copied = false;
+      try {
+        await navigator.clipboard.writeText(url);
+        copied = true;
+      } catch { /* clipboard non disponibile */ }
+      await ask({
+        title: copied ? 'Link monouso copiato' : 'Link monouso creato',
+        text: `${copied ? 'Il link è già negli appunti. ' : ''}Valido fino al ${fmtTime(result.expiresAt)} (5 giorni) e utilizzabile una sola volta.`,
+        ok: 'Chiudi',
+        fields: [{ id: 'url', label: 'Link di download', value: url }]
+      });
+      toast(copied ? 'Link copiato negli appunti' : 'Copia il link dalla finestra');
     } catch (error) { toast(error.message); }
   },
 
@@ -3480,7 +3552,7 @@ const busyActions = new Set([
   'new-engagement', 'save-rule', 'send-solicitation', 'upload-manleva',
   'upload-ingaggio', 'register-order', 'save-order', 'edit-financials', 'save-financials-inline', 'approve-financials', 'propose', 'reschedule',
   'decide', 'save-scope', 'save-credentials', 'upload-report',
-  'download-report', 'submit-review', 'review-decide', 'publish', 'add-dl',
+  'download-report', 'create-download-link', 'submit-review', 'review-decide', 'publish', 'add-dl',
   'remove-dl', 'invite-team', 'remove-team', 'toggle-mail', 'send-mail', 'export-log', 'retry-list',
   'save-mail-template', 'reset-mail-template'
 ]);

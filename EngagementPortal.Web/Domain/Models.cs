@@ -207,6 +207,7 @@ public sealed class Engagement
 
     public List<Proposal> Proposals { get; init; } = [];
     public List<ReportFile> Reports { get; init; } = [];
+    public List<ReportDownloadLink> ReportLinks { get; init; } = [];
     public ReviewStatus ReviewStatus { get; set; }
     public List<AuditEntry> AuditLog { get; init; } = [];
 
@@ -252,6 +253,20 @@ public sealed record ReportFile(
     long Size,
     DateTimeOffset Date,
     bool Published);
+
+/// <summary>
+/// Link di download monouso per un deliverable pubblicato. Il token è
+/// l'unica credenziale: scade dopo 5 giorni e si invalida al primo uso.
+/// </summary>
+public sealed class ReportDownloadLink
+{
+    public required string Token { get; init; }
+    public required string ReportId { get; init; }
+    public required string CreatedBy { get; init; }
+    public DateTimeOffset CreatedAt { get; init; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset ExpiresAt { get; init; }
+    public DateTimeOffset? UsedAt { get; set; }
+}
 
 public sealed record AuditEntry(
     DateTimeOffset Date,

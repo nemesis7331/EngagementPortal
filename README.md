@@ -31,7 +31,9 @@ App Service a ogni push su `main`.
 - **Credenziali**: dati di accesso per l'esecuzione (consegna tramite
   vault/canale separato, nessuna password conservata nel portale).
 - **Esecuzione e report**: attività in corso, bozze caricate dal Pentester,
-  revisione del Manager, pubblicazione al cliente, download tracciato. Il
+  revisione del Manager, pubblicazione al cliente, download tracciato con
+  **placeholder 2FA** per il Cliente. Cliente, PMO e Manager possono generare
+  **link monouso** validi **5 giorni** e consumati al primo download. Il
   Cliente vede solo i deliverable pubblicati.
 - **Ritardo preparazione**: la lista segnala gli engagement con scope o
   credenziali mancanti a due settimane dall'avvio dell'esecuzione.
@@ -171,6 +173,10 @@ riporta esattamente i controlli applicati dalle API.
   server SMTP. L'invio manuale resta riservato al PMO.
 - Report: caricamento, invio in revisione e pubblicazione solo Pentester;
   approvazione solo Manager; pubblicazione subordinata a `ReviewStatus.Approved`.
+  Il download diretto del Cliente passa da una modale **2FA demo** (placeholder,
+  qualsiasi codice di 6 cifre). I link monouso sono creabili da Cliente, PMO e
+  Manager solo su report pubblicati: scadono dopo 5 giorni e si invalidano al
+  primo uso.
 - Distribution list dell'engagement: scrittura Cliente/PMO; il Cliente può
   gestire solo i destinatari con organizzazione `Cliente`. La base comune del
   cliente è gestita dal Manager.
@@ -307,7 +313,9 @@ engagement, gestione clienti e tutte le schede operative.
 Il dettaglio usa lo **split editor C3**: workflow a sinistra come navigazione,
 pannello operativo al centro con **editing inline** (niente modali “Modifica”)
 e colonna di contesto a destra con prossimo passo, persone, date ed economia.
-Costi e margine sono visibili solo a PMO e Manager.
+La lista **Persone** è interattiva: click su una persona per aprire il team,
+`+` per invitare e `×` per rimuovere (secondo i permessi). Costi e margine sono
+visibili solo a PMO e Manager.
 Il selettore profilo/cliente in alto permette di provare i diversi profili (demo).
 
 > Nota: l'identità è simulata tramite parametri `role`/`client` per rendere la
@@ -341,6 +349,8 @@ Le API sono esposte sotto `/api` e documentate in `documentazione.txt`
 | GET/PUT | `/api/engagements/{id}/credentials` |
 | GET/POST | `/api/engagements/{id}/reports` |
 | POST | `/api/engagements/{id}/reports/{rid}/download` |
+| POST | `/api/engagements/{id}/reports/{rid}/links` (link monouso, 5 giorni) |
+| GET | `/api/downloads/{token}` (pubblico, monouso) |
 | POST | `/api/engagements/{id}/review/submit` · `/review/decide` · `/reports/publish` |
 | GET/POST/DELETE | `/api/engagements/{id}/distribution-list` (`?kind=notifications\|deliverables`) |
 | GET | `/api/engagements/{id}/mails` |
