@@ -5,12 +5,12 @@ namespace EngagementPortal.Web.Services;
 public interface IClientRepository
 {
     IReadOnlyList<ClientAccount> List();
-    ClientAccount? Get(string tenantId);
-    ClientAccount Add(string name, string? tenantId);
-    ClientAccount? Rename(string tenantId, string name);
-    ClientUser? AddUser(string tenantId, string name, string email);
-    bool RemoveUser(string tenantId, string userId);
-    bool Exists(string tenantId);
+    ClientAccount? Get(string clientId);
+    ClientAccount Add(string name, string? website);
+    ClientAccount? Update(string clientId, string name, string? website);
+    ClientUser? AddUser(string clientId, string name, string email);
+    bool RemoveUser(string clientId, string userId);
+    bool Exists(string clientId);
 }
 
 public sealed class InMemoryClientRepository : IClientRepository
@@ -26,35 +26,31 @@ public sealed class InMemoryClientRepository : IClientRepository
         }
     }
 
-    public ClientAccount? Get(string tenantId)
+    public ClientAccount? Get(string clientId)
     {
         lock (gate)
         {
-            return clients.FirstOrDefault(client =>
-                client.TenantId == tenantId);
+            return clients.FirstOrDefault(client => client.Id == clientId);
         }
     }
 
-    public bool Exists(string tenantId)
+    public bool Exists(string clientId)
     {
         lock (gate)
         {
-            return clients.Any(client => client.TenantId == tenantId);
+            return clients.Any(client => client.Id == clientId);
         }
     }
 
-    public ClientAccount Add(string name, string? tenantId)
+    public ClientAccount Add(string name, string? website)
     {
         lock (gate)
         {
-            var resolved = string.IsNullOrWhiteSpace(tenantId)
-                ? UniqueTenantId(Slug(name))
-                : tenantId.Trim();
-
             var account = new ClientAccount
             {
-                TenantId = resolved,
-                Name = name.Trim()
+                Id = UniqueId(Slug(name)),
+                Name = name.Trim(),
+                Website = website
             };
 
             clients.Add(account);
@@ -62,30 +58,34 @@ public sealed class InMemoryClientRepository : IClientRepository
         }
     }
 
-    public ClientAccount? Rename(string tenantId, string name)
+    public ClientAccount? Update(
+        string clientId,
+        string name,
+        string? website)
     {
         lock (gate)
         {
             var account = clients.FirstOrDefault(client =>
-                client.TenantId == tenantId);
+                client.Id == clientId);
 
             if (account is null)
                 return null;
 
             account.Name = name.Trim();
+            account.Website = website;
             return account;
         }
     }
 
     public ClientUser? AddUser(
-        string tenantId,
+        string clientId,
         string name,
         string email)
     {
         lock (gate)
         {
             var account = clients.FirstOrDefault(client =>
-                client.TenantId == tenantId);
+                client.Id == clientId);
 
             if (account is null)
                 return null;
@@ -100,12 +100,12 @@ public sealed class InMemoryClientRepository : IClientRepository
         }
     }
 
-    public bool RemoveUser(string tenantId, string userId)
+    public bool RemoveUser(string clientId, string userId)
     {
         lock (gate)
         {
             var account = clients.FirstOrDefault(client =>
-                client.TenantId == tenantId);
+                client.Id == clientId);
 
             var user = account?.Users
                 .FirstOrDefault(item => item.Id == userId);
@@ -118,14 +118,14 @@ public sealed class InMemoryClientRepository : IClientRepository
         }
     }
 
-    private string UniqueTenantId(string slug)
+    private string UniqueId(string slug)
     {
-        var candidate = $"tenant-{slug}";
+        var candidate = slug;
         var index = 2;
 
-        while (clients.Any(client => client.TenantId == candidate))
+        while (clients.Any(client => client.Id == candidate))
         {
-            candidate = $"tenant-{slug}-{index}";
+            candidate = $"{slug}-{index}";
             index++;
         }
 
@@ -152,39 +152,45 @@ public sealed class InMemoryClientRepository : IClientRepository
     public static List<ClientAccount> CreateSeed() =>
     [
         NewClient(
-            "tenant-contoso",
+            "contoso",
             "Contoso",
+            "https://contoso.com",
             ("Marta Rinaldi", "marta.rinaldi@contoso.example"),
             ("Anna Rossi", "anna.rossi@contoso.example")),
         NewClient(
-            "tenant-fabrikam",
+            "fabrikam",
             "Fabrikam",
+            "https://fabrikam.com",
             ("Paolo Bassi", "paolo.bassi@fabrikam.example")),
         NewClient(
-            "tenant-novabank",
+            "novabank",
             "Nova Bank",
+            null,
             ("Giulia Sala", "giulia.sala@novabank.example")),
         NewClient(
-            "tenant-orion",
+            "orion",
             "Orion Energia",
+            "https://orionenergia.com",
             ("Andrea Conti", "andrea.conti@orion.example"))
     ];
 
     private static ClientAccount NewClient(
-        string tenantId,
+        string clientId,
         string name,
+        string? website,
         params (string Name, string Email)[] users)
     {
         var account = new ClientAccount
         {
-            TenantId = tenantId,
-            Name = name
+            Id = clientId,
+            Name = name,
+            Website = website
         };
 
         for (var index = 0; index < users.Length; index++)
         {
             account.Users.Add(new ClientUser(
-                $"CU-{tenantId}-{index + 1}",
+                $"CU-{clientId}-{index + 1}",
                 users[index].Name,
                 users[index].Email));
         }

@@ -91,18 +91,22 @@ tr:last-child td{border-bottom:0}
 .btn.acc{background:var(--accent);color:var(--brand-950)}.btn.acc:hover{filter:brightness(.95)}
 .btn.sec{background:#fff;border-color:var(--line);color:var(--brand-900)}.btn.sec:hover{border-color:var(--brand-500)}
 .btn.dng{background:#fff;border-color:var(--st-negative-border);color:var(--st-negative)}
+/* Decisioni: niente riempimenti verde/rosso, solo il bordo distingue l'azione */
+.decide{background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 15px;font-weight:600;color:var(--brand-900);transition:.15s;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.decide:hover{background:#f8fafc}
+.decide.yes{color:var(--st-done);border-color:var(--st-done-border)}
+.decide.yes:hover{background:var(--st-done-bg)}
+.decide.no{color:var(--st-negative);border-color:var(--st-negative-border)}
+.decide.no:hover{background:var(--st-negative-bg)}
+.decide.warn{color:var(--st-wait);border-color:var(--st-wait-border)}
+.decide.warn:hover{background:var(--st-wait-bg)}
+.decide:focus-visible{outline:2px solid var(--brand-500);outline-offset:2px}
+.decide.sm{padding:5px 12px;font-size:13px}
+.decision-group{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .btn.sm{padding:5px 11px;font-size:13px}
 .btn[disabled]{opacity:.45;cursor:not-allowed}
-/* stepper */
-.stepper{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin:6px 0 4px;list-style:none;padding:0}
-.st{position:relative;text-align:center;padding:0 6px}
-.st::before{content:"";position:absolute;top:17px;left:-50%;width:100%;height:3px;background:var(--line)}
-.st:first-child::before{display:none}
-.st.done::before,.st.cur::before{background:var(--accent)}
-.dot{position:relative;z-index:1;width:36px;height:36px;border-radius:50%;margin:0 auto 8px;display:grid;place-items:center;background:#fff;border:3px solid var(--line);font-weight:700;color:var(--muted)}
-.st.done .dot{background:var(--accent);border-color:var(--accent);color:var(--brand-950)}
-.st.cur .dot{border-color:var(--brand-500);color:var(--brand-600);box-shadow:0 0 0 5px var(--brand-100)}
-.st b{display:block;font-size:13px;color:var(--brand-900)}.st span{font-size:12px;color:var(--muted)}
+/* stepper orizzontale legacy (usato solo dai mockup statici) */
+.sprite{position:absolute;width:0;height:0;overflow:hidden}
 /* tabs */
 .tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:22px 0 18px;overflow:auto}
 .tab{background:none;border:0;padding:10px 16px;color:var(--muted);font-weight:600;border-bottom:3px solid transparent;white-space:nowrap}
@@ -110,7 +114,9 @@ tr:last-child td{border-bottom:0}
 .tab .lock{opacity:.6;font-size:12px}
 /* misc */
 .two{grid-template-columns:1fr 1fr}
-@media(max-width:820px){.two{grid-template-columns:1fr}.stepper{grid-template-columns:1fr;gap:12px}.st{display:flex;gap:12px;text-align:left;align-items:center}.st::before{display:none}.dot{margin:0}}
+@media(max-width:820px){
+  .two{grid-template-columns:1fr}
+}
 .doc{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--line)}
 .doc:last-child{border-bottom:0}
 .ico{width:42px;height:42px;border-radius:10px;background:var(--brand-100);color:var(--brand-600);display:grid;place-items:center;font-weight:800;font-size:12px}
@@ -118,7 +124,7 @@ tr:last-child td{border-bottom:0}
 .note{background:var(--brand-50);border:1px solid var(--brand-100);border-radius:10px;padding:12px 14px;color:var(--brand-700);font-size:13.5px;margin-bottom:16px}
 .note.lockbox{background:var(--st-blocked-bg);border-color:var(--st-blocked-border);color:var(--st-blocked)}
 label{display:block;font-size:12.5px;font-weight:600;margin-bottom:5px;color:var(--brand-900)}
-input[type=text],input[type=date],textarea,select.f,#modal select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font:inherit;background:#fff}
+input[type=text],input[type=search],input[type=date],textarea,select.f,#modal select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font:inherit;background:#fff}
 input:focus,textarea:focus,select:focus{outline:2px solid var(--brand-500);outline-offset:-1px}
 .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .fgrid .full{grid-column:1/-1}
@@ -153,6 +159,66 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--brand-500);outli
 .chips.secondary{margin:-4px 0 16px}.chips.secondary .chipb{padding:5px 11px;font-size:12.5px;background:var(--brand-50);color:var(--brand-700);border-color:var(--brand-100)}.chips.secondary .chipb.on{background:#fff;border-color:var(--brand-600);color:var(--brand-600)}
 .cnt{display:inline-block;min-width:20px;padding:0 6px;border-radius:999px;background:#eceff6;color:var(--muted);font-size:12px;font-weight:700;text-align:center}.chipb.on .cnt{background:var(--brand-100);color:var(--brand-600)}
 .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:-8px 0 18px}.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+/* ====== DETTAGLIO: workspace con sidebar ====== */
+.workspace{display:grid;grid-template-columns:320px minmax(0,1fr);gap:20px;align-items:start;margin-top:14px}
+.aside{position:sticky;top:16px;align-self:start}
+.side{padding:18px 18px 20px}
+.side-kicker{font-size:11.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:0 0 6px;overflow-wrap:anywhere}
+.side-title{font-size:19px;line-height:1.25;margin:0 0 10px;color:var(--brand-900)}
+.side-status{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
+.side-status .status-owner{font-size:12px;color:var(--muted);margin:0}
+.side-alert{margin-top:10px;border:1px solid var(--st-action-border);background:#fff;border-radius:10px;padding:8px 10px;display:grid;gap:2px;color:var(--st-negative)}
+.side-alert b{font-size:10.5px;text-transform:uppercase;letter-spacing:.05em}
+.side-alert span{font-size:12.5px;font-weight:600;line-height:1.35}
+.side h3{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 10px;display:flex;justify-content:space-between;align-items:center;gap:8px;font-weight:700}
+.side h3 .side-count{color:var(--brand-600);letter-spacing:0;font-size:12px}
+.side .divider{height:1px;background:var(--line);margin:16px 0}
+.side .kv{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 12px;margin:0;font-size:13px}
+.side .kv dt{color:var(--muted)}
+.side .kv dd{margin:0;font-weight:600;color:var(--brand-900);text-align:right;overflow-wrap:anywhere}
+.side-chips{margin:0;gap:8px}
+.side-chips .chipb{padding:5px 11px;font-size:12.5px;background:var(--brand-50);color:var(--brand-700);border-color:var(--brand-100)}
+.side-chips .chipb.on{background:#fff;border-color:var(--brand-600);color:var(--brand-600)}
+.side-legend{margin-top:14px;font-size:12px;color:var(--muted)}
+.side-legend summary{cursor:pointer;font-weight:600;color:var(--brand-600);list-style:none}
+.side-legend summary::-webkit-details-marker{display:none}
+.side-legend summary::before{content:"▸ "}
+.side-legend[open] summary::before{content:"▾ "}
+.side-legend .lg{display:grid;gap:7px;margin-top:10px}
+.side-legend .lg span{display:flex;align-items:center;gap:8px}
+.side-legend .lg b{display:inline-grid;place-items:center;width:17px;height:17px;border-radius:50%;font-size:10.5px;flex:none}
+.main-col{min-width:0}
+/* avanzamento verticale: una riga per passo, binario a sinistra */
+.vsteps{list-style:none;margin:0;padding:0}
+.vsteps li{position:relative;display:grid;grid-template-columns:26px minmax(0,1fr);column-gap:12px;padding-bottom:16px}
+.vsteps li:last-child{padding-bottom:0}
+.vsteps li::before{content:"";position:absolute;left:12px;top:27px;bottom:0;width:2px;border-radius:1px;background:var(--line)}
+.vsteps li.done::before{background:var(--accent)}
+.vsteps li:last-child::before{display:none}
+.vsteps .vt{position:relative;z-index:1;width:26px;height:26px;border-radius:50%;border:2px solid var(--line);background:#fff;color:#7b8a9b;display:grid;place-items:center;font-size:11.5px;font-weight:800;line-height:1}
+.vsteps .vt svg{width:12px;height:12px;fill:currentColor;display:block}
+.vsteps li.done .vt{background:var(--accent);border-color:var(--accent);color:var(--brand-950)}
+.vsteps li.cur .vt{border-color:var(--brand-500);color:var(--brand-600);box-shadow:0 0 0 4px var(--brand-100)}
+.vsteps .vtx{min-width:0;padding-top:2px}
+.vsteps b{display:block;font-size:13px;line-height:1.35;font-weight:600;color:var(--brand-900);overflow-wrap:anywhere}
+.vsteps .vsd{display:block;font-style:normal;font-size:11.5px;line-height:1.4;color:var(--muted);margin-top:2px}
+.vsteps li.future b{color:var(--muted);font-weight:600}
+.vsteps li.cur b{color:var(--brand-600);font-weight:700}
+/* avanzamento compatto per schermi stretti */
+.cprog{display:none}
+.cprog .cbar{display:flex;gap:4px}
+.cprog .cbar i{flex:1;height:6px;border-radius:999px;background:var(--line)}
+.cprog .cbar i.on{background:var(--accent)}
+.cprog .cbar i.cur{background:var(--brand-500)}
+.cprog .clabel{display:flex;justify-content:space-between;gap:10px;margin-top:8px;font-size:12px;color:var(--muted)}
+.cprog .clabel b{color:var(--brand-900);font-size:12.5px}
+@media(max-width:1000px){
+  .workspace{grid-template-columns:1fr;gap:16px}
+  .aside{position:static}
+  .vsteps{display:none}
+  .cprog{display:block}
+  .side .divider--steps{display:none}
+}
 @media(max-width:820px){
   .tab.s-ok{background:var(--st-done-bg);border-color:var(--st-done-border)}.tab.s-todo{background:var(--st-action-bg);border-color:var(--st-action-border)}.tab.s-wait{background:var(--st-wait-bg);border-color:var(--st-wait-border)}.tab.s-lock{background:var(--st-blocked-bg)}
   .tabs{flex-wrap:wrap;overflow:visible;border-bottom:0;gap:8px;margin:18px 0 14px}
@@ -197,6 +263,14 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .status-age{font-size:11.5px;color:var(--st-wait);font-weight:700}
 .status-age.overdue{color:#8a4b00}
 .status-age.late{color:var(--st-action)}
+.delay{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--st-action-border);color:var(--st-negative);border-radius:999px;padding:3px 10px;font-size:12px;font-weight:600;white-space:nowrap}
+.delay-none{color:var(--muted)}
+/* Icona cliente (favicon con fallback a iniziali) */
+.cav{position:relative;display:inline-grid;place-items:center;width:28px;height:28px;border-radius:8px;background:var(--brand-50);border:1px solid var(--brand-100);color:var(--brand-700);font-size:11px;font-weight:800;flex:none;overflow:hidden}
+.cav.lg{width:40px;height:40px;border-radius:10px;font-size:14px}
+.cav img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#fff;padding:4px}
+.client-cell{display:flex;align-items:center;gap:9px;min-width:0}
+.client-cell span{overflow-wrap:anywhere}
 tr.row.is-action{background:#fffafa}
 tr.row.is-waiting{background:#fffdf5}
 tr.row.is-done{background:#fbfffc}
@@ -205,8 +279,9 @@ tr.row.is-waiting td:first-child{box-shadow:inset 3px 0 var(--st-wait)}
 tr.row.is-done td:first-child{box-shadow:inset 3px 0 var(--st-done)}
 /* filtri lista */
 .filters{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:0 0 16px}
-.filters .search{flex:1;min-width:220px;max-width:360px}
-.filters .search input{margin:0}
+.filters .search{position:relative;flex:1;min-width:220px;max-width:360px}
+.filters .search input{margin:0;padding-left:38px;border-radius:999px;font-size:13.5px}
+.filters .search-ico{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:16px;height:16px;fill:var(--muted);pointer-events:none}
 .filters .chipb{cursor:pointer}
 /* skeleton */
 .skeleton{background:linear-gradient(90deg,#eef3f8 25%,#f7fafc 37%,#eef3f8 63%);background-size:400% 100%;animation:sk 1.2s ease infinite;border-radius:8px;height:14px}
@@ -242,6 +317,15 @@ tr.row.is-done td:first-child{box-shadow:inset 3px 0 var(--st-done)}
 </style>
 </head>
 <body>
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <symbol id="i-doc" viewBox="0 0 16 16"><path d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5"/><path d="M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5zm0 1v2A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 16 16"><path d="M10.854 8.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708 0"/><path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M2 2a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1z"/><path d="M2.5 4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H3a.5.5 0 0 1-.5-.5z"/></symbol>
+  <symbol id="i-key" viewBox="0 0 16 16"><path d="M0 8a4 4 0 0 1 7.465-2H14a.5.5 0 0 1 .354.146l1.5 1.5a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0L13 9.207l-.646.647a.5.5 0 0 1-.708 0L11 9.207l-.646.647a.5.5 0 0 1-.708 0L9 9.207l-.646.647A.5.5 0 0 1 8 10h-.535A4 4 0 0 1 0 8m4-3a3 3 0 1 0 2.712 4.285A.5.5 0 0 1 7.163 9h.63l.853-.854a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.793-.793-1-1h-6.63a.5.5 0 0 1-.451-.285A3 3 0 0 0 4 5"/><path d="M4 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/></symbol>
+  <symbol id="i-play" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/><path d="M6.271 5.055a.5.5 0 0 1 .52.038l3.5 2.5a.5.5 0 0 1 0 .814l-3.5 2.5A.5.5 0 0 1 6 10.5v-5a.5.5 0 0 1 .271-.445"/></symbol>
+  <symbol id="i-report" viewBox="0 0 16 16"><path d="M9.5 0a.5.5 0 0 1 .5.5.5.5 0 0 0 .5.5.5.5 0 0 1 .5.5V2a.5.5 0 0 1-.5.5h-5A.5.5 0 0 1 5 2v-.5a.5.5 0 0 1 .5-.5.5.5 0 0 0 .5-.5.5.5 0 0 1 .5-.5z"/><path d="M3 2.5a.5.5 0 0 1 .5-.5H4a.5.5 0 0 0 0-1h-.5A1.5 1.5 0 0 0 2 2.5v12A1.5 1.5 0 0 0 3.5 16h9a1.5 1.5 0 0 0 1.5-1.5v-12A1.5 1.5 0 0 0 12.5 1H12a.5.5 0 0 0 0 1h.5a.5.5 0 0 1 .5.5v12a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5z"/><path d="M10.854 7.854a.5.5 0 0 0-.708-.708L7.5 9.793 6.354 8.646a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 16 16"><path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425z"/></symbol>
+  <symbol id="i-search" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/></symbol>
+</svg>
 <header>
   <div class="hwrap">
     <div class="logo"><i>CE</i><div>Cyber Engagement Portal<small>Area clienti</small></div></div>
@@ -251,8 +335,8 @@ tr.row.is-done td:first-child{box-shadow:inset 3px 0 var(--st-done)}
       <label for="role">Profilo
         <select id="role" aria-label="Profilo demo"></select>
       </label>
-      <label for="tenant">Tenant
-        <select id="tenant" aria-label="Tenant demo"></select>
+      <label for="client">Cliente
+        <select id="client" aria-label="Cliente demo"></select>
       </label>
     </div>
     <div class="user"><div class="avatar" id="av">–</div><div><div id="uname" style="font-weight:600"></div><div id="urole" style="opacity:.7;font-size:12px"></div></div></div>
@@ -265,13 +349,13 @@ tr.row.is-done td:first-child{box-shadow:inset 3px 0 var(--st-done)}
 <div id="modal" class="modal"></div>
 
 <script>
-/* ====== PROFILI E TENANT ====== */
+/* ====== PROFILI E CLIENTI ====== */
 const ROLES = {
-  Client:       { label: 'Cliente',      role: 'Cliente',                av: 'MR', tenant: 'tenant-contoso' },
-  PMO:     { label: 'PMO',     role: 'PMO',               av: 'LF', tenant: 'tenant-provider' },
-  Pentester: { label: 'Pentester', role: 'Pentester',           av: 'SC', tenant: 'tenant-provider' },
-  Manager:      { label: 'Manager',      role: 'Manager',                av: 'GM', tenant: 'tenant-provider' },
-  Auditor:      { label: 'Auditor',      role: 'Auditor · sola lettura', av: 'EG', tenant: 'tenant-provider' }
+  Client:       { label: 'Cliente',      role: 'Cliente',                av: 'MR', client: 'contoso' },
+  PMO:     { label: 'PMO',     role: 'PMO',               av: 'LF', client: null },
+  Pentester: { label: 'Pentester', role: 'Pentester',           av: 'SC', client: null },
+  Manager:      { label: 'Manager',      role: 'Manager',                av: 'GM', client: null },
+  Auditor:      { label: 'Auditor',      role: 'Auditor · sola lettura', av: 'EG', client: null }
 };
 const ROLE_NAMES = {
   Client: 'Marta Rinaldi',
@@ -287,19 +371,13 @@ const ROLE_LABEL = {
   Manager: 'Manager',
   Auditor: 'Auditor'
 };
-const TENANTS = [
-  ['tenant-provider', 'Provider'],
-  ['tenant-contoso', 'Contoso'],
-  ['tenant-fabrikam', 'Fabrikam'],
-  ['tenant-novabank', 'Nova Bank'],
-  ['tenant-orion', 'Orion Energia']
+const DEMO_CLIENTS = [
+  // Cliente = anagrafica che raggruppa utenze ed engagement.
+  ['contoso', 'Contoso'],
+  ['fabrikam', 'Fabrikam'],
+  ['novabank', 'Nova Bank'],
+  ['orion', 'Orion Energia']
 ];
-const CLIENT_CONTACTS = {
-  'tenant-contoso': ['Marta Rinaldi', 'MR'],
-  'tenant-fabrikam': ['Paolo Bassi', 'PB'],
-  'tenant-novabank': ['Giulia Sala', 'GS'],
-  'tenant-orion': ['Andrea Conti', 'AC']
-};
 const TYPES = [
   ['PenetrationTest', 'Penetration Test'],
   ['VulnerabilityAssessment', 'Vulnerability Assessment'],
@@ -308,9 +386,10 @@ const TYPES = [
   ['CloudSecurity', 'Cloud Security']
 ];
 const STEPS = [
-  ['Scheda tecnica + Ordine', 'Scheda tecnica con manleva e ordine'],
-  ['Pianificazione', 'Proposta e accettazione'],
-  ['Scope e credenziali', 'Dati di accesso e perimetro'],
+  ['Ordine e manleva', 'Scheda tecnica firmata e ordine registrato'],
+  ['Scope', 'Perimetro e obiettivi dell\'attività'],
+  ['Pianificazione', 'Proposta e approvazione delle date'],
+  ['Credenziali', 'Dati di accesso per l\'esecuzione'],
   ['Esecuzione', 'Attività in corso'],
   ['Report', 'Revisione e consegna']
 ];
@@ -321,7 +400,7 @@ const MAIL_META = {
 };
 const PROPOSAL_STATUS = {
   Pending: ['In attesa', 'wait'],
-  Accepted: ['Accettata', 'done'],
+  Accepted: ['Approvata', 'done'],
   Rejected: ['Rifiutata', 'negative'],
   Superseded: ['Sostituita', 'neutral'],
   Replaced: ['Superata', 'neutral']
@@ -342,7 +421,7 @@ const VISIBILITY = {
 
 const state = {
   role: localStorage.getItem('cep.role') || 'Pentester',
-  tenant: localStorage.getItem('cep.tenant') || 'tenant-provider',
+  clientId: localStorage.getItem('cep.client') || '',
   view: 'list',
   listTab: 'eng',
   listFilter: 'all',
@@ -382,23 +461,65 @@ const today = () => {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 };
 const typeLabel = t => (TYPES.find(x => x[0] === t) || [t, t])[1];
-const tenantLabel = t => tenantName(t);
+const clientLabel = t => clientName(t);
 const isClient = () => state.role === 'Client';
-const isProviderRole = () => state.role === 'PMO' || state.role === 'Pentester' || state.role === 'Manager' || state.role === 'Auditor';
+const isInternalRole = () => state.role === 'PMO' || state.role === 'Pentester' || state.role === 'Manager' || state.role === 'Auditor';
 const canCreateEngagement = () => state.role === 'PMO' || state.role === 'Manager';
 const canManageClients = () => state.role === 'Manager';
-const tenantName = t => (state.clients.find(c => c.tenantId === t) || {}).name
-  || (TENANTS.find(x => x[0] === t) || [t, t])[1];
+const clientName = t => (state.clients.find(c => c.id === t) || {}).name
+  || (DEMO_CLIENTS.find(x => x[0] === t) || [t, t])[1];
+
+// Icona del cliente: favicon del sito, con le iniziali come fallback
+// quando il cliente non ha un sito o l'immagine non è raggiungibile.
+function clientFor(e) {
+  const id = e && e.clientId;
+  return (state.clients || []).find(c => c.id === id)
+    || { id, name: (e && e.clientName) || clientName(id) };
+}
+function faviconUrl(website) {
+  if (!website) return '';
+  try {
+    const url = new URL(website);
+    return url.hostname
+      ? `https://www.google.com/s2/favicons?sz=64&domain=${encodeURIComponent(url.hostname)}`
+      : '';
+  } catch {
+    return '';
+  }
+}
+function initialsOf(name) {
+  const clean = String(name || '?').trim();
+  const parts = clean.split(/\s+/).filter(Boolean);
+  if (parts.length === 1) return (clean.slice(0, 2) || '?').toUpperCase();
+  return (parts.map(p => p[0]).join('').slice(0, 2) || '?').toUpperCase();
+}
+function hostOf(website) {
+  try {
+    return new URL(website).hostname.replace(/^www\./, '');
+  } catch {
+    return website || '';
+  }
+}
+function clientAvatar(client, cls) {
+  const name = (client && client.name) || '';
+  const src = faviconUrl(client && client.website);
+  const size = cls === 'lg' ? 40 : 28;
+  return `<span class="cav ${cls || ''}" title="${esc(name)}">
+    <span class="cav-init" aria-hidden="true">${esc(initialsOf(name))}</span>
+    ${src ? `<img src="${esc(src)}" alt="" width="${size}" height="${size}" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : ''}
+  </span>`;
+}
+
 const pill = ([text, cls]) => `<span class="pill p-${cls}">${esc(text)}</span>`;
 function reviewLabel(s) {
   if (s === 'Pending') {
     return state.role === 'Manager'
-      ? ['Da fare: approva', 'action']
+      ? ['Da approvare', 'action']
       : ['In attesa del manager', 'wait'];
   }
   if (s === 'Changes') {
     return state.role === 'Pentester'
-      ? ['Da fare: correggi', 'action']
+      ? ['Da correggere', 'action']
       : ['Modifiche richieste', 'negative'];
   }
   return REVIEW_STATUS[s] || [s, 'neutral'];
@@ -423,7 +544,7 @@ function toast(msg) {
 }
 
 function qs(extra = {}) {
-  return new URLSearchParams({ role: state.role, tenant: state.tenant, ...extra }).toString();
+  return new URLSearchParams({ role: state.role, client: state.clientId || '', ...extra }).toString();
 }
 
 async function api(path, options = {}) {
@@ -534,7 +655,7 @@ function updateHeader() {
   let name = ROLE_NAMES[state.role] || 'Demo User';
   let av = (ROLES[state.role] || {}).av || '–';
   if (isClient()) {
-    const account = state.clients.find(c => c.tenantId === state.tenant);
+    const account = state.clients.find(c => c.id === state.clientId);
     const contact = account && account.users && account.users[0];
     if (contact) {
       name = contact.name;
@@ -546,29 +667,42 @@ function updateHeader() {
   $('#av').textContent = av;
 }
 
-function fillTenantSelect() {
-  const select = $('#tenant');
+function fillClientSelect() {
+  const select = $('#client');
   const clients = state.clients || [];
-  const fallback = TENANTS.filter(option => option[0] !== 'tenant-provider');
+  const known = clients.length
+    ? clients.map(c => [c.id, c.name])
+    : (isClient() ? [] : DEMO_CLIENTS);
   const options = isClient()
-    ? (clients.length ? clients.map(c => [c.tenantId, c.name]) : fallback)
-    : [['tenant-provider', 'Provider'], ...(clients.length ? clients.map(c => [c.tenantId, c.name]) : fallback)];
-  select.innerHTML = options
-    .map(([value, label]) => `<option value="${esc(value)}" ${value === state.tenant ? 'selected' : ''}>${esc(label)}</option>`)
-    .join('');
-  if (!options.some(o => o[0] === state.tenant)) {
-    state.tenant = options[0][0];
-    select.value = state.tenant;
-    localStorage.setItem('cep.tenant', state.tenant);
+    ? known
+    : [['', 'Tutti i clienti'], ...known];
+  select.innerHTML = options.length
+    ? options
+      .map(([value, label]) => `<option value="${esc(value)}" ${value === (state.clientId || '') ? 'selected' : ''}>${esc(label)}</option>`)
+      .join('')
+    : '<option value="">Nessun cliente disponibile</option>';
+  if (!options.some(o => o[0] === (state.clientId || ''))) {
+    // Per un Cliente l'identità la decide il server: si usa solo la lista
+    // restituita dal server, mai il fallback demo.
+    state.clientId = isClient()
+      ? (clients[0] ? clients[0].id : '')
+      : '';
+    select.value = state.clientId;
+    localStorage.setItem('cep.client', state.clientId);
   }
 }
 
 function setRole(role) {
   if (!ROLES[role]) return;
   state.role = role;
-  state.tenant = role === 'Client'
-    ? (state.clients[0] ? state.clients[0].tenantId : ROLES[role].tenant)
-    : 'tenant-provider';
+  if (role === 'Client') {
+    // La lista clienti di un profilo Cliente è solo la propria: si riparte
+    // dalla risposta del server per non ereditare quella del profilo interno.
+    state.clients = [];
+    state.clientId = '';
+  } else {
+    state.clientId = '';
+  }
   state.view = 'list';
   state.detail = null;
   state.tab = 'docs';
@@ -576,17 +710,22 @@ function setRole(role) {
   state.scope = null;
   state.credentials = null;
   localStorage.setItem('cep.role', role);
-  localStorage.setItem('cep.tenant', state.tenant);
-  fillTenantSelect();
+  localStorage.setItem('cep.client', state.clientId || '');
+  fillClientSelect();
   updateHeader();
   loadClients().then(loadList);
 }
 
-function setTenant(tenant) {
-  state.tenant = tenant;
-  localStorage.setItem('cep.tenant', tenant);
+function setClient(clientId) {
+  state.clientId = clientId;
+  localStorage.setItem('cep.client', clientId || '');
   updateHeader();
-  if (state.view === 'detail' && state.detail) loadDetail(state.detail.engagement.id);
+  if (state.view === 'detail' && state.detail) {
+    // Un utente interno che cambia cliente torna alla lista: il dettaglio
+    // aperto potrebbe non appartenere al nuovo perimetro.
+    if (isInternalRole()) backToList();
+    else loadDetail(state.detail.engagement.id);
+  }
   else if (state.view === 'clients') loadClients().then(render);
   else loadList();
 }
@@ -692,7 +831,12 @@ async function loadClients() {
   } catch {
     state.clients = [];
   }
-  fillTenantSelect();
+  if (isClient() && state.clients.length &&
+      !state.clients.some(c => c.id === state.clientId)) {
+    state.clientId = state.clients[0].id;
+    localStorage.setItem('cep.client', state.clientId);
+  }
+  fillClientSelect();
   updateHeader();
 }
 
@@ -706,7 +850,7 @@ function statusPill(e) {
   const s = actionState(e);
   if (!s) return ['Stato non disponibile', 'neutral'];
   switch (s.kind) {
-    case 'action': return ['Da fare', 'action'];
+    case 'action': return ['Da gestire', 'action'];
     case 'waiting': return ['In attesa', 'wait'];
     case 'progress': return ['In corso', 'progress'];
     case 'done': return ['Completato', 'done'];
@@ -755,6 +899,25 @@ function statusCell(e, withAction) {
     ${statusText(e) ? `<span class="status-detail">${esc(statusText(e))}</span>` : ''}
     ${owner ? `<span class="status-owner">In attesa di: ${esc(owner)}</span>` : ''}
     ${statusAge(e)}${quick}</div>`;
+}
+
+// Colonna "Ritardo": scope/credenziali mancanti a due settimane dall'avvio.
+function delayCell(e) {
+  const a = e && e.preparationAlert;
+  if (!a) return '<span class="delay-none" aria-hidden="true">–</span>';
+
+  const missing = (a.missing || []).map(m => m === 'scope' ? 'Scope' : 'Cred.');
+  const labels = missing.join(' + ') || 'Preparazione';
+  const days = Number(a.daysToStart) || 0;
+  const when = days > 0
+    ? `${days} gg all'avvio`
+    : days === 0 ? 'avvio oggi' : 'avvio superato';
+  const full = missing.length > 1 ? 'Scope e credenziali' : (a.missing[0] === 'scope' ? 'Scope' : 'Credenziali');
+  const title = `${full} non completati: ${days > 0
+    ? `mancano ${days} giorni all'avvio`
+    : days < 0 ? `l'avvio è già avvenuto da ${Math.abs(days)} giorni` : 'l\'avvio è oggi'}.`;
+
+  return `<span class="delay" title="${esc(title)}">${esc(when)} · ${esc(labels)}</span>`;
 }
 
 function rowClass(e) {
@@ -809,31 +972,47 @@ function legacyTabState(d, k) {
 }
 
 function defaultTab(d) {
-  return ['docs', 'plan', 'scope', 'cred', 'reports'].find(k => tabState(d, k) === 'todo') || 'docs';
+  return ['docs', 'scope', 'plan', 'cred', 'reports'].find(k => tabState(d, k) === 'todo') || 'docs';
 }
 
 function canEditPreparation(d) {
   const e = d.engagement;
   if (!e.hasManleva || !e.orderConfirmed) return false;
   if (state.role === 'Client')
-    return d.phase === 'Planning' || d.phase === 'Prep' || d.phase === 'Scheduled';
+    return d.phase === 'Scope' || d.phase === 'Planning' || d.phase === 'Credentials' || d.phase === 'Scheduled';
   if (state.role === 'PMO')
-    return d.phase === 'Planning' || d.phase === 'Prep' || d.phase === 'Scheduled' || d.phase === 'Running';
+    return d.phase === 'Scope' || d.phase === 'Planning' || d.phase === 'Credentials' || d.phase === 'Scheduled' || d.phase === 'Running';
   return false;
 }
 
 /* ====== COMPONENTI ====== */
 function mini(stepIndex) {
-  return `<div class="mini" aria-hidden="true">${[0, 1, 2, 3, 4]
-    .map(i => `<i class="${stepIndex > i ? 'on' : stepIndex === i ? 'cur' : ''}"></i>`).join('')}</div>`;
+  return `<div class="mini" aria-hidden="true">${STEPS.map((_, i) =>
+    `<i class="${stepIndex > i ? 'on' : stepIndex === i ? 'cur' : ''}"></i>`).join('')}</div>`;
 }
 
-function stepper(stepIndex) {
-  return `<ol class="stepper">${STEPS.map((x, i) => `
-    <li class="st ${stepIndex > i ? 'done' : stepIndex === i ? 'cur' : ''}">
-      <div class="dot" aria-hidden="true">${stepIndex > i ? '✓' : i + 1}</div>
-      <div><b>${x[0]}</b><span>${x[1]}</span></div>
-    </li>`).join('')}</ol>`;
+function vstepper(stepIndex) {
+  return `<ol class="vsteps">${STEPS.map((x, i) => {
+    const cls = stepIndex > i ? 'done' : stepIndex === i ? 'cur' : 'future';
+    const mark = stepIndex > i
+      ? '<svg aria-hidden="true"><use href="#i-check"></use></svg>'
+      : String(i + 1);
+    return `
+    <li class="${cls}"${stepIndex === i ? ' aria-current="step"' : ''}>
+      <span class="vt" aria-hidden="true">${mark}</span>
+      <div class="vtx"><b>${esc(x[0])}</b><em class="vsd">${esc(x[1])}</em></div>
+    </li>`;
+  }).join('')}</ol>`;
+}
+
+function cprogress(stepIndex) {
+  const done = stepIndex >= STEPS.length;
+  const cur = Math.max(0, Math.min(stepIndex, STEPS.length - 1));
+  return `<div class="cprog">
+    <div class="cbar" aria-hidden="true">${STEPS.map((_, i) =>
+      `<i class="${stepIndex > i ? 'on' : stepIndex === i ? 'cur' : ''}"></i>`).join('')}</div>
+    <div class="clabel"><span>${done ? '<b>Completato</b>' : `Passo <b>${cur + 1} di ${STEPS.length}</b>`}</span><span>${done ? 'Tutti i passi conclusi' : esc(STEPS[cur][0])}</span></div>
+  </div>`;
 }
 
 function mailSubject(type) {
@@ -861,8 +1040,30 @@ function listTabs() {
   </div>`;
 }
 
+const normText = v => String(v == null ? '' : v)
+  .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+  .toLowerCase();
+
+// Tutti i campi mostrati in tabella finiscono nell'indice di ricerca:
+// nome, codice, cliente, tipologia, passo, stato, responsabile, periodo e ritardo.
+function searchableRow(e) {
+  const s = actionState(e);
+  const step = STEPS[Math.max(0, Math.min(Number(e.stepIndex) || 0, STEPS.length - 1))];
+  const alert = e.preparationAlert;
+  return normText([
+    e.name, e.id, e.clientName, typeLabel(e.type),
+    s ? s.label : '', s ? s.kind : '', statusOwner(e),
+    statusPill(e).join(' '),
+    step ? `${step[0]} ${step[1]}` : '',
+    e.periodStart
+      ? `${fmt(e.periodStart)} ${fmt(e.periodEnd)} ${e.periodStart} ${e.periodEnd}`
+      : 'da definire',
+    alert ? `ritardo ${(alert.missing || []).join(' ')} ${alert.daysToStart}` : ''
+  ].join(' '));
+}
+
 function filteredList() {
-  const query = state.listQuery.trim().toLowerCase();
+  const terms = normText(state.listQuery).split(/\s+/).filter(Boolean);
   const match = e => {
     const s = actionState(e);
     const kind = s ? s.kind : 'neutral';
@@ -870,9 +1071,9 @@ function filteredList() {
     if (state.listFilter === 'waiting' && kind !== 'waiting') return false;
     if (state.listFilter === 'progress' && kind !== 'progress') return false;
     if (state.listFilter === 'done' && kind !== 'done') return false;
-    if (!query) return true;
-    return [e.name, e.id, e.clientName, typeLabel(e.type), s && s.label]
-      .join(' ').toLowerCase().includes(query);
+    if (!terms.length) return true;
+    const haystack = searchableRow(e);
+    return terms.every(term => haystack.includes(term));
   };
   const rank = { action: 0, waiting: 1, progress: 2, blocked: 3, neutral: 4, done: 5 };
   return state.list
@@ -903,11 +1104,13 @@ function renderList() {
   const next = all
     .filter(e => e.periodStart && e.periodStart >= today())
     .sort((a, b) => a.periodStart.localeCompare(b.periodStart))[0];
-  const who = isClient() ? `Engagement di ${esc(tenantLabel(state.tenant))}` : 'Tutti i clienti';
+  const who = state.clientId
+    ? `Engagement di ${esc(clientLabel(state.clientId))}`
+    : (isClient() ? 'Il tuo cliente' : 'Tutti i clienti');
 
   const createButton = canCreateEngagement()
     ? `<div style="margin-bottom:16px;display:flex;gap:10px;flex-wrap:wrap"><button class="btn pri" data-act="new-engagement">+ Nuovo engagement</button><button class="btn sec" data-act="clients">Clienti e utenze</button></div>`
-    : isProviderRole()
+    : isInternalRole()
       ? `<div style="margin-bottom:16px"><button class="btn sec" data-act="clients">Clienti e utenze</button></div>`
       : '';
 
@@ -916,11 +1119,12 @@ function renderList() {
     return `<tr class="row${rowClass(e)}" data-act="open" data-id="${esc(e.id)}">
       <td class="name" data-label="Engagement"><button class="linkb" data-act="open" data-id="${esc(e.id)}"><b>${esc(e.name)}</b></button>
         <span>${esc(e.id)}</span></td>
-      ${isClient() ? '' : `<td data-label="Cliente">${esc(e.clientName)}</td>`}
+      ${isClient() ? '' : `<td data-label="Cliente"><span class="client-cell">${clientAvatar(clientFor(e))}<span>${esc(e.clientName)}</span></span></td>`}
       <td data-label="Tipologia">${esc(typeLabel(e.type))}</td>
       <td data-label="Avanzamento">${mini(e.stepIndex)}</td>
       <td data-label="Stato">${statusCell(e, true)}</td>
       <td data-label="Periodo">${a ? `${fmt(a)} – ${fmt(e.periodEnd)}` : '<span style="color:var(--muted)">Da definire</span>'}</td>
+      <td data-label="Ritardo">${delayCell(e)}</td>
     </tr>`;
   }).join('');
 
@@ -929,7 +1133,7 @@ function renderList() {
 
   const empty = state.listQuery || state.listFilter !== 'all'
     ? `<div class="empty">Nessun engagement in questo filtro. <button class="btn sec sm" data-act="clear-filter" style="margin-left:8px">Azzera filtri</button></div>`
-    : `<div class="empty">Nessun engagement visibile per questo profilo e tenant.</div>`;
+    : `<div class="empty">Nessun engagement visibile per questo profilo e cliente.</div>`;
 
   const content = state.error
     ? `<div class="errorbox"><span><b>Impossibile caricare gli engagement.</b> ${esc(state.error)}</span><button class="btn sec sm" data-act="retry-list">Riprova</button></div>`
@@ -937,17 +1141,17 @@ function renderList() {
       ? skeletonRows(4)
       : `<div class="card" style="padding:8px 8px"><table class="list-table">
           <caption class="sr-only">Elenco engagement con stato e proprietario dell'azione</caption>
-          <thead><tr><th scope="col">Engagement</th>${isClient() ? '' : '<th scope="col">Cliente</th>'}<th scope="col">Tipologia</th><th scope="col">Avanzamento</th><th scope="col">Stato</th><th scope="col">Periodo</th></tr></thead>
-          <tbody>${rows || `<tr><td colspan="${isClient() ? 5 : 6}">${empty}</td></tr>`}</tbody>
+          <thead><tr><th scope="col">Engagement</th>${isClient() ? '' : '<th scope="col">Cliente</th>'}<th scope="col">Tipologia</th><th scope="col">Avanzamento</th><th scope="col">Stato</th><th scope="col">Periodo</th><th scope="col">Ritardo</th></tr></thead>
+          <tbody>${rows || `<tr><td colspan="${isClient() ? 6 : 7}">${empty}</td></tr>`}</tbody>
         </table></div>`;
 
   $('#app').innerHTML = `
     <h1>I miei engagement</h1>
-    <p class="sub">${who} · aggiornato al ${fmt(today())}${todo ? ` · <b style="color:var(--st-action)">${todo} da fare</b>` : ''}</p>
+    <p class="sub">${who} · aggiornato al ${fmt(today())}${todo ? ` · <b style="color:var(--st-action)">${todo} da gestire</b>` : ''}</p>
     ${listTabs()}
     <div class="grid kpis">
       <div class="card kpi"><b>${active}</b><span>Engagement attivi</span></div>
-      <div class="card kpi action ${todo ? '' : 'zero'}"><b>${todo}</b><span>Da fare (a te)</span></div>
+      <div class="card kpi action ${todo ? '' : 'zero'}"><b>${todo}</b><span>Da gestire</span></div>
       <div class="card kpi wait ${waiting ? '' : 'zero'}"><b>${waiting}</b><span>In attesa di altri</span></div>
       <div class="card kpi done ${done ? '' : 'zero'}"><b>${done}</b><span>Completati</span></div>
       <div class="card kpi progress"><b>${next ? fmt(next.periodStart) : '–'}</b><span>Prossima attività</span></div>
@@ -956,15 +1160,18 @@ function renderList() {
     <div class="filters">
       <div class="chips" role="group" aria-label="Filtra engagement" style="margin:0">
         ${filterButton('all', 'Tutti', all.length)}
-        ${filterButton('action', 'Da fare', todo)}
+        ${filterButton('action', 'Da gestire', todo)}
         ${filterButton('waiting', 'In attesa', waiting)}
         ${filterButton('progress', 'In corso', all.filter(e => (actionState(e) || {}).kind === 'progress').length)}
         ${filterButton('done', 'Completati', done)}
       </div>
-      <div class="search"><input type="search" id="list-search" value="${esc(state.listQuery)}" placeholder="Cerca engagement…" aria-label="Cerca per nome, cliente o codice"></div>
+      <div class="search">
+        <svg class="search-ico" aria-hidden="true"><use href="#i-search"></use></svg>
+        <input type="search" id="list-search" value="${esc(state.listQuery)}" placeholder="Cerca in tutti i campi…" aria-label="Cerca per nome, codice, cliente, tipologia, avanzamento, stato, periodo o ritardo">
+      </div>
     </div>
     <div class="legend" aria-label="Legenda degli stati">
-      <span><b class="g-action">!</b> Da fare (a te)</span>
+      <span><b class="g-action">!</b> Da gestire</span>
       <span><b class="g-wait">…</b> In attesa di altri</span>
       <span><b class="g-progress">▶</b> In corso</span>
       <span><b class="g-done">✓</b> Completato</span>
@@ -1019,7 +1226,7 @@ function nextAction(d) {
   if (s) {
     const icons = { action: '!', waiting: '…', progress: '▶', done: '✓', blocked: '🔒', neutral: '·' };
     const head = s.kind === 'action'
-      ? 'Azione richiesta a te'
+      ? 'Richiede il tuo intervento'
       : s.kind === 'waiting'
         ? `In attesa di ${s.ownerLabel || 'altri'}`
         : s.kind === 'done'
@@ -1039,7 +1246,7 @@ function nextAction(d) {
       : '';
     return `<div class="note ${s.kind}">
       <div class="note-head"><span class="note-ico">${icons[s.kind] || '·'}</span>${esc(head)}</div>
-      ${s.label ? `<div>${esc(s.label)}${button}</div>` : ''}
+      ${s.label && s.label !== head ? `<div>${esc(s.label)}${button}</div>` : ''}
       ${statusAge(d)}
     </div>`;
   }
@@ -1052,19 +1259,19 @@ function nextAction(d) {
     case 'Docs':
       message = 'In attesa di: ' + [
         !e.hasManleva ? 'scheda tecnica firmata dal cliente' : '',
-        !e.orderConfirmed ? 'ricezione ordine da parte del provider' : ''
-      ].filter(Boolean).join(' e ') + '. La pianificazione si sblocca quando entrambi sono completati.';
+        !e.orderConfirmed ? 'registrazione dell\'ordine da parte del PMO' : ''
+      ].filter(Boolean).join(' e ') + '. Il workflow prosegue con lo scope quando entrambi sono completati.';
+      break;
+    case 'Scope':
+      message = `In attesa dello scope dell'attività: ${d.scope && d.scope.done ? 'completato' : 'da compilare da cliente o PMO'}. Scope e credenziali si possono compilare già da ora.`;
       break;
     case 'Planning':
       message = pending
-        ? `Proposta ${fmt(pending.startDate)} → ${fmt(pending.endDate)} in attesa di decisione ${pending.from === 'Client' ? 'di PMO' : 'del cliente'}.`
+        ? `Proposta ${fmt(pending.startDate)} → ${fmt(pending.endDate)} in attesa dell'approvazione del Manager.`
         : 'Nessuna proposta di date ancora inviata.';
       break;
-    case 'Prep':
-      message = `In attesa che vengano forniti: ${[
-        d.scope && !d.scope.done ? 'scope' : '',
-        d.credentials && !d.credentials.done ? 'credenziali' : ''
-      ].filter(Boolean).join(' e ') || 'scope e credenziali'}.`;
+    case 'Credentials':
+      message = `Scope completato: in attesa delle credenziali di accesso per l'esecuzione.`;
       break;
     case 'Scheduled':
       message = `Tutto pronto: attività pianificata dal ${fmt(accepted?.startDate)} al ${fmt(accepted?.endDate)}.`;
@@ -1081,44 +1288,10 @@ function nextAction(d) {
       return '<div class="note done"><div class="note-head"><span class="note-ico">✓</span>Completato</div>Engagement completato. I deliverables sono disponibili nella scheda Reportistica.</div>';
   }
   if (pending && pending.kind === 'resched' && d.phase !== 'Planning') {
-    message += ` Richiesta di riprogrammazione ${fmt(pending.startDate)} → ${fmt(pending.endDate)} in attesa di decisione ${pending.from === 'Client' ? 'di PMO' : 'del cliente'}.`;
+    message += ` Richiesta di riprogrammazione ${fmt(pending.startDate)} → ${fmt(pending.endDate)} in attesa dell'approvazione del Manager.`;
   }
   const readOnly = state.role === 'Auditor' ? '<b>Profilo Auditor</b>: sola lettura. ' : '';
   return `<div class="note blocked">${readOnly}${esc(message)}</div>`;
-}
-
-function renderOverview(d) {
-  const e = d.engagement;
-  const st = statusPill(d);
-  const audit = (d.audit || []).slice()
-    .sort((a, b) => String(b.date).localeCompare(String(a.date)))
-    .slice(0, 5);
-  const rows = [
-    ['Codice', esc(e.id)],
-    ['Cliente', esc(e.clientName)],
-    ['Tipologia', esc(typeLabel(e.type))],
-    ['Responsabile', esc(e.owner)],
-    ['Stato', pill(st)]
-  ];
-  if (!isClient()) {
-    rows.push(['Ordine', e.orderConfirmed ? esc(e.orderRef || 'Ricevuto') : 'Non ricevuto']);
-  }
-  rows.push(['Periodo', e.acceptedProposal
-    ? `${fmt(e.acceptedProposal.startDate)} – ${fmt(e.acceptedProposal.endDate)}`
-    : 'Da definire']);
-
-  return `${nextAction(d)}
-    <div class="grid two">
-      <div class="card"><h2>Dettagli</h2><table style="font-size:14px">
-        ${rows.map(r => `<tr><td style="padding:8px 0;color:var(--muted);width:40%">${r[0]}</td><td style="padding:8px 0"><b>${r[1]}</b></td></tr>`).join('')}
-      </table></div>
-      <div class="card"><h2>Ultime attività</h2>
-        ${audit.length
-          ? `<ul class="tl">${audit.map(a => `<li>${esc(a.text)}<span>${fmtTime(a.date)} · ${esc(a.author)} (${esc(a.authorRole)})</span></li>`).join('')}</ul>`
-          : '<div class="empty">Nessuna attività registrata.</div>'}
-        <button class="btn sec sm" style="margin-top:10px" data-act="tab" data-tab="log">Registro completo</button>
-      </div>
-    </div>`;
 }
 
 function renderDetail() {
@@ -1126,8 +1299,8 @@ function renderDetail() {
   const e = d.engagement;
   const st = statusPill(d);
   const owner = statusOwner(d);
-  const TABS = [['docs', 'Documenti'], ['plan', 'Pianificazione'], ['scope', 'Scope'], ['cred', 'Credenziali'], ['reports', 'Reportistica']];
-  const mailCount = isClient() ? (d.mailLog || []).length : (d.mailLog || []).length;
+  const TABS = [['docs', 'Documenti'], ['scope', 'Scope'], ['plan', 'Pianificazione'], ['cred', 'Credenziali'], ['reports', 'Reportistica']];
+  const mailCount = (d.mailLog || []).length;
   const body = {
     docs: tabDocs,
     plan: tabPlan,
@@ -1139,40 +1312,84 @@ function renderDetail() {
     log: tabLog
   }[state.tab] || tabDocs;
   const activeReason = tabReason(d, state.tab);
+  // Se il motivo dello stato coincide con l'azione già mostrata nel
+  // riquadro in alto, evitiamo di ripeterlo sotto i tab.
+  const tabHint = activeReason && activeReason !== statusText(d)
+    ? activeReason
+    : '';
+  const step = Math.max(0, Math.min(Number(d.stepIndex) || 0, STEPS.length));
+  const stepDone = step >= STEPS.length;
+  const stepCount = stepDone ? 'Completato' : `${step + 1}/${STEPS.length}`;
+  const prep = d.preparationAlert;
+  const prepText = prep
+    ? [
+        (prep.missing || []).map(m => m === 'scope' ? 'Scope' : 'Credenziali').join(' e '),
+        prep.daysToStart > 0
+          ? `mancano ${prep.daysToStart} gg`
+          : prep.daysToStart === 0
+            ? 'avvio oggi'
+            : `avvio superato da ${Math.abs(prep.daysToStart)} gg`
+      ].join(' · ')
+    : '';
+  const period = e.acceptedProposal
+    ? `${fmt(e.acceptedProposal.startDate)} – ${fmt(e.acceptedProposal.endDate)}`
+    : 'Da definire';
+  const extra = [
+    ['dl', '👥', 'Distribution list', (d.distributionList || []).length],
+    ['mail', '✉️', isClient() ? 'Email ricevute' : 'Comunicazioni', mailCount],
+    ['log', '📋', 'Registro', (d.audit || []).length]
+  ];
 
   $('#app').innerHTML = `
     <button class="crumb" data-act="list">← Tutti gli engagement</button>
-    <div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:flex-start">
-      <div><h1>${esc(e.name)}</h1>
-        <p class="sub" style="margin-bottom:14px">${esc(e.id)} · ${esc(typeLabel(e.type))} · ${esc(e.clientName)}</p></div>
-      <div style="text-align:right">${pill(st)}
-        ${owner ? `<div class="status-owner" style="margin-top:6px">In attesa di: <b>${esc(owner)}</b></div>` : ''}
-      </div>
-    </div>
-    <div class="card">${stepper(d.stepIndex)}</div>
-    <div style="margin-top:16px">${renderOverview(d)}</div>
-    <div class="tabs" role="tablist">
-      ${TABS.map(([key, label]) => {
-        const s = tabState(d, key);
-        const reason = tabReason(d, key);
-        return `<button role="tab" aria-selected="${state.tab === key}" class="tab s-${s} ${state.tab === key ? 'on' : ''}" data-act="tab" data-tab="${key}" title="${esc(reason || '')}" aria-label="${esc(label + (reason ? ': ' + reason : ''))}">${label}${s === 'lock' ? ' <span class="lock" aria-label="bloccato">🔒</span>' : ''}</button>`;
-      }).join('')}
-    </div>
-    ${activeReason ? `<p class="hint" style="margin:-8px 0 14px">${esc(activeReason)}</p>` : ''}
-    <div class="legend">
-      <span><b class="g-action">!</b> Da fare (a te)</span>
-      <span><b class="g-wait">…</b> In attesa di altri</span>
-      <span><b class="g-progress">▶</b> In corso</span>
-      <span><b class="g-done">✓</b> Completato</span>
-      <span><b class="g-blocked">🔒</b> Bloccato</span>
-    </div>
-    <div class="section-label">Altro</div>
-    <div class="chips secondary">
-      <button class="chipb ${state.tab === 'dl' ? 'on' : ''}" data-act="tab" data-tab="dl">👥 Distribution list <span class="cnt">${(d.distributionList || []).length}</span></button>
-      <button class="chipb ${state.tab === 'mail' ? 'on' : ''}" data-act="tab" data-tab="mail">✉️ ${isClient() ? 'Email ricevute' : 'Comunicazioni'} <span class="cnt">${mailCount}</span></button>
-      <button class="chipb ${state.tab === 'log' ? 'on' : ''}" data-act="tab" data-tab="log">📋 Registro <span class="cnt">${(d.audit || []).length}</span></button>
-    </div>
-    ${body(d)}`;
+    <div class="workspace">
+      <aside class="aside">
+        <div class="card side">
+          <p class="side-kicker">${esc(e.id)} · ${esc(typeLabel(e.type))}</p>
+          <h1 class="side-title">${esc(e.name)}</h1>
+          <div class="side-status">${pill(st)}${owner ? `<span class="status-owner">In attesa di <b>${esc(owner)}</b></span>` : ''}</div>
+          ${prep ? `<div class="side-alert"><b>Preparazione in ritardo</b><span>${esc(prepText)}</span></div>` : ''}
+          <div class="divider divider--steps"></div>
+          <h3>Avanzamento <span class="side-count">${stepCount}</span></h3>
+          ${vstepper(step)}
+          ${cprogress(step)}
+          <div class="divider"></div>
+          <h3>Riepilogo</h3>
+          <dl class="kv">
+            <dt>Cliente</dt><dd><span class="client-cell" style="justify-content:flex-end">${clientAvatar(clientFor(e))}<span>${esc(e.clientName)}</span></span></dd>
+            <dt>Responsabile</dt><dd>${esc(e.owner)}</dd>
+            <dt>Periodo</dt><dd>${period}</dd>
+            ${isClient() ? '' : `<dt>Ordine</dt><dd>${e.orderConfirmed ? esc(e.orderRef || 'Ricevuto') : 'Non ricevuto'}</dd>`}
+          </dl>
+          <div class="divider"></div>
+          <div class="chips side-chips">
+            ${extra.map(([key, icon, label, count]) => `<button class="chipb ${state.tab === key ? 'on' : ''}" data-act="tab" data-tab="${key}">${icon} ${esc(label)} <span class="cnt">${count}</span></button>`).join('')}
+          </div>
+          <details class="side-legend">
+            <summary>Cosa significano i simboli?</summary>
+            <div class="lg">
+              <span><b class="g-action">!</b> Da gestire</span>
+              <span><b class="g-wait">…</b> In attesa di altri</span>
+              <span><b class="g-progress">▶</b> In corso</span>
+              <span><b class="g-done">✓</b> Completato</span>
+              <span><b class="g-blocked">🔒</b> Bloccato</span>
+            </div>
+          </details>
+        </div>
+      </aside>
+      <section class="main-col">
+        ${nextAction(d)}
+        <div class="tabs" role="tablist">
+          ${TABS.map(([key, label]) => {
+            const s = tabState(d, key);
+            const reason = tabReason(d, key);
+            return `<button role="tab" aria-selected="${state.tab === key}" class="tab s-${s} ${state.tab === key ? 'on' : ''}" data-act="tab" data-tab="${key}" title="${esc(reason || '')}" aria-label="${esc(label + (reason ? ': ' + reason : ''))}">${label}${s === 'lock' ? ' <span class="lock" aria-label="bloccato">🔒</span>' : ''}</button>`;
+          }).join('')}
+        </div>
+        ${tabHint ? `<p class="hint" style="margin:-8px 0 14px">${esc(tabHint)}</p>` : ''}
+        ${body(d)}
+      </section>
+    </div>`;
 }
 
 /* ====== SCHEDE ====== */
@@ -1211,12 +1428,12 @@ function tabDocs(d) {
 
   if (!isClient()) {
     html += docRow('PO', 'Ordine',
-      e.orderConfirmed ? `Ricevuto · ${esc(e.orderRef || '')}` : 'In attesa di ricezione lato provider',
+      e.orderConfirmed ? `Ricevuto · ${esc(e.orderRef || '')}` : 'In attesa di registrazione',
       e.orderConfirmed
         ? pill(['Ricevuto', 'ok'])
         : canDocs
           ? `<button class="btn acc sm" data-act="register-order">Registra ordine ricevuto</button>`
-          : pill(['In attesa provider', 'warn']));
+          : pill(['In attesa ordine', 'warn']));
 
     html += docRow('BC', 'Business case',
       e.businessCaseFile ? esc(e.businessCaseFile) : 'Non ancora caricato',
@@ -1249,14 +1466,13 @@ function tabDocs(d) {
       : pill(['Non disponibili', 'mute']));
 
   html += `</div>
-    <p style="color:var(--muted);font-size:13px;margin-top:12px">La pianificazione si sblocca quando la scheda tecnica firmata è caricata e l'ordine è ricevuto dal provider.</p>`;
+    <p style="color:var(--muted);font-size:13px;margin-top:12px">Scope e pianificazione si sbloccano quando la scheda tecnica firmata è caricata e l'ordine è registrato dal PMO.</p>`;
   return html;
 }
 
 function canDecideProposal(p) {
-  return p.status === 'Pending' &&
-    ((p.from === 'Client' && state.role === 'PMO') ||
-     (p.from === 'Provider' && state.role === 'Client'));
+  // Le proposte di pianificazione (cliente o PMO) sono approvate solo dal Manager.
+  return p.status === 'Pending' && state.role === 'Manager';
 }
 
 function tabPlan(d) {
@@ -1265,7 +1481,7 @@ function tabPlan(d) {
   const canPropose = c.canPropose;
 
   if (!e.hasManleva || !e.orderConfirmed) {
-    return `<div class="note lockbox"><b>Pianificazione bloccata.</b> Servono la scheda tecnica firmata dal cliente e l'ordine ricevuto dal provider.</div>`;
+    return `<div class="note lockbox"><b>Pianificazione bloccata.</b> Servono la scheda tecnica firmata dal cliente e l'ordine registrato dal PMO.</div>`;
   }
 
   const pending = (e.proposals || []).find(p => p.status === 'Pending');
@@ -1278,13 +1494,15 @@ function tabPlan(d) {
           <div class="d">
             <b>${fmt(p.startDate)} → ${fmt(p.endDate)}</b>
             ${p.kind === 'resched' ? '<span class="badge-kind">Riprogrammazione</span>' : ''}
-            <span>${p.from === 'Client' ? 'Cliente' : 'Provider'} · ${esc(p.by)} · ${fmt(p.date)}
+            <span>${p.from === 'Client' ? 'Cliente' : 'PMO'} · ${esc(p.by)} · ${fmt(p.date)}
               ${p.note ? ` · “${esc(p.note)}”` : ''}${p.reason ? ` · Motivo rifiuto: ${esc(p.reason)}` : ''}</span>
           </div>
           ${pill(status)}
           ${canDecideProposal(p)
-            ? `<button class="btn acc sm" data-act="decide" data-pid="${esc(p.id)}" data-accept="1">Accetta</button>
-               <button class="btn dng sm" data-act="decide" data-pid="${esc(p.id)}" data-accept="0">Rifiuta</button>`
+            ? `<div class="decision-group" role="group" aria-label="Decisione sulla proposta">
+                 <button class="decide yes sm" data-act="decide" data-pid="${esc(p.id)}" data-accept="1">Approva</button>
+                 <button class="decide no sm" data-act="decide" data-pid="${esc(p.id)}" data-accept="0">Rifiuta</button>
+               </div>`
             : ''}
         </div>`;
       }).join('')
@@ -1294,7 +1512,7 @@ function tabPlan(d) {
   if (accepted) {
     let action = '';
     if (pending) {
-      action = `<p style="color:var(--muted);font-size:13px;margin:12px 0 0">Richiesta di riprogrammazione in corso: decide ${pending.from === 'Client' ? 'PMO' : 'il cliente'}.</p>`;
+      action = `<p style="color:var(--muted);font-size:13px;margin:12px 0 0">Richiesta di riprogrammazione in corso: decide il Manager.</p>`;
     } else if (!canPropose) {
       action = '';
     } else if (d.phase !== 'Done') {
@@ -1303,22 +1521,18 @@ function tabPlan(d) {
     right = `<h2>Pianificazione confermata</h2>
       <div class="note done">
         <b>${fmt(accepted.startDate)} → ${fmt(accepted.endDate)}</b><br>
-        Confermata${accepted.from === 'Client' ? ' da PMO' : ' dal cliente'}.</div>${action}`;
+        Approvata dal Manager${accepted.from === 'Client' ? ' · proposta del cliente' : ' · proposta del PMO'}.</div>${action}`;
   } else if (!canPropose) {
-    right = `<h2>Nuova proposta</h2><div class="note lockbox">Sola lettura: da questo profilo non si possono inviare proposte.</div>`;
+    right = `<h2>Nuova proposta</h2><div class="note lockbox">Sola lettura: proposte di date solo da cliente e PMO.</div>`;
   } else {
     right = `<h2>Nuova proposta</h2>
-      <p class="sub" style="margin-bottom:12px">${state.role === 'Client'
-        ? 'Le date proposte dal cliente vengono accettate da PMO.'
-        : 'Le date proposte dal provider vengono accettate dal cliente.'}</p>
+      <p class="sub" style="margin-bottom:12px">Le date proposte da cliente o PMO vengono approvate dal Manager.</p>
       <div class="fgrid">
         <div><label for="ps">Inizio attività</label><input type="date" id="ps" min="${today()}"></div>
         <div><label for="pe">Fine attività</label><input type="date" id="pe" min="${today()}"></div>
         <div class="full"><label for="pn">Note (vincoli, finestre di manutenzione…)</label><textarea id="pn" rows="3"></textarea></div>
       </div>
-      <div style="margin-top:14px"><button class="btn pri" data-act="propose">${state.role === 'Client'
-        ? 'Invia proposta al provider'
-        : 'Invia proposta al cliente'}</button></div>`;
+      <div style="margin-top:14px"><button class="btn pri" data-act="propose">Invia proposta al Manager</button></div>`;
   }
 
   return `${!accepted && canEditPreparation(d)
@@ -1453,8 +1667,10 @@ function reviewCard(d) {
     action = `<button class="btn pri" data-act="submit-review">Invia in revisione al manager</button>`;
   }
   if (state.role === 'Manager' && e.reviewStatus === 'Pending') {
-    action = `<button class="btn acc" data-act="review-decide" data-approve="1">Approva</button>
-      <button class="btn dng" data-act="review-decide" data-approve="0">Richiedi modifiche</button>`;
+    action = `<div class="decision-group">
+      <button class="decide yes" data-act="review-decide" data-approve="1">Approva</button>
+      <button class="decide warn" data-act="review-decide" data-approve="0">Richiedi modifiche</button>
+    </div>`;
   }
   if (state.role === 'Pentester' && unpublished > 0 && e.reviewStatus === 'Approved') {
     action = `<button class="btn acc" data-act="publish">Pubblica al cliente${entryAuto(d.mail, 'deliver') ? ' e invia email' : ''}</button>`;
@@ -1576,8 +1792,8 @@ function tabMail(d) {
   const accepted = e.acceptedProposal;
   const published = (e.reports || []).some(r => r.published);
   const when = {
-    start: accepted ? `alla data di inizio (${fmt(accepted.startDate)})` : 'dopo l\'accettazione della pianificazione',
-    end: accepted ? `alla data di fine (${fmt(accepted.endDate)})` : 'dopo l\'accettazione della pianificazione',
+    start: accepted ? `alla data di inizio (${fmt(accepted.startDate)})` : 'dopo l\'approvazione della pianificazione',
+    end: accepted ? `alla data di fine (${fmt(accepted.endDate)})` : 'dopo l\'approvazione della pianificazione',
     deliver: 'alla pubblicazione dei deliverables'
   };
 
@@ -1651,22 +1867,27 @@ function renderClients() {
     const userRows = users.length
       ? `<ul style="list-style:none;margin:0;padding:0">${users.map(u => `<li style="display:flex;justify-content:space-between;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid #eef2f7">
           <span><b>${esc(u.name)}</b><br><span style="color:var(--muted);font-size:13px">${esc(u.email)}</span></span>
-          ${manage ? `<button class="btn dng sm" data-act="remove-client-user" data-tenant="${esc(client.tenantId)}" data-user="${esc(u.id)}">Rimuovi</button>` : ''}
+          ${manage ? `<button class="btn dng sm" data-act="remove-client-user" data-client="${esc(client.id)}" data-user="${esc(u.id)}">Rimuovi</button>` : ''}
         </li>`).join('')}</ul>`
       : '<div class="empty" style="padding:8px 0">Nessuna utenza associata.</div>';
 
     return `<div class="card" style="margin-bottom:16px">
       <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start">
-        <div><h2 style="margin:0">${esc(client.name)}</h2>
-          <p class="sub" style="margin:4px 0 0">${esc(client.tenantId)} · ${client.engagementCount || 0} engagement associati</p></div>
+        <div style="display:flex;gap:12px;align-items:flex-start;min-width:0">
+          ${clientAvatar(client, 'lg')}
+          <div><h2 style="margin:0">${esc(client.name)}</h2>
+            <p class="sub" style="margin:4px 0 0">${esc(client.id)} · ${client.engagementCount || 0} engagement ${(client.engagementCount || 0) === 1 ? 'associato' : 'associati'}${client.website
+              ? ` · <a href="${esc(client.website)}" target="_blank" rel="noopener noreferrer">${esc(hostOf(client.website))}</a>`
+              : ''}</p></div>
+        </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="btn sec sm" data-act="open-client" data-tenant="${esc(client.tenantId)}">Vedi engagement</button>
-          ${manage ? `<button class="btn sec sm" data-act="rename-client" data-tenant="${esc(client.tenantId)}">Rinomina</button>` : ''}
+          <button class="btn sec sm" data-act="open-client" data-client="${esc(client.id)}">Vedi engagement</button>
+          ${manage ? `<button class="btn sec sm" data-act="rename-client" data-client="${esc(client.id)}">Modifica</button>` : ''}
         </div>
       </div>
       <h3 style="font-size:14px;margin:18px 0 6px">Utenze associate</h3>
       ${userRows}
-      ${manage ? `<div style="margin-top:12px"><button class="btn pri sm" data-act="add-client-user" data-tenant="${esc(client.tenantId)}">+ Aggiungi utenza</button></div>` : ''}
+      ${manage ? `<div style="margin-top:12px"><button class="btn pri sm" data-act="add-client-user" data-client="${esc(client.id)}">+ Aggiungi utenza</button></div>` : ''}
     </div>`;
   }).join('');
 
@@ -1703,10 +1924,13 @@ const actions = {
     loadClients().then(render);
   },
   'open-client': el => {
-    state.tenant = el.dataset.tenant;
-    localStorage.setItem('cep.tenant', state.tenant);
+    state.clientId = el.dataset.client;
+    localStorage.setItem('cep.client', state.clientId);
     state.view = 'list';
-    fillTenantSelect();
+    state.listFilter = 'all';
+    state.listQuery = '';
+    state.listTab = 'eng';
+    fillClientSelect();
     updateHeader();
     loadList();
   },
@@ -1716,7 +1940,7 @@ const actions = {
       ok: 'Crea cliente',
       fields: [
         { id: 'name', label: 'Ragione sociale*' },
-        { id: 'tenantId', label: 'Identificativo tenant (opzionale)', ph: 'es. tenant-acme' }
+        { id: 'website', label: 'Sito web', type: 'url', ph: 'https://esempio.it' }
       ]
     });
     if (!v) return;
@@ -1724,7 +1948,7 @@ const actions = {
     try {
       await api('/api/clients?' + qs(), {
         method: 'POST',
-        body: JSON.stringify({ name: v.name, tenantId: v.tenantId || null })
+        body: JSON.stringify({ name: v.name, website: v.website || null })
       });
       toast('Cliente creato');
       await loadClients();
@@ -1732,19 +1956,22 @@ const actions = {
     } catch (error) { toast(error.message); }
   },
   'rename-client': async el => {
-    const client = (state.clients || []).find(c => c.tenantId === el.dataset.tenant);
+    const client = (state.clients || []).find(c => c.id === el.dataset.client);
     if (!client) return;
     const v = await ask({
-      title: 'Rinomina cliente',
+      title: 'Modifica cliente',
       ok: 'Salva',
-      fields: [{ id: 'name', label: 'Ragione sociale*', value: client.name }]
+      fields: [
+        { id: 'name', label: 'Ragione sociale*', value: client.name },
+        { id: 'website', label: 'Sito web', type: 'url', ph: 'https://esempio.it', value: client.website || '' }
+      ]
     });
     if (!v) return;
     if (!v.name) { toast('Il nome del cliente è obbligatorio'); return; }
     try {
-      await api(`/api/clients/${encodeURIComponent(client.tenantId)}?` + qs(), {
+      await api(`/api/clients/${encodeURIComponent(client.id)}?` + qs(), {
         method: 'PUT',
-        body: JSON.stringify({ name: v.name })
+        body: JSON.stringify({ name: v.name, website: v.website || null })
       });
       toast('Cliente aggiornato');
       await loadClients();
@@ -1752,7 +1979,7 @@ const actions = {
     } catch (error) { toast(error.message); }
   },
   'add-client-user': async el => {
-    const tenantId = el.dataset.tenant;
+    const clientId = el.dataset.client;
     const v = await ask({
       title: 'Aggiungi utenza',
       ok: 'Aggiungi',
@@ -1767,7 +1994,7 @@ const actions = {
       return;
     }
     try {
-      await api(`/api/clients/${encodeURIComponent(tenantId)}/users?` + qs(), {
+      await api(`/api/clients/${encodeURIComponent(clientId)}/users?` + qs(), {
         method: 'POST',
         body: JSON.stringify({ name: v.name, email: v.email })
       });
@@ -1777,7 +2004,7 @@ const actions = {
     } catch (error) { toast(error.message); }
   },
   'remove-client-user': async el => {
-    const tenantId = el.dataset.tenant;
+    const clientId = el.dataset.client;
     const userId = el.dataset.user;
     const v = await ask({
       title: 'Rimuovere l\'utenza?',
@@ -1787,7 +2014,7 @@ const actions = {
     });
     if (!v) return;
     try {
-      await api(`/api/clients/${encodeURIComponent(tenantId)}/users/${encodeURIComponent(userId)}?` + qs(), { method: 'DELETE' });
+      await api(`/api/clients/${encodeURIComponent(clientId)}/users/${encodeURIComponent(userId)}?` + qs(), { method: 'DELETE' });
       toast('Utenza rimossa');
       await loadClients();
       render();
@@ -1831,25 +2058,22 @@ const actions = {
   },
 
   'new-engagement': async () => {
-    const clientTenants = state.clients.length
-      ? state.clients.map(c => [c.tenantId, c.name])
-      : TENANTS.filter(t => t[0] !== 'tenant-provider');
+    const clientOptions = state.clients.map(c => [c.id, c.name]);
     const v = await ask({
       title: 'Nuovo engagement',
       ok: 'Crea',
       fields: [
         { id: 'name', label: 'Nome engagement*' },
-        { id: 'clientName', label: 'Cliente*' },
-        { id: 'tenantId', label: 'Tenant cliente*', type: 'select', options: clientTenants },
+        { id: 'clientId', label: 'Cliente*', type: 'select', options: clientOptions, value: state.clientId || (clientOptions[0] || [''])[0] },
         { id: 'type', label: 'Tipologia', type: 'select', options: TYPES, value: 'PenetrationTest' }
       ]
     });
     if (!v) return;
-    if (!v.name || !v.clientName || !v.tenantId) { toast('Compila tutti i campi obbligatori'); return; }
+    if (!v.name || !v.clientId) { toast('Compila tutti i campi obbligatori'); return; }
     try {
       await api('/api/engagements?' + qs(), {
         method: 'POST',
-        body: JSON.stringify({ name: v.name, clientName: v.clientName, type: v.type || 'PenetrationTest', tenantId: v.tenantId })
+        body: JSON.stringify({ name: v.name, clientId: v.clientId, type: v.type || 'PenetrationTest' })
       });
       toast('Engagement creato');
       await loadList();
@@ -1979,7 +2203,7 @@ const actions = {
       await api(`/api/engagements/${engagedId()}/proposals/${encodeURIComponent(el.dataset.pid)}/decide?` + qs(), {
         method: 'POST', body: JSON.stringify({ accept, reason })
       });
-      toast(accept ? 'Proposta accettata' : 'Proposta rifiutata');
+      toast(accept ? 'Proposta approvata' : 'Proposta rifiutata');
       await refreshDetail();
     } catch (error) { toast(error.message); }
   },
@@ -2205,7 +2429,9 @@ document.addEventListener('change', event => {
 
 /* ====== INIT ====== */
 function init() {
-  if (!ROLES[state.role]) state.role = 'Pentester';
+  // Ruolo assente o non riconosciuto: come lato server si parte dal profilo
+  // meno privilegiato (Cliente), non da un utente interno.
+  if (!ROLES[state.role]) state.role = 'Client';
 
   const roleSelect = $('#role');
   roleSelect.innerHTML = Object.entries(ROLES)
@@ -2214,16 +2440,17 @@ function init() {
   roleSelect.value = state.role;
   roleSelect.onchange = event => setRole(event.target.value);
 
-  $('#tenant').onchange = event => setTenant(event.target.value);
+  $('#client').onchange = event => setClient(event.target.value);
 
-  fillTenantSelect();
+  fillClientSelect();
   updateHeader();
 
   loadClients().then(async () => {
-    if (isClient() && !state.clients.length) {
-      state.tenant = ROLES.Client.tenant;
-      localStorage.setItem('cep.tenant', state.tenant);
-      await loadClients();
+    if (isClient() && !state.clients.length && !state.clientId) {
+      // Server irraggiungibile: si mostra comunque il cliente demo atteso.
+      state.clientId = ROLES.Client.client || '';
+      localStorage.setItem('cep.client', state.clientId);
+      fillClientSelect();
     }
     updateHeader();
     await loadList();

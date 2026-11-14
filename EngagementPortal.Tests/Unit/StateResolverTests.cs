@@ -23,7 +23,7 @@ public sealed class StateResolverTests
     private static Engagement NewEngagement() => new()
     {
         Id = "ENG-2026-001",
-        TenantId = "tenant-client",
+        ClientId = "client",
         ClientName = "Nova Bank",
         Name = "External Penetration Test",
         Type = EngagementType.PenetrationTest,
@@ -56,13 +56,15 @@ public sealed class StateResolverTests
 
     private static void AddPendingProposal(
         Engagement engagement,
-        ProposalParty from)
+        ProposalParty from,
+        string kind = "initial")
     {
         engagement.Proposals.Add(new Proposal
         {
             Id = "P-002",
             From = from,
             By = from == ProposalParty.Client ? "Cliente" : "Provider",
+            Kind = kind,
             StartDate = Today.AddDays(2),
             EndDate = Today.AddDays(5),
             Date = Today,
@@ -121,35 +123,64 @@ public sealed class StateResolverTests
     }
 
     [Fact]
-    public void PendingProposalFromProvider_ClientActsPmoWaits()
+    public void PendingProposalFromProvider_OnlyManagerDecides()
     {
         var engagement = NewEngagement();
         AddPendingProposal(engagement, ProposalParty.Provider);
 
+        var manager = Resolver().ResolveAction(engagement, Roles.Manager);
         var client = Resolver().ResolveAction(engagement, Roles.Client);
         var pmo = Resolver().ResolveAction(engagement, Roles.PMO);
 
-        Assert.Equal("action", client.Kind);
-        Assert.Equal("plan", client.TargetTab);
+        Assert.Equal("action", manager.Kind);
+        Assert.Equal(Roles.Manager, manager.Owner);
+        Assert.Equal("plan", manager.TargetTab);
+        Assert.Contains("approva", manager.Label);
+
+        Assert.Equal("waiting", client.Kind);
+        Assert.Equal(Roles.Manager, client.Owner);
 
         Assert.Equal("waiting", pmo.Kind);
-        Assert.Equal(Roles.Client, pmo.Owner);
+        Assert.Equal(Roles.Manager, pmo.Owner);
     }
 
     [Fact]
-    public void PendingProposalFromClient_PmoActsClientWaits()
+    public void PendingProposalFromClient_OnlyManagerDecides()
     {
         var engagement = NewEngagement();
         AddPendingProposal(engagement, ProposalParty.Client);
 
+        var manager = Resolver().ResolveAction(engagement, Roles.Manager);
         var pmo = Resolver().ResolveAction(engagement, Roles.PMO);
         var client = Resolver().ResolveAction(engagement, Roles.Client);
 
-        Assert.Equal("action", pmo.Kind);
-        Assert.Equal("plan", pmo.TargetTab);
+        Assert.Equal("action", manager.Kind);
+        Assert.Equal("plan", manager.TargetTab);
+
+        Assert.Equal("waiting", pmo.Kind);
+        Assert.Equal(Roles.Manager, pmo.Owner);
+        Assert.Contains("Manager", pmo.Label);
 
         Assert.Equal("waiting", client.Kind);
-        Assert.Equal(Roles.PMO, client.Owner);
+        Assert.Equal(Roles.Manager, client.Owner);
+    }
+
+    [Fact]
+    public void PendingReschedule_ManagerDecidesDuringExecution()
+    {
+        var engagement = NewEngagement();
+        AddAcceptedProposal(engagement, Today.AddDays(-1), Today.AddDays(3));
+        AddPendingProposal(engagement, ProposalParty.Client, "resched");
+
+        var manager = Resolver().ResolveAction(engagement, Roles.Manager);
+        var pmo = Resolver().ResolveAction(engagement, Roles.PMO);
+
+        Assert.Equal("action", manager.Kind);
+        Assert.Equal("plan", manager.TargetTab);
+        Assert.Contains("riprogrammazione", manager.Label);
+
+        Assert.Equal("waiting", pmo.Kind);
+        Assert.Equal(Roles.Manager, pmo.Owner);
     }
 
     [Fact]
@@ -241,7 +272,7 @@ public sealed class StateResolverTests
         var pentester = Resolver().ResolveTabs(engagement, Roles.Pentester);
 
         Assert.Equal("todo", client["scope"].State);
-        Assert.Contains("prima della pianificazione", client["scope"].Reason);
+        Assert.Contains("scope", client["scope"].Reason);
         Assert.Equal("todo", pmo["scope"].State);
 
         Assert.Equal("wait", pentester["scope"].State);
@@ -284,12 +315,16 @@ public sealed class StateResolverTests
     }
 
     [Fact]
-    public void Preparation_EditableFromPlanningOnwards()
+    public void Preparation_EditableFromScopeOnwards()
     {
         var engagement = NewEngagement();
 
         Assert.True(EngagementWorkflow.CanEditPreparation(
+            engagement, Roles.Client, EngagementPhase.Scope));
+        Assert.True(EngagementWorkflow.CanEditPreparation(
             engagement, Roles.Client, EngagementPhase.Planning));
+        Assert.True(EngagementWorkflow.CanEditPreparation(
+            engagement, Roles.Client, EngagementPhase.Credentials));
         Assert.True(EngagementWorkflow.CanEditPreparation(
             engagement, Roles.Client, EngagementPhase.Scheduled));
         Assert.True(EngagementWorkflow.CanEditPreparation(

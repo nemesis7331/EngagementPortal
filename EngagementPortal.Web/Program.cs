@@ -101,15 +101,16 @@ api.MapGet("/clients", (
     var user = GetUser(context);
 
     var result = clients.List()
-        .Where(client => user.IsProvider || client.TenantId == user.TenantId)
+        .Where(client => user.IsInternal || client.Id == user.ClientId)
         .Select(client => new
         {
-            client.TenantId,
+            client.Id,
             client.Name,
+            client.Website,
             client.CreatedDate,
             client.Users,
             EngagementCount = repository
-                .List(client.TenantId, crossTenant: false)
+                .List(client.Id, allClients: false)
                 .Count()
         });
 
@@ -127,39 +128,34 @@ api.MapPost("/clients", (
         return Forbidden();
 
     var name = request.Name?.Trim();
-    var tenantId = request.TenantId?.Trim();
 
     if (string.IsNullOrWhiteSpace(name))
         return Results.BadRequest("Il nome del cliente è obbligatorio.");
 
-    if (tenantId is { Length: > 0 } &&
-        (tenantId.Length < 3 || clients.Exists(tenantId)))
-    {
-        return tenantId.Length < 3
-            ? Results.BadRequest(
-                "L'identificativo del tenant deve avere almeno 3 caratteri.")
-            : Results.Conflict();
-    }
+    if (!TryNormalizeWebsite(request.Website, out var website))
+        return Results.BadRequest("Il sito web deve essere un indirizzo valido.");
 
-    var account = clients.Add(name, tenantId);
+    var account = clients.Add(name, website);
 
     return Results.Created(
-        $"/api/clients/{account.TenantId}",
+        $"/api/clients/{account.Id}",
         new
         {
-            account.TenantId,
+            account.Id,
             account.Name,
+            account.Website,
             account.CreatedDate,
             account.Users,
             EngagementCount = 0
         });
 });
 
-api.MapPut("/clients/{tenantId}", (
-    string tenantId,
+api.MapPut("/clients/{clientId}", (
+    string clientId,
     RenameClientRequest request,
     HttpContext context,
-    IClientRepository clients) =>
+    IClientRepository clients,
+    IEngagementRepository repository) =>
 {
     var user = GetUser(context);
 
@@ -169,15 +165,30 @@ api.MapPut("/clients/{tenantId}", (
     if (string.IsNullOrWhiteSpace(request.Name))
         return Results.BadRequest("Il nome del cliente è obbligatorio.");
 
-    var account = clients.Rename(tenantId, request.Name);
+    if (!TryNormalizeWebsite(request.Website, out var website))
+        return Results.BadRequest("Il sito web deve essere un indirizzo valido.");
 
-    return account is null
-        ? Results.NotFound()
-        : Results.Ok(account);
+    var account = clients.Update(clientId, request.Name, website);
+
+    if (account is null)
+        return Results.NotFound();
+
+    // Il nome è denormalizzato sugli engagement: allinearlo subito evita
+    // che la lista continui a mostrare la vecchia ragione sociale.
+    foreach (var engagement in repository.List(clientId, allClients: false))
+    {
+        if (engagement.ClientName == account.Name)
+            continue;
+
+        engagement.ClientName = account.Name;
+        repository.Save(engagement);
+    }
+
+    return Results.Ok(account);
 });
 
-api.MapPost("/clients/{tenantId}/users", (
-    string tenantId,
+api.MapPost("/clients/{clientId}/users", (
+    string clientId,
     AddClientUserRequest request,
     HttpContext context,
     IClientRepository clients) =>
@@ -187,7 +198,7 @@ api.MapPost("/clients/{tenantId}/users", (
     if (user.Role != Roles.Manager)
         return Forbidden();
 
-    var account = clients.Get(tenantId);
+    var account = clients.Get(clientId);
 
     if (account is null)
         return Results.NotFound();
@@ -212,12 +223,12 @@ api.MapPost("/clients/{tenantId}/users", (
         return Results.Conflict();
     }
 
-    var created = clients.AddUser(tenantId, name, email);
+    var created = clients.AddUser(clientId, name, email);
     return Results.Ok(created);
 });
 
-api.MapDelete("/clients/{tenantId}/users/{userId}", (
-    string tenantId,
+api.MapDelete("/clients/{clientId}/users/{userId}", (
+    string clientId,
     string userId,
     HttpContext context,
     IClientRepository clients) =>
@@ -227,7 +238,7 @@ api.MapDelete("/clients/{tenantId}/users/{userId}", (
     if (user.Role != Roles.Manager)
         return Forbidden();
 
-    return clients.RemoveUser(tenantId, userId)
+    return clients.RemoveUser(clientId, userId)
         ? Results.NoContent()
         : Results.NotFound();
 });
@@ -242,7 +253,7 @@ api.MapGet("/engagements", (
     var user = GetUser(context);
 
     var result = repository
-        .List(user.TenantId, user.IsProvider)
+        .List(ClientScope(user), SeesAllClients(user))
         .Select(e => Summary(e, user, workflow, todos, clock));
 
     return Results.Ok(result);
@@ -252,6 +263,7 @@ api.MapPost("/engagements", (
     CreateEngagementRequest request,
     HttpContext context,
     IEngagementRepository repository,
+    IClientRepository clients,
     EngagementWorkflow workflow,
     TodoResolver todos,
     IDateProvider clock) =>
@@ -262,11 +274,17 @@ api.MapPost("/engagements", (
         return Forbidden();
 
     if (string.IsNullOrWhiteSpace(request.Name) ||
-        string.IsNullOrWhiteSpace(request.ClientName) ||
-        string.IsNullOrWhiteSpace(request.TenantId))
+        string.IsNullOrWhiteSpace(request.ClientId))
+    {
+        return Results.BadRequest("name e clientId sono obbligatori.");
+    }
+
+    var client = clients.Get(request.ClientId.Trim());
+
+    if (client is null)
     {
         return Results.BadRequest(
-            "name, clientName e tenantId sono obbligatori.");
+            "clientId non corrisponde a un cliente esistente.");
     }
 
     var id = string.IsNullOrWhiteSpace(request.Id)
@@ -279,8 +297,10 @@ api.MapPost("/engagements", (
     var engagement = new Engagement
     {
         Id = id,
-        TenantId = request.TenantId.Trim(),
-        ClientName = request.ClientName.Trim(),
+        ClientId = client.Id,
+        // Il nome è letto dall'anagrafica: rinominare il cliente aggiorna
+        // tutti gli engagement senza duplicare il dato.
+        ClientName = client.Name,
         Name = request.Name.Trim(),
         Type = request.Type,
         Owner = user.Name,
@@ -324,7 +344,7 @@ api.MapGet("/dashboard/todo", (
     var user = GetUser(context);
 
     var result = repository
-        .List(user.TenantId, user.IsProvider)
+        .List(ClientScope(user), SeesAllClients(user))
         .Select(e => new
         {
             e.Id,
@@ -577,10 +597,7 @@ api.MapPost(
 
     var canDecide =
         proposal.Status == ProposalStatus.Pending &&
-        ((proposal.From == ProposalParty.Client &&
-          user.Role == Roles.PMO) ||
-         (proposal.From == ProposalParty.Provider &&
-          user.Role == Roles.Client));
+        user.Role == Roles.Manager;
 
     if (!canDecide)
         return Forbidden();
@@ -611,7 +628,7 @@ api.MapPost(
         user.Name,
         user.Role,
         request.Accept
-            ? "Proposta accettata"
+            ? "Proposta approvata"
             : $"Proposta rifiutata: {proposal.Reason}",
         AuditVisibility.All);
 
@@ -1301,7 +1318,7 @@ api.MapGet("/solicitations/due", (
         return Forbidden();
 
     var due = solicitations.Due(
-        repository.List(user.TenantId, user.IsProvider),
+        repository.List(ClientScope(user), SeesAllClients(user)),
         clock.Today);
 
     return Results.Ok(due.Select(item => new
@@ -1376,16 +1393,23 @@ static UserContext GetUser(HttpContext context)
         Roles.Manager or
         Roles.Auditor))
     {
-        role = Roles.Pentester;
+        // Ruolo assente o non riconosciuto: si applica il profilo meno
+        // privilegiato invece di assumere un utente interno.
+        role = Roles.Client;
     }
 
-    var tenant = context.Request.Query["tenant"].FirstOrDefault();
+    var clientId = context.Request.Query["client"].FirstOrDefault()?.Trim();
 
-    if (string.IsNullOrWhiteSpace(tenant))
+    if (role == Roles.Client)
     {
-        tenant = role == Roles.Client
-            ? "tenant-contoso"
-            : "tenant-provider";
+        // Demo: il cliente è un'identità fissa lato server. Il parametro
+        // `client` è ignorato per un profilo Cliente, così il chiamante non
+        // può scegliere a quale cliente accedere.
+        clientId = "contoso";
+    }
+    else if (string.IsNullOrWhiteSpace(clientId))
+    {
+        clientId = null;
     }
 
     var name =
@@ -1393,14 +1417,49 @@ static UserContext GetUser(HttpContext context)
             .FirstOrDefault()
         ?? "Demo User";
 
-    return new UserContext(name, tenant, role);
+    return new UserContext(name, clientId, role);
 }
 
 static Engagement? Find(
     IEngagementRepository repository,
     string id,
     UserContext user) =>
-    repository.Get(id, user.TenantId, user.IsProvider);
+    repository.Get(id, ClientScope(user), SeesAllClients(user));
+
+// Un utente interno senza cliente selezionato vede tutti i clienti;
+// il cliente vede solo il proprio.
+static string ClientScope(UserContext user) =>
+    user.ClientId ?? string.Empty;
+
+static bool SeesAllClients(UserContext user) =>
+    user.IsInternal && string.IsNullOrEmpty(user.ClientId);
+
+// Accetta "https://example.com", "www.example.com" o "example.com" e
+// restituisce l'URL normalizzato con schema. Vuoto = nessun sito.
+static bool TryNormalizeWebsite(string? value, out string? website)
+{
+    website = null;
+
+    if (string.IsNullOrWhiteSpace(value))
+        return true;
+
+    var text = value.Trim();
+
+    if (!text.Contains("://", StringComparison.Ordinal))
+        text = "https://" + text;
+
+    if (!Uri.TryCreate(text, UriKind.Absolute, out var uri) ||
+        (uri.Scheme != Uri.UriSchemeHttp &&
+         uri.Scheme != Uri.UriSchemeHttps) ||
+        string.IsNullOrWhiteSpace(uri.Host) ||
+        !uri.Host.Contains('.', StringComparison.Ordinal))
+    {
+        return false;
+    }
+
+    website = uri.GetLeftPart(UriPartial.Path).TrimEnd('/');
+    return true;
+}
 
 static IResult Forbidden() =>
     Results.StatusCode(StatusCodes.Status403Forbidden);
@@ -1435,6 +1494,7 @@ static object Summary(
     return new
     {
         engagement.Id,
+        engagement.ClientId,
         engagement.Name,
         engagement.ClientName,
         engagement.Type,
@@ -1445,6 +1505,10 @@ static object Summary(
         ActionState = todos.ResolveAction(
             engagement,
             user.Role,
+            clock.Today),
+        PreparationAlert = EngagementWorkflow.PreparationAlertFor(
+            engagement,
+            phase,
             clock.Today),
         PeriodStart = engagement.AcceptedProposal?.StartDate,
         PeriodEnd = engagement.AcceptedProposal?.EndDate,
@@ -1482,7 +1546,7 @@ static object Detail(
         engagement = new
         {
             engagement.Id,
-            engagement.TenantId,
+            engagement.ClientId,
             engagement.ClientName,
             engagement.Name,
             engagement.Type,
@@ -1513,6 +1577,10 @@ static object Detail(
         ActionState = todos.ResolveAction(
             engagement,
             user.Role,
+            clock.Today),
+        PreparationAlert = EngagementWorkflow.PreparationAlertFor(
+            engagement,
+            phase,
             clock.Today),
         TabStates = todos.ResolveTabs(engagement, user.Role, phase),
         Audit = VisibleAudit(engagement, user),
@@ -1546,9 +1614,9 @@ static object Detail(
         Capabilities = new
         {
             IsClient = user.Role == Roles.Client,
-            IsProvider = user.IsProvider,
+            IsInternal = user.IsInternal,
             CanWrite = CanWrite(user),
-            CanDecide = user.Role is Roles.Client or Roles.PMO,
+            CanDecide = user.Role == Roles.Manager,
             CanCredentials = CanSeeCredentials(user),
             CanManageMail = user.Role == Roles.PMO,
             CanManageSolicitations = user.Role == Roles.PMO,
@@ -1559,7 +1627,7 @@ static object Detail(
             CanPropose = user.Role is Roles.Client or Roles.PMO,
             CanUploadReports = user.Role == Roles.Pentester,
             CanManageClients = user.Role == Roles.Manager,
-            CanViewClients = user.IsProvider,
+            CanViewClients = user.IsInternal,
             ReadOnly = user.Role == Roles.Auditor
         }
     };
@@ -1570,13 +1638,13 @@ static IEnumerable<AuditView> VisibleAudit(
     UserContext user) =>
     engagement.AuditLog
         .Where(entry =>
-            user.IsProvider ||
+            user.IsInternal ||
             entry.Visibility == AuditVisibility.All)
         .Select(entry => new AuditView(
             entry.Date,
             entry.Author,
             entry.AuthorRole,
-            user.IsProvider
+            user.IsInternal
                 ? entry.Text
                 : entry.ClientText ?? entry.Text));
 

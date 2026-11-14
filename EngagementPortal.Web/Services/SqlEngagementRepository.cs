@@ -13,13 +13,13 @@ public sealed class SqlEngagementRepository(
     IDateProvider clock) : IEngagementRepository
 {
     public IReadOnlyList<Engagement> List(
-        string tenantId,
-        bool crossTenant)
+        string clientId,
+        bool allClients)
     {
         var query = db.Engagements.AsNoTracking();
 
-        if (!crossTenant)
-            query = query.Where(record => record.TenantId == tenantId);
+        if (!allClients)
+            query = query.Where(record => record.ClientId == clientId);
 
         return query
             .OrderBy(record => record.Id)
@@ -31,10 +31,10 @@ public sealed class SqlEngagementRepository(
 
     public Engagement? Get(
         string id,
-        string tenantId,
-        bool crossTenant)
+        string clientId,
+        bool allClients)
     {
-        var record = FindRecord(id, tenantId, crossTenant);
+        var record = FindRecord(id, clientId, allClients);
         return record is null
             ? null
             : PortalJson.Deserialize<Engagement>(record.Payload);
@@ -50,14 +50,14 @@ public sealed class SqlEngagementRepository(
             db.Engagements.Add(new EngagementRecord
             {
                 Id = engagement.Id,
-                TenantId = engagement.TenantId,
+                ClientId = engagement.ClientId,
                 Payload = payload,
                 UpdatedAt = clock.UtcNow
             });
         }
         else
         {
-            record.TenantId = engagement.TenantId;
+            record.ClientId = engagement.ClientId;
             record.Payload = payload;
             record.UpdatedAt = clock.UtcNow;
         }
@@ -67,15 +67,15 @@ public sealed class SqlEngagementRepository(
 
     private EngagementRecord? FindRecord(
         string id,
-        string tenantId,
-        bool crossTenant)
+        string clientId,
+        bool allClients)
     {
         var query = db.Engagements
             .AsNoTracking()
             .Where(record => record.Id == id);
 
-        if (!crossTenant)
-            query = query.Where(record => record.TenantId == tenantId);
+        if (!allClients)
+            query = query.Where(record => record.ClientId == clientId);
 
         return query.SingleOrDefault();
     }

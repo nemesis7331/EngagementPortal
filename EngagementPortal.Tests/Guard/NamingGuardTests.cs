@@ -11,7 +11,9 @@ public class NamingGuardTests
     [
         string.Concat("b", "ip"),
         string.Concat("s", "taf"),
-        string.Concat("s", "tid")
+        string.Concat("s", "tid"),
+        string.Concat("Ten", "antId"),
+        string.Concat("tenant-", "provider")
     ];
 
     [Fact]
@@ -41,6 +43,31 @@ public class NamingGuardTests
         Assert.True(
             violations.Count == 0,
             "Terminologia non ammessa nel prodotto:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, violations));
+    }
+
+    [Fact]
+    public void WebSources_DoNotContainTenantConcept()
+    {
+        // Il termine storico non deve tornare nel prodotto. Il controllo è
+        // limitato a EngagementPortal.Web: README e workflow possono citare
+        // l'infrastruttura Azure (es. tenant-id dell'identity provider).
+        var root = FindRepositoryRoot();
+        var webRoot = Path.Combine(root, "EngagementPortal.Web");
+        var term = string.Concat("ten", "ant");
+
+        var violations = EnumerateProductFiles(root)
+            .Where(file => file.StartsWith(
+                webRoot, StringComparison.OrdinalIgnoreCase))
+            .Where(file => File.ReadAllText(file)
+                .Contains(term, StringComparison.OrdinalIgnoreCase))
+            .Select(file => Path.GetRelativePath(root, file))
+            .ToList();
+
+        Assert.True(
+            violations.Count == 0,
+            "Il concetto di tenant non deve comparire nel prodotto:" +
             Environment.NewLine +
             string.Join(Environment.NewLine, violations));
     }

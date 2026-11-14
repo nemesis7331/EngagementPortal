@@ -4,8 +4,8 @@ namespace EngagementPortal.Web.Services;
 
 public interface IEngagementRepository
 {
-    IReadOnlyList<Engagement> List(string tenantId, bool crossTenant);
-    Engagement? Get(string id, string tenantId, bool crossTenant);
+    IReadOnlyList<Engagement> List(string clientId, bool allClients);
+    Engagement? Get(string id, string clientId, bool allClients);
     void Save(Engagement engagement);
 }
 
@@ -16,27 +16,27 @@ public sealed class InMemoryEngagementRepository :
     private readonly List<Engagement> engagements = CreateSeed();
 
     public IReadOnlyList<Engagement> List(
-        string tenantId,
-        bool crossTenant)
+        string clientId,
+        bool allClients)
     {
         lock (gate)
         {
             return engagements
-                .Where(e => crossTenant || e.TenantId == tenantId)
+                .Where(e => allClients || e.ClientId == clientId)
                 .ToList();
         }
     }
 
     public Engagement? Get(
         string id,
-        string tenantId,
-        bool crossTenant)
+        string clientId,
+        bool allClients)
     {
         lock (gate)
         {
             return engagements.FirstOrDefault(e =>
                 e.Id == id &&
-                (crossTenant || e.TenantId == tenantId));
+                (allClients || e.ClientId == clientId));
         }
     }
 
@@ -59,7 +59,7 @@ public sealed class InMemoryEngagementRepository :
 
         var planning = NewEngagement(
             "ENG-2026-001",
-            "tenant-contoso",
+            "contoso",
             "Contoso",
             "External Penetration Test",
             EngagementType.PenetrationTest,
@@ -77,7 +77,7 @@ public sealed class InMemoryEngagementRepository :
         {
             Id = "P-001",
             From = ProposalParty.Provider,
-            By = "Provider Planner",
+            By = "Luca Ferri",
             StartDate = today.AddDays(7),
             EndDate = today.AddDays(12),
             Note = "Finestra proposta dal team PMO"
@@ -91,7 +91,7 @@ public sealed class InMemoryEngagementRepository :
 
         var documents = NewEngagement(
             "ENG-2026-002",
-            "tenant-fabrikam",
+            "fabrikam",
             "Fabrikam",
             "Cloud Security Review",
             EngagementType.CloudSecurity,
@@ -108,7 +108,7 @@ public sealed class InMemoryEngagementRepository :
 
         var reporting = NewEngagement(
             "ENG-2026-003",
-            "tenant-contoso",
+            "contoso",
             "Contoso",
             "Web Application Retest",
             EngagementType.PenetrationTest,
@@ -170,7 +170,7 @@ public sealed class InMemoryEngagementRepository :
         reporting.ReviewStatus = ReviewStatus.Pending;
 
         reporting.AddAudit(
-            "Provider Pentester",
+            "Sara Conti",
             Roles.Pentester,
             "Deliverable submitted for review",
             AuditVisibility.ProviderOnly,
@@ -178,7 +178,7 @@ public sealed class InMemoryEngagementRepository :
 
         var running = NewEngagement(
             "ENG-2026-004",
-            "tenant-novabank",
+            "novabank",
             "Nova Bank",
             "Internal Red Team",
             EngagementType.RedTeam,
@@ -201,7 +201,7 @@ public sealed class InMemoryEngagementRepository :
             Contact = "soc@novabank.example",
             Notes = "Esercitazione con regole concordate",
             Done = true,
-            By = "Provider Pentester",
+            By = "Sara Conti",
             Date = DateTimeOffset.UtcNow.AddDays(-7)
         };
         running.Credentials = new CredentialData
@@ -221,7 +221,7 @@ public sealed class InMemoryEngagementRepository :
         {
             Id = "P-004",
             From = ProposalParty.Provider,
-            By = "Provider Planner",
+            By = "Luca Ferri",
             StartDate = today.AddDays(-3),
             EndDate = today.AddDays(4),
             Status = ProposalStatus.Accepted
@@ -243,7 +243,7 @@ public sealed class InMemoryEngagementRepository :
 
         var scheduled = NewEngagement(
             "ENG-2026-005",
-            "tenant-orion",
+            "orion",
             "Orion Energia",
             "Cloud Security Assessment",
             EngagementType.CloudSecurity,
@@ -261,7 +261,7 @@ public sealed class InMemoryEngagementRepository :
         {
             Host = "cloud.orion.example",
             IpRange = "Sottoscrizioni Azure",
-            OutOfScope = "Tenant di produzione",
+            OutOfScope = "Ambiente di produzione",
             Window = "Lun-Ven 09:00-18:00",
             Contact = "cloud-security@orion.example",
             Notes = "Assessment su ambiente di pre-produzione",
@@ -285,7 +285,7 @@ public sealed class InMemoryEngagementRepository :
         {
             Id = "P-005",
             From = ProposalParty.Provider,
-            By = "Provider Planner",
+            By = "Luca Ferri",
             StartDate = today.AddDays(7),
             EndDate = today.AddDays(17),
             Status = ProposalStatus.Accepted
@@ -299,7 +299,7 @@ public sealed class InMemoryEngagementRepository :
 
         var done = NewEngagement(
             "ENG-2026-006",
-            "tenant-novabank",
+            "novabank",
             "Nova Bank",
             "Web Application Penetration Test",
             EngagementType.PenetrationTest,
@@ -322,7 +322,7 @@ public sealed class InMemoryEngagementRepository :
             Contact = "appsec@novabank.example",
             Notes = "Test completato",
             Done = true,
-            By = "Provider Pentester",
+            By = "Sara Conti",
             Date = DateTimeOffset.UtcNow.AddDays(-35)
         };
         done.Credentials = new CredentialData
@@ -344,7 +344,7 @@ public sealed class InMemoryEngagementRepository :
         {
             Id = "P-006",
             From = ProposalParty.Provider,
-            By = "Provider Planner",
+            By = "Luca Ferri",
             StartDate = today.AddDays(-30),
             EndDate = today.AddDays(-20),
             Status = ProposalStatus.Accepted
@@ -360,9 +360,41 @@ public sealed class InMemoryEngagementRepository :
         done.ReviewStatus = ReviewStatus.Approved;
 
         done.AddAudit(
-            "Provider Pentester",
+            "Sara Conti",
             Roles.Pentester,
             "Deliverables published",
+            AuditVisibility.All);
+
+        // Caso dimostrativo per la colonna "Ritardo": dates accettate e
+        // avvio entro due settimane, ma scope e credenziali mancanti.
+        var atRisk = NewEngagement(
+            "ENG-2026-007",
+            "fabrikam",
+            "Fabrikam",
+            "Cloud Configuration Review",
+            EngagementType.CloudSecurity,
+            5);
+
+        atRisk.HasManleva = true;
+        atRisk.ManlevaFile = "Manleva_firmata.pdf";
+        atRisk.OrderConfirmed = true;
+        atRisk.OrderRef = "PO-2026-0197";
+        AddDefaultDistribution(atRisk, "fabrikam.example");
+
+        atRisk.Proposals.Add(new Proposal
+        {
+            Id = "P-007",
+            From = ProposalParty.Provider,
+            By = "Luca Ferri",
+            StartDate = today.AddDays(9),
+            EndDate = today.AddDays(19),
+            Status = ProposalStatus.Accepted
+        });
+
+        atRisk.AddAudit(
+            "Luca Ferri",
+            Roles.PMO,
+            "Planning proposal accepted",
             AuditVisibility.All);
 
         return
@@ -372,24 +404,25 @@ public sealed class InMemoryEngagementRepository :
             reporting,
             running,
             scheduled,
-            done
+            done,
+            atRisk
         ];
     }
 
     private static Engagement NewEngagement(
         string id,
-        string tenantId,
+        string clientId,
         string clientName,
         string name,
         EngagementType type,
         int createdDaysAgo) => new()
         {
             Id = id,
-            TenantId = tenantId,
+            ClientId = clientId,
             ClientName = clientName,
             Name = name,
             Type = type,
-            Owner = "Provider Pentester",
+            Owner = "Sara Conti",
             CreatedDate = DateTimeOffset.UtcNow.AddDays(-createdDaysAgo)
         };
 

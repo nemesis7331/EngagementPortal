@@ -21,33 +21,30 @@ public sealed class SqlClientRepository(
                 record.Payload))
             .ToList();
 
-    public ClientAccount? Get(string tenantId)
+    public ClientAccount? Get(string clientId)
     {
-        var record = FindRecord(tenantId);
+        var record = FindRecord(clientId);
         return record is null
             ? null
             : PortalJson.Deserialize<ClientAccount>(record.Payload);
     }
 
-    public bool Exists(string tenantId) =>
+    public bool Exists(string clientId) =>
         db.Clients.AsNoTracking().Any(record =>
-            record.TenantId == tenantId);
+            record.Id == clientId);
 
-    public ClientAccount Add(string name, string? tenantId)
+    public ClientAccount Add(string name, string? website)
     {
-        var resolved = string.IsNullOrWhiteSpace(tenantId)
-            ? UniqueTenantId(Slug(name))
-            : tenantId.Trim();
-
         var account = new ClientAccount
         {
-            TenantId = resolved,
-            Name = name.Trim()
+            Id = UniqueId(Slug(name)),
+            Name = name.Trim(),
+            Website = website
         };
 
         db.Clients.Add(new ClientRecord
         {
-            TenantId = account.TenantId,
+            Id = account.Id,
             Name = account.Name,
             Payload = PortalJson.Serialize(account),
             UpdatedAt = clock.UtcNow
@@ -57,9 +54,12 @@ public sealed class SqlClientRepository(
         return account;
     }
 
-    public ClientAccount? Rename(string tenantId, string name)
+    public ClientAccount? Update(
+        string clientId,
+        string name,
+        string? website)
     {
-        var record = FindRecord(tenantId);
+        var record = FindRecord(clientId);
 
         if (record is null)
             return null;
@@ -67,17 +67,18 @@ public sealed class SqlClientRepository(
         var account = PortalJson.Deserialize<ClientAccount>(
             record.Payload);
         account.Name = name.Trim();
+        account.Website = website;
 
         Save(record, account);
         return account;
     }
 
     public ClientUser? AddUser(
-        string tenantId,
+        string clientId,
         string name,
         string email)
     {
-        var record = FindRecord(tenantId);
+        var record = FindRecord(clientId);
 
         if (record is null)
             return null;
@@ -96,9 +97,9 @@ public sealed class SqlClientRepository(
         return user;
     }
 
-    public bool RemoveUser(string tenantId, string userId)
+    public bool RemoveUser(string clientId, string userId)
     {
-        var record = FindRecord(tenantId);
+        var record = FindRecord(clientId);
 
         if (record is null)
             return false;
@@ -117,9 +118,8 @@ public sealed class SqlClientRepository(
         return true;
     }
 
-    private ClientRecord? FindRecord(string tenantId) =>
-        db.Clients.SingleOrDefault(record =>
-            record.TenantId == tenantId);
+    private ClientRecord? FindRecord(string clientId) =>
+        db.Clients.SingleOrDefault(record => record.Id == clientId);
 
     private void Save(
         ClientRecord record,
@@ -131,14 +131,14 @@ public sealed class SqlClientRepository(
         db.SaveChanges();
     }
 
-    private string UniqueTenantId(string slug)
+    private string UniqueId(string slug)
     {
-        var candidate = $"tenant-{slug}";
+        var candidate = slug;
         var index = 2;
 
         while (Exists(candidate))
         {
-            candidate = $"tenant-{slug}-{index}";
+            candidate = $"{slug}-{index}";
             index++;
         }
 

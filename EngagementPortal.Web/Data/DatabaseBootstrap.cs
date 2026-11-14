@@ -21,7 +21,7 @@ public static class DatabaseBootstrap
             var clients = InMemoryClientRepository.CreateSeed();
             db.Clients.AddRange(clients.Select(client => new ClientRecord
             {
-                TenantId = client.TenantId,
+                Id = client.Id,
                 Name = client.Name,
                 Payload = PortalJson.Serialize(client),
                 UpdatedAt = client.CreatedDate
@@ -50,7 +50,7 @@ public static class DatabaseBootstrap
                 new EngagementRecord
                 {
                     Id = engagement.Id,
-                    TenantId = engagement.TenantId,
+                    ClientId = engagement.ClientId,
                     Payload = PortalJson.Serialize(engagement),
                     UpdatedAt = engagement.CreatedDate
                 }));

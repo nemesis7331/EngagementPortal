@@ -83,7 +83,7 @@ jobs:
               "$APP_URL/health") &&
               printf '%s' "$health" | jq -e '.status == "ok"' >/dev/null &&
               response=$(curl --fail --silent --show-error \
-              "$APP_URL/api/engagements?role=PMO&tenant=tenant-provider") &&
+              "$APP_URL/api/engagements?role=PMO&client=") &&
               printf '%s' "$response" | jq -e 'type == "array"' >/dev/null; then
               echo "Cyber Engagement Portal is responding."
               exit 0

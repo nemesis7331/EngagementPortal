@@ -11,12 +11,13 @@ public enum EngagementType
 
 public enum EngagementPhase
 {
-    Docs,
-    Planning,
-    Prep,
-    Scheduled,
-    Running,
-    Reporting,
+    Docs,        // 1. Ordine e manleva
+    Scope,       // 2. Scope
+    Planning,    // 3. Pianificazione
+    Credentials, // 4. Credenziali
+    Scheduled,   // 5. Esecuzione (prima dell'avvio)
+    Running,     // 5. Esecuzione (in corso)
+    Reporting,   // 6. Report
     Done
 }
 
@@ -57,7 +58,11 @@ public static class Roles
     public const string Manager = "Manager";
     public const string Auditor = "Auditor";
 
-    public static bool IsProvider(string role) =>
+    /// <summary>
+    /// Utente dell'ente che eroga il servizio (non di un cliente):
+    /// PMO, Pentester, Manager, Auditor.
+    /// </summary>
+    public static bool IsInternal(string role) =>
         role is PMO or Pentester or Manager or Auditor;
 }
 
@@ -110,8 +115,8 @@ public sealed record MailLogEntry(
 public sealed class Engagement
 {
     public required string Id { get; init; }
-    public required string TenantId { get; init; }
-    public required string ClientName { get; init; }
+    public required string ClientId { get; init; }
+    public required string ClientName { get; set; }
     public required string Name { get; set; }
     public required EngagementType Type { get; init; }
     public required string Owner { get; init; }
@@ -195,10 +200,11 @@ public sealed record TodoItem(string Action, string TargetTab);
 
 public sealed record UserContext(
     string Name,
-    string TenantId,
+    string? ClientId,
     string Role)
 {
-    public bool IsProvider => Roles.IsProvider(Role);
+    /// <summary>Utente interno: PMO, Pentester, Manager, Auditor.</summary>
+    public bool IsInternal => Roles.IsInternal(Role);
 }
 
 public sealed record CreateProposalRequest(
@@ -242,17 +248,18 @@ public sealed record DistributionEntryRequest(
 
 public sealed class ClientAccount
 {
-    public required string TenantId { get; init; }
+    public required string Id { get; init; }
     public required string Name { get; set; }
+    public string? Website { get; set; }
     public DateTimeOffset CreatedDate { get; init; } = DateTimeOffset.UtcNow;
     public List<ClientUser> Users { get; init; } = [];
 }
 
 public sealed record ClientUser(string Id, string Name, string Email);
 
-public sealed record CreateClientRequest(string Name, string? TenantId);
+public sealed record CreateClientRequest(string Name, string? Website);
 
-public sealed record RenameClientRequest(string Name);
+public sealed record RenameClientRequest(string Name, string? Website);
 
 public sealed record AddClientUserRequest(string Name, string Email);
 
@@ -262,9 +269,8 @@ public sealed record SolicitationRuleRequest(
 
 public sealed record CreateEngagementRequest(
     string Name,
-    string ClientName,
     EngagementType Type,
-    string? TenantId,
+    string? ClientId,
     string? Id);
 
 public sealed record DocumentRequest(string? FileName);

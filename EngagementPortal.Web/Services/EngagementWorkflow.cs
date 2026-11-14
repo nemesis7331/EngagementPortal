@@ -6,6 +6,44 @@ public sealed class EngagementWorkflow(IDateProvider clock)
 {
     public DateOnly Today => clock.Today;
 
+    /// <summary>
+    /// Segnala la preparazione incompleta (scope/credenziali) a ridosso
+    /// dell'esecuzione: l'allerta scatta da 14 giorni prima della data di
+    /// inizio e resta finché i dati mancano. Null se non c'è nulla da
+    /// segnalare o se l'engagement è concluso.
+    /// </summary>
+    public static PreparationAlert? PreparationAlertFor(
+        Engagement engagement,
+        EngagementPhase phase,
+        DateOnly today)
+    {
+        if (phase == EngagementPhase.Done)
+            return null;
+
+        var start = engagement.AcceptedProposal?.StartDate;
+
+        if (start is null)
+            return null;
+
+        var missing = new List<string>();
+
+        if (!engagement.ScopeDone)
+            missing.Add("scope");
+
+        if (!engagement.CredentialsDone)
+            missing.Add("credenziali");
+
+        if (missing.Count == 0)
+            return null;
+
+        var days = start.Value.DayNumber - today.DayNumber;
+
+        // 14 giorni prima dell'avvio (o meno): preparazione a rischio.
+        return days <= 14
+            ? new PreparationAlert("late", missing, days)
+            : null;
+    }
+
     public EngagementPhase Resolve(
         Engagement engagement,
         DateOnly? currentDate = null)
@@ -17,21 +55,26 @@ public sealed class EngagementWorkflow(IDateProvider clock)
 
         var proposal = engagement.AcceptedProposal;
 
-        if (proposal is null)
-            return EngagementPhase.Planning;
-
         // Precedenza allineata alla demo: un deliverable pubblicato chiude
         // l'engagement anche se le date non sono ancora trascorse.
         if (engagement.Reports.Any(report => report.Published))
             return EngagementPhase.Done;
 
-        // Demo: oltre la data di fine si passa a reporting anche se la
+        // Oltre la data di fine si passa a reporting anche se la
         // preparazione non è completa.
-        if (today > proposal.EndDate)
+        if (proposal is not null && today > proposal.EndDate)
             return EngagementPhase.Reporting;
 
-        if (!engagement.ScopeDone || !engagement.CredentialsDone)
-            return EngagementPhase.Prep;
+        // Ordine del workflow: documenti, scope, pianificazione,
+        // credenziali, esecuzione, report.
+        if (!engagement.ScopeDone)
+            return EngagementPhase.Scope;
+
+        if (proposal is null)
+            return EngagementPhase.Planning;
+
+        if (!engagement.CredentialsDone)
+            return EngagementPhase.Credentials;
 
         if (today < proposal.StartDate)
             return EngagementPhase.Scheduled;
@@ -42,11 +85,12 @@ public sealed class EngagementWorkflow(IDateProvider clock)
     public static int StepIndex(EngagementPhase phase) => phase switch
     {
         EngagementPhase.Docs => 0,
-        EngagementPhase.Planning => 1,
-        EngagementPhase.Prep => 2,
-        EngagementPhase.Scheduled or EngagementPhase.Running => 3,
-        EngagementPhase.Reporting => 4,
-        EngagementPhase.Done => 5,
+        EngagementPhase.Scope => 1,
+        EngagementPhase.Planning => 2,
+        EngagementPhase.Credentials => 3,
+        EngagementPhase.Scheduled or EngagementPhase.Running => 4,
+        EngagementPhase.Reporting => 5,
+        EngagementPhase.Done => 6,
         _ => 0
     };
 
@@ -59,23 +103,32 @@ public sealed class EngagementWorkflow(IDateProvider clock)
         EngagementPhase phase)
     {
         // Scope e credenziali si sbloccano appena i documenti sono completi:
-        // si possono compilare anche prima che la pianificazione sia accettata.
+        // restano modificabili in tutte le fasi successive, anche prima che
+        // il loro passo sia quello corrente (es. credenziali durante la
+        // pianificazione).
         if (!engagement.HasManleva || !engagement.OrderConfirmed)
             return false;
 
         return role switch
         {
-            Roles.Client => phase is EngagementPhase.Planning or
-                EngagementPhase.Prep or
+            Roles.Client => phase is EngagementPhase.Scope or
+                EngagementPhase.Planning or
+                EngagementPhase.Credentials or
                 EngagementPhase.Scheduled,
-            Roles.PMO => phase is EngagementPhase.Planning or
-                EngagementPhase.Prep or
+            Roles.PMO => phase is EngagementPhase.Scope or
+                EngagementPhase.Planning or
+                EngagementPhase.Credentials or
                 EngagementPhase.Scheduled or
                 EngagementPhase.Running,
             _ => false
         };
     }
 }
+
+public sealed record PreparationAlert(
+    string Level,
+    IReadOnlyList<string> Missing,
+    int DaysToStart);
 
 public sealed class TodoResolver(EngagementWorkflow workflow)
 {
@@ -92,29 +145,28 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
         var pending = engagement.Proposals
             .FirstOrDefault(p => p.Status == ProposalStatus.Pending);
 
+        // Le proposte di pianificazione possono essere inviate da cliente o PMO,
+        // ma solo il Manager le approva o le rifiuta.
         if (role == Roles.Manager)
         {
-            return phase == EngagementPhase.Reporting &&
-                   engagement.ReviewStatus == ReviewStatus.Pending
-                ? new TodoItem(
+            if (phase == EngagementPhase.Reporting &&
+                engagement.ReviewStatus == ReviewStatus.Pending)
+            {
+                return new TodoItem(
                     "Rivedi i deliverables prima della pubblicazione.",
-                    "reports")
-                : null;
-        }
+                    "reports");
+            }
 
-        var canDecide = pending is not null &&
-            ((pending.From == ProposalParty.Client &&
-              role == Roles.PMO) ||
-             (pending.From == ProposalParty.Provider &&
-              role == Roles.Client));
+            if (pending is not null)
+            {
+                return new TodoItem(
+                    pending.Kind == "resched"
+                        ? "Richiesta di riprogrammazione: approva o rifiuta."
+                        : "Proposta di pianificazione: approva o rifiuta.",
+                    "plan");
+            }
 
-        if (canDecide)
-        {
-            return new TodoItem(
-                pending!.Kind == "resched"
-                    ? "Richiesta di riprogrammazione: accetta o rifiuta."
-                    : "Proposta di pianificazione: accetta o rifiuta.",
-                "plan");
+            return null;
         }
 
         if (phase == EngagementPhase.Docs)
@@ -132,34 +184,18 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
             return null;
         }
 
+        if (phase == EngagementPhase.Scope && !engagement.ScopeDone &&
+            role is Roles.Client or Roles.PMO)
+            return new TodoItem("Compila lo scope dell'attività", "scope");
+
         if (phase == EngagementPhase.Planning && pending is null &&
             role is Roles.Client or Roles.PMO)
             return new TodoItem("Proponi date", "plan");
 
-        if (phase == EngagementPhase.Prep)
-        {
-            var needsScope = !engagement.ScopeDone;
-            var needsCredentials = !engagement.CredentialsDone &&
-                role is Roles.Client or Roles.PMO;
-
-            if (needsScope && needsCredentials)
-                return new TodoItem(
-                    "Fornisci scope e credenziali",
-                    "scope");
-
-            if (needsScope &&
-                role is Roles.Client or Roles.PMO)
-                return new TodoItem(
-                    "Compila lo scope dell'attività",
-                    "scope");
-
-            if (needsCredentials)
-                return new TodoItem(
-                    "Fornisci le credenziali di accesso",
-                    "cred");
-
-            return null;
-        }
+        if (phase == EngagementPhase.Credentials &&
+            !engagement.CredentialsDone &&
+            role is Roles.Client or Roles.PMO)
+            return new TodoItem("Fornisci le credenziali di accesso", "cred");
 
         if (phase == EngagementPhase.Reporting &&
             role == Roles.Pentester)
@@ -235,19 +271,26 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
                 new TabState("todo", todo.Action),
             _ => new TabState("wait", !engagement.HasManleva
                 ? "In attesa della firma del cliente"
-                : "In attesa dell'ordine dal provider")
+                : "In attesa che il PMO registri l'ordine")
         };
+
+        var pendingProposal = engagement.Proposals
+            .FirstOrDefault(p => p.Status == ProposalStatus.Pending);
 
         tabs["plan"] = !engagement.HasManleva || !engagement.OrderConfirmed
             ? new TabState("lock", "Si sblocca dopo firma e ordine")
-            : engagement.AcceptedProposal is not null
-                ? new TabState("ok", null)
-                : todo?.TargetTab == "plan"
-                    ? new TabState("todo", todo.Action)
-                    : new TabState("wait", "In attesa di una proposta di date");
+            : todo?.TargetTab == "plan"
+                ? new TabState("todo", todo.Action)
+                : pendingProposal is not null
+                    ? new TabState(
+                        "wait",
+                        "In attesa dell'approvazione del Manager")
+                    : engagement.AcceptedProposal is not null
+                        ? new TabState("ok", null)
+                        : new TabState("wait", "In attesa di una proposta di date");
 
         var docsReady = engagement.HasManleva && engagement.OrderConfirmed;
-        var canEditScope = EngagementWorkflow.CanEditPreparation(
+        var canEditPreparation = EngagementWorkflow.CanEditPreparation(
             engagement, role, phase);
 
         tabs["scope"] = !docsReady
@@ -256,10 +299,10 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
                 ? new TabState("ok", null)
                 : todo?.TargetTab == "scope"
                     ? new TabState("todo", todo.Action)
-                    : canEditScope
+                    : canEditPreparation
                         ? new TabState(
                             "todo",
-                            "Puoi compilarlo anche prima della pianificazione")
+                            "Compilabile subito dopo firma e ordine")
                         : new TabState("wait", "In attesa dello scope dal cliente");
 
         tabs["cred"] = !docsReady
@@ -270,10 +313,10 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
                     ? new TabState("ok", null)
                     : todo?.TargetTab == "cred"
                         ? new TabState("todo", todo.Action)
-                        : canEditScope
+                        : canEditPreparation
                             ? new TabState(
                                 "todo",
-                                "Puoi compilarle anche prima della pianificazione")
+                                "Compilabile anche durante la pianificazione")
                             : new TabState(
                                 "wait",
                                 "In attesa delle credenziali dal cliente");
@@ -298,7 +341,7 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
             tabs["reports"] = new TabState("wait", engagement.ReviewStatus switch
             {
                 ReviewStatus.Pending => "In attesa della revisione del manager",
-                ReviewStatus.Changes => "In attesa degli aggiornamenti dal provider",
+                ReviewStatus.Changes => "In attesa degli aggiornamenti dal Pentester",
                 ReviewStatus.Approved => "In attesa di pubblicazione",
                 _ => "In attesa di invio in revisione"
             });
@@ -316,6 +359,21 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
         EngagementPhase phase,
         string role)
     {
+        // Una riprogrammazione in attesa di approvazione riguarda il Manager
+        // anche quando l'attività è già pianificata o in corso.
+        if ((phase is EngagementPhase.Scope or
+                EngagementPhase.Credentials or
+                EngagementPhase.Scheduled or
+                EngagementPhase.Running) &&
+            PendingProposal(engagement) is { } reschedule)
+        {
+            return Wait(
+                Roles.Manager,
+                OwnerLabel(Roles.Manager),
+                "In attesa dell'approvazione della riprogrammazione",
+                reschedule.Date);
+        }
+
         switch (phase)
         {
             case EngagementPhase.Docs:
@@ -328,7 +386,7 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
                     : Wait(
                         Roles.PMO,
                         OwnerLabel(Roles.PMO),
-                        "In attesa dell'ordine dal provider",
+                        "In attesa che il PMO registri l'ordine",
                         SinceDocs(engagement));
 
             case EngagementPhase.Planning:
@@ -337,16 +395,10 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
 
                 if (pending is not null)
                 {
-                    var decider = pending.From == ProposalParty.Client
-                        ? Roles.PMO
-                        : Roles.Client;
-
                     return Wait(
-                        decider,
-                        OwnerLabel(decider),
-                        decider == Roles.PMO
-                            ? "In attesa della decisione del PMO"
-                            : "In attesa della decisione del cliente",
+                        Roles.Manager,
+                        OwnerLabel(Roles.Manager),
+                        "In attesa dell'approvazione del Manager",
                         pending.Date);
                 }
 
@@ -357,22 +409,19 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
                     SinceDocs(engagement));
             }
 
-            case EngagementPhase.Prep:
-            {
-                var missing = new List<string>();
-
-                if (!engagement.ScopeDone)
-                    missing.Add("scope");
-
-                if (!engagement.CredentialsDone)
-                    missing.Add("credenziali");
-
+            case EngagementPhase.Scope:
                 return Wait(
                     Roles.Client,
                     OwnerLabel(Roles.Client),
-                    $"In attesa di {string.Join(" e ", missing)} dal cliente",
+                    "In attesa dello scope dal cliente",
                     SincePreparation(engagement));
-            }
+
+            case EngagementPhase.Credentials:
+                return Wait(
+                    Roles.Client,
+                    OwnerLabel(Roles.Client),
+                    "In attesa delle credenziali dal cliente",
+                    SincePreparation(engagement));
 
             case EngagementPhase.Scheduled:
                 return new ActionState(
@@ -426,7 +475,7 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
             return Wait(
                 Roles.Pentester,
                 OwnerLabel(Roles.Pentester),
-                "In attesa degli aggiornamenti dal provider",
+                "In attesa degli aggiornamenti dal Pentester",
                 since);
         }
 
@@ -436,7 +485,7 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
             return Wait(
                 Roles.Pentester,
                 OwnerLabel(Roles.Pentester),
-                "In attesa della pubblicazione dal provider",
+                "In attesa della pubblicazione dal Pentester",
                 since);
         }
 
@@ -445,7 +494,7 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
             return Wait(
                 Roles.Pentester,
                 OwnerLabel(Roles.Pentester),
-                "In attesa dei deliverables dal provider",
+                "In attesa dei deliverables dal Pentester",
                 since);
         }
 
@@ -474,7 +523,8 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
             PendingProposal(engagement) is { } pending
                 ? pending.Date
                 : SinceDocs(engagement),
-        EngagementPhase.Prep => SincePreparation(engagement),
+        EngagementPhase.Scope or EngagementPhase.Credentials =>
+            SincePreparation(engagement),
         EngagementPhase.Reporting => LatestReportDate(engagement),
         _ => null
     };
@@ -502,7 +552,7 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
     {
         Roles.Client => "Cliente",
         Roles.PMO => "PMO",
-        Roles.Pentester => "Provider",
+        Roles.Pentester => "Pentester",
         Roles.Manager => "Manager",
         _ => role
     };

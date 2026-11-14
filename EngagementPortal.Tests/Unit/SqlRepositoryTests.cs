@@ -38,7 +38,7 @@ public sealed class SqlRepositoryTests
     private static Engagement NewEngagement() => new()
     {
         Id = "ENG-2026-001",
-        TenantId = "tenant-contoso",
+        ClientId = "contoso",
         ClientName = "Contoso",
         Name = "External Penetration Test",
         Type = EngagementType.PenetrationTest,
@@ -100,8 +100,8 @@ public sealed class SqlRepositoryTests
 
         var loaded = secondRepository.Get(
             engagement.Id,
-            engagement.TenantId,
-            crossTenant: false);
+            engagement.ClientId,
+            allClients: false);
 
         Assert.NotNull(loaded);
         Assert.Equal("External Penetration Test", loaded.Name);
@@ -111,9 +111,9 @@ public sealed class SqlRepositoryTests
         Assert.Equal(ProposalStatus.Accepted, loaded.Proposals[0].Status);
         Assert.Single(loaded.Reports);
 
-        Assert.Single(secondRepository.List("tenant-contoso", false));
-        Assert.Empty(secondRepository.List("tenant-other", false));
-        Assert.Single(secondRepository.List("tenant-other", true));
+        Assert.Single(secondRepository.List("contoso", false));
+        Assert.Empty(secondRepository.List("other", false));
+        Assert.Single(secondRepository.List("other", true));
     }
 
     [Fact]
@@ -126,18 +126,22 @@ public sealed class SqlRepositoryTests
             db,
             new FixedDateProvider());
 
-        var client = repository.Add("Acme", null);
-        Assert.Equal("tenant-acme", client.TenantId);
+        var client = repository.Add("Acme", "https://acme.example");
+        Assert.Equal("acme", client.Id);
 
         var user = repository.AddUser(
-            client.TenantId,
+            client.Id,
             "Mario Rossi",
             "mario.rossi@acme.example");
         Assert.NotNull(user);
 
-        var renamed = repository.Rename(client.TenantId, "Acme S.p.A.");
+        var renamed = repository.Update(
+            client.Id,
+            "Acme S.p.A.",
+            "https://www.acme.example");
         Assert.NotNull(renamed);
         Assert.Equal("Acme S.p.A.", renamed.Name);
+        Assert.Equal("https://www.acme.example", renamed.Website);
 
         var options = new DbContextOptionsBuilder<PortalDbContext>()
             .UseSqlite(connection)
@@ -147,16 +151,17 @@ public sealed class SqlRepositoryTests
             secondDb,
             new FixedDateProvider());
 
-        var loaded = secondRepository.Get("tenant-acme");
+        var loaded = secondRepository.Get("acme");
         Assert.NotNull(loaded);
         Assert.Equal("Acme S.p.A.", loaded.Name);
+        Assert.Equal("https://www.acme.example", loaded.Website);
         Assert.Single(loaded.Users);
 
         Assert.True(secondRepository.RemoveUser(
-            "tenant-acme",
+            "acme",
             loaded.Users[0].Id));
-        Assert.Empty(secondRepository.Get("tenant-acme")!.Users);
-        Assert.True(secondRepository.Exists("tenant-acme"));
+        Assert.Empty(secondRepository.Get("acme")!.Users);
+        Assert.True(secondRepository.Exists("acme"));
     }
 
     [Fact]
@@ -188,7 +193,7 @@ public sealed class SqlRepositoryTests
         DatabaseBootstrap.Initialize(db, logger);
         DatabaseBootstrap.Initialize(db, logger);
 
-        Assert.Equal(6, db.Engagements.Count());
+        Assert.Equal(7, db.Engagements.Count());
         Assert.Equal(4, db.Clients.Count());
     }
 }

@@ -88,7 +88,9 @@ public sealed class SolicitationService(EngagementWorkflow workflow)
             Add("manleva", age, phase == EngagementPhase.Docs && !engagement.HasManleva);
             Add("order", age, phase == EngagementPhase.Docs && !engagement.OrderConfirmed);
             Add("prop", proposalAge, phase == EngagementPhase.Planning);
-            Add("prep", age, phase == EngagementPhase.Prep);
+            Add("prep", age,
+                phase is EngagementPhase.Scope or
+                    EngagementPhase.Credentials);
             Add("rep", reportAge,
                 phase == EngagementPhase.Reporting &&
                 !engagement.Reports.Any(report => report.Published));

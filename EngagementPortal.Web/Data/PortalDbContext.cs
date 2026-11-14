@@ -22,19 +22,19 @@ public sealed class PortalDbContext(DbContextOptions<PortalDbContext> options)
             entity.ToTable("Engagements");
             entity.HasKey(record => record.Id);
             entity.Property(record => record.Id).HasMaxLength(64);
-            entity.Property(record => record.TenantId)
-                .HasMaxLength(128)
+            entity.Property(record => record.ClientId)
+                .HasMaxLength(64)
                 .IsRequired();
             entity.Property(record => record.Payload).IsRequired();
             entity.Property(record => record.UpdatedAt);
-            entity.HasIndex(record => record.TenantId);
+            entity.HasIndex(record => record.ClientId);
         });
 
         modelBuilder.Entity<ClientRecord>(entity =>
         {
             entity.ToTable("Clients");
-            entity.HasKey(record => record.TenantId);
-            entity.Property(record => record.TenantId).HasMaxLength(128);
+            entity.HasKey(record => record.Id);
+            entity.Property(record => record.Id).HasMaxLength(64);
             entity.Property(record => record.Name)
                 .HasMaxLength(256)
                 .IsRequired();
@@ -47,14 +47,14 @@ public sealed class PortalDbContext(DbContextOptions<PortalDbContext> options)
 public sealed class EngagementRecord
 {
     public required string Id { get; set; }
-    public required string TenantId { get; set; }
+    public required string ClientId { get; set; }
     public required string Payload { get; set; }
     public DateTimeOffset UpdatedAt { get; set; } = DateTimeOffset.UtcNow;
 }
 
 public sealed class ClientRecord
 {
-    public required string TenantId { get; set; }
+    public required string Id { get; set; }
     public required string Name { get; set; }
     public required string Payload { get; set; }
     public DateTimeOffset UpdatedAt { get; set; } = DateTimeOffset.UtcNow;

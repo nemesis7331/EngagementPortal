@@ -26,7 +26,7 @@ public class WorkflowTests
     private static Engagement NewEngagement() => new()
     {
         Id = "ENG-2026-001",
-        TenantId = "tenant-client",
+        ClientId = "client",
         ClientName = "Nova Bank",
         Name = "External Penetration Test",
         Type = EngagementType.PenetrationTest,
@@ -166,7 +166,7 @@ public class WorkflowTests
     }
 
     [Fact]
-    public void Todo_BothPreparationItemsMissing()
+    public void Todo_BothPreparationItemsMissing_ScopeFirst()
     {
         var engagement = NewEngagement();
         engagement.ScopeDone = false;
@@ -177,7 +177,7 @@ public class WorkflowTests
             .Resolve(engagement, Roles.Client);
 
         Assert.NotNull(todo);
-        Assert.Equal("Fornisci scope e credenziali", todo.Action);
+        Assert.Equal("Compila lo scope dell'attività", todo.Action);
         Assert.Equal("scope", todo.TargetTab);
     }
 
@@ -206,6 +206,35 @@ public class WorkflowTests
         Assert.Null(
             new TodoResolver(Workflow())
                 .Resolve(engagement, Roles.Auditor));
+    }
+
+    [Fact]
+    public void Todo_Manager_ApprovesPendingProposal()
+    {
+        var engagement = NewEngagement();
+        engagement.Proposals.Add(new Proposal
+        {
+            Id = "P-002",
+            From = ProposalParty.Client,
+            By = "Cliente",
+            StartDate = Today.AddDays(2),
+            EndDate = Today.AddDays(5),
+            Status = ProposalStatus.Pending
+        });
+
+        var todo = new TodoResolver(Workflow())
+            .Resolve(engagement, Roles.Manager);
+
+        Assert.NotNull(todo);
+        Assert.Equal(
+            "Proposta di pianificazione: approva o rifiuta.",
+            todo.Action);
+        Assert.Equal("plan", todo.TargetTab);
+
+        Assert.Null(
+            new TodoResolver(Workflow()).Resolve(engagement, Roles.PMO));
+        Assert.Null(
+            new TodoResolver(Workflow()).Resolve(engagement, Roles.Client));
     }
 
     [Fact]
@@ -269,9 +298,64 @@ public class WorkflowTests
     }
 
     [Fact]
-    public void StepIndex_ReportingIsFour_DoneIsFive()
+    public void NoScope_ReturnsScope_EvenWithoutProposal()
     {
-        Assert.Equal(4, EngagementWorkflow.StepIndex(EngagementPhase.Reporting));
-        Assert.Equal(5, EngagementWorkflow.StepIndex(EngagementPhase.Done));
+        var engagement = NewEngagement();
+        engagement.ScopeDone = false;
+
+        Assert.Equal(
+            EngagementPhase.Scope,
+            Workflow().Resolve(engagement));
+    }
+
+    [Fact]
+    public void MissingCredentials_AfterAcceptedProposal_ReturnsCredentials()
+    {
+        var engagement = NewEngagement();
+        engagement.CredentialsDone = false;
+        AddAcceptedProposal(engagement, Today.AddDays(2), Today.AddDays(5));
+
+        Assert.Equal(
+            EngagementPhase.Credentials,
+            Workflow().Resolve(engagement));
+    }
+
+    [Fact]
+    public void StepIndex_FollowsWorkflowOrder()
+    {
+        Assert.Equal(0, EngagementWorkflow.StepIndex(EngagementPhase.Docs));
+        Assert.Equal(1, EngagementWorkflow.StepIndex(EngagementPhase.Scope));
+        Assert.Equal(2, EngagementWorkflow.StepIndex(EngagementPhase.Planning));
+        Assert.Equal(3, EngagementWorkflow.StepIndex(EngagementPhase.Credentials));
+        Assert.Equal(4, EngagementWorkflow.StepIndex(EngagementPhase.Running));
+        Assert.Equal(5, EngagementWorkflow.StepIndex(EngagementPhase.Reporting));
+        Assert.Equal(6, EngagementWorkflow.StepIndex(EngagementPhase.Done));
+    }
+
+    [Fact]
+    public void PreparationAlert_StartsTwoWeeksBeforeExecution()
+    {
+        var engagement = NewEngagement();
+        engagement.CredentialsDone = false;
+        AddAcceptedProposal(engagement, Today.AddDays(20), Today.AddDays(30));
+
+        Assert.Null(EngagementWorkflow.PreparationAlertFor(
+            engagement,
+            EngagementPhase.Credentials,
+            Today));
+
+        var near = NewEngagement();
+        near.ScopeDone = false;
+        AddAcceptedProposal(near, Today.AddDays(10), Today.AddDays(20));
+
+        var alert = EngagementWorkflow.PreparationAlertFor(
+            near,
+            EngagementPhase.Scope,
+            Today);
+
+        Assert.NotNull(alert);
+        Assert.Equal("late", alert.Level);
+        Assert.Contains("scope", alert.Missing);
+        Assert.Equal(10, alert.DaysToStart);
     }
 }

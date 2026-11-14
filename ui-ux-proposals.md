@@ -39,7 +39,7 @@ di miglioramento. Le proposte sono numerate: puoi approvarne solo alcune.
 Regola unica, valida in tutta l'app:
 
 > **Rosso** = la palla è a te: solo tu puoi sbloccare l'engagement.
-> **Giallo** = la palla è a qualcun altro: stai aspettando cliente, PMO, provider o manager.
+> **Giallo** = la palla è a qualcun altro: stai aspettando cliente, PMO, Pentester o Manager.
 > **Blu** = in corso: nessuno è bloccato, il tempo scorre.
 > **Verde** = completato.
 > **Grigio** = bloccato da un prerequisito o da un permesso (non è "colpa" di nessuno).
@@ -47,7 +47,7 @@ Regola unica, valida in tutta l'app:
 | Stato semantico | Significato | Token | Colore testo | Sfondo | Icona | Esempi |
 |---|---|---|---|---|---|---|
 | **Da fare (tuo)** | Azione richiesta a te, l'avanzamento è fermo qui | `--st-action` | `#B42318` | `#FEE4E2` | `!` | Firma manleva, registra ordine, accetta/rifiuta proposta, compila scope/credenziali, invia in revisione, pubblica, approva report |
-| **In attesa (altri)** | A carico di cliente/PMO/provider/manager | `--st-wait` | `#7A5B00` | `#FFF8C5` | `…` | In attesa firma cliente, ordine provider, decisione sull'altra parte, revisione manager |
+| **In attesa (altri)** | A carico di cliente/PMO/Pentester/Manager | `--st-wait` | `#7A5B00` | `#FFF8C5` | `…` | In attesa firma cliente, ordine PMO, decisione sull'altra parte, revisione Manager |
 | **In corso** | Nessuno bloccato | `--st-progress` | `#175CD3` | `#D1E9FF` | `▶` | Pianificato, in esecuzione, report in redazione |
 | **Completato** | Chiuso positivamente | `--st-done` | `#067647` | `#DCFAE6` | `✓` | Firmato, accettata, approvata, pubblicata, done |
 | **Bloccato** | Prerequisito mancante / permesso / sola lettura | `--st-blocked` | `#475467` | `#F2F4F7` | `🔒` | Pianificazione prima dei documenti, credenziali non visibili all'Auditor |
@@ -106,7 +106,7 @@ Proposto:
 
 ```
 Contoso – External PT          [● Da fare: firma manleva]    1–5 giu
-                              [● In attesa: ordine provider]
+                              [● In attesa: ordine PMO]
 ```
 
 - Pill primaria rossa se `todo` riguarda il ruolo corrente.
@@ -131,7 +131,7 @@ Contoso – External PT          [● Da fare: firma manleva]    1–5 giu
 
 - Sostituire il box `note` generico con una card "Prossimo passo" che contiene:
   - icona e colore semantico;
-  - **"Azione richiesta a te"** oppure **"In attesa di: Cliente / PMO / Provider / Manager"**;
+  - **"Azione richiesta a te"** oppure **"In attesa di: Cliente / PMO / Pentester / Manager"**;
   - una frase sola ("Firma e carica la manleva");
   - bottone primario che porta alla scheda giusta.
 - La pill di stato accanto al titolo usa la stessa semantica.
@@ -190,8 +190,9 @@ metodo `ResolveAll` o un campo calcolato nel DTO.
 ### P7 — Microcopy e accessibilità (priorità alta, effort S)
 
 - "Azione richiesta" → **"Da fare"**; "In attesa di altri" → **"In attesa di <ruolo>"**.
-- "Proposta da valutare" → dipende dal ruolo: **"Da decidere (tu)"** o
-  **"In attesa decisione cliente/PMO"**.
+- "Proposta da valutare" → dipende dal ruolo: **"Da decidere (tu)"** per il
+  Manager, **"In attesa dell'approvazione del Manager"** per cliente e PMO.
+  Le proposte di date le inviano cliente o PMO; le approva solo il Manager.
 - Ogni pill: `title`/`aria-label` con la frase estesa.
 - `aria-live="polite"` sul toast (già presente) e sullo stato che cambia dopo un'azione.
 - Focus visibile già buono; aggiungere focus management nel modale (focus al primo
@@ -249,10 +250,11 @@ Non è necessario per la semantica: P1–P10 funzionano anche con la palette att
 
 | Situazione attuale | Oggi | Nuovo |
 |---|---|---|
-| `Docs` – manleva/ordine mancanti | giallo "In attesa documenti" | **rosso "Da fare: firma manleva / registra ordine"** se puoi agire tu; **giallo "In attesa cliente/provider"** altrimenti |
-| `Planning` – proposta pending | blu "Proposta da valutare" | **rosso "Da decidere"** se puoi decidere; **giallo "In attesa decisione cliente/PMO"** altrimenti |
+| `Docs` – manleva/ordine mancanti | giallo "In attesa documenti" | **rosso "Da fare: firma manleva / registra ordine"** se puoi agire tu; **giallo "In attesa cliente/PMO"** altrimenti |
+| `Planning` – proposta pending | blu "Proposta da valutare" | **rosso "Da decidere"** per il Manager; **giallo "In attesa dell'approvazione del Manager"** altrimenti |
 | `Planning` – nessuna proposta | giallo "Da pianificare" | **rosso "Proponi date"** se puoi proporre; **giallo "In attesa PMO/cliente"** altrimenti |
-| `Prep` | giallo "Preparazione in corso" | **rosso "Fornisci scope/credenziali"** se puoi compilare; **giallo "In attesa cliente"** altrimenti |
+| `Scope` | giallo "Preparazione in corso" | **rosso "Compila lo scope"** se puoi compilare; **giallo "In attesa cliente"** altrimenti |
+| `Credentials` | giallo "Preparazione in corso" | **rosso "Fornisci le credenziali"** se puoi compilare; **giallo "In attesa cliente"** altrimenti |
 | `Scheduled` | blu | **blu "Pianificato dal …"** (invariato) |
 | `Running` | blu | **blu "In esecuzione"** (invariato) |
 | `Reporting` – revisione pending | teal | **giallo "In attesa revisione manager"** (per il Pentester) / **rosso "Rivedi e approva"** (per il Manager) |
@@ -279,7 +281,7 @@ Tipologia: Penetration Test   Avanzamento: ▬▬▬▭▭   [In attesa document
 
 ```
 External Penetration Test                          [● Da fare: firma manleva]
-ENG-2026-001 · Contoso · Penetration Test          [● In attesa: ordine provider]
+ENG-2026-001 · Contoso · Penetration Test          [● In attesa: ordine PMO]
 ▬▬▬▭▭  Pianificazione bloccata                     1–5 giu
 ```
 
@@ -324,11 +326,20 @@ Tutte le proposte P1–P11 sono state applicate. Scelte adottate:
 - Giallo "in attesa" più giallo (`#7A5B00` su `#FFF8C5`) per non confonderlo col rosso.
 - Microcopy formale: "Azione richiesta a te" / "In attesa di: <ruolo>"; niente "tocca a".
 - Scope e credenziali compilabili appena completi manleva e ordine, anche prima
-  dell'accettazione della pianificazione (era richiesta la proposta accettata).
+  dell'approvazione della pianificazione (era richiesta la proposta accettata).
 - "Bloccato" include sia i prerequisiti mancanti sia i permessi.
 - Rifiuti ed errori usano la stessa famiglia del rosso azione ma con icona e
   testo espliciti (`.p-negative`).
 - Palette brand mantenuta, con accento leggermente desaturato per coerenza.
+- Icone **Bootstrap Icons** (licenza MIT) come sprite SVG inline in `index.html`:
+  nessuna dipendenza esterna, colore ereditato da `currentColor`, stesse icone
+  per fasi, check e ricerca in tutta l'app.
+- Terminologia: "provider" non è un ruolo e non compare più nel testo. L'ente che
+  eroga il servizio si chiama "Il mio ente"; gli utenti hanno i ruoli PMO,
+  Pentester, Manager, Auditor.
+- Pianificazione: **propongono le date cliente o PMO**, **approva o rifiuta solo
+  il Manager** (vale anche per le richieste di riprogrammazione). Il controllo è
+  nel workflow e nell'endpoint `decide`, non solo nella UI.
 
 ### Cosa è cambiato
 
@@ -343,7 +354,7 @@ Tutte le proposte P1–P11 sono state applicate. Scelte adottate:
 | P7 | Microcopy formale ("Azione richiesta a te", "In attesa di <ruolo>", "Da fare"), `aria-label`/`title` su tab e pill, `aria-busy` sui bottoni, `caption`/`scope` nelle tabelle, legenda con icona + parola |
 | P8 | Tab secondarie (Distribution list, Comunicazioni, Registro) sotto "Altro"; tabella che diventa card su mobile; gerarchia visiva ridotta |
 | P9 | Skeleton in lista, errore inline con "Riprova", spinner e blocco dei bottoni durante le richieste |
-| P10 | Controllo "Demo" unico (Profilo + Tenant) separato dal logo, banner demo esplicito |
+| P10 | Controllo "Demo" unico (Profilo + Cliente) separato dal logo, banner demo esplicito |
 | P11 | Palette invariata; accento `#0e9fb5` |
 
 ### File toccati
@@ -359,7 +370,7 @@ Tutte le proposte P1–P11 sono state applicate. Scelte adottate:
 
 ### Verifica
 
-- `dotnet test EngagementPortal.sln -c Release` → 34 test superati.
+- `dotnet test EngagementPortal.sln -c Release` → 38 test superati.
 - Controllo manuale via API per i cinque ruoli e via browser su lista, dettaglio,
   tab, proposta pending, revisione report: colori e proprietari coerenti.
 
@@ -371,4 +382,36 @@ Tutte le proposte P1–P11 sono state applicate. Scelte adottate:
   quindi in demo dipende dalla data di sistema.
 - La tabella mobile usa `data-label`; se si aggiungono colonne vanno aggiunte
   anche le etichette.
+
+---
+
+## 9. Dettaglio engagement: layout implementato (sidebar + workspace)
+
+La legenda degli stati sotto i tab ripeteva le icone già presenti nei tab e
+creava una terza riga di navigazione. Le tre varianti di confronto restano nel
+mockup `detail-layout-proposals.html`; è stata **implementata la variante C**.
+
+**Com'è fatto ora**
+
+- Colonna sinistra (320 px, `position:sticky`) con codice e tipologia, titolo,
+  pill di stato, avanzamento, riepilogo (cliente, responsabile, periodo,
+  ordine) e accessi secondari (DL, comunicazioni, registro).
+- Colonna destra con il riquadro "azione richiesta" (CTA) e i 5 tab; il
+  contenuto inizia subito sotto.
+- La legenda non è più una riga della pagina: sta in fondo alla sidebar dentro
+  un `<details>` ("Cosa significano i simboli?"), quindi non ruba spazio ma
+  resta consultabile.
+
+**Avanzamento leggibile**
+
+- Desktop: stepper verticale, un passo per riga, binario a sinistra che si
+  colora man mano. Cerchio da 26 px con numero; i passi completati hanno la
+  spunta e il binario in accent, quello corrente un anello blu, i futuri sono
+  in grigio. Titolo e sottotitolo vanno a capo senza schiacciarsi
+  (`minmax(0,1fr)`), quindi anche i nomi lunghi restano leggibili.
+- Sotto i 1000 px la sidebar si impila sopra il contenuto: la lista verticale
+  lascerebbe troppo spazio vuoto, quindi viene sostituita da una barra
+  segmentata compatta con "Passo 4 di 5" e il nome del passo corrente.
+- Il contatore "4/5" in testata all'avanzamento indica la posizione nella fase,
+  non le fasi completate.
 
