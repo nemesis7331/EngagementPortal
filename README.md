@@ -362,3 +362,5 @@ Aprire `http://localhost:5xxx` (la porta è indicata nel log di avvio).
 - `documentazione.txt` — architettura e requisiti di riferimento
 - `demo-poc.html` — specifica UX di riferimento
 - `improvement.md` — piano di evoluzione
+- `EngagementPortal.Web/wwwroot/engagement-ux-proposals.html` — tre proposte
+  navigabili per il layout del dettaglio engagement (inline editing e workflow)

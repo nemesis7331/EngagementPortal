@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dettaglio engagement · proposte UI/UX</title>
+<style>
+:root{
+  --brand-950:#061d36;--brand-900:#0a2a4d;--brand-800:#0c355f;--brand-700:#0f4275;--brand-600:#0b5fa5;
+  --brand-500:#2a86d8;--brand-100:#e1eefa;--brand-50:#f1f7fc;--accent:#0e9fb5;--accent-soft:#d6f4f8;
+  --ink:#0a1b2e;--muted:#566a80;--muted-2:#78899b;--line:#dfe7ef;--line-soft:#edf2f7;
+  --bg:#f4f7fa;--card:#fff;--surface-2:#f8fafc;
+  --st-action:#b42318;--st-action-bg:#fee4e2;--st-action-border:#fda29b;
+  --st-wait:#7a5b00;--st-wait-bg:#fff8c5;--st-wait-border:#eac54f;
+  --st-progress:#175cd3;--st-progress-bg:#d1e9ff;--st-progress-border:#b2ddff;
+  --st-done:#067647;--st-done-bg:#dcfae6;--st-done-border:#a9efc5;
+  --st-blocked:#475467;--st-blocked-bg:#f2f4f7;--st-blocked-border:#e4e7ec;
+  --radius:14px;--radius-md:10px;--radius-sm:8px;
+  --shadow:0 1px 2px rgba(6,29,54,.06),0 6px 20px rgba(6,29,54,.06);
+  --shadow-lg:0 10px 30px rgba(6,29,54,.12);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button{font:inherit;cursor:pointer}
+a{color:var(--brand-600)}
+h1{font-size:30px;line-height:1.15;letter-spacing:-.02em;margin:0 0 8px;color:var(--brand-900)}
+h2{font-size:20px;margin:0;color:var(--brand-900);letter-spacing:-.01em}
+h3{font-size:15px;margin:0;color:var(--brand-900)}
+p{margin:0}
+.sub{color:var(--muted)}
+.small{font-size:12.5px;color:var(--muted)}
+.tiny{font-size:11.5px;color:var(--muted)}
+.wrap{max-width:1240px;margin:0 auto;padding:28px 24px 80px}
+.top{display:flex;align-items:center;gap:14px;padding:14px 24px;background:var(--brand-900);color:#fff}
+.top .logo{width:34px;height:34px;border-radius:10px;background:var(--accent);display:grid;place-items:center;color:var(--brand-950);font-weight:800}
+.top b{font-size:15px}
+.top .meta{margin-left:auto;font-size:12.5px;color:#bed3e6}
+.intro{padding:34px 0 8px;max-width:980px}
+.lede{font-size:17px;color:var(--muted);margin:0 0 22px}
+.principle-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:22px 0 8px}
+.principle{background:#fff;border:1px solid var(--line);border-radius:var(--radius-md);padding:14px;box-shadow:var(--shadow)}
+.principle b{display:block;color:var(--brand-900);font-size:13.5px;margin-bottom:4px}
+.principle span{font-size:12.5px;color:var(--muted);display:block}
+.switcher{display:flex;gap:8px;flex-wrap:wrap;margin:28px 0 6px;position:sticky;top:0;z-index:30;background:linear-gradient(var(--bg) 70%,rgba(244,247,250,0));padding:10px 0}
+.switcher button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 16px;font-weight:650;color:var(--muted);display:flex;align-items:center;gap:8px}
+.switcher button.on{border-color:var(--brand-600);color:var(--brand-700);box-shadow:0 0 0 3px var(--brand-100);background:#fff}
+.switcher .n{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--brand-100);color:var(--brand-700);font-size:11px;font-weight:800}
+.switcher button.on .n{background:var(--brand-600);color:#fff}
+.proposal{display:none;padding-top:22px}
+.proposal.active{display:block}
+.prop-head{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap;margin-bottom:6px}
+.tag{font-size:11px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent-soft);background:#fff;padding:4px 10px;border-radius:999px;margin-top:3px}
+.prop-head h2{font-size:24px}
+.prop-desc{max-width:860px;color:var(--muted);margin:6px 0 18px}
+.metrics{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 20px}
+.metric{background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:12.5px;color:var(--muted)}
+.metric b{color:var(--brand-900)}
+.mock{border:1px solid #c9d8e7;border-radius:18px;background:#fbfdff;padding:18px;box-shadow:var(--shadow)}
+.mockbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 2px 12px;border-bottom:1px solid var(--line-soft);margin-bottom:16px}
+.mockbar .dots{display:flex;gap:5px}
+.mockbar .dots i{display:block;width:9px;height:9px;border-radius:50%;background:#d6e1ec}
+.mockbar .name{font-size:12px;color:var(--muted);font-weight:600}
+.crumbs{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted);margin-bottom:10px}
+.crumbs b{color:var(--brand-700)}
+.enghead{display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:14px}
+.enghead .t{flex:1;min-width:240px}
+.enghead h3{font-size:22px;line-height:1.2;margin-bottom:3px}
+.enghead .sub{font-size:13px}
+.enghead .actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:650;white-space:nowrap;border:1px solid transparent}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
+.p-action{background:var(--st-action-bg);color:var(--st-action);border-color:var(--st-action-border)}
+.p-wait{background:var(--st-wait-bg);color:var(--st-wait);border-color:var(--st-wait-border)}
+.p-progress{background:var(--st-progress-bg);color:var(--st-progress);border-color:var(--st-progress-border)}
+.p-done{background:var(--st-done-bg);color:var(--st-done);border-color:var(--st-done-border)}
+.p-blocked{background:var(--st-blocked-bg);color:var(--st-blocked);border-color:var(--st-blocked-border)}
+.btn{border:1px solid transparent;border-radius:9px;padding:9px 15px;font-weight:650;font-size:13.5px;display:inline-flex;align-items:center;gap:7px;text-decoration:none}
+.btn.pri{background:var(--brand-600);color:#fff}
+.btn.pri:hover{background:var(--brand-700)}
+.btn.sec{background:#fff;border-color:var(--line);color:var(--brand-900)}
+.btn.ghost{background:transparent;color:var(--brand-600);padding:6px 4px}
+.btn.sm{padding:5px 10px;font-size:12.5px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.iconbtn{border:1px solid var(--line);background:#fff;border-radius:8px;width:32px;height:32px;display:grid;place-items:center;color:var(--muted)}
+
+/* workflow */
+.wf{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:0;list-style:none;padding:0;margin:0 0 18px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}
+.wf li{position:relative}
+.wf button{width:100%;border:0;background:#fff;text-align:left;padding:11px 12px 11px 34px;color:var(--muted);border-right:1px solid var(--line-soft)}
+.wf li:last-child button{border-right:0}
+.wf button:hover{background:var(--brand-50)}
+.wf .num{position:absolute;left:11px;top:12px;width:17px;height:17px;border-radius:50%;display:grid;place-items:center;font-size:10px;font-weight:800;background:var(--st-blocked-bg);color:var(--st-blocked);border:1px solid var(--line)}
+.wf b{display:block;font-size:12px;color:var(--brand-900);line-height:1.25;font-weight:650}
+.wf span{display:block;font-size:10.5px;margin-top:2px}
+.wf .done .num{background:var(--st-done);border-color:var(--st-done);color:#fff}
+.wf .done b{color:var(--st-done)}
+.wf .cur{background:var(--brand-50)}
+.wf .cur button{background:var(--brand-50);box-shadow:inset 0 -3px 0 var(--brand-600)}
+.wf .cur .num{background:var(--brand-600);border-color:var(--brand-600);color:#fff}
+.wf .cur b{color:var(--brand-700)}
+.wf .cur span{color:var(--brand-700)}
+.wf .wait .num{background:var(--st-wait-bg);border-color:var(--st-wait-border);color:var(--st-wait)}
+.wf .wait b{color:var(--st-wait)}
+
+/* cockpit */
+.cockpit{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:18px;align-items:start}
+.stack{display:grid;gap:12px}
+.block{border:1px solid var(--line);border-radius:var(--radius-md);background:#fff;overflow:hidden}
+.block-head{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;background:#fff}
+.block-head:hover{background:var(--surface-2)}
+.block-head .stepnum{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:800;background:var(--st-blocked-bg);color:var(--st-blocked);flex:none}
+.block-head .h{flex:1;min-width:0}
+.block-head h4{margin:0;font-size:15px;color:var(--brand-900)}
+.block-head .why{font-size:12.5px;color:var(--muted);margin-top:1px}
+.block.done .stepnum{background:var(--st-done);color:#fff}
+.block.done h4{color:var(--st-done)}
+.block.current{border-color:var(--brand-500);box-shadow:0 0 0 3px var(--brand-100)}
+.block.current .stepnum{background:var(--brand-600);color:#fff}
+.block.current .block-head{background:var(--brand-50)}
+.block.locked{background:var(--surface-2)}
+.block.locked .block-head{cursor:default}
+.block-body{padding:0 16px 16px;border-top:1px solid var(--line-soft);display:none}
+.block.open .block-body{display:block}
+.block.open .block-head{border-bottom:1px solid var(--line-soft)}
+.block.done:not(.open) .block-body{display:none}
+.chev{color:var(--muted-2);font-size:12px;transition:.15s}
+.block.open .chev{transform:rotate(180deg)}
+.summaryline{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:11px 16px;border-top:1px solid var(--line-soft);background:var(--surface-2);font-size:12.5px;color:var(--muted)}
+.summaryline b{color:var(--brand-900)}
+.summaryline .sep{color:#c2cfdd}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:14px 16px;padding-top:16px}
+.field{display:grid;gap:5px;min-width:0}
+.field.full{grid-column:1/-1}
+.field label{font-size:12px;font-weight:700;color:var(--brand-900);letter-spacing:.01em}
+.field .hint{font-size:11.5px;color:var(--muted);line-height:1.35}
+.input,select.input,textarea.input{width:100%;border:1px solid #cfdae6;border-radius:8px;background:#fff;padding:9px 11px;font:inherit;font-size:14px;color:var(--ink);min-height:40px}
+textarea.input{min-height:74px;resize:vertical}
+.input:focus{outline:2px solid var(--brand-500);outline-offset:-1px;border-color:var(--brand-500)}
+.input[readonly]{background:var(--surface-2);color:var(--muted)}
+.inputrow{display:flex;gap:8px;align-items:center}
+.inputrow .input{flex:1}
+.unit{font-size:12.5px;color:var(--muted);white-space:nowrap}
+.formfoot{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding-top:16px;margin-top:16px;border-top:1px solid var(--line-soft)}
+.formfoot .right{margin-left:auto;display:flex;gap:8px;align-items:center}
+.savehint{font-size:12px;color:var(--st-done);display:none;align-items:center;gap:5px}
+.savehint.show{display:inline-flex}
+.filecard{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:8px;padding:9px 11px;background:#fff;font-size:13px}
+.filecard .fmt{width:32px;height:32px;border-radius:7px;background:var(--brand-100);color:var(--brand-700);display:grid;place-items:center;font-size:10px;font-weight:800;flex:none}
+.filecard .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.filecard a{font-size:12px;font-weight:650;text-decoration:none;white-space:nowrap}
+
+/* rail */
+.rail{display:grid;gap:12px;position:sticky;top:64px}
+.railcard{background:#fff;border:1px solid var(--line);border-radius:var(--radius-md);padding:14px}
+.railcard.next{border-left:3px solid var(--st-action);background:linear-gradient(180deg,#fff, #fff) padding-box}
+.railcard h5{margin:0 0 7px;font-size:11px;letter-spacing:.7px;text-transform:uppercase;color:var(--muted);font-weight:800}
+.railcard .big{font-size:15px;font-weight:700;color:var(--brand-900);line-height:1.3;margin-bottom:4px}
+.railcard .btn{margin-top:10px;width:100%;justify-content:center}
+.kv{display:grid;grid-template-columns:auto minmax(0,1fr);gap:7px 12px;margin:0;font-size:12.5px}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;text-align:right;font-weight:650;color:var(--brand-900)}
+.people{display:grid;gap:8px}
+.person{display:flex;align-items:center;gap:8px;min-width:0}
+.avatar{width:27px;height:27px;border-radius:50%;display:grid;place-items:center;background:var(--brand-100);color:var(--brand-700);font-size:10.5px;font-weight:800;flex:none}
+.person .nm{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12.5px;font-weight:600}
+.person .rl{display:block;font-size:10.5px;color:var(--muted)}
+
+/* checklist proposal B */
+.quickbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:linear-gradient(90deg,var(--brand-50),#fff);border:1px solid var(--brand-100);border-radius:12px;padding:14px 16px;margin-bottom:14px}
+.quickbar .ico{width:34px;height:34px;border-radius:50%;background:var(--st-action-bg);color:var(--st-action);display:grid;place-items:center;font-weight:800;flex:none}
+.quickbar .t{flex:1;min-width:220px}
+.quickbar b{color:var(--brand-900);font-size:14.5px;display:block}
+.quickbar span{font-size:12.5px;color:var(--muted)}
+.mini-wf{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:14px}
+.mini-wf span{font-size:11px;font-weight:650;border:1px solid var(--line);background:#fff;color:var(--muted);border-radius:999px;padding:4px 9px;display:flex;gap:5px;align-items:center}
+.mini-wf span.done{border-color:var(--st-done-border);background:var(--st-done-bg);color:var(--st-done)}
+.mini-wf span.cur{border-color:var(--brand-500);background:var(--brand-100);color:var(--brand-700)}
+.mini-wf span.wait{border-color:var(--st-wait-border);background:var(--st-wait-bg);color:var(--st-wait)}
+.mini-wf span.lock{background:var(--st-blocked-bg);color:var(--st-blocked)}
+.tasklist{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}
+.task{border-bottom:1px solid var(--line-soft)}
+.task:last-child{border-bottom:0}
+.task-head{display:flex;align-items:center;gap:12px;padding:13px 16px;cursor:pointer}
+.task-head:hover{background:var(--surface-2)}
+.task-head .tick{width:22px;height:22px;border-radius:50%;border:1.5px solid #cbd6e2;background:#fff;display:grid;place-items:center;font-size:11px;font-weight:800;color:var(--muted);flex:none}
+.task.done .tick{background:var(--st-done);border-color:var(--st-done);color:#fff}
+.task.current{box-shadow:inset 3px 0 0 var(--brand-600)}
+.task.current .task-head{background:var(--brand-50)}
+.task.waiting .tick{background:var(--st-wait-bg);border-color:var(--st-wait-border);color:var(--st-wait)}
+.task.locked{background:var(--surface-2)}
+.task.locked .task-head{cursor:default}
+.task-head .h{flex:1;min-width:0}
+.task-head b{display:block;font-size:14px;color:var(--brand-900)}
+.task-head .sub{display:block;font-size:12px;color:var(--muted);margin-top:1px}
+.task-body{padding:0 16px 16px 50px;display:none}
+.task.open .task-body{display:block}
+.task-inline{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:0 16px 13px 50px}
+.task-inline .val{font-size:12.5px;color:var(--brand-900);font-weight:650}
+.task-inline .lbl{font-size:12px;color:var(--muted)}
+.task-inline .btn{margin-left:auto}
+.bottomline{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:10px;padding:11px 14px;margin-top:14px;box-shadow:var(--shadow)}
+.bottomline .t{flex:1;min-width:180px;font-size:12.5px;color:var(--muted)}
+
+/* split proposal C */
+.split{display:grid;grid-template-columns:250px minmax(0,1fr);gap:16px;align-items:start}
+.vrail{border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden}
+.vrail .vhead{padding:12px 14px;border-bottom:1px solid var(--line-soft);font-size:11px;letter-spacing:.7px;text-transform:uppercase;color:var(--muted);font-weight:800;display:flex;justify-content:space-between}
+.vstep{display:flex;gap:10px;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line-soft);background:#fff;padding:11px 13px;align-items:flex-start}
+.vstep:last-child{border-bottom:0}
+.vstep:hover{background:var(--surface-2)}
+.vstep.on{background:var(--brand-50);box-shadow:inset 3px 0 0 var(--brand-600)}
+.vstep .num{width:21px;height:21px;border-radius:50%;display:grid;place-items:center;font-size:10px;font-weight:800;background:var(--st-blocked-bg);color:var(--st-blocked);border:1px solid var(--line);flex:none;margin-top:1px}
+.vstep.done .num{background:var(--st-done);border-color:var(--st-done);color:#fff}
+.vstep.on .num{background:var(--brand-600);border-color:var(--brand-600);color:#fff}
+.vstep .h{min-width:0}
+.vstep b{display:block;font-size:12.5px;color:var(--brand-900);line-height:1.25}
+.vstep span{display:block;font-size:10.5px;color:var(--muted);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vstep.wait .num{background:var(--st-wait-bg);border-color:var(--st-wait-border);color:var(--st-wait)}
+.vpanel{border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden}
+.vpanel-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:16px 18px;border-bottom:1px solid var(--line-soft);background:var(--brand-50)}
+.vpanel-head .step{font-size:11px;letter-spacing:.6px;text-transform:uppercase;color:var(--brand-700);font-weight:800}
+.vpanel-head h4{margin:0;font-size:19px;color:var(--brand-900)}
+.vpanel-head .sub{font-size:12.5px;color:var(--muted);margin-top:2px}
+.vpanel-head .right{margin-left:auto;display:flex;gap:8px;align-items:center}
+.vpanel-body{padding:18px}
+.vpanel .fields{padding-top:0}
+.vpanel .formfoot{margin-bottom:0}
+.vpanel .savebar{background:var(--surface-2);border-top:1px solid var(--line-soft);padding:11px 18px;display:flex;align-items:center;gap:10px}
+.vpanel .savebar .t{flex:1;font-size:12px;color:var(--muted)}
+.ghostpanel{border:1px dashed #c9d8e7;border-radius:10px;padding:12px 14px;margin-top:14px;font-size:12.5px;color:var(--muted);display:flex;gap:10px;align-items:center}
+.ghostpanel b{color:var(--brand-900)}
+
+/* callouts / pros */
+.callouts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:18px 0 0}
+.callout{background:#fff;border:1px solid var(--line);border-radius:10px;padding:11px 12px;font-size:12.5px;color:var(--muted)}
+.callout b{display:block;color:var(--brand-900);font-size:12px;margin-bottom:2px}
+.proscons{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0 0}
+.pc{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:13px}
+.pc h5{margin:0 0 6px;font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:800}
+.pc ul{margin:0;padding-left:18px;color:var(--muted)}
+.pc li{margin-bottom:3px}
+.pc.good ul{color:#196345}
+.pc.bad ul{color:#8a4b00}
+.compare{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;margin-top:34px;box-shadow:var(--shadow)}
+.compare h2{margin-bottom:4px}
+.compare p{color:var(--muted);font-size:13px;margin-bottom:14px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)}
+td b{color:var(--brand-900)}
+.reco{margin-top:16px;background:var(--brand-50);border:1px solid var(--brand-100);border-radius:10px;padding:14px;font-size:13.5px;color:var(--brand-800)}
+.reco b{color:var(--brand-900)}
+.toast{position:fixed;right:24px;bottom:24px;background:var(--brand-900);color:#fff;padding:11px 16px;border-radius:10px;font-size:13px;box-shadow:var(--shadow-lg);opacity:0;transform:translateY(8px);transition:.2s;pointer-events:none;z-index:100}
+.toast.show{opacity:1;transform:translateY(0)}
+@media(max-width:1000px){
+  .cockpit{grid-template-columns:1fr}
+  .rail{position:static;grid-template-columns:1fr 1fr}
+  .wf{grid-template-columns:repeat(3,1fr)}
+  .split{grid-template-columns:1fr}
+  .vrail{display:flex;overflow:auto}
+  .vstep{min-width:190px;border-bottom:0;border-right:1px solid var(--line-soft)}
+  .principle-grid{grid-template-columns:1fr 1fr}
+  .callouts{grid-template-columns:1fr}
+}
+@media(max-width:700px){
+  .wrap{padding:20px 14px 70px}
+  .wf{grid-template-columns:repeat(2,1fr)}
+  .fields{grid-template-columns:1fr}
+  .field.full{grid-column:auto}
+  .rail{grid-template-columns:1fr}
+  .proscons{grid-template-columns:1fr}
+  .principle-grid{grid-template-columns:1fr}
+  .task-body{padding-left:16px}
+  .task-inline{padding-left:16px}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="logo">EP</div>
+  <div><b>Cyber Engagement Portal</b><div class="tiny" style="color:#9fb9cf">Proposte UI/UX · dettaglio engagement</div></div>
+  <div class="meta">Mockup navigabili · dati demo ENG-2026-001</div>
+</header>
+
+<main class="wrap">
+  <section class="intro">
+    <h1>Dettaglio engagement, senza form nascosti</h1>
+    <p class="lede">
+      Tre layout per lo stesso obiettivo: <b>leggere e compilare con il minimo numero di click</b>,
+      con campi sempre visibili e grandi abbastanza, e con le sezioni che parlano la stessa lingua
+      del workflow. Niente più “Modifica → modale → Salva → torna alla scheda”.
+    </p>
+    <div class="principle-grid">
+      <div class="principle"><b>0 click per leggere</b><span>I valori sono già nella pagina, non dietro un bottone “Dettagli”.</span></div>
+      <div class="principle"><b>Editing sul posto</b><span>Input, select e date sono nel contesto della sezione. Nessuna modale.</span></div>
+      <div class="principle"><b>Workflow = indice</b><span>Gli stessi 6 passi diventano la navigazione e lo stato delle sezioni.</span></div>
+      <div class="principle"><b>Una sola azione primaria</b><span>La prossima cosa da fare è sempre in evidenza, il resto resta consultabile.</span></div>
+    </div>
+
+    <div class="switcher" role="tablist" aria-label="Proposte">
+      <button class="on" data-proposal="a" role="tab" aria-selected="true"><span class="n">A</span> Workflow cockpit <span class="tiny">· consigliata</span></button>
+      <button data-proposal="b" role="tab" aria-selected="false"><span class="n">B</span> Checklist guidata</button>
+      <button data-proposal="c" role="tab" aria-selected="false"><span class="n">C</span> Split editor</button>
+    </div>
+  </section>
+
+  <!-- ================= A ================= -->
+  <section class="proposal active" id="proposal-a">
+    <div class="prop-head"><span class="tag">Proposta A</span><h2>Workflow cockpit</h2></div>
+    <p class="prop-desc">
+      La pagina è una sola: i 6 passi del workflow diventano una barra in alto e, subito sotto, delle
+      sezioni nello stesso ordine. Il passo corrente è aperto e già in modifica; quelli completati
+      restano come righe di riepilogo leggibili, quelli futuri mostrano cosa manca.
+    </p>
+    <div class="metrics">
+      <span class="metric"><b>0 click</b> per aprire il passo corrente</span>
+      <span class="metric"><b>1 click</b> per salvare la sezione</span>
+      <span class="metric"><b>0 modali</b></span>
+      <span class="metric"><b>Workflow</b> = indice della pagina</span>
+    </div>
+
+    <div class="mock">
+      <div class="mockbar"><span class="dots"><i></i><i></i><i></i></span><span class="name">engagement · dettaglio · profilo PMO</span></div>
+
+      <div class="crumbs"><span>Tutti gli engagement</span><span>/</span><b>External Penetration Test</b></div>
+      <div class="enghead">
+        <div class="t">
+          <h3>External Penetration Test</h3>
+          <p class="sub">ENG-2026-001 · Contoso · Penetration Test · responsabile Sara Conti</p>
+        </div>
+        <div class="actions">
+          <span class="pill p-action">Da fare · Scope</span>
+          <button class="btn sec sm" data-toast="Report aperti (demo)">Report</button>
+          <button class="btn pri sm" data-focus="scope-target" data-proposal-a="1">Completa lo Scope</button>
+        </div>
+      </div>
+
+      <ol class="wf" aria-label="Workflow">
+        <li class="done"><button data-scroll="a-docs"><span class="num">✓</span><b>Documenti</b><span>Completato</span></button></li>
+        <li class="cur"><button data-scroll="a-scope"><span class="num">2</span><b>Scope</b><span>Da compilare</span></button></li>
+        <li class="wait"><button data-scroll="a-plan"><span class="num">3</span><b>Pianificazione</b><span>In attesa Manager</span></button></li>
+        <li><button data-scroll="a-cred"><span class="num">4</span><b>Credenziali</b><span>Da compilare</span></button></li>
+        <li><button data-scroll="a-run"><span class="num">5</span><b>Esecuzione</b><span>Non iniziata</span></button></li>
+        <li><button data-scroll="a-rep"><span class="num">6</span><b>Report</b><span>Bloccato</span></button></li>
+      </ol>
+
+      <div class="cockpit">
+        <div class="stack">
+          <!-- docs -->
+          <section class="block done" id="a-docs">
+            <div class="block-head" data-toggle="a-docs">
+              <span class="stepnum">✓</span>
+              <div class="h"><h4>Documenti e dati economici</h4><div class="why">Scheda tecnica, ordine e dati economici approvati</div></div>
+              <span class="pill p-done">Completato</span>
+              <span class="chev">▾</span>
+            </div>
+            <div class="summaryline">
+              <span>Manleva <b>ENG-2026-001-manleva.txt</b></span><span class="sep">·</span>
+              <span>Ordine <b>PO-2026-0142</b></span><span class="sep">·</span>
+              <span>Costo <b>12.000,00 €</b></span><span class="sep">·</span>
+              <span>Margine <b>46%</b></span><span class="sep">·</span>
+              <span>Approvato dal Manager</span>
+              <button class="btn ghost sm" data-open-block="a-docs">Modifica valori</button>
+            </div>
+            <div class="block-body">
+              <div class="fields">
+                <div class="field full"><label>Scheda tecnica con manleva</label><div class="filecard"><span class="fmt">TXT</span><span class="nm">ENG-2026-001-manleva.txt</span><a href="#" data-toast="Aperto (demo)">Apri</a><button class="btn sec sm" data-toast="Sostituisci file (demo)">Sostituisci</button></div></div>
+                <div class="field"><label>Ordine</label><input class="input" value="PO-2026-0142"></div>
+                <div class="field"><label>Costo (€)</label><input class="input" type="number" value="12000"></div>
+                <div class="field"><label>Margine (%)</label><input class="input" type="number" value="46" min="0" max="100"></div>
+                <div class="field"><label>Valore</label><input class="input" value="17.520,00 €" readonly></div>
+              </div>
+              <div class="formfoot"><span class="tiny">Valori già approvati: modificarli richiede una nuova approvazione del Manager.</span><div class="right"><span class="savehint" data-save>✓ Salvato ora</span><button class="btn sec" data-save-btn>Salva bozza</button><button class="btn pri" data-save-btn>Salva e richiedi approvazione</button></div></div>
+            </div>
+          </section>
+
+          <!-- scope -->
+          <section class="block current open" id="a-scope">
+            <div class="block-head">
+              <span class="stepnum">2</span>
+              <div class="h"><h4>Scope</h4><div class="why">Perimetro, finestre e referente tecnico</div></div>
+              <span class="pill p-action">Da compilare</span>
+              <span class="chev">▾</span>
+            </div>
+            <div class="block-body">
+              <div class="fields">
+                <div class="field"><label for="a-host">Target (hostname / URL)</label><input class="input" id="a-host" value="app.contoso.example"><span class="hint">Dominio o URL principale oggetto del test.</span></div>
+                <div class="field"><label for="a-ip">Indirizzi / range IP</label><input class="input" id="a-ip" value="10.20.30.0/24"></div>
+                <div class="field"><label for="a-out">Fuori scope</label><input class="input" id="a-out" value="Ambienti di produzione"></div>
+                <div class="field"><label for="a-win">Finestra oraria</label><input class="input" id="a-win" value="Lun–Ven 20:00–06:00"></div>
+                <div class="field"><label for="a-mail">Referente tecnico</label><input class="input" id="a-mail" type="email" value="security@contoso.example"></div>
+                <div class="field"><label for="a-note">Note e vincoli</label><textarea class="input" id="a-note">Retest dopo remediation; nessun test su dati reali.</textarea></div>
+              </div>
+              <div class="formfoot">
+                <span class="tiny">Visibile a cliente e PMO. Salvataggio esplicito, niente perdita di dati.</span>
+                <div class="right"><span class="savehint" data-save>✓ Salvato ora</span><button class="btn sec" data-save-btn>Salva bozza</button><button class="btn pri" data-save-btn data-toast="Scope completato (demo)">Salva e completa</button></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- planning -->
+          <section class="block" id="a-plan">
+            <div class="block-head" data-toggle="a-plan">
+              <span class="stepnum">3</span>
+              <div class="h"><h4>Pianificazione</h4><div class="why">Proposta 20/11/2026 → 25/11/2026</div></div>
+              <span class="pill p-wait">In attesa Manager</span>
+              <span class="chev">▾</span>
+            </div>
+            <div class="summaryline" id="a-plan-summary">
+              <span>Proposta del <b>PMO</b></span><span class="sep">·</span>
+              <span><b>20/11/2026 → 25/11/2026</b></span><span class="sep">·</span>
+              <span>Inviata il 14/11/2026</span>
+              <button class="btn ghost sm" data-toast="Promemoria inviato al Manager (demo)">Sollecita il Manager</button>
+            </div>
+          </section>
+
+          <!-- credentials -->
+          <section class="block" id="a-cred">
+            <div class="block-head" data-toggle="a-cred">
+              <span class="stepnum">4</span>
+              <div class="h"><h4>Credenziali</h4><div class="why">Accessi per l'esecuzione, consegnati su canale sicuro</div></div>
+              <span class="pill p-blocked">Da compilare</span>
+              <span class="chev">▾</span>
+            </div>
+            <div class="block-body">
+              <div class="fields">
+                <div class="field"><label>VPN</label><input class="input" value="VPN-CONTOSO-01"></div>
+                <div class="field"><label>Utenze</label><input class="input" value="2 utenze di test"></div>
+                <div class="field"><label>Metodo di consegna</label><select class="input"><option>Azure Key Vault</option><option>File cifrato</option><option>Canale separato</option></select></div>
+                <div class="field"><label>Riferimento segreto</label><input class="input" value="kv://demo/eng-001"></div>
+              </div>
+              <div class="formfoot"><span class="tiny">Le password non vengono mai salvate nel portale.</span><div class="right"><button class="btn sec" data-save-btn>Salva bozza</button><button class="btn pri" data-save-btn>Salva e conferma</button></div></div>
+            </div>
+          </section>
+
+          <section class="block locked" id="a-run">
+            <div class="block-head"><span class="stepnum">5</span><div class="h"><h4>Esecuzione</h4><div class="why">Si apre quando scope, planning e credenziali sono completi</div></div><span class="pill p-blocked">Bloccato</span></div>
+          </section>
+          <section class="block locked" id="a-rep">
+            <div class="block-head"><span class="stepnum">6</span><div class="h"><h4>Report</h4><div class="why">Revisione e consegna dei deliverable</div></div><span class="pill p-blocked">Bloccato</span></div>
+          </section>
+        </div>
+
+        <aside class="rail">
+          <div class="railcard next">
+            <h5>Prossimo passo</h5>
+            <div class="big">Compila lo Scope</div>
+            <p class="small">Mancano target, referente e finestra oraria. È l'unico passo che sblocca l'esecuzione.</p>
+            <button class="btn pri sm" data-focus="scope-target">Compila ora</button>
+          </div>
+          <div class="railcard">
+            <h5>Chi fa cosa</h5>
+            <div class="people">
+              <div class="person"><span class="avatar">SC</span><span><span class="nm">Sara Conti</span><span class="rl">Pentester · esecuzione</span></span></div>
+              <div class="person"><span class="avatar">LF</span><span><span class="nm">Luca Ferri</span><span class="rl">PMO · scope e date</span></span></div>
+              <div class="person"><span class="avatar">MR</span><span><span class="nm">Marta Rinaldi</span><span class="rl">Cliente · referente</span></span></div>
+            </div>
+          </div>
+          <div class="railcard">
+            <h5>Date</h5>
+            <dl class="kv"><dt>Proposta</dt><dd>20 → 25 nov</dd><dt>Approvazione</dt><dd>Manager</dd><dt>Decorrenza</dt><dd>da definire</dd></dl>
+          </div>
+          <div class="railcard">
+            <h5>Economia</h5>
+            <dl class="kv"><dt>Costo</dt><dd>12.000 €</dd><dt>Margine</dt><dd>46%</dd><dt>Valore</dt><dd>17.520 €</dd><dt>Stato</dt><dd style="color:var(--st-done)">Approvato</dd></dl>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <div class="callouts">
+      <div class="callout"><b>1 · Nessun “Modifica”</b>Il passo corrente è già un form. I valori completati restano leggibili nella riga di riepilogo.</div>
+      <div class="callout"><b>2 · Workflow e sezioni coincidono</b>La barra dei 6 passi è l'indice della pagina: clicchi “Pianificazione” e arrivi alla sezione, con lo stesso stato.</div>
+      <div class="callout"><b>3 · Campi leggibili</b>Due colonne, 14 px, etichette sopra. Nel vecchio layout i valori erano testo da 12 px dentro card da 400 px.</div>
+    </div>
+    <div class="proscons">
+      <div class="pc good"><h5>Perché funziona</h5><ul><li>Un solo scroll verticale, il contesto non si perde.</li><li>Il passo corrente è sempre aperto e modificabile.</li><li>Le sezioni future dicono esattamente cosa manca.</li><li>Mobile: la barra passa a 2 colonne e i campi a una.</li></ul></div>
+      <div class="pc bad"><h5>Attenzione</h5><ul><li>Pagine lunghe: servono sezioni collassate e “torna al passo”.</li><li>Due modalità di salvataggio (bozza / completa) da spiegare bene.</li></ul></div>
+    </div>
+  </section>
+
+  <!-- ================= B ================= -->
+  <section class="proposal" id="proposal-b">
+    <div class="prop-head"><span class="tag">Proposta B</span><h2>Checklist guidata</h2></div>
+    <p class="prop-desc">
+      Zero navigazione: la pagina è una lista di cose da fare, nell'ordine del workflow. La prima voce
+      aperta è quella che sblocca l'avanzamento; le completate restano come righe compatte con i valori
+      e un link per correggerle. Ideale per Client e PMO che entrano di rado.
+    </p>
+    <div class="metrics">
+      <span class="metric"><b>0 click</b> per capire cosa fare</span>
+      <span class="metric"><b>1 click</b> per salvare</span>
+      <span class="metric"><b>Nessun tab</b></span>
+      <span class="metric"><b>Workflow</b> = ordine delle attività</span>
+    </div>
+
+    <div class="mock">
+      <div class="mockbar"><span class="dots"><i></i><i></i><i></i></span><span class="name">engagement · checklist · profilo PMO</span></div>
+
+      <div class="quickbar">
+        <span class="ico">!</span>
+        <div class="t"><b>Ti restano 2 cose per sbloccare l'esecuzione</b><span>Compila lo scope e fornisci le credenziali. La pianificazione è già in attesa del Manager.</span></div>
+        <button class="btn pri" data-toast="Focus sul primo campo (demo)">Inizia dallo Scope</button>
+      </div>
+
+      <div class="mini-wf">
+        <span class="done">✓ Documenti</span>
+        <span class="cur">2 Scope</span>
+        <span class="wait">3 Pianificazione</span>
+        <span>4 Credenziali</span>
+        <span class="lock">5 Esecuzione</span>
+        <span class="lock">6 Report</span>
+      </div>
+
+      <div class="tasklist">
+        <div class="task done">
+          <div class="task-head"><span class="tick">✓</span><div class="h"><b>Documenti e dati economici</b><span class="sub">Manleva, ordine e dati economici approvati</span></div><span class="pill p-done">Completato</span></div>
+          <div class="task-inline"><span class="lbl">Ordine</span><span class="val">PO-2026-0142</span><span class="lbl">· Costo</span><span class="val">12.000 €</span><span class="lbl">· Margine</span><span class="val">46%</span><span class="lbl">· Valore</span><span class="val">17.520 €</span><button class="btn sec sm" data-toast="Valori modificabili in linea (demo)">Correggi</button></div>
+        </div>
+
+        <div class="task current open">
+          <div class="task-head" data-toggle-task="b-scope"><span class="tick">2</span><div class="h"><b>Scope</b><span class="sub">La prima cosa che manca: perimetro e referente</span></div><span class="pill p-action">Da compilare</span></div>
+          <div class="task-body">
+            <div class="fields">
+              <div class="field"><label>Target (hostname / URL)</label><input class="input" value="app.contoso.example"></div>
+              <div class="field"><label>Range IP</label><input class="input" value="10.20.30.0/24"></div>
+              <div class="field"><label>Fuori scope</label><input class="input" value="Ambienti di produzione"></div>
+              <div class="field"><label>Finestra</label><input class="input" value="Lun–Ven 20:00–06:00"></div>
+              <div class="field"><label>Referente</label><input class="input" value="security@contoso.example"></div>
+              <div class="field"><label>Note</label><input class="input" value="Retest dopo remediation"></div>
+            </div>
+            <div class="formfoot"><span class="tiny">Il form è dentro la riga: niente pannelli, niente ritorno alla pagina.</span><div class="right"><span class="savehint" data-save>✓ Salvato ora</span><button class="btn sec" data-save-btn>Salva bozza</button><button class="btn pri" data-save-btn>Salva e completa</button></div></div>
+          </div>
+        </div>
+
+        <div class="task waiting">
+          <div class="task-head" data-toggle-task="b-plan"><span class="tick">3</span><div class="h"><b>Pianificazione</b><span class="sub">20/11/2026 → 25/11/2026 · proposta del PMO</span></div><span class="pill p-wait">In attesa Manager</span></div>
+          <div class="task-inline"><span class="lbl">Inviata il</span><span class="val">14/11/2026</span><span class="lbl">· decide</span><span class="val">Giorgio Marino</span><button class="btn ghost sm" data-toast="Promemoria inviato (demo)">Sollecita</button></div>
+        </div>
+
+        <div class="task">
+          <div class="task-head" data-toggle-task="b-cred"><span class="tick">4</span><div class="h"><b>Credenziali</b><span class="sub">Accessi per l'esecuzione (canale sicuro)</span></div><span class="pill p-blocked">Da compilare</span></div>
+          <div class="task-body">
+            <div class="fields">
+              <div class="field"><label>VPN</label><input class="input" value="VPN-CONTOSO-01"></div>
+              <div class="field"><label>Utenze</label><input class="input" value="2 utenze di test"></div>
+              <div class="field"><label>Consegna</label><select class="input"><option>Azure Key Vault</option><option>File cifrato</option></select></div>
+              <div class="field"><label>Riferimento</label><input class="input" value="kv://demo/eng-001"></div>
+            </div>
+            <div class="formfoot"><div class="right"><button class="btn sec" data-save-btn>Salva bozza</button><button class="btn pri" data-save-btn>Salva e conferma</button></div></div>
+          </div>
+        </div>
+
+        <div class="task locked">
+          <div class="task-head"><span class="tick">5</span><div class="h"><b>Esecuzione</b><span class="sub">Si sblocca quando scope, planning e credenziali sono completi</span></div><span class="pill p-blocked">Bloccato</span></div>
+        </div>
+        <div class="task locked">
+          <div class="task-head"><span class="tick">6</span><div class="h"><b>Report</b><span class="sub">Revisione Manager e consegna al cliente</span></div><span class="pill p-blocked">Bloccato</span></div>
+        </div>
+      </div>
+
+      <div class="bottomline"><span class="t"><b>Tutto salvato.</b> Ultimo salvataggio 14/11/2026 09:42 · nessuna modifica in sospeso.</span><span class="savehint show">✓ Synchronizzato</span><button class="btn sec" data-toast="Anteprima cliente (demo)">Anteprima cliente</button><button class="btn pri" data-save-btn>Salva tutte le modifiche</button></div>
+    </div>
+
+    <div class="callouts">
+      <div class="callout"><b>1 · Una sola lista</b>Nessun tab da scegliere: l'ordine è il workflow. La prima riga aperta è la prossima azione.</div>
+      <div class="callout"><b>2 · Riga = sezione</b>Ogni riga ha stato, riepilogo e, se serve, i campi inline. Non si perde mai il contesto.</div>
+      <div class="callout"><b>3 · Pensata per chi entra poco</b>Cliente e PMO vedono subito cosa manca e cosa devono fare, senza imparare la struttura.</div>
+    </div>
+    <div class="proscons">
+      <div class="pc good"><h5>Perché funziona</h5><ul><li>Il minor numero di click in assoluto: si compila dove si legge.</li><li>Ottima su mobile e per utenti occasionali.</li><li>Il “prossimo passo” è fisicamente la prima riga aperta.</li></ul></div>
+      <div class="pc bad"><h5>Attenzione</h5><ul><li>Meno adatta a chi deve confrontare molte sezioni insieme.</li><li>Con molte righe serve una buona gestione di apertura/chiusura.</li></ul></div>
+    </div>
+  </section>
+
+  <!-- ================= C ================= -->
+  <section class="proposal" id="proposal-c">
+    <div class="prop-head"><span class="tag">Proposta C</span><h2>Split editor</h2></div>
+    <p class="prop-desc">
+      Il workflow resta a sinistra, ma diventa una vera navigazione con stato e riepilogo per passo.
+      A destra c'è una sola sezione, sempre in modifica, con campi grandi e barra di salvataggio fissa.
+      È la versione più vicina all'attuale, ma elimina tab, bottoni “Modifica” e modali.
+    </p>
+    <div class="metrics">
+      <span class="metric"><b>1 click</b> per cambiare passo</span>
+      <span class="metric"><b>0 click</b> per modificare</span>
+      <span class="metric"><b>0 modali</b></span>
+      <span class="metric"><b>Workflow</b> = navigazione</span>
+    </div>
+
+    <div class="mock">
+      <div class="mockbar"><span class="dots"><i></i><i></i><i></i></span><span class="name">engagement · split · profilo PMO</span></div>
+
+      <div class="crumbs"><span>Tutti gli engagement</span><span>/</span><b>External Penetration Test</b></div>
+      <div class="enghead">
+        <div class="t"><h3>External Penetration Test</h3><p class="sub">ENG-2026-001 · Contoso · responsabile Sara Conti</p></div>
+        <div class="actions"><span class="pill p-action">Scope da compilare</span><button class="btn sec sm" data-toast="Report (demo)">Report</button></div>
+      </div>
+
+      <div class="split">
+        <nav class="vrail" aria-label="Workflow">
+          <div class="vhead"><span>Workflow</span><span>2 / 6</span></div>
+          <button class="vstep done" data-vstep="docs"><span class="num">✓</span><span class="h"><b>Documenti</b><span>3/3 · completato</span></span></button>
+          <button class="vstep on" data-vstep="scope"><span class="num">2</span><span class="h"><b>Scope</b><span>da compilare</span></span></button>
+          <button class="vstep wait" data-vstep="plan"><span class="num">3</span><span class="h"><b>Pianificazione</b><span>in attesa Manager</span></span></button>
+          <button class="vstep" data-vstep="cred"><span class="num">4</span><span class="h"><b>Credenziali</b><span>da compilare</span></span></button>
+          <button class="vstep" data-vstep="run"><span class="num">5</span><span class="h"><b>Esecuzione</b><span>bloccato</span></span></button>
+          <button class="vstep" data-vstep="rep"><span class="num">6</span><span class="h"><b>Report</b><span>bloccato</span></span></button>
+        </nav>
+
+        <div class="vpanel">
+          <div class="vpanel-head">
+            <div><span class="step">Passo 2 di 6</span><h4>Scope</h4><div class="sub">Perimetro, finestre e referente tecnico · visibile a cliente e PMO</div></div>
+            <div class="right"><span class="pill p-action">Da compilare</span><button class="btn sec sm" data-toast="Cronologia modifiche (demo)">Cronologia</button></div>
+          </div>
+          <div class="vpanel-body">
+            <div class="fields">
+              <div class="field full"><label for="c-host">Target (hostname / URL)</label><input class="input" id="c-host" value="app.contoso.example" style="font-size:16px;padding:12px 13px"><span class="hint">Il campo è già attivo: nessun click per entrare in modifica.</span></div>
+              <div class="field"><label>Indirizzi / range IP</label><input class="input" value="10.20.30.0/24"></div>
+              <div class="field"><label>Fuori scope</label><input class="input" value="Ambienti di produzione"></div>
+              <div class="field"><label>Finestra oraria</label><input class="input" value="Lun–Ven 20:00–06:00"></div>
+              <div class="field"><label>Referente tecnico</label><input class="input" type="email" value="security@contoso.example"></div>
+              <div class="field full"><label>Note e vincoli</label><textarea class="input">Retest dopo remediation; nessun test su dati reali.</textarea></div>
+            </div>
+          </div>
+          <div class="savebar"><span class="t">Ultimo salvataggio 14/11/2026 09:42 · bozza non ancora completata</span><span class="savehint" data-save>✓ Salvato ora</span><button class="btn sec" data-save-btn>Salva bozza</button><button class="btn pri" data-save-btn>Salva e completa</button></div>
+        </div>
+      </div>
+
+      <div style="margin-top:14px" class="ghostpanel"><b>In basso, sempre visibile:</b> prossimo passo “Pianificazione in attesa del Manager” · <a href="#" data-toast="Vai alla pianificazione (demo)">Apri il passo</a></div>
+    </div>
+
+    <div class="callouts">
+      <div class="callout"><b>1 · Workflow = navigazione</b>I passi non sono decorativi: cambiano il pannello a destra e mostrano lo stato riassunto.</div>
+      <div class="callout"><b>2 · Un solo pannello</b>Più spazio per i campi, gerarchia chiara, niente tab orizzontali che nascondono sezioni.</div>
+      <div class="callout"><b>3 · Sempre in modifica</b>Chi ha i permessi vede gli input direttamente; chi è in sola lettura vede i valori.</div>
+    </div>
+    <div class="proscons">
+      <div class="pc good"><h5>Perché funziona</h5><ul><li>Evoluzione naturale del layout attuale: basso rischio implementativo.</li><li>Il workflow acquista finalmente un ruolo: è il menù delle sezioni.</li><li>Campi grandi e una sola azione primaria per volta.</li></ul></div>
+      <div class="pc bad"><h5>Attenzione</h5><ul><li>Un click per cambiare sezione: leggermente più di A e B.</li><li>Meno adatta al confronto simultaneo tra due sezioni.</li></ul></div>
+    </div>
+  </section>
+
+  <section class="compare">
+    <h2>Confronto rapido</h2>
+    <p>Le tre proposte usano gli stessi dati e gli stessi endpoint; cambia il modello di navigazione e il rapporto tra workflow e sezioni.</p>
+    <table>
+      <thead><tr><th></th><th>A · Workflow cockpit</th><th>B · Checklist guidata</th><th>C · Split editor</th></tr></thead>
+      <tbody>
+        <tr><td><b>Click per compilare</b></td><td>0 per aprire, 1 per salvare</td><td>0 per aprire, 1 per salvare</td><td>1 per cambiare passo, 0 per aprire</td></tr>
+        <tr><td><b>Workflow</b></td><td>Barra = indice, sezioni nello stesso ordine</td><td>Ordine delle attività = workflow</td><td>Rail = navigazione con riepilogo</td></tr>
+        <tr><td><b>Form</b></td><td>Inline nella sezione corrente</td><td>Inline nella riga</td><td>Un pannello sempre attivo</td></tr>
+        <tr><td><b>Migliore per</b></td><td>Tutti i ruoli, desktop</td><td>Cliente/PMO occasionali, mobile</td><td>PMO operativo, tante sezioni</td></tr>
+        <tr><td><b>Rischio implementativo</b></td><td>Medio</td><td>Medio-alto (struttura nuova)</td><td>Basso (evoluzione dell'attuale)</td></tr>
+        <tr><td><b>Densità visiva</b></td><td>Media</td><td>Bassa</td><td>Media</td></tr>
+      </tbody>
+    </table>
+    <div class="reco"><b>Consiglio:</b> partire da <b>A · Workflow cockpit</b> per il desktop, riutilizzando la logica della checklist B nel blocco “Prossimo passo” e nelle righe dei passi completati. Se si vuole limitare il rischio, <b>C · Split editor</b> è la trasformazione più vicina all'attuale: elimina modali e bottoni “Modifica”, e collega finalmente il workflow alle sezioni.</div>
+  </section>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const toast = document.getElementById('toast');
+let toastTimer;
+function showToast(msg){
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+}
+
+/* proposal switcher */
+document.querySelectorAll('.switcher button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const key = btn.dataset.proposal;
+    document.querySelectorAll('.switcher button').forEach(b => {
+      const on = b === btn;
+      b.classList.toggle('on', on);
+      b.setAttribute('aria-selected', String(on));
+    });
+    document.querySelectorAll('.proposal').forEach(p => {
+      p.classList.toggle('active', p.id === 'proposal-' + key);
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+});
+
+/* generic demo actions */
+document.addEventListener('click', event => {
+  const save = event.target.closest('[data-save-btn]');
+  if (save) {
+    const foot = save.closest('.formfoot, .savebar');
+    const hint = foot && foot.querySelector('[data-save]');
+    if (hint) {
+      hint.classList.add('show');
+      setTimeout(() => hint.classList.remove('show'), 2600);
+    }
+    showToast('Bozza salvata (demo)');
+    return;
+  }
+  const toastEl = event.target.closest('[data-toast]');
+  if (toastEl) {
+    event.preventDefault();
+    showToast(toastEl.dataset.toast);
+    return;
+  }
+  const focus = event.target.closest('[data-focus]');
+  if (focus) {
+    const target = document.getElementById('a-host') || document.getElementById('c-host');
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(() => target.focus(), 250);
+    }
+    return;
+  }
+});
+
+/* A: block toggles + workflow scroll */
+document.querySelectorAll('[data-toggle]').forEach(head => {
+  head.addEventListener('click', () => {
+    const block = document.getElementById(head.dataset.toggle);
+    if (!block || block.classList.contains('locked')) return;
+    block.classList.toggle('open');
+  });
+});
+document.querySelectorAll('[data-open-block]').forEach(btn => {
+  btn.addEventListener('click', event => {
+    event.preventDefault();
+    const block = document.getElementById(btn.dataset.openBlock);
+    if (!block) return;
+    block.classList.add('open');
+    block.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+document.querySelectorAll('[data-scroll]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const block = document.getElementById(btn.dataset.scroll);
+    if (!block) return;
+    if (!block.classList.contains('locked')) block.classList.add('open');
+    block.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
+/* B: task toggles */
+document.querySelectorAll('[data-toggle-task]').forEach(head => {
+  head.addEventListener('click', () => {
+    const task = head.closest('.task');
+    if (!task || task.classList.contains('locked')) return;
+    task.classList.toggle('open');
+  });
+});
+
+/* C: rail navigation */
+document.querySelectorAll('[data-vstep]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.vstep').forEach(x => x.classList.toggle('on', x === btn));
+    showToast('Passo aperto (demo): ' + btn.querySelector('b').textContent);
+  });
+});
+</script>
+</body>
+</html>
