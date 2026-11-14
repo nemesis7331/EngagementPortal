@@ -10,7 +10,7 @@ public sealed class EngagementWorkflow
     {
         var today = currentDate?? DateOnly.FromDateTime(DateTime.UtcNow);
 
-        if (!engagement.HasStaf ||!engagement.OrderConfirmed)
+        if (!engagement.HasManleva ||!engagement.OrderConfirmed)
             return EngagementPhase.Docs;
 
         var proposal = engagement.AcceptedProposal;
@@ -62,7 +62,7 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
         var canDecide = pending is not null &&
             ((pending.From == ProposalParty.Client &&
               role == Roles.Cyberdefence) ||
-             (pending.From == ProposalParty.Bip &&
+             (pending.From == ProposalParty.Provider &&
               role == Roles.Client));
 
         if (canDecide)
@@ -70,8 +70,8 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
 
         if (role == Roles.Client &&
             phase == EngagementPhase.Docs &&
-            !engagement.HasStaf)
-            return new("Firma e carica STAF", "docs");
+            !engagement.HasManleva)
+            return new("Firma e carica la manleva", "docs");
 
         if (role is Roles.Cybersec or Roles.Cyberdefence &&
             phase == EngagementPhase.Docs &&

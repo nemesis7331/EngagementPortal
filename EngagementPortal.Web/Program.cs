@@ -38,7 +38,7 @@ static UserContext GetUser(HttpContext context)
     {
         tenant = role == Roles.Client
             ? "tenant-contoso"
-            : "tenant-bip";
+            : "tenant-provider";
     }
 
     var name =
@@ -65,7 +65,7 @@ api.MapGet("/engagements", (
     var user = GetUser(context);
 
     var result = repository
-        .List(user.TenantId, user.IsBip)
+        .List(user.TenantId, user.IsProvider)
         .Select(e => new
         {
             e.Id,
@@ -93,21 +93,21 @@ api.MapGet("/engagements/{id}", (
     var engagement = repository.Get(
         id,
         user.TenantId,
-        user.IsBip);
+        user.IsProvider);
 
     if (engagement is null)
         return Results.NotFound();
 
     var visibleAudit = engagement.AuditLog
         .Where(log =>
-            user.IsBip ||
+            user.IsProvider ||
             log.Visibility == AuditVisibility.All)
         .Select(log => new
         {
             log.Date,
             log.Author,
             log.AuthorRole,
-            Text = user.IsBip
+            Text = user.IsProvider
                 ? log.Text
                 : log.ClientText?? log.Text
         });
@@ -129,7 +129,7 @@ api.MapGet("/dashboard/todo", (
     var user = GetUser(context);
 
     var result = repository
-        .List(user.TenantId, user.IsBip)
+        .List(user.TenantId, user.IsProvider)
         .Select(e => new
         {
             e.Id,
@@ -142,7 +142,7 @@ api.MapGet("/dashboard/todo", (
     return Results.Ok(result);
 });
 
-api.MapPost("/engagements/{id}/staf", (
+api.MapPost("/engagements/{id}/manleva", (
     string id,
     HttpContext context,
     IEngagementRepository repository) =>
@@ -151,7 +151,7 @@ api.MapPost("/engagements/{id}/staf", (
     var engagement = repository.Get(
         id,
         user.TenantId,
-        user.IsBip);
+        user.IsProvider);
 
     if (engagement is null)
         return Results.NotFound();
@@ -159,11 +159,11 @@ api.MapPost("/engagements/{id}/staf", (
     if (user.Role is not (Roles.Client or Roles.Cybersec))
         return Results.Forbid();
 
-    engagement.HasStaf = true;
+    engagement.HasManleva = true;
     engagement.AddAudit(
         user.Name,
         user.Role,
-        "STAF registered",
+        "Manleva registrata",
         AuditVisibility.All);
 
     repository.Save(engagement);
@@ -179,7 +179,7 @@ api.MapPost("/engagements/{id}/order", (
     var engagement = repository.Get(
         id,
         user.TenantId,
-        user.IsBip);
+        user.IsProvider);
 
     if (engagement is null)
         return Results.NotFound();
@@ -193,7 +193,7 @@ api.MapPost("/engagements/{id}/order", (
         user.Name,
         user.Role,
         "Order confirmed",
-        AuditVisibility.BipOnly,
+        AuditVisibility.ProviderOnly,
         "Order registered");
 
     repository.Save(engagement);
@@ -210,7 +210,7 @@ api.MapPost("/engagements/{id}/proposals", (
     var engagement = repository.Get(
         id,
         user.TenantId,
-        user.IsBip);
+        user.IsProvider);
 
     if (engagement is null)
         return Results.NotFound();
@@ -221,10 +221,10 @@ api.MapPost("/engagements/{id}/proposals", (
         Roles.Cyberdefence))
         return Results.Forbid();
 
-    if (!engagement.HasStaf ||
+    if (!engagement.HasManleva ||
         !engagement.OrderConfirmed)
         return Results.BadRequest(
-            "Planning is locked until STAF and order are complete.");
+            "Planning is locked until the manleva and order are complete.");
 
     var today = DateOnly.FromDateTime(DateTime.UtcNow);
     var duration =
@@ -251,7 +251,7 @@ api.MapPost("/engagements/{id}/proposals", (
         Id = $"P-{Guid.NewGuid():N}"[..10],
         From = user.Role == Roles.Client
             ? ProposalParty.Client
-            : ProposalParty.Bip,
+            : ProposalParty.Provider,
         By = user.Name,
         StartDate = request.StartDate,
         EndDate = request.EndDate,
@@ -281,7 +281,7 @@ api.MapPost(
     var engagement = repository.Get(
         id,
         user.TenantId,
-        user.IsBip);
+        user.IsProvider);
 
     if (engagement is null)
         return Results.NotFound();
@@ -296,7 +296,7 @@ api.MapPost(
         proposal.Status == ProposalStatus.Pending &&
         ((proposal.From == ProposalParty.Client &&
           user.Role == Roles.Cyberdefence) ||
-         (proposal.From == ProposalParty.Bip &&
+         (proposal.From == ProposalParty.Provider &&
           user.Role == Roles.Client));
 
     if (!canDecide)
@@ -331,7 +331,7 @@ api.MapPut("/engagements/{id}/preparation", (
     var engagement = repository.Get(
         id,
         user.TenantId,
-        user.IsBip);
+        user.IsProvider);
 
     if (engagement is null)
         return Results.NotFound();
@@ -355,7 +355,7 @@ api.MapPut("/engagements/{id}/preparation", (
         user.Name,
         user.Role,
         "Preparation updated",
-        AuditVisibility.BipOnly,
+        AuditVisibility.ProviderOnly,
         "Preparation data updated");
 
     repository.Save(engagement);
@@ -372,7 +372,7 @@ api.MapPost("/engagements/{id}/reports", (
     var engagement = repository.Get(
         id,
         user.TenantId,
-        user.IsBip);
+        user.IsProvider);
 
     if (engagement is null)
         return Results.NotFound();
@@ -394,7 +394,7 @@ api.MapPost("/engagements/{id}/reports", (
         user.Name,
         user.Role,
         "Deliverable uploaded; review reset",
-        AuditVisibility.BipOnly);
+        AuditVisibility.ProviderOnly);
 
     repository.Save(engagement);
     return Results.Ok(engagement);
@@ -409,7 +409,7 @@ api.MapPost("/engagements/{id}/review/submit", (
     var engagement = repository.Get(
         id,
         user.TenantId,
-        user.IsBip);
+        user.IsProvider);
 
     if (engagement is null)
         return Results.NotFound();
@@ -434,7 +434,7 @@ api.MapPost("/engagements/{id}/review/decide", (
     var engagement = repository.Get(
         id,
         user.TenantId,
-        user.IsBip);
+        user.IsProvider);
 
     if (engagement is null)
         return Results.NotFound();
@@ -453,7 +453,7 @@ api.MapPost("/engagements/{id}/review/decide", (
         request.Approve
             ? "Deliverables approved"
             : $"Changes requested: {request.Comment}",
-        AuditVisibility.BipOnly);
+        AuditVisibility.ProviderOnly);
 
     repository.Save(engagement);
     return Results.Ok(engagement);
@@ -468,7 +468,7 @@ api.MapPost("/engagements/{id}/reports/publish", (
     var engagement = repository.Get(
         id,
         user.TenantId,
-        user.IsBip);
+        user.IsProvider);
 
     if (engagement is null)
         return Results.NotFound();

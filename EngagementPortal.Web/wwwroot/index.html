@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport"
           content="width=device-width, initial-scale=1">
-    <title>Bip Engagement Portal</title>
+    <title>Cyber Engagement Portal</title>
     <style>
         :root {
             font-family: Segoe UI, Arial, sans-serif;
@@ -83,7 +83,7 @@
 </head>
 <body>
 <header>
-    <h1>Bip Engagement Portal</h1>
+    <h1>Cyber Engagement Portal</h1>
     <p>Demo workflow engagement e isolamento tenant</p>
 </header>
 
@@ -103,7 +103,7 @@
         <label>
             Tenant:
             <select id="tenant">
-                <option value="tenant-bip">Bip</option>
+                <option value="tenant-provider">Provider</option>
                 <option value="tenant-contoso">Contoso</option>
                 <option value="tenant-fabrikam">Fabrikam</option>
             </select>
@@ -190,8 +190,8 @@ async function loadDetail(id) {
                 ${data.engagement.clientName}
             </p>
             <p>
-                STAF:
-                <b>${data.engagement.hasStaf
+                Manleva:
+                <b>${data.engagement.hasManleva
                     ? "completato"
                     : "mancante"}</b>
                 · Ordine:
@@ -231,7 +231,7 @@ document.getElementById("role")
         document.getElementById("tenant").value =
             event.target.value === "Client"
                 ? "tenant-contoso"
-                : "tenant-bip";
+                : "tenant-provider";
         loadDashboard();
     });
 

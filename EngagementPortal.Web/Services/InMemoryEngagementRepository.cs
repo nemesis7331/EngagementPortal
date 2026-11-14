@@ -62,22 +62,22 @@ public sealed class InMemoryEngagementRepository:
             ClientName = "Contoso",
             Name = "External Penetration Test",
             Type = EngagementType.PenetrationTest,
-            Owner = "Bip Cyberdefence",
-            HasStaf = true,
+            Owner = "Provider Cyberdefence",
+            HasManleva = true,
             OrderConfirmed = true
         };
 
         planning.Proposals.Add(new Proposal
         {
             Id = "P-001",
-            From = ProposalParty.Bip,
-            By = "Bip Planner",
+            From = ProposalParty.Provider,
+            By = "Provider Planner",
             StartDate = today.AddDays(7),
             EndDate = today.AddDays(12)
         });
 
         planning.AddAudit(
-            "Bip Planner",
+            "Provider Planner",
             Roles.Cyberdefence,
             "Planning proposal created",
             AuditVisibility.All);
@@ -89,8 +89,8 @@ public sealed class InMemoryEngagementRepository:
             ClientName = "Fabrikam",
             Name = "Cloud Security Review",
             Type = EngagementType.CloudSecurity,
-            Owner = "Bip Cyberdefence",
-            HasStaf = false,
+            Owner = "Provider Cyberdefence",
+            HasManleva = false,
             OrderConfirmed = false
         };
 
@@ -101,8 +101,8 @@ public sealed class InMemoryEngagementRepository:
             ClientName = "Contoso",
             Name = "Web Application Retest",
             Type = EngagementType.PenetrationTest,
-            Owner = "Bip Cyberdefence",
-            HasStaf = true,
+            Owner = "Provider Cyberdefence",
+            HasManleva = true,
             OrderConfirmed = true,
             ScopeDone = true,
             CredentialsDone = true,
@@ -130,10 +130,10 @@ public sealed class InMemoryEngagementRepository:
             false));
 
         reporting.AddAudit(
-            "Bip Cyberdefence",
+            "Provider Cyberdefence",
             Roles.Cyberdefence,
             "Deliverable submitted for review",
-            AuditVisibility.BipOnly,
+            AuditVisibility.ProviderOnly,
             "Deliverable is under review");
 
         return [planning, documents, reporting];

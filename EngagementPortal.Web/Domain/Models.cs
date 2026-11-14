@@ -23,7 +23,7 @@ public enum EngagementPhase
 public enum ProposalParty
 {
     Client,
-    Bip
+    Provider
 }
 
 public enum ProposalStatus
@@ -46,7 +46,7 @@ public enum ReviewStatus
 public enum AuditVisibility
 {
     All,
-    BipOnly
+    ProviderOnly
 }
 
 public static class Roles
@@ -57,7 +57,7 @@ public static class Roles
     public const string Manager = "Manager";
     public const string Auditor = "Auditor";
 
-    public static bool IsBip(string role) =>
+    public static bool IsProvider(string role) =>
         role is Cybersec or Cyberdefence or Manager or Auditor;
 }
 
@@ -71,7 +71,7 @@ public sealed class Engagement
     public required string Owner { get; init; }
 
     public DateTimeOffset CreatedDate { get; init; } = DateTimeOffset.UtcNow;
-    public bool HasStaf { get; set; }
+    public bool HasManleva { get; set; }
     public bool OrderConfirmed { get; set; }
 
     public bool ScopeDone { get; set; }
@@ -139,7 +139,7 @@ public sealed record UserContext(
     string TenantId,
     string Role)
 {
-    public bool IsBip => Roles.IsBip(Role);
+    public bool IsProvider => Roles.IsProvider(Role);
 }
 
 public sealed record CreateProposalRequest(

@@ -1,4 +1,4 @@
-name: Build and deploy Engagement Portal
+name: Build and deploy Cyber Engagement Portal
 
 on:
   push:
@@ -80,9 +80,9 @@ jobs:
         run: |
           for attempt in {1..12}; do
             if response=$(curl --fail --silent --show-error \
-              "$APP_URL/api/engagements?role=Cyberdefence&tenant=tenant-bip") &&
+              "$APP_URL/api/engagements?role=Cyberdefence&tenant=tenant-provider") &&
               printf '%s' "$response" | jq -e 'type == "array"' >/dev/null; then
-              echo "Engagement Portal API is responding."
+              echo "Cyber Engagement Portal API is responding."
               exit 0
             fi
 
@@ -90,5 +90,5 @@ jobs:
             sleep 10
           done
 
-          echo "Deployment completed, but the Engagement Portal API did not become available." >&2
+          echo "Deployment completed, but the Cyber Engagement Portal API did not become available." >&2
           exit 1
