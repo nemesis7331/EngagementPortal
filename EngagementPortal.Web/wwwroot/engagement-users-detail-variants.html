@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Utenti · dettaglio dinamico · 4 varianti</title>
+<style>
+:root{
+  --brand-950:#061d36;--brand-900:#0a2a4d;--brand-700:#0f4275;--brand-600:#0b5fa5;
+  --brand-500:#2a86d8;--brand-100:#e1eefa;--brand-50:#f1f7fc;--accent:#0e9fb5;--accent-soft:#d6f4f8;
+  --ink:#0a1b2e;--muted:#566a80;--line:#dfe7ef;--line-soft:#edf2f7;--bg:#f4f7fa;--card:#fff;--surface-2:#f8fafc;
+  --st-action:#b42318;--st-action-bg:#fee4e2;--st-action-border:#fda29b;
+  --st-wait:#7a5b00;--st-wait-bg:#fff8c5;--st-wait-border:#eac54f;
+  --st-progress:#175cd3;--st-progress-bg:#d1e9ff;--st-progress-border:#b2ddff;
+  --st-done:#067647;--st-done-bg:#dcfae6;--st-done-border:#a9efc5;
+  --st-blocked:#475467;--st-blocked-bg:#f2f4f7;--st-blocked-border:#e4e7ec;
+  --radius:14px;--radius-md:10px;--shadow:0 1px 2px rgba(6,29,54,.06),0 6px 20px rgba(6,29,54,.06);
+  --shadow-lg:0 10px 30px rgba(6,29,54,.12);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button{font:inherit;cursor:pointer}a{color:var(--brand-600)}
+h1{font-size:30px;line-height:1.15;letter-spacing:-.02em;margin:0 0 8px;color:var(--brand-900)}
+h2{font-size:20px;margin:0;color:var(--brand-900)}h3{font-size:15px;margin:0;color:var(--brand-900)}p{margin:0}
+.sub{color:var(--muted)}.small{font-size:12.5px;color:var(--muted)}.tiny{font-size:11.5px;color:var(--muted)}
+.wrap{max-width:1220px;margin:0 auto;padding:28px 24px 80px}
+.top{display:flex;align-items:center;gap:14px;padding:14px 24px;background:var(--brand-900);color:#fff}
+.top .logo{width:34px;height:34px;border-radius:10px;background:var(--accent);display:grid;place-items:center;color:var(--brand-950);font-weight:800}
+.top b{font-size:15px}.top .meta{margin-left:auto;font-size:12.5px;color:#bed3e6}
+.intro{padding:34px 0 8px;max-width:1000px}
+.lede{font-size:17px;color:var(--muted);margin:0 0 20px}
+.rulebar{display:flex;align-items:flex-start;gap:12px;background:#fff;border:1px solid var(--line);border-left:3px solid var(--brand-600);border-radius:10px;padding:13px 15px;margin:0 0 20px}
+.rulebar .i{width:30px;height:30px;border-radius:50%;background:var(--brand-100);color:var(--brand-700);display:grid;place-items:center;font-weight:800;flex:none}
+.rulebar b{display:block;font-size:13.5px;color:var(--brand-900)}
+.rulebar span{font-size:12.5px;color:var(--muted)}
+.switcher{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 8px;padding:10px 0}
+.switcher button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 16px;font-weight:650;color:var(--muted);display:flex;align-items:center;gap:8px}
+.switcher button.on{border-color:var(--brand-600);color:var(--brand-700);box-shadow:0 0 0 3px var(--brand-100)}
+.switcher .n{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--brand-100);color:var(--brand-700);font-size:11px;font-weight:800}
+.switcher button.on .n{background:var(--brand-600);color:#fff}
+.proposal{display:none;padding-top:16px}.proposal.active{display:block}
+.prop-head{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap;margin-bottom:4px}
+.tag{font-size:11px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent-soft);background:#fff;padding:4px 10px;border-radius:999px;margin-top:3px}
+.prop-head h2{font-size:24px}
+.prop-desc{max-width:920px;color:var(--muted);margin:5px 0 16px}
+.metrics{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}
+.metric{background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:12.5px;color:var(--muted)}
+.metric b{color:var(--brand-900)}
+.mock{border:1px solid #c9d8e7;border-radius:18px;background:#fbfdff;padding:18px;box-shadow:var(--shadow);position:relative}
+.mockbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 2px 12px;border-bottom:1px solid var(--line-soft);margin-bottom:16px}
+.mockbar .dots{display:flex;gap:5px}.mockbar .dots i{display:block;width:9px;height:9px;border-radius:50%;background:#d6e1ec}
+.mockbar .name{font-size:12px;color:var(--muted);font-weight:600}
+.pagehead{display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:12px}
+.pagehead .t{flex:1;min-width:240px}.pagehead h3{font-size:21px;line-height:1.2;margin-bottom:3px}.pagehead .sub{font-size:12.5px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:650;white-space:nowrap;border:1px solid transparent}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
+.p-action{background:var(--st-action-bg);color:var(--st-action);border-color:var(--st-action-border)}
+.p-wait{background:var(--st-wait-bg);color:var(--st-wait);border-color:var(--st-wait-border)}
+.p-progress{background:var(--st-progress-bg);color:var(--st-progress);border-color:var(--st-progress-border)}
+.p-done{background:var(--st-done-bg);color:var(--st-done);border-color:var(--st-done-border)}
+.p-blocked{background:var(--st-blocked-bg);color:var(--st-blocked);border-color:var(--st-blocked-border)}
+.btn{border:1px solid transparent;border-radius:9px;padding:9px 15px;font-weight:650;font-size:13.5px;display:inline-flex;align-items:center;gap:7px;text-decoration:none}
+.btn.pri{background:var(--brand-600);color:#fff}.btn.pri:hover{background:var(--brand-700)}
+.btn.sec{background:#fff;border-color:var(--line);color:var(--brand-900)}
+.btn.ghost{background:transparent;color:var(--brand-600);padding:6px 4px}
+.btn.sm{padding:5px 10px;font-size:12.5px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.badge{font-size:10px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;padding:2px 7px;border-radius:999px;border:1px solid var(--line);color:var(--muted);background:var(--surface-2)}
+.badge.int{border-color:var(--st-progress-border);background:var(--st-progress-bg);color:var(--st-progress)}
+.badge.ext{border-color:var(--st-wait-border);background:var(--st-wait-bg);color:var(--st-wait)}
+.badge.ok{border-color:var(--st-done-border);background:var(--st-done-bg);color:var(--st-done)}
+.badge.mgr{border-color:var(--accent-soft);background:var(--accent-soft);color:var(--brand-700)}
+.avatar{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--brand-100);color:var(--brand-700);font-size:11px;font-weight:800;flex:none}
+.card2{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;min-width:0}
+.sec-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.sec-head h3{margin:0}
+.searchbox{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 10px;margin-bottom:9px}
+.searchbox input{border:0;outline:0;width:100%;font:inherit;font-size:13px;background:transparent}
+.list{display:grid;gap:5px;max-height:560px;overflow:auto;padding-right:2px}
+.ulist{display:grid;gap:6px}
+.urow{display:flex;align-items:center;gap:9px;width:100%;text-align:left;border:1px solid var(--line);border-radius:9px;background:#fff;padding:9px 10px;color:inherit;min-width:0}
+.urow:hover{background:var(--surface-2)}
+.urow.on{border-color:var(--brand-500);background:var(--brand-50);box-shadow:inset 3px 0 0 var(--brand-600)}
+.urow .who{flex:1;min-width:0}
+.urow .nm{display:block;font-size:13px;font-weight:650;color:var(--brand-900);line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.urow .em{display:block;font-size:10.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.urow .end{display:flex;gap:5px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.cnt{display:inline-grid;place-items:center;min-width:19px;height:19px;padding:0 5px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);font-size:10.5px;color:var(--muted);font-weight:700}
+.detail{display:grid;gap:12px}
+.dhead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding-bottom:11px;border-bottom:1px solid var(--line-soft)}
+.dhead .avatar{width:40px;height:40px;font-size:13px}
+.dhead .t{flex:1;min-width:160px}
+.dhead b{display:block;font-size:17px;color:var(--brand-900);line-height:1.2}
+.dhead span{display:block;font-size:11.5px;color:var(--muted)}
+.block{border:1px solid var(--line);border-radius:9px;background:#fff;padding:11px 12px}
+.block h4{font-size:11px;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin:0 0 8px;font-weight:800;display:flex;justify-content:space-between;gap:8px}
+.block h4 span{letter-spacing:0;text-transform:none;font-weight:600;font-size:10.5px}
+.chips{display:flex;gap:5px;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;border:1px solid var(--line);border-radius:6px;padding:3px 7px;background:var(--surface-2);color:var(--muted)}
+.chip.on{border-color:var(--st-done-border);background:var(--st-done-bg);color:var(--st-done)}
+.chip .x{border:0;background:none;color:inherit;font-size:12px;line-height:1;padding:0;cursor:pointer;opacity:.75}
+.chip .x:hover{opacity:1}
+.addline{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.addline select{flex:1;min-width:130px;border:1px solid var(--line);border-radius:7px;padding:7px 9px;font:inherit;font-size:12px;background:#fff}
+.managerbox{background:linear-gradient(180deg,var(--brand-50),#fff);border:1px solid var(--brand-100);border-radius:9px;padding:11px 12px}
+.managerbox b{display:block;font-size:13px;color:var(--brand-900);margin-bottom:2px}
+.managerbox span{font-size:11.5px;color:var(--muted)}
+.visibility{background:var(--brand-50);border:1px solid var(--brand-100);border-radius:9px;padding:10px 11px;font-size:11.5px;color:var(--brand-800)}
+.visibility b{color:var(--brand-900)}
+.kpi{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:8px}
+.kpi div{background:#fff;border:1px solid var(--line);border-radius:7px;padding:7px 8px}
+.kpi b{display:block;font-size:16px;color:var(--brand-900)}
+.kpi span{font-size:10px;color:var(--muted)}
+.perms{display:grid;gap:4px;font-size:11.5px;color:var(--muted)}
+.perms div{display:flex;justify-content:space-between;gap:8px}
+.perms b{color:var(--brand-900);font-weight:650}
+.savebar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.savebar .t{flex:1;min-width:130px;font-size:11.5px;color:var(--muted)}
+.hintbox{background:#fff;border:1px dashed #c9d8e7;border-radius:8px;padding:10px 11px;font-size:11.5px;color:var(--muted);text-align:center}
+.tabs2{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px}
+.tabs2 button{border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-size:11.5px;font-weight:650;color:var(--muted);background:#fff}
+.tabs2 button.on{border-color:var(--brand-600);background:var(--brand-100);color:var(--brand-700)}
+.split1{display:grid;grid-template-columns:360px minmax(0,1fr);gap:14px;align-items:start}
+.split2{display:grid;grid-template-columns:260px minmax(0,1fr) 280px;gap:12px;align-items:start}
+.split3{display:grid;grid-template-columns:340px minmax(0,1fr);gap:14px;align-items:start}
+.detail-sticky{position:sticky;top:12px;max-height:calc(100vh - 80px);overflow:auto}
+.preview .listline{display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:1px solid var(--line-soft);padding:6px 0;font-size:11.5px}
+.preview .listline:last-child{border-bottom:0}
+.preview .listline span{color:var(--muted)}
+.preview .listline b{color:var(--brand-900);font-size:11.5px}
+.source{font-size:9.5px;border:1px solid var(--line);border-radius:4px;padding:1px 4px;color:var(--muted);background:var(--surface-2)}
+.d4 .listfull{width:100%}
+.drawer4{position:absolute;top:0;right:0;bottom:0;width:390px;background:#fff;border-left:1px solid var(--line);box-shadow:-12px 0 30px rgba(6,29,54,.12);padding:16px;overflow:auto;border-radius:0 18px 18px 0;z-index:4}
+.drawer4 .dhead{margin-top:2px}
+.drawer4 .close{position:absolute;top:10px;right:10px;border:1px solid var(--line);background:#fff;border-radius:7px;width:28px;height:28px;display:grid;place-items:center;color:var(--muted)}
+.backdrop{position:absolute;inset:0;background:rgba(6,29,54,.18);border-radius:18px;z-index:3}
+.drawer-empty{position:absolute;top:0;right:0;bottom:0;width:390px;background:#fff;border-left:1px solid var(--line);padding:20px;display:grid;place-content:center;text-align:center;color:var(--muted);font-size:13px}
+.callouts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:18px 0 0}
+.callout{background:#fff;border:1px solid var(--line);border-radius:10px;padding:11px 12px;font-size:12.5px;color:var(--muted)}
+.callout b{display:block;color:var(--brand-900);font-size:12px;margin-bottom:2px}
+.proscons{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0 0}
+.pc{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:13px}
+.pc h5{margin:0 0 6px;font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:800}
+.pc ul{margin:0;padding-left:18px;color:var(--muted)}.pc li{margin-bottom:3px}
+.pc.good ul{color:#196345}.pc.bad ul{color:#8a4b00}
+.compare{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;margin-top:34px;box-shadow:var(--shadow)}
+.compare h2{margin-bottom:4px}.compare p{color:var(--muted);font-size:13px;margin-bottom:14px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)}
+td b{color:var(--brand-900)}
+.reco{margin-top:16px;background:var(--brand-50);border:1px solid var(--brand-100);border-radius:10px;padding:14px;font-size:13.5px;color:var(--brand-800)}
+.reco b{color:var(--brand-900)}
+.tech{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;margin-top:18px;box-shadow:var(--shadow)}
+.tech h2{font-size:18px;margin-bottom:6px}.tech h3{font-size:13.5px;margin:16px 0 7px}
+.tech ul{margin:0;padding-left:18px;color:var(--muted);font-size:13px}.tech li{margin-bottom:4px}
+.tech code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px;background:var(--surface-2);border:1px solid var(--line);border-radius:4px;padding:1px 5px;color:var(--brand-900)}
+.toast{position:fixed;right:24px;bottom:24px;background:var(--brand-900);color:#fff;padding:11px 16px;border-radius:10px;font-size:13px;box-shadow:var(--shadow-lg);opacity:0;transform:translateY(8px);transition:.2s;pointer-events:none;z-index:100}
+.toast.show{opacity:1;transform:translateY(0)}
+@media(max-width:1040px){.split2{grid-template-columns:240px minmax(0,1fr)}.split2 .preview{grid-column:1/-1}.detail-sticky{position:static;max-height:none}}
+@media(max-width:920px){.split1,.split3{grid-template-columns:290px minmax(0,1fr)}.drawer4{width:340px}}
+@media(max-width:760px){.split1,.split2,.split3{grid-template-columns:1fr}.drawer4{width:100%;border-radius:18px}.backdrop{display:none}.callouts{grid-template-columns:1fr}.list{max-height:none}}
+@media(max-width:720px){.wrap{padding:20px 14px 70px}.proscons{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="logo">EP</div>
+  <div><b>Cyber Engagement Portal</b><div class="tiny" style="color:#9fb9cf">Utenti · dettaglio dinamico · 4 varianti</div></div>
+  <div class="meta">Demo · clicca un utente a sinistra</div>
+</header>
+
+<main class="wrap">
+  <section class="intro">
+    <h1>Il pannello a destra segue l'utente che clicchi</h1>
+    <p class="lede">
+      La proposta A diventa interattiva: selezioni una persona a sinistra e il pannello a destra
+      mostra <b>ruolo, assegnazioni, visibilità effettiva e permessi</b> di quella persona.
+      Il Manager vede tutti; per gli altri si gestiscono clienti ed engagement.
+    </p>
+    <div class="rulebar">
+      <span class="i">◎</span>
+      <div><b>Regola di visibilità</b><span>Manager: tutti i clienti e gli engagement. PMO, Pentester, Auditor e Cliente: solo ciò che è assegnato. Cliente assegnato = tutti i suoi engagement; assegnazione a engagement = solo quello.</span></div>
+    </div>
+    <div class="switcher" role="tablist" aria-label="Varianti">
+      <button class="on" data-variant="v1" role="tab" aria-selected="true"><span class="n">1</span> Master-detail <span class="tiny">· consigliata</span></button>
+      <button data-variant="v2" role="tab" aria-selected="false"><span class="n">2</span> Tre colonne</button>
+      <button data-variant="v3" role="tab" aria-selected="false"><span class="n">3</span> Dettaglio a schede</button>
+      <button data-variant="v4" role="tab" aria-selected="false"><span class="n">4</span> Drawer laterale</button>
+    </div>
+  </section>
+
+  <section class="proposal active" id="p-v1">
+    <div class="prop-head"><span class="tag">Variante 1</span><h2>Master-detail classico</h2></div>
+    <p class="prop-desc">Lista utenti a sinistra, dettaglio della persona selezionata a destra. La selezione è evidente, il pannello è ricco e resta sotto gli occhi. È la versione consigliata: semplice, prevedibile, ottima da desktop.</p>
+    <div class="metrics"><span class="metric"><b>1 click</b> per cambiare utente</span><span class="metric">Dettaglio completo</span><span class="metric">Selezione persistente</span><span class="metric">Mobile: stacked</span></div>
+    <div class="mock">
+      <div class="mockbar"><span class="dots"><i></i><i></i><i></i></span><span class="name">utenti · master-detail · profilo Manager</span></div>
+      <div id="mount-v1"></div>
+    </div>
+    <div class="callouts">
+      <div class="callout"><b>1 · Click → contesto</b>Ogni riga selezionata aggiorna il pannello: niente pagine separate.</div>
+      <div class="callout"><b>2 · Modifiche sul posto</b>Aggiungi/rimuovi clienti ed engagement senza uscire dalla selezione.</div>
+      <div class="callout"><b>3 · Anteprima</b>La visibilità effettiva si aggiorna mentre aggiungi o togli assegnazioni.</div>
+    </div>
+    <div class="proscons"><div class="pc good"><h5>Perché funziona</h5><ul><li>Modello mentale immediato: elenco → dettaglio.</li><li>Il pannello può contenere tutto senza perdersi.</li><li>Facile da rendere accessibile con tastiera.</li></ul></div><div class="pc bad"><h5>Da valutare</h5><ul><li>Con molti utenti serve una buona ricerca.</li><li>Su mobile il dettaglio va sotto la lista.</li></ul></div></div>
+  </section>
+
+  <section class="proposal" id="p-v2">
+    <div class="prop-head"><span class="tag">Variante 2</span><h2>Tre colonne: lista, assegnazioni, anteprima</h2></div>
+    <p class="prop-desc">Separa l’editing dall’esito: a sinistra scegli l’utente, al centro gestisci clienti/engagement, a destra vedi in tempo reale cosa vedrà. Ideale per il Manager che deve controllare l’impatto di ogni modifica.</p>
+    <div class="metrics"><span class="metric"><b>Anteprima live</b></span><span class="metric">Editing separato</span><span class="metric">Desktop wide</span><span class="metric">Più densa</span></div>
+    <div class="mock">
+      <div class="mockbar"><span class="dots"><i></i><i></i><i></i></span><span class="name">utenti · tre colonne · profilo Manager</span></div>
+      <div id="mount-v2"></div>
+    </div>
+    <div class="callouts">
+      <div class="callout"><b>1 · Impatto visibile</b>A destra si vede subito “2 clienti, 4 engagement” dopo ogni modifica.</div>
+      <div class="callout"><b>2 · Meno errori</b>Prima di salvare, il Manager controlla l’effetto della visibilità.</div>
+      <div class="callout"><b>3 · Spazio</b>Richiede schermi larghi; sotto i 1120 px l’anteprima va sotto.</div>
+    </div>
+    <div class="proscons"><div class="pc good"><h5>Perché funziona</h5><ul><li>Editing e verifica nello stesso colpo d’occhio.</li><li>La matrice di visibilità è esplicita.</li><li>Adatta a ruoli di amministrazione.</li></ul></div><div class="pc bad"><h5>Da valutare</h5><ul><li>Tre colonne su laptop piccoli sono strette.</li><li>Richiede più lavoro di responsive design.</li></ul></div></div>
+  </section>
+
+  <section class="proposal" id="p-v3">
+    <div class="prop-head"><span class="tag">Variante 3</span><h2>Dettaglio a schede</h2></div>
+    <p class="prop-desc">Lista a sinistra e pannello a destra con tre schede: Profilo, Assegnazioni, Visibilità. Riduce lo scroll e mantiene il contesto, ma introduce un click per cambiare scheda. Buona quando il dettaglio è molto ricco.</p>
+    <div class="metrics"><span class="metric"><b>3 schede</b></span><span class="metric">Meno scroll</span><span class="metric">+1 click per scheda</span><span class="metric">Desktop</span></div>
+    <div class="mock">
+      <div class="mockbar"><span class="dots"><i></i><i></i><i></i></span><span class="name">utenti · dettaglio a schede · profilo Manager</span></div>
+      <div id="mount-v3"></div>
+    </div>
+    <div class="callouts">
+      <div class="callout"><b>1 · Compatto</b>Il pannello non diventa lunghissimo: ogni scheda ha il suo spazio.</div>
+      <div class="callout"><b>2 · Contesto</b>La testata dell’utente resta sempre visibile sopra le schede.</div>
+      <div class="callout"><b>3 · Costo</b>Un click in più per passare da assegnazioni a visibilità.</div>
+    </div>
+    <div class="proscons"><div class="pc good"><h5>Perché funziona</h5><ul><li>Sezioni chiare e facili da trovare.</li><li>Riduce il rischio di perdersi in una pagina lunga.</li><li>Si adatta bene a molti campi.</li></ul></div><div class="pc bad"><h5>Da valutare</h5><ul><li>Un click in più rispetto a master-detail.</li><li>La visibilità non è sempre sotto gli occhi.</li></ul></div></div>
+  </section>
+
+  <section class="proposal" id="p-v4">
+    <div class="prop-head"><span class="tag">Variante 4</span><h2>Drawer laterale</h2></div>
+    <p class="prop-desc">La lista resta larga e cliccando un utente si apre un pannello laterale sovrapposto. Ottimo per scorrere molte persone e aprire/chiudere velocemente; il dettaglio può essere chiuso per tornare alla lista. Su mobile diventa un foglio a tutta larghezza.</p>
+    <div class="metrics"><span class="metric"><b>Lista ampia</b></span><span class="metric">Apri/chiudi</span><span class="metric">Focus sul dettaglio</span><span class="metric">Overlay su mobile</span></div>
+    <div class="mock">
+      <div class="mockbar"><span class="dots"><i></i><i></i><i></i></span><span class="name">utenti · drawer · profilo Manager</span></div>
+      <div id="mount-v4"></div>
+    </div>
+    <div class="callouts">
+      <div class="callout"><b>1 · Veloce</b>Clicchi, vedi, chiudi: la lista non si restringe mai.</div>
+      <div class="callout"><b>2 · Focus</b>Il drawer cattura l’attenzione sull’utente selezionato.</div>
+      <div class="callout"><b>3 · Mobile</b>Diventa un pannello a tutta larghezza, come un bottom sheet.</div>
+    </div>
+    <div class="proscons"><div class="pc good"><h5>Perché funziona</h5><ul><li>Lista sempre visibile e ampia.</li><li>Ottimo per revisioni utente veloci.</li><li>Il dettaglio è chiaramente temporaneo.</li></ul></div><div class="pc bad"><h5>Da valutare</h5><ul><li>Overlay può nascondere parte della lista.</li><li>Meno adatto al confronto tra due utenti.</li></ul></div></div>
+  </section>
+
+  <section class="compare">
+    <h2>Confronto rapido</h2>
+    <p>Tutte le varianti usano la stessa base dati e le stesse API: cambia solo il modo di selezionare e mostrare il dettaglio.</p>
+    <table>
+      <thead><tr><th></th><th>1 · Master-detail</th><th>2 · Tre colonne</th><th>3 · Schede</th><th>4 · Drawer</th></tr></thead>
+      <tbody>
+        <tr><td><b>Click per cambiare utente</b></td><td>1</td><td>1</td><td>1</td><td>1 + chiusura</td></tr>
+        <tr><td><b>Visibilità sempre visibile</b></td><td>Sì</td><td>Sì, In tempo reale</td><td>Solo nella scheda</td><td>Sì</td></tr>
+        <tr><td><b>Spazio richiesto</b></td><td>Medio</td><td>Alto</td><td>Medio</td><td>Medio</td></tr>
+        <tr><td><b>Mobile</b></td><td>Buono</td><td>Anteprima sotto</td><td>Buono</td><td>Foglio intero</td></tr>
+        <tr><td><b>Migliore per</b></td><td>Uso quotidiano</td><td>Manager/controllo</td><td>Molti dati</td><td>Revisione veloce</td></tr>
+      </tbody>
+    </table>
+    <div class="reco"><b>Consiglio:</b> <b>V1 master-detail</b> come default; <b>V2</b> come vista “controllo impatto” per il Manager, ottenuta con lo stesso componente; <b>V4 drawer</b> come variante mobile o per revisioni rapide. V3 è utile solo se il pannello cresce molto.</div>
+  </section>
+
+  <section class="tech">
+    <h2>Come funziona il dettaglio dinamico</h2>
+    <ul>
+      <li>La lista carica <code>GET /api/users?q=…&amp;role=…</code>; ogni riga ha l’id utente.</li>
+      <li>Al click: <code>GET /api/users/{id}/assignments</code> e rendering del pannello. La selezione può stare nell’URL (<code>?user=sc</code>) per condividerla e ricaricarla.</li>
+      <li>Aggiunta/rimozione: <code>POST/DELETE /api/users/{id}/assignments</code>, con aggiornamento ottimistico e rollback su errore.</li>
+      <li>La visibilità effettiva è calcolata dal server con <code>AccessScope(user)</code>: Manager → tutto; altri → unione clienti + engagement assegnati.</li>
+      <li>La stessa funzione alimenta il pannello “Visibilità” e il filtro reale di liste, dettagli e todo.</li>
+      <li>Accessibilità: lista come <code>listbox</code>, righe selezionabili da tastiera, focus che resta sulla riga scelta; annuncio del cambio pannello.</li>
+      <li>Manager: il pannello mostra “Accesso globale” e non permette assegnazioni (non servono).</li>
+    </ul>
+    <h3>Dati demo usati nelle varianti</h3>
+    <p class="small">Giorgio Marino (Manager) · Luca Ferri (PMO) · Sara Conti (Pentester) · Elena Fabbri (Pentester) · Paolo Galli (Auditor) · Marta Rinaldi (Cliente). Le assegnazioni sono modificabili nel mock e i contatori si aggiornano in tempo reale.</p>
+  </section>
+</main>
+
+<div class="toast" id="toast"></div>
+<script>
+const CLIENTS = [
+  {id:'contoso', name:'Contoso'}, {id:'fabrikam', name:'Fabrikam'},
+  {id:'novabank', name:'Nova Bank'}, {id:'orion', name:'Orion Energia'},
+  {id:'tailspin', name:'Tailspin Toys'}, {id:'northwind', name:'Northwind Traders'}
+];
+const ENGAGEMENTS = [
+  {id:'ENG-2026-001', client:'contoso', name:'External Penetration Test'},
+  {id:'ENG-2026-003', client:'contoso', name:'Web Application Retest'},
+  {id:'ENG-2026-008', client:'contoso', name:'Payment API Security Review'},
+  {id:'ENG-2026-015', client:'contoso', name:'Internal Vulnerability Assessment'},
+  {id:'ENG-2026-002', client:'fabrikam', name:'Cloud Security Review'},
+  {id:'ENG-2026-007', client:'fabrikam', name:'Cloud Configuration Review'},
+  {id:'ENG-2026-009', client:'fabrikam', name:'Mobile App Penetration Test'},
+  {id:'ENG-2026-004', client:'novabank', name:'Internal Red Team'},
+  {id:'ENG-2026-006', client:'novabank', name:'Web Application Penetration Test'},
+  {id:'ENG-2026-011', client:'novabank', name:'Third-Party Risk Assessment'},
+  {id:'ENG-2026-012', client:'fabrikam', name:'Supply Chain Security Review'},
+  {id:'ENG-2026-005', client:'orion', name:'Cloud Security Assessment'},
+  {id:'ENG-2026-010', client:'orion', name:'OT Network Segmentation Review'},
+  {id:'ENG-2026-013', client:'tailspin', name:'E-commerce Red Team'},
+  {id:'ENG-2026-014', client:'northwind', name:'SAP S/4HANA Security Assessment'}
+];
+const users = [
+  {id:'gm', name:'Giorgio Marino', email:'giorgio.marino@provider.example', role:'Manager', manager:true, clients:[], eng:[], status:'Attivo'},
+  {id:'lf', name:'Luca Ferri', email:'luca.ferri@provider.example', role:'PMO', clients:['contoso','fabrikam'], eng:[], status:'Attivo'},
+  {id:'sc', name:'Sara Conti', email:'sara.conti@provider.example', role:'Pentester', clients:['contoso','novabank'], eng:[], status:'Attivo'},
+  {id:'ef', name:'Elena Fabbri', email:'elena.fabbri@provider.example', role:'Pentester', clients:['fabrikam'], eng:['ENG-2026-009','ENG-2026-014'], status:'Attivo'},
+  {id:'pg', name:'Paolo Galli', email:'paolo.galli@provider.example', role:'Auditor', clients:['novabank'], eng:['ENG-2026-006'], status:'Attivo'},
+  {id:'mr', name:'Marta Rinaldi', email:'marta.rinaldi@contoso.example', role:'Cliente', clients:['contoso'], eng:['ENG-2026-001','ENG-2026-003','ENG-2026-015'], status:'Attivo'}
+];
+const state = { variant:'v1', selectedId:'sc', tab:'assign', query:'' };
+const toast = document.getElementById('toast'); let timer;
+function showToast(msg){toast.textContent=msg;toast.classList.add('show');clearTimeout(timer);timer=setTimeout(()=>toast.classList.remove('show'),2300);}
+const initials = name => String(name||'?').trim().split(/\s+/).filter(Boolean).map(x=>x[0]).join('').slice(0,2).toUpperCase();
+const clientName = id => (CLIENTS.find(c=>c.id===id)||{}).name || id;
+const engById = id => ENGAGEMENTS.find(e=>e.id===id);
+const selectedUser = () => users.find(u=>u.id===state.selectedId) || null;
+const roleClass = role => role==='Manager'?'mgr':role==='Cliente'?'ext':'int';
+function visibility(user){
+  if (!user) return {clients:[], engagements:[]};
+  if (user.manager) return {clients:CLIENTS.map(c=>c.id), engagements:ENGAGEMENTS.map(e=>e.id)};
+  const cset = new Set(user.clients);
+  const eset = new Set(user.eng);
+  ENGAGEMENTS.filter(e=>cset.has(e.client)).forEach(e=>eset.add(e.id));
+  return {clients:[...cset], engagements:[...eset]};
+}
+function filteredUsers(){
+  const q = state.query.trim().toLowerCase();
+  return users.filter(u => !q || [u.name,u.email,u.role,...u.clients.map(clientName)].join(' ').toLowerCase().includes(q));
+}
+function listHTML(){
+  const rows = filteredUsers();
+  if (!rows.length) return '<div class="hintbox">Nessun utente corrisponde alla ricerca.</div>';
+  return `<div class="ulist">${rows.map(u=>{
+    const v = visibility(u);
+    return `<button class="urow ${state.selectedId===u.id?'on':''}" data-user="${u.id}" ${state.selectedId===u.id?'aria-current="true"':''}>
+      <span class="avatar">${initials(u.name)}</span>
+      <span class="who"><span class="nm">${u.name}</span><span class="em">${u.email}</span></span>
+      <span class="end"><span class="badge ${roleClass(u.role)}">${u.role}</span><span class="cnt" title="clienti">${u.manager?'Tutti':v.clients.length}</span><span class="cnt" title="engagement">${v.engagements.length}</span></span>
+    </button>`;
+  }).join('')}</div>`;
+}
+function headHTML(){
+  return `<div class="pagehead">
+    <div class="t"><h3>Utenti e accessi</h3><p class="sub">Seleziona una persona per gestire visibilità e assegnazioni · ${users.length} utenti</p></div>
+    <div class="actions"><button class="btn sec sm" data-toast="Invita utente cliente (demo)">+ Utente cliente</button><button class="btn pri sm" data-toast="Nuovo utente interno (demo)">+ Utente interno</button></div>
+  </div>`;
+}
+function searchHTML(){
+  return `<div class="searchbox"><input data-search placeholder="Cerca nome, email, ruolo o cliente…" value="${state.query}" aria-label="Cerca utenti"><span class="tiny">${filteredUsers().length}</span></div>`;
+}
+function assignmentBlocks(user){
+  if (user.manager) return `<div class="managerbox"><b>Accesso globale</b><span>Il Manager vede tutti i clienti e tutti gli engagement. Non servono assegnazioni: il ruolo è la sua visibilità.</span></div>`;
+  const v = visibility(user);
+  const availableClients = CLIENTS.filter(c=>!user.clients.includes(c.id));
+  const coveredClients = new Set(user.clients);
+  const availableEngs = ENGAGEMENTS.filter(e=>!coveredClients.has(e.client) && !user.eng.includes(e.id));
+  return `<div class="block"><h4>Clienti assegnati <span>${v.clients.length}</span></h4>
+    <div class="chips">${user.clients.length ? user.clients.map(id=>`<span class="chip on">${clientName(id)}<button class="x" data-remove-client="${id}" title="Rimuovi ${clientName(id)}">×</button></span>`).join('') : '<span class="tiny">Nessun cliente assegnato.</span>'}</div>
+    <p class="tiny" style="margin-top:6px">Cliente assegnato = tutti i suoi engagement.</p>
+    ${availableClients.length ? `<div class="addline"><select data-client-select>${availableClients.map(c=>`<option value="${c.id}">${c.name}</option>`).join('')}</select><button class="btn sec sm" data-add-client>Aggiungi cliente</button></div>` : ''}
+  </div>
+  <div class="block"><h4>Engagement specifici <span>${user.eng.length}</span></h4>
+    <div class="chips">${user.eng.length ? user.eng.map(id=>`<span class="chip">${id} · ${engById(id)?.name || ''}<button class="x" data-remove-eng="${id}" title="Rimuovi ${id}">×</button></span>`).join('') : '<span class="tiny">Nessun engagement specifico.</span>'}</div>
+    ${availableEngs.length ? `<div class="addline"><select data-eng-select>${availableEngs.map(e=>`<option value="${e.id}">${e.id} · ${e.name}</option>`).join('')}</select><button class="btn sec sm" data-add-eng>Aggiungi engagement</button></div>` : '<p class="tiny" style="margin-top:6px">Tutti gli engagement utili sono già coperti dai clienti o assegnati.</p>'}
+  </div>`;
+}
+function visibilityBlock(user){
+  const v = visibility(user);
+  return `<div class="visibility"><b>Visibilità effettiva:</b> ${v.clients.length} clienti, ${v.engagements.length} engagement.<br>
+    Ruolo ${user.role}: ${user.manager?'tutti i clienti e gli engagement':user.role==='Pentester'?'scope, credenziali e report degli engagement assegnati; niente costi':user.role==='PMO'?'dati e operazioni sui clienti/engagement assegnati; costi sì':'sola lettura sugli engagement assegnati'}.</div>`;
+}
+function permsHTML(user){
+  const base = user.manager ? ['Tutti i clienti','Tutti gli engagement','Costi e margine','Amministra utenti'] :
+    user.role==='PMO' ? ['Clienti assegnati','Engagement assegnati','Costi e margine','Utenti: no'] :
+    user.role==='Pentester' ? ['Solo riferimento cliente','Engagement assegnati','Costi: no','Utenti: no'] :
+    user.role==='Auditor' ? ['Clienti assegnati','Engagement assegnati','Sola lettura','Utenti: no'] :
+    ['Proprio cliente','Engagement assegnati','Costi: no','Solo utenti cliente'];
+  return `<div class="block"><h4>Permessi</h4><div class="perms">${base.map(x=>`<div><b>${x}</b></div>`).join('')}</div></div>`;
+}
+function detailHTML(user, mode){
+  if (!user) return '<div class="hintbox">Seleziona un utente a sinistra per vedere il dettaglio.</div>';
+  const v = visibility(user);
+  const head = `<div class="dhead"><span class="avatar">${initials(user.name)}</span><span class="t"><b>${user.name}</b><span>${user.email} · ${user.role}</span></span><span class="badge ${roleClass(user.role)}">${user.role}</span><span class="badge ok">${user.status}</span></div>`;
+  const save = user.manager ? '' : `<div class="savebar"><span class="t">Modifiche salvate subito nel mock · in produzione PATCH con conferma.</span><button class="btn sec sm" data-toast="Modifiche annullate (demo)">Annulla</button><button class="btn pri sm" data-toast="Assegnazioni salvate (demo)">Salva</button></div>`;
+  if (mode === 'tabs'){
+    return `${head}<div class="tabs2"><button class="${state.tab==='profile'?'on':''}" data-detail-tab="profile">Profilo</button><button class="${state.tab==='assign'?'on':''}" data-detail-tab="assign">Assegnazioni</button><button class="${state.tab==='vis'?'on':''}" data-detail-tab="vis">Visibilità</button></div>
+      ${state.tab==='profile' ? `<div class="block"><h4>Profilo</h4><div class="perms"><div><span>Ruolo</span><b>${user.role}</b></div><div><span>Stato</span><b>${user.status}</b></div><div><span>Clienti</span><b>${user.manager?'Tutti':v.clients.length}</b></div><div><span>Engagement</span><b>${v.engagements.length}</b></div></div></div>${permsHTML(user)}` : ''}
+      ${state.tab==='assign' ? assignmentBlocks(user) : ''}
+      ${state.tab==='vis' ? visibilityBlock(user) + permsHTML(user) : ''}
+      ${save}`;
+  }
+  return `${head}${assignmentBlocks(user)}${visibilityBlock(user)}${permsHTML(user)}${save}`;
+}
+function previewHTML(user){
+  if (!user) return '<div class="hintbox">Seleziona un utente.</div>';
+  const v = visibility(user);
+  const sources = new Map();
+  v.engagements.forEach(id=>{
+    const e = engById(id); if (!e) return;
+    sources.set(id, user.clients.includes(e.client) ? 'Cliente' : 'Engagement');
+  });
+  return `<div class="card2 preview"><div class="sec-head"><h3>Visibilità live</h3><span class="badge ok">Aggiornata</span></div>
+    <div class="kpi"><div><b>${v.clients.length}</b><span>clienti</span></div><div><b>${v.engagements.length}</b><span>engagement</span></div></div>
+    <h4 style="font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin:8px 0 4px">Clienti</h4>
+    ${v.clients.map(c=>`<div class="listline"><b>${clientName(c)}</b><span class="source">${user.manager?'Globale':'Assegnato'}</span></div>`).join('') || '<div class="tiny">Nessun cliente.</div>'}
+    <h4 style="font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin:10px 0 4px">Engagement</h4>
+    ${v.engagements.map(id=>`<div class="listline"><b>${id}</b><span class="source">${user.manager?'Globale':sources.get(id)}</span></div>`).join('') || '<div class="tiny">Nessun engagement.</div>'}
+    <p class="tiny" style="margin-top:8px">Il pannello si aggiorna a ogni aggiunta/rimozione. In produzione questi conteggi vengono dal server (<code>AccessScope</code>).</p>
+  </div>`;
+}
+function shell1(){
+  const u = selectedUser();
+  return `${headHTML()}<div class="split1"><div class="card2"><div class="sec-head"><h3>Utenti</h3><span class="tiny">${filteredUsers().length} visibili</span></div>${searchHTML()}${listHTML()}</div><div class="card2 detail-sticky"><div class="detail">${detailHTML(u)}</div></div></div>`;
+}
+function shell2(){
+  const u = selectedUser();
+  return `${headHTML()}<div class="split2"><div class="card2"><div class="sec-head"><h3>Utenti</h3></div>${searchHTML()}${listHTML()}</div><div class="card2"><div class="detail">${detailHTML(u)}</div></div>${previewHTML(u)}</div>`;
+}
+function shell3(){
+  const u = selectedUser();
+  return `${headHTML()}<div class="split3"><div class="card2"><div class="sec-head"><h3>Utenti</h3></div>${searchHTML()}${listHTML()}</div><div class="card2 detail-sticky"><div class="detail">${detailHTML(u,'tabs')}</div></div></div>`;
+}
+function shell4(){
+  const u = selectedUser();
+  return `${headHTML()}<div class="m4"><div class="card2 listfull"><div class="sec-head"><h3>Utenti</h3><span class="tiny">Clicca una riga per aprire il drawer</span></div>${searchHTML()}${listHTML()}</div>
+    ${u ? `<div class="backdrop" data-close></div><aside class="drawer4"><button class="close" data-close aria-label="Chiudi">×</button><div class="detail">${detailHTML(u)}</div></aside>` : `<div class="drawer-empty">Seleziona un utente per aprire il pannello laterale.</div>`}
+  </div>`;
+}
+function render(){
+  document.getElementById('mount-v1').innerHTML = shell1();
+  document.getElementById('mount-v2').innerHTML = shell2();
+  document.getElementById('mount-v3').innerHTML = shell3();
+  document.getElementById('mount-v4').innerHTML = shell4();
+}
+/* events */
+document.querySelectorAll('.switcher button').forEach(b=>b.addEventListener('click',()=>{
+  const key=b.dataset.variant;
+  document.querySelectorAll('.switcher button').forEach(x=>{const on=x===b;x.classList.toggle('on',on);x.setAttribute('aria-selected',String(on));});
+  document.querySelectorAll('.proposal').forEach(p=>p.classList.toggle('active',p.id==='p-'+key));
+  window.scrollTo({top:0});
+}));
+document.addEventListener('input', e=>{
+  if (!e.target.matches('[data-search]')) return;
+  state.query = e.target.value;
+  const active = document.querySelector('.proposal.active');
+  render();
+  const input = active?.querySelector('[data-search]');
+  if (input) {
+    input.focus();
+    const end = input.value.length;
+    try { input.setSelectionRange(end, end); } catch {}
+  }
+});
+document.addEventListener('click', e=>{
+  const u = e.target.closest('[data-user]');
+  if (u) { state.selectedId = u.dataset.user; render(); return; }
+  const addC = e.target.closest('[data-add-client]');
+  if (addC) {
+    const user = selectedUser(); const sel = addC.closest('.addline')?.querySelector('[data-client-select]');
+    if (user && sel?.value) {
+      user.clients.push(sel.value);
+      user.eng = user.eng.filter(id=>engById(id)?.client !== sel.value);
+      showToast('Cliente assegnato: ' + clientName(sel.value)); render();
+    }
+    return;
+  }
+  const remC = e.target.closest('[data-remove-client]');
+  if (remC) {
+    const user = selectedUser(); const id = remC.dataset.removeClient;
+    user.clients = user.clients.filter(c=>c!==id);
+    showToast('Cliente rimosso: ' + clientName(id)); render(); return;
+  }
+  const addE = e.target.closest('[data-add-eng]');
+  if (addE) {
+    const user = selectedUser(); const sel = addE.closest('.addline')?.querySelector('[data-eng-select]');
+    if (user && sel?.value) { user.eng.push(sel.value); showToast('Engagement assegnato: '+sel.value); render(); }
+    return;
+  }
+  const remE = e.target.closest('[data-remove-eng]');
+  if (remE) {
+    const user = selectedUser(); const id = remE.dataset.removeEng;
+    user.eng = user.eng.filter(x=>x!==id); showToast('Engagement rimosso: '+id); render(); return;
+  }
+  const tab = e.target.closest('[data-detail-tab]');
+  if (tab) { state.tab = tab.dataset.detailTab; render(); return; }
+  if (e.target.closest('[data-close]')) { state.selectedId = null; render(); return; }
+  const t = e.target.closest('[data-toast]');
+  if (t) { e.preventDefault(); showToast(t.dataset.toast); }
+});
+render();
+</script>
+</body>
+</html>

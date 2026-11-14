@@ -386,3 +386,5 @@ Aprire `http://localhost:5xxx` (la porta è indicata nel log di avvio).
   per aggiungere persone interne (pentester) all'engagement, con modello dati e API
 - `EngagementPortal.Web/wwwroot/engagement-users-proposals.html` — 4 proposte per
   la sezione Utenti e la visibilità per assegnazione (Manager vede tutto)
+- `EngagementPortal.Web/wwwroot/engagement-users-detail-variants.html` — 4 varianti
+  interattive del dettaglio utente (lista a sinistra, pannello dinamico a destra)
