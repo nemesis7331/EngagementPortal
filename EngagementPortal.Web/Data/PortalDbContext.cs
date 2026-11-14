@@ -15,6 +15,8 @@ public sealed class PortalDbContext(DbContextOptions<PortalDbContext> options)
 
     public DbSet<ClientRecord> Clients => Set<ClientRecord>();
 
+    public DbSet<SettingRecord> Settings => Set<SettingRecord>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<EngagementRecord>(entity =>
@@ -41,6 +43,15 @@ public sealed class PortalDbContext(DbContextOptions<PortalDbContext> options)
             entity.Property(record => record.Payload).IsRequired();
             entity.Property(record => record.UpdatedAt);
         });
+
+        modelBuilder.Entity<SettingRecord>(entity =>
+        {
+            entity.ToTable("Settings");
+            entity.HasKey(record => record.SettingKey);
+            entity.Property(record => record.SettingKey).HasMaxLength(64);
+            entity.Property(record => record.Payload).IsRequired();
+            entity.Property(record => record.UpdatedAt);
+        });
     }
 }
 
@@ -56,6 +67,13 @@ public sealed class ClientRecord
 {
     public required string Id { get; set; }
     public required string Name { get; set; }
+    public required string Payload { get; set; }
+    public DateTimeOffset UpdatedAt { get; set; } = DateTimeOffset.UtcNow;
+}
+
+public sealed class SettingRecord
+{
+    public required string SettingKey { get; set; }
     public required string Payload { get; set; }
     public DateTimeOffset UpdatedAt { get; set; } = DateTimeOffset.UtcNow;
 }

@@ -96,11 +96,61 @@ public sealed record DistributionEntry(
     string Email,
     string Organization);
 
+public sealed record TeamMember(
+    string Id,
+    string Name,
+    string Email,
+    string Organization,
+    string? Role,
+    string InvitedBy,
+    DateTimeOffset InvitedDate);
+
 public sealed class MailSettings
 {
     public bool Start { get; set; } = true;
     public bool End { get; set; } = true;
     public bool Deliver { get; set; } = true;
+}
+
+public sealed class MailTemplate
+{
+    public string Subject { get; set; } = string.Empty;
+    public string Body { get; set; } = string.Empty;
+
+    public bool IsBlank =>
+        string.IsNullOrWhiteSpace(Subject) &&
+        string.IsNullOrWhiteSpace(Body);
+}
+
+public sealed class MailTemplateSet
+{
+    public MailTemplate? Start { get; set; }
+    public MailTemplate? End { get; set; }
+    public MailTemplate? Deliver { get; set; }
+
+    public MailTemplate? For(string type) => type switch
+    {
+        "start" => Start,
+        "end" => End,
+        "deliver" => Deliver,
+        _ => null
+    };
+
+    public void Set(string type, MailTemplate? template)
+    {
+        switch (type)
+        {
+            case "start":
+                Start = template;
+                break;
+            case "end":
+                End = template;
+                break;
+            case "deliver":
+                Deliver = template;
+                break;
+        }
+    }
 }
 
 public sealed record MailLogEntry(
@@ -109,7 +159,10 @@ public sealed record MailLogEntry(
     DateTimeOffset Date,
     string Recipients,
     bool Auto,
-    string Visibility);
+    string Visibility,
+    string? Subject = null,
+    string? Body = null,
+    string? TemplateSource = null);
 
 
 public sealed class Engagement
@@ -133,11 +186,22 @@ public sealed class Engagement
     public string? ManlevaFile { get; set; }
     public string? DocumentoIngaggioFile { get; set; }
     public string? OrderRef { get; set; }
-    public string? BusinessCaseFile { get; set; }
+    public decimal? Cost { get; set; }
+    public decimal? Margin { get; set; }
+    public bool FinancialsApproved { get; set; }
+    public string? FinancialsSetByRole { get; set; }
+    public string? FinancialsSetBy { get; set; }
+    public string? FinancialsApprovedBy { get; set; }
+    public DateTimeOffset? FinancialsApprovedDate { get; set; }
+    public bool FinancialsDone => Cost is not null && Margin is not null;
+    public bool FinancialsPending => FinancialsDone && !FinancialsApproved;
     public ScopeData Scope { get; set; } = new();
     public CredentialData Credentials { get; set; } = new();
     public List<DistributionEntry> DistributionList { get; init; } = [];
+    public List<DistributionEntry> DeliverablesDistributionList { get; init; } = [];
+    public List<TeamMember> Team { get; init; } = [];
     public MailSettings Mail { get; set; } = new();
+    public MailTemplateSet MailTemplates { get; set; } = new();
     public List<MailLogEntry> MailLog { get; init; } = [];
 
     public List<Proposal> Proposals { get; init; } = [];
@@ -246,6 +310,19 @@ public sealed record DistributionEntryRequest(
     string Email,
     string Organization);
 
+public sealed record TeamMemberRequest(
+    string? Scope,
+    string Name,
+    string Email,
+    string Organization,
+    string? Role);
+
+public sealed record MailTemplateUpdateRequest(
+    string Scope,
+    string? Subject,
+    string? Body,
+    bool Reset = false);
+
 public sealed class ClientAccount
 {
     public required string Id { get; init; }
@@ -253,6 +330,10 @@ public sealed class ClientAccount
     public string? Website { get; set; }
     public DateTimeOffset CreatedDate { get; init; } = DateTimeOffset.UtcNow;
     public List<ClientUser> Users { get; init; } = [];
+    public List<DistributionEntry> DistributionList { get; init; } = [];
+    public List<DistributionEntry> DeliverablesDistributionList { get; init; } = [];
+    public List<TeamMember> Team { get; init; } = [];
+    public MailTemplateSet MailTemplates { get; set; } = new();
 }
 
 public sealed record ClientUser(string Id, string Name, string Email);
@@ -260,6 +341,8 @@ public sealed record ClientUser(string Id, string Name, string Email);
 public sealed record CreateClientRequest(string Name, string? Website);
 
 public sealed record RenameClientRequest(string Name, string? Website);
+
+public sealed record FinancialsRequest(decimal? Cost, decimal? Margin);
 
 public sealed record AddClientUserRequest(string Name, string Email);
 

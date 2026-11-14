@@ -50,7 +50,7 @@ public sealed class EngagementWorkflow(IDateProvider clock)
     {
         var today = currentDate ?? clock.Today;
 
-        if (!engagement.HasManleva || !engagement.OrderConfirmed)
+        if (!DocsComplete(engagement))
             return EngagementPhase.Docs;
 
         var proposal = engagement.AcceptedProposal;
@@ -95,18 +95,40 @@ public sealed class EngagementWorkflow(IDateProvider clock)
     };
 
     public static bool CanSeeCredentials(string role) =>
-        role is Roles.Client or Roles.PMO or Roles.Pentester;
+        role is Roles.Client or Roles.PMO or Roles.Pentester or Roles.Manager;
+
+    /// <summary>
+    /// Il primo passo è completo con manleva, ordine e costi/margine.
+    /// </summary>
+    public static bool DocsComplete(Engagement engagement) =>
+        engagement.HasManleva &&
+        engagement.OrderConfirmed &&
+        engagement.FinancialsDone &&
+        engagement.FinancialsApproved;
+
+    public static bool CanEditFinancials(
+        Engagement engagement,
+        string role,
+        EngagementPhase phase) =>
+        phase == EngagementPhase.Docs &&
+        role is Roles.PMO or Roles.Manager;
+
+    public static bool CanApproveFinancials(
+        Engagement engagement,
+        string role,
+        EngagementPhase phase) =>
+        phase == EngagementPhase.Docs &&
+        role == Roles.Manager &&
+        engagement.FinancialsDone &&
+        !engagement.FinancialsApproved;
 
     public static bool CanEditPreparation(
         Engagement engagement,
         string role,
         EngagementPhase phase)
     {
-        // Scope e credenziali si sbloccano appena i documenti sono completi:
-        // restano modificabili in tutte le fasi successive, anche prima che
-        // il loro passo sia quello corrente (es. credenziali durante la
-        // pianificazione).
-        if (!engagement.HasManleva || !engagement.OrderConfirmed)
+        // Lo scope si sblocca appena il primo passo è completo.
+        if (!DocsComplete(engagement))
             return false;
 
         return role switch
@@ -123,7 +145,65 @@ public sealed class EngagementWorkflow(IDateProvider clock)
             _ => false
         };
     }
+
+    /// <summary>
+    /// Le credenziali seguono lo scope per Cliente e PMO; in più il Manager
+    /// può vederle e modificarle nelle fasi operative, senza poter toccare
+    /// scope o pianificazione.
+    /// </summary>
+    public static bool CanEditCredentials(
+        Engagement engagement,
+        string role,
+        EngagementPhase phase)
+    {
+        if (!DocsComplete(engagement))
+            return false;
+
+        return role switch
+        {
+            Roles.Client => phase is EngagementPhase.Scope or
+                EngagementPhase.Planning or
+                EngagementPhase.Credentials or
+                EngagementPhase.Scheduled,
+            Roles.PMO => phase is EngagementPhase.Scope or
+                EngagementPhase.Planning or
+                EngagementPhase.Credentials or
+                EngagementPhase.Scheduled or
+                EngagementPhase.Running,
+            Roles.Manager => phase is not EngagementPhase.Done,
+            _ => false
+        };
+    }
+
+    /// <summary>
+    /// Giorni minimi tra la richiesta di engagement e la proposta di
+    /// pianificazione. È un avviso, non un blocco: cliente e PMO possono
+    /// comunque inviare la proposta.
+    /// </summary>
+    public const int PlanningNoticeDays = 14;
+
+    public static ProposalNotice? PlanningNotice(
+        Engagement engagement,
+        DateOnly today)
+    {
+        var requestDate = DateOnly.FromDateTime(
+            engagement.CreatedDate.UtcDateTime);
+        var availableFrom = requestDate.AddDays(PlanningNoticeDays);
+
+        if (today >= availableFrom)
+            return null;
+
+        return new ProposalNotice(
+            requestDate,
+            availableFrom,
+            availableFrom.DayNumber - today.DayNumber);
+    }
 }
+
+public sealed record ProposalNotice(
+    DateOnly RequestDate,
+    DateOnly AvailableFrom,
+    int DaysRemaining);
 
 public sealed record PreparationAlert(
     string Level,
@@ -149,6 +229,15 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
         // ma solo il Manager le approva o le rifiuta.
         if (role == Roles.Manager)
         {
+            if (phase == EngagementPhase.Docs)
+            {
+                if (!engagement.FinancialsDone)
+                    return new TodoItem("Inserisci costi e margine", "docs");
+
+                if (!engagement.FinancialsApproved)
+                    return new TodoItem("Approva costi e margine", "docs");
+            }
+
             if (phase == EngagementPhase.Reporting &&
                 engagement.ReviewStatus == ReviewStatus.Pending)
             {
@@ -180,6 +269,10 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
             if (!engagement.OrderConfirmed &&
                 role is Roles.PMO)
                 return new TodoItem("Registra ordine", "docs");
+
+            if (!engagement.FinancialsDone &&
+                role is Roles.PMO)
+                return new TodoItem("Inserisci costi e margine", "docs");
 
             return null;
         }
@@ -264,21 +357,25 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
 
         var tabs = new Dictionary<string, TabState>(StringComparer.Ordinal);
 
-        tabs["docs"] = (engagement.HasManleva, engagement.OrderConfirmed) switch
-        {
-            (true, true) => new TabState("ok", null),
-            _ when todo?.TargetTab == "docs" =>
-                new TabState("todo", todo.Action),
-            _ => new TabState("wait", !engagement.HasManleva
-                ? "In attesa della firma del cliente"
-                : "In attesa che il PMO registri l'ordine")
-        };
+        tabs["docs"] = EngagementWorkflow.DocsComplete(engagement)
+            ? new TabState("ok", null)
+            : todo?.TargetTab == "docs"
+                ? new TabState("todo", todo.Action)
+                : new TabState("wait", !engagement.HasManleva
+                    ? "In attesa della firma del cliente"
+                    : !engagement.OrderConfirmed
+                        ? "In attesa che il PMO registri l'ordine"
+                        : !engagement.FinancialsDone
+                            ? "In attesa di costi e margine da PMO o Manager"
+                            : !engagement.FinancialsApproved
+                                ? "In attesa dell'approvazione del Manager"
+                                : "In attesa del completamento della prima fase");
 
         var pendingProposal = engagement.Proposals
             .FirstOrDefault(p => p.Status == ProposalStatus.Pending);
 
-        tabs["plan"] = !engagement.HasManleva || !engagement.OrderConfirmed
-            ? new TabState("lock", "Si sblocca dopo firma e ordine")
+        tabs["plan"] = !EngagementWorkflow.DocsComplete(engagement)
+            ? new TabState("lock", "Si sblocca dopo firma, ordine, costi e approvazione")
             : todo?.TargetTab == "plan"
                 ? new TabState("todo", todo.Action)
                 : pendingProposal is not null
@@ -289,12 +386,14 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
                         ? new TabState("ok", null)
                         : new TabState("wait", "In attesa di una proposta di date");
 
-        var docsReady = engagement.HasManleva && engagement.OrderConfirmed;
+        var docsReady = EngagementWorkflow.DocsComplete(engagement);
         var canEditPreparation = EngagementWorkflow.CanEditPreparation(
+            engagement, role, phase);
+        var canEditCredentials = EngagementWorkflow.CanEditCredentials(
             engagement, role, phase);
 
         tabs["scope"] = !docsReady
-            ? new TabState("lock", "Si sblocca dopo firma e ordine")
+            ? new TabState("lock", "Si sblocca dopo firma, ordine, costi e approvazione")
             : engagement.ScopeDone
                 ? new TabState("ok", null)
                 : todo?.TargetTab == "scope"
@@ -306,14 +405,14 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
                         : new TabState("wait", "In attesa dello scope dal cliente");
 
         tabs["cred"] = !docsReady
-            ? new TabState("lock", "Si sblocca dopo firma e ordine")
+            ? new TabState("lock", "Si sblocca dopo firma, ordine, costi e approvazione")
             : !EngagementWorkflow.CanSeeCredentials(role)
                 ? new TabState("lock", "Non visibile al tuo profilo")
                 : engagement.CredentialsDone
                     ? new TabState("ok", null)
                     : todo?.TargetTab == "cred"
                         ? new TabState("todo", todo.Action)
-                        : canEditPreparation
+                        : canEditCredentials
                             ? new TabState(
                                 "todo",
                                 "Compilabile anche durante la pianificazione")
@@ -377,17 +476,38 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
         switch (phase)
         {
             case EngagementPhase.Docs:
-                return !engagement.HasManleva
-                    ? Wait(
+                if (!engagement.HasManleva)
+                {
+                    return Wait(
                         Roles.Client,
                         OwnerLabel(Roles.Client),
                         "In attesa della firma della manleva dal cliente",
-                        SinceDocs(engagement))
-                    : Wait(
+                        SinceDocs(engagement));
+                }
+
+                if (!engagement.OrderConfirmed)
+                {
+                    return Wait(
                         Roles.PMO,
                         OwnerLabel(Roles.PMO),
                         "In attesa che il PMO registri l'ordine",
                         SinceDocs(engagement));
+                }
+
+                if (!engagement.FinancialsDone)
+                {
+                    return Wait(
+                        "PMO/Manager",
+                        "PMO o Manager",
+                        "In attesa di costi e margine",
+                        SinceDocs(engagement));
+                }
+
+                return Wait(
+                    Roles.Manager,
+                    OwnerLabel(Roles.Manager),
+                    "In attesa dell'approvazione di costi e margine",
+                    SinceDocs(engagement));
 
             case EngagementPhase.Planning:
             {

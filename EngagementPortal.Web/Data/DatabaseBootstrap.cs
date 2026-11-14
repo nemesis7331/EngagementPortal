@@ -16,6 +16,10 @@ public static class DatabaseBootstrap
     {
         db.Database.EnsureCreated();
 
+        // Le installazioni esistenti non ricevono le nuove tabelle da
+        // EnsureCreated: la tabella delle impostazioni viene creata qui.
+        EnsureSettingsTable(db, logger);
+
         if (!db.Clients.Any())
         {
             var clients = InMemoryClientRepository.CreateSeed();
@@ -68,6 +72,41 @@ public static class DatabaseBootstrap
                 logger.LogInformation(
                     "Seed engagement già presente, nessuna modifica.");
             }
+        }
+    }
+
+    private static void EnsureSettingsTable(
+        PortalDbContext db,
+        ILogger logger)
+    {
+        try
+        {
+            var provider = db.Database.ProviderName ?? string.Empty;
+
+            if (provider.Contains("Sqlite", StringComparison.OrdinalIgnoreCase))
+            {
+                db.Database.ExecuteSqlRaw(
+                    "CREATE TABLE IF NOT EXISTS Settings (" +
+                    "SettingKey TEXT NOT NULL PRIMARY KEY, " +
+                    "Payload TEXT NOT NULL, " +
+                    "UpdatedAt TEXT NOT NULL);");
+            }
+            else
+            {
+                db.Database.ExecuteSqlRaw(
+                    "IF OBJECT_ID(N'Settings', N'U') IS NULL " +
+                    "CREATE TABLE Settings (" +
+                    "SettingKey nvarchar(64) NOT NULL PRIMARY KEY, " +
+                    "Payload nvarchar(max) NOT NULL, " +
+                    "UpdatedAt datetimeoffset NOT NULL);");
+            }
+        }
+        catch (Exception exception)
+        {
+            logger.LogWarning(
+                exception,
+                "Impossibile verificare la tabella Settings: i template " +
+                "standard resteranno in memoria.");
         }
     }
 }

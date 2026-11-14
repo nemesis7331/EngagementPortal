@@ -1,0 +1,5 @@
+Documento di ingaggio
+Engagement: ENG-2026-014 - SAP S/4HANA Security Assessment
+Cliente: Northwind Traders
+
+Il presente documento definisce referenti, perimetro e finestre operative dell'ingaggio.

@@ -1,0 +1,5 @@
+Documento di ingaggio
+Engagement: ENG-2026-005 - Cloud Security Assessment
+Cliente: Orion Energia
+
+Il presente documento definisce referenti, perimetro e finestre operative dell'ingaggio.

@@ -73,6 +73,14 @@ public sealed class SqlClientRepository(
         return account;
     }
 
+    public void Save(ClientAccount account)
+    {
+        var record = FindRecord(account.Id);
+
+        if (record is not null)
+            Save(record, account);
+    }
+
     public ClientUser? AddUser(
         string clientId,
         string name,

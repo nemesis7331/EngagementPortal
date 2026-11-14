@@ -1,0 +1,5 @@
+Scheda tecnica con manleva firmata
+Engagement: ENG-2026-013 - E-commerce Red Team
+Cliente: Tailspin Toys
+
+Documento dimostrativo: red team sull'e-commerce.

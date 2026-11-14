@@ -1,0 +1,5 @@
+Scheda tecnica con manleva firmata
+Engagement: ENG-2026-006 - Web Application Penetration Test
+Cliente: Nova Bank
+
+Documento dimostrativo: test completato e credenziali revocate.

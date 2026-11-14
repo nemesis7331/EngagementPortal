@@ -1,0 +1,5 @@
+Scheda tecnica con manleva firmata
+Engagement: ENG-2026-012 - Supply Chain Security Review
+Cliente: Fabrikam
+
+Documento dimostrativo: revisione della sicurezza della supply chain.

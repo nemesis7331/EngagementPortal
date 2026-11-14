@@ -1,0 +1,5 @@
+Scheda tecnica con manleva firmata
+Engagement: ENG-2026-010 - OT Network Segmentation Review
+Cliente: Orion Energia
+
+Documento dimostrativo: verifica della segmentazione della rete OT.

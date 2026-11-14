@@ -33,6 +33,9 @@ public class WorkflowTests
         Owner = "Provider Pentester",
         HasManleva = true,
         OrderConfirmed = true,
+        Cost = 12000m,
+        Margin = 4800m,
+        FinancialsApproved = true,
         ScopeDone = true,
         CredentialsDone = true
     };
@@ -71,6 +74,56 @@ public class WorkflowTests
         AddAcceptedProposal(engagement, Today, Today.AddDays(2));
 
         Assert.Equal(EngagementPhase.Docs, Workflow().Resolve(engagement));
+    }
+
+    [Fact]
+    public void MissingFinancials_ReturnsDocs()
+    {
+        var engagement = NewEngagement();
+        engagement.Cost = null;
+        engagement.Margin = null;
+        AddAcceptedProposal(engagement, Today, Today.AddDays(2));
+
+        Assert.Equal(EngagementPhase.Docs, Workflow().Resolve(engagement));
+    }
+
+    [Fact]
+    public void PendingFinancialApproval_ReturnsDocs()
+    {
+        var engagement = NewEngagement();
+        engagement.FinancialsApproved = false;
+        AddAcceptedProposal(engagement, Today, Today.AddDays(2));
+
+        Assert.Equal(EngagementPhase.Docs, Workflow().Resolve(engagement));
+    }
+
+    [Fact]
+    public void FinancialApproval_IsManagerOnly()
+    {
+        var engagement = NewEngagement();
+        engagement.FinancialsApproved = false;
+
+        Assert.True(EngagementWorkflow.CanApproveFinancials(
+            engagement, Roles.Manager, EngagementPhase.Docs));
+        Assert.False(EngagementWorkflow.CanApproveFinancials(
+            engagement, Roles.PMO, EngagementPhase.Docs));
+        Assert.False(EngagementWorkflow.CanApproveFinancials(
+            engagement, Roles.Manager, EngagementPhase.Scope));
+    }
+
+    [Fact]
+    public void Financials_EditableOnlyInFirstPhaseByPmoOrManager()
+    {
+        var engagement = NewEngagement();
+
+        Assert.True(EngagementWorkflow.CanEditFinancials(
+            engagement, Roles.PMO, EngagementPhase.Docs));
+        Assert.True(EngagementWorkflow.CanEditFinancials(
+            engagement, Roles.Manager, EngagementPhase.Docs));
+        Assert.False(EngagementWorkflow.CanEditFinancials(
+            engagement, Roles.Pentester, EngagementPhase.Docs));
+        Assert.False(EngagementWorkflow.CanEditFinancials(
+            engagement, Roles.PMO, EngagementPhase.Scope));
     }
 
     [Fact]
@@ -298,6 +351,47 @@ public class WorkflowTests
     }
 
     [Fact]
+    public void Todo_PmoAndManager_InsertFinancialsInFirstPhase()
+    {
+        var engagement = NewEngagement();
+        engagement.Cost = null;
+        engagement.Margin = null;
+
+        var pmo = new TodoResolver(Workflow())
+            .Resolve(engagement, Roles.PMO);
+        var manager = new TodoResolver(Workflow())
+            .Resolve(engagement, Roles.Manager);
+        var client = new TodoResolver(Workflow())
+            .Resolve(engagement, Roles.Client);
+
+        Assert.NotNull(pmo);
+        Assert.Equal("Inserisci costi e margine", pmo.Action);
+        Assert.Equal("docs", pmo.TargetTab);
+
+        Assert.NotNull(manager);
+        Assert.Equal("Inserisci costi e margine", manager.Action);
+
+        Assert.Null(client);
+    }
+
+    [Fact]
+    public void Todo_Manager_ApprovesFinancials()
+    {
+        var engagement = NewEngagement();
+        engagement.FinancialsApproved = false;
+
+        var manager = new TodoResolver(Workflow())
+            .Resolve(engagement, Roles.Manager);
+        var pmo = new TodoResolver(Workflow())
+            .Resolve(engagement, Roles.PMO);
+
+        Assert.NotNull(manager);
+        Assert.Equal("Approva costi e margine", manager.Action);
+        Assert.Equal("docs", manager.TargetTab);
+        Assert.Null(pmo);
+    }
+
+    [Fact]
     public void NoScope_ReturnsScope_EvenWithoutProposal()
     {
         var engagement = NewEngagement();
@@ -318,6 +412,35 @@ public class WorkflowTests
         Assert.Equal(
             EngagementPhase.Credentials,
             Workflow().Resolve(engagement));
+    }
+
+    [Fact]
+    public void PlanningNotice_WarnsBeforeTwoWeeksFromRequest()
+    {
+        var engagement = new Engagement
+        {
+            Id = "ENG-NOTICE",
+            ClientId = "client",
+            ClientName = "Contoso",
+            Name = "Avviso pianificazione",
+            Type = EngagementType.PenetrationTest,
+            Owner = "Sara Conti",
+            CreatedDate = new DateTimeOffset(
+                2026, 6, 1, 9, 0, 0, TimeSpan.Zero)
+        };
+
+        var notice = EngagementWorkflow.PlanningNotice(
+            engagement,
+            new DateOnly(2026, 6, 5));
+
+        Assert.NotNull(notice);
+        Assert.Equal(new DateOnly(2026, 6, 1), notice.RequestDate);
+        Assert.Equal(new DateOnly(2026, 6, 15), notice.AvailableFrom);
+        Assert.Equal(10, notice.DaysRemaining);
+
+        Assert.Null(EngagementWorkflow.PlanningNotice(
+            engagement,
+            new DateOnly(2026, 6, 15)));
     }
 
     [Fact]

@@ -1,0 +1,5 @@
+Documento di ingaggio
+Engagement: ENG-2026-004 - Internal Red Team
+Cliente: Nova Bank
+
+Il presente documento definisce referenti, perimetro e finestre operative dell'ingaggio.

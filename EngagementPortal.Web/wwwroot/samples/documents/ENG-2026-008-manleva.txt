@@ -1,0 +1,5 @@
+Scheda tecnica con manleva firmata
+Engagement: ENG-2026-008 - Payment API Security Review
+Cliente: Contoso
+
+Documento dimostrativo: revisione dei servizi di pagamento.

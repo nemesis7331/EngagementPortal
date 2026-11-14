@@ -1,0 +1,5 @@
+Documento di ingaggio
+Engagement: ENG-2026-013 - E-commerce Red Team
+Cliente: Tailspin Toys
+
+Il presente documento definisce referenti, perimetro e finestre operative dell'ingaggio.

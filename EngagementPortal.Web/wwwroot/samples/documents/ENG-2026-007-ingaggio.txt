@@ -1,0 +1,5 @@
+Documento di ingaggio
+Engagement: ENG-2026-007 - Cloud Configuration Review
+Cliente: Fabrikam
+
+Il presente documento definisce referenti, perimetro e finestre operative dell'ingaggio.

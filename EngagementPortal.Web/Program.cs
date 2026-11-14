@@ -41,6 +41,8 @@ if (useDatabase)
         SqlEngagementRepository>();
     builder.Services.AddScoped<IClientRepository,
         SqlClientRepository>();
+    builder.Services.AddScoped<IAppSettingsRepository,
+        SqlAppSettingsRepository>();
 }
 else
 {
@@ -49,11 +51,14 @@ else
         InMemoryEngagementRepository>();
     builder.Services.AddSingleton<IClientRepository,
         InMemoryClientRepository>();
+    builder.Services.AddSingleton<IAppSettingsRepository,
+        InMemoryAppSettingsRepository>();
 }
 
 builder.Services.AddSingleton<EngagementWorkflow>();
 builder.Services.AddSingleton<TodoResolver>();
 builder.Services.AddSingleton<SolicitationService>();
+builder.Services.AddHostedService<MailAutomationService>();
 
 var app = builder.Build();
 
@@ -109,6 +114,9 @@ api.MapGet("/clients", (
             client.Website,
             client.CreatedDate,
             client.Users,
+            client.DistributionList,
+            client.DeliverablesDistributionList,
+            client.Team,
             EngagementCount = repository
                 .List(client.Id, allClients: false)
                 .Count()
@@ -146,6 +154,9 @@ api.MapPost("/clients", (
             account.Website,
             account.CreatedDate,
             account.Users,
+            account.DistributionList,
+            account.DeliverablesDistributionList,
+            account.Team,
             EngagementCount = 0
         });
 });
@@ -243,6 +254,175 @@ api.MapDelete("/clients/{clientId}/users/{userId}", (
         : Results.NotFound();
 });
 
+// Base comune della distribution list: destinatari validi per tutti gli
+// engagement del cliente. La gestisce il Manager nell'anagrafica.
+api.MapPost("/clients/{clientId}/distribution-list", (
+    string clientId,
+    DistributionEntryRequest request,
+    HttpContext context,
+    IClientRepository clients) =>
+{
+    var user = GetUser(context);
+
+    if (user.Role != Roles.Manager)
+        return Forbidden();
+
+    var account = clients.Get(clientId);
+
+    if (account is null)
+        return Results.NotFound();
+
+    var list = SelectsDeliverables(context)
+        ? account.DeliverablesDistributionList
+        : account.DistributionList;
+
+    var name = request.Name?.Trim();
+    var email = request.Email?.Trim();
+
+    if (string.IsNullOrWhiteSpace(name) ||
+        string.IsNullOrWhiteSpace(email) ||
+        !email.Contains('@') ||
+        !email.Contains('.'))
+    {
+        return Results.BadRequest("Nome ed email valida sono obbligatori.");
+    }
+
+    if (list.Any(entry => string.Equals(
+        entry.Email,
+        email,
+        StringComparison.OrdinalIgnoreCase)))
+    {
+        return Results.Conflict();
+    }
+
+    var entry = new DistributionEntry(
+        $"DL-{Guid.NewGuid():N}"[..10],
+        name,
+        email,
+        "Cliente");
+
+    list.Add(entry);
+    clients.Save(account);
+    return Results.Ok(entry);
+});
+
+api.MapDelete("/clients/{clientId}/distribution-list/{entryId}", (
+    string clientId,
+    string entryId,
+    HttpContext context,
+    IClientRepository clients) =>
+{
+    var user = GetUser(context);
+
+    if (user.Role != Roles.Manager)
+        return Forbidden();
+
+    var account = clients.Get(clientId);
+
+    if (account is null)
+        return Results.NotFound();
+
+    var list = SelectsDeliverables(context)
+        ? account.DeliverablesDistributionList
+        : account.DistributionList;
+
+    var entry = list.FirstOrDefault(item => item.Id == entryId);
+
+    if (entry is null)
+        return Results.NotFound();
+
+    list.Remove(entry);
+    clients.Save(account);
+    return Results.NoContent();
+});
+
+// Team esterno del cliente: base comune a tutti i suoi engagement.
+api.MapPost("/clients/{clientId}/team", (
+    string clientId,
+    TeamMemberRequest request,
+    HttpContext context,
+    IClientRepository clients,
+    IDateProvider clock) =>
+{
+    var user = GetUser(context);
+
+    if (!Team.CanInvite(user.Role))
+        return Forbidden();
+
+    if (user.Role == Roles.Client && user.ClientId != clientId)
+        return Forbidden();
+
+    var account = clients.Get(clientId);
+
+    if (account is null)
+        return Results.NotFound();
+
+    var name = request.Name?.Trim();
+    var email = request.Email?.Trim();
+    var organization = request.Organization?.Trim();
+
+    if (string.IsNullOrWhiteSpace(name) ||
+        string.IsNullOrWhiteSpace(email) ||
+        !email.Contains('@') ||
+        !email.Contains('.') ||
+        organization is not ("Cliente" or "Partner" or "Altro"))
+    {
+        return Results.BadRequest(
+            "Nome, email valida e organizzazione sono obbligatori.");
+    }
+
+    if (account.Team.Any(member => string.Equals(
+        member.Email,
+        email,
+        StringComparison.OrdinalIgnoreCase)))
+    {
+        return Results.Conflict();
+    }
+
+    var created = new TeamMember(
+        $"TM-{Guid.NewGuid():N}"[..10],
+        name,
+        email,
+        organization,
+        request.Role?.Trim(),
+        user.Name,
+        clock.UtcNow);
+
+    account.Team.Add(created);
+    clients.Save(account);
+    return Results.Ok(created);
+});
+
+api.MapDelete("/clients/{clientId}/team/{memberId}", (
+    string clientId,
+    string memberId,
+    HttpContext context,
+    IClientRepository clients) =>
+{
+    var user = GetUser(context);
+
+    if (user.Role == Roles.Client && user.ClientId != clientId)
+        return Forbidden();
+
+    var account = clients.Get(clientId);
+
+    if (account is null)
+        return Results.NotFound();
+
+    var member = account.Team
+        .FirstOrDefault(item => item.Id == memberId);
+
+    if (member is null)
+        return Results.NotFound();
+
+    if (!Team.CanRemove(user.Role, member))
+        return Forbidden();
+
+    account.Team.Remove(member);
+    clients.Save(account);
+    return Results.NoContent();
+});
+
 api.MapGet("/engagements", (
     HttpContext context,
     IEngagementRepository repository,
@@ -317,13 +497,22 @@ api.MapPost("/engagements", (
 
     return Results.Created(
         $"/api/engagements/{id}",
-        Detail(engagement, user, workflow, todos, clock));
+        Detail(
+            engagement,
+            user,
+            workflow,
+            todos,
+            clock,
+            client.DistributionList,
+            client.DeliverablesDistributionList,
+            client.Team));
 });
 
 api.MapGet("/engagements/{id}", (
     string id,
     HttpContext context,
     IEngagementRepository repository,
+    IClientRepository clients,
     EngagementWorkflow workflow,
     TodoResolver todos,
     IDateProvider clock) =>
@@ -331,9 +520,20 @@ api.MapGet("/engagements/{id}", (
     var user = GetUser(context);
     var engagement = Find(repository, id, user);
 
-    return engagement is null
-        ? Results.NotFound()
-        : Results.Ok(Detail(engagement, user, workflow, todos, clock));
+    if (engagement is null)
+        return Results.NotFound();
+
+    var client = clients.Get(engagement.ClientId);
+
+    return Results.Ok(Detail(
+        engagement,
+        user,
+        workflow,
+        todos,
+        clock,
+        client?.DistributionList ?? [],
+        client?.DeliverablesDistributionList ?? [],
+        client?.Team ?? []));
 });
 
 api.MapGet("/dashboard/todo", (
@@ -457,10 +657,13 @@ api.MapPost("/engagements/{id}/order", async (
     return Results.Ok(new { status = "ok", reference });
 });
 
-api.MapPost("/engagements/{id}/business-case", async (
+api.MapPut("/engagements/{id}/financials", (
     string id,
+    FinancialsRequest request,
     HttpContext context,
-    IEngagementRepository repository) =>
+    IEngagementRepository repository,
+    EngagementWorkflow workflow,
+    IDateProvider clock) =>
 {
     var user = GetUser(context);
     var engagement = Find(repository, id, user);
@@ -468,25 +671,96 @@ api.MapPost("/engagements/{id}/business-case", async (
     if (engagement is null)
         return Results.NotFound();
 
-    if (user.Role is not Roles.PMO)
+    if (user.Role is not (Roles.PMO or Roles.Manager))
         return Forbidden();
 
-    var request = await ReadBody<DocumentRequest>(context.Request);
+    if (request.Cost is null || request.Margin is null)
+        return Results.BadRequest("Costo e margine sono obbligatori.");
 
-    engagement.BusinessCaseFile =
-        string.IsNullOrWhiteSpace(request?.FileName)
-            ? "Business_case.pdf"
-            : Path.GetFileName(request.FileName);
+    if (request.Cost < 0)
+        return Results.BadRequest("Il costo non può essere negativo.");
+
+    if (!CanEditFinancials(engagement, user, workflow))
+    {
+        return Results.BadRequest(
+            "Costi e margine si inseriscono nella prima fase.");
+    }
+
+    engagement.Cost = request.Cost;
+    engagement.Margin = request.Margin;
+    engagement.FinancialsSetByRole = user.Role;
+    engagement.FinancialsSetBy = user.Name;
+
+    // Il Manager che inserisce i dati li approva contestualmente; il PMO
+    // lascia la voce in attesa di approvazione.
+    engagement.FinancialsApproved = user.Role == Roles.Manager;
+    engagement.FinancialsApprovedBy =
+        user.Role == Roles.Manager ? user.Name : null;
+    engagement.FinancialsApprovedDate =
+        user.Role == Roles.Manager ? clock.UtcNow : null;
 
     engagement.AddAudit(
         user.Name,
         user.Role,
-        "Business case caricato",
+        user.Role == Roles.Manager
+            ? "Costi e margine aggiornati e approvati"
+            : "Costi e margine aggiornati (in attesa di approvazione)",
         AuditVisibility.ProviderOnly,
-        "Business case disponibile");
+        user.Role == Roles.Manager
+            ? "Dati economici approvati"
+            : "Dati economici aggiornati");
 
     repository.Save(engagement);
-    return Results.Ok(new { status = "ok" });
+    return Results.Ok(new
+    {
+        status = "ok",
+        cost = engagement.Cost,
+        margin = engagement.Margin,
+        financialsDone = engagement.FinancialsDone,
+        financialsApproved = engagement.FinancialsApproved
+    });
+});
+
+api.MapPost("/engagements/{id}/financials/approve", (
+    string id,
+    HttpContext context,
+    IEngagementRepository repository,
+    EngagementWorkflow workflow,
+    IDateProvider clock) =>
+{
+    var user = GetUser(context);
+    var engagement = Find(repository, id, user);
+
+    if (engagement is null)
+        return Results.NotFound();
+
+    if (user.Role != Roles.Manager)
+        return Forbidden();
+
+    if (!CanApproveFinancials(engagement, user, workflow))
+    {
+        return Results.BadRequest(
+            "Non ci sono costi e margine da approvare in questa fase.");
+    }
+
+    engagement.FinancialsApproved = true;
+    engagement.FinancialsApprovedBy = user.Name;
+    engagement.FinancialsApprovedDate = clock.UtcNow;
+
+    engagement.AddAudit(
+        user.Name,
+        user.Role,
+        "Costi e margine approvati",
+        AuditVisibility.ProviderOnly,
+        "Dati economici approvati");
+
+    repository.Save(engagement);
+    return Results.Ok(new
+    {
+        status = "ok",
+        financialsApproved = engagement.FinancialsApproved,
+        financialsApprovedBy = engagement.FinancialsApprovedBy
+    });
 });
 
 api.MapGet("/engagements/{id}/proposals", (
@@ -714,7 +988,7 @@ api.MapGet("/engagements/{id}/credentials", (
     return Results.Ok(new
     {
         credentials = engagement.Credentials,
-        canEdit = CanEditPreparation(engagement, user, workflow)
+        canEdit = CanEditCredentials(engagement, user, workflow)
     });
 });
 
@@ -735,7 +1009,7 @@ api.MapPut("/engagements/{id}/credentials", (
     if (!CanSeeCredentials(user))
         return Forbidden();
 
-    if (!CanEditPreparation(engagement, user, workflow))
+    if (!CanEditCredentials(engagement, user, workflow))
         return Forbidden();
 
     var credentials = engagement.Credentials;
@@ -951,6 +1225,8 @@ api.MapPost("/engagements/{id}/reports/publish", (
     string id,
     HttpContext context,
     IEngagementRepository repository,
+    IClientRepository clients,
+    IAppSettingsRepository settings,
     IDateProvider clock) =>
 {
     var user = GetUser(context);
@@ -982,17 +1258,35 @@ api.MapPost("/engagements/{id}/reports/publish", (
         "Deliverables pubblicati",
         AuditVisibility.All);
 
-    if (engagement.Mail.Deliver && engagement.DistributionList.Count > 0)
+    var client = clients.Get(engagement.ClientId);
+    var baseList = client?.DistributionList ?? [];
+    var baseDeliverables = client?.DeliverablesDistributionList ?? [];
+    var recipients = Distribution.EffectiveDeliverables(
+        engagement,
+        baseDeliverables,
+        baseList);
+
+    if (engagement.Mail.Deliver && recipients.Count > 0)
     {
+        var standard = MailTemplates.Standard(
+            settings.Get<MailTemplateSet>(MailTemplates.StandardKey));
+        var resolved = MailTemplates.Resolve(
+            "deliver",
+            engagement,
+            standard,
+            client?.MailTemplates,
+            clock.Today);
+
         engagement.MailLog.Add(new MailLogEntry(
             $"M-{Guid.NewGuid():N}"[..10],
             "deliver",
             clock.UtcNow,
-            string.Join(
-                "; ",
-                engagement.DistributionList.Select(entry => entry.Email)),
+            string.Join("; ", recipients.Select(entry => entry.Email)),
             true,
-            "All"));
+            "All",
+            resolved.Subject,
+            resolved.Body,
+            resolved.Source));
     }
 
     repository.Save(engagement);
@@ -1002,21 +1296,42 @@ api.MapPost("/engagements/{id}/reports/publish", (
 api.MapGet("/engagements/{id}/distribution-list", (
     string id,
     HttpContext context,
-    IEngagementRepository repository) =>
+    IEngagementRepository repository,
+    IClientRepository clients) =>
 {
     var user = GetUser(context);
     var engagement = Find(repository, id, user);
 
-    return engagement is null
-        ? Results.NotFound()
-        : Results.Ok(engagement.DistributionList);
+    if (engagement is null)
+        return Results.NotFound();
+
+    var client = clients.Get(engagement.ClientId);
+    var baseList = client?.DistributionList ?? [];
+    var baseDeliverables = client?.DeliverablesDistributionList ?? [];
+
+    return Results.Ok(new
+    {
+        @base = baseList,
+        engagement = engagement.DistributionList,
+        effective = Distribution.Effective(engagement, baseList),
+        deliverablesBase = baseDeliverables,
+        deliverablesEngagement = engagement.DeliverablesDistributionList,
+        deliverablesEffective = Distribution.EffectiveDeliverables(
+            engagement,
+            baseDeliverables,
+            baseList),
+        deliverablesFallback = Distribution.UsesNotificationFallback(
+            engagement,
+            baseDeliverables)
+    });
 });
 
 api.MapPost("/engagements/{id}/distribution-list", (
     string id,
     DistributionEntryRequest request,
     HttpContext context,
-    IEngagementRepository repository) =>
+    IEngagementRepository repository,
+    IClientRepository clients) =>
 {
     var user = GetUser(context);
     var engagement = Find(repository, id, user);
@@ -1046,7 +1361,21 @@ api.MapPost("/engagements/{id}/distribution-list", (
             "Nome, email valida e organizzazione sono obbligatori.");
     }
 
-    if (engagement.DistributionList.Any(entry =>
+    var client = clients.Get(engagement.ClientId);
+    var baseList = client?.DistributionList ?? [];
+    var baseDeliverables = client?.DeliverablesDistributionList ?? [];
+    var deliverables = SelectsDeliverables(context);
+    var list = deliverables
+        ? engagement.DeliverablesDistributionList
+        : engagement.DistributionList;
+    var effective = deliverables
+        ? Distribution.EffectiveDeliverables(
+            engagement,
+            baseDeliverables,
+            baseList)
+        : Distribution.Effective(engagement, baseList);
+
+    if (effective.Any(entry =>
         string.Equals(entry.Email, email, StringComparison.OrdinalIgnoreCase)))
         return Results.Conflict();
 
@@ -1056,12 +1385,12 @@ api.MapPost("/engagements/{id}/distribution-list", (
         email,
         organization);
 
-    engagement.DistributionList.Add(entry);
+    list.Add(entry);
 
     engagement.AddAudit(
         user.Name,
         user.Role,
-        $"Destinatario aggiunto: {name}",
+        $"Destinatario {(deliverables ? "deliverables" : "notifiche")} aggiunto: {name}",
         AuditVisibility.All,
         "Distribution list aggiornata");
 
@@ -1073,7 +1402,8 @@ api.MapDelete("/engagements/{id}/distribution-list/{entryId}", (
     string id,
     string entryId,
     HttpContext context,
-    IEngagementRepository repository) =>
+    IEngagementRepository repository,
+    IClientRepository clients) =>
 {
     var user = GetUser(context);
     var engagement = Find(repository, id, user);
@@ -1084,8 +1414,11 @@ api.MapDelete("/engagements/{id}/distribution-list/{entryId}", (
     if (!CanWrite(user))
         return Forbidden();
 
-    var entry = engagement.DistributionList
-        .FirstOrDefault(item => item.Id == entryId);
+    var deliverables = SelectsDeliverables(context);
+    var list = deliverables
+        ? engagement.DeliverablesDistributionList
+        : engagement.DistributionList;
+    var entry = list.FirstOrDefault(item => item.Id == entryId);
 
     if (entry is null)
         return Results.NotFound();
@@ -1093,18 +1426,28 @@ api.MapDelete("/engagements/{id}/distribution-list/{entryId}", (
     if (user.Role == Roles.Client && entry.Organization != "Cliente")
         return Forbidden();
 
-    if (entry.Organization == "Cliente" &&
-        engagement.DistributionList.Count(item =>
-            item.Organization == "Cliente") <= 1)
+    var client = clients.Get(engagement.ClientId);
+    var baseList = client?.DistributionList ?? [];
+    var baseDeliverables = client?.DeliverablesDistributionList ?? [];
+    var effective = deliverables
+        ? Distribution.EffectiveDeliverables(
+            engagement,
+            baseDeliverables,
+            baseList)
+        : Distribution.Effective(engagement, baseList);
+    var clientRecipients = effective
+        .Count(item => item.Organization == "Cliente");
+
+    if (entry.Organization == "Cliente" && clientRecipients <= 1)
         return Results.BadRequest(
             "Deve rimanere almeno un destinatario Cliente.");
 
-    engagement.DistributionList.Remove(entry);
+    list.Remove(entry);
 
     engagement.AddAudit(
         user.Name,
         user.Role,
-        $"Destinatario rimosso: {entry.Name}",
+        $"Destinatario {(deliverables ? "deliverables" : "notifiche")} rimosso: {entry.Name}",
         AuditVisibility.All,
         "Distribution list aggiornata");
 
@@ -1112,6 +1455,144 @@ api.MapDelete("/engagements/{id}/distribution-list/{entryId}", (
     return Results.NoContent();
 });
 
+api.MapPost("/engagements/{id}/team", (
+    string id,
+    TeamMemberRequest request,
+    HttpContext context,
+    IEngagementRepository repository,
+    IClientRepository clients,
+    IDateProvider clock) =>
+{
+    var user = GetUser(context);
+
+    // I partecipanti esterni possono essere invitati da chiunque
+    // tranne l'Auditor.
+    if (!Team.CanInvite(user.Role))
+        return Forbidden();
+
+    var engagement = Find(repository, id, user);
+
+    if (engagement is null)
+        return Results.NotFound();
+
+    var scope = (request.Scope ?? "engagement")
+        .Trim()
+        .ToLowerInvariant();
+
+    if (scope is not ("client" or "engagement"))
+        return Results.BadRequest("Ambito non valido.");
+
+    var name = request.Name?.Trim();
+    var email = request.Email?.Trim();
+    var organization = request.Organization?.Trim();
+
+    if (string.IsNullOrWhiteSpace(name) ||
+        string.IsNullOrWhiteSpace(email) ||
+        !email.Contains('@') ||
+        !email.Contains('.') ||
+        organization is not ("Cliente" or "Partner" or "Altro"))
+    {
+        return Results.BadRequest(
+            "Nome, email valida e organizzazione sono obbligatori.");
+    }
+
+    var client = clients.Get(engagement.ClientId);
+    var baseTeam = client?.Team ?? [];
+
+    if (Team.Effective(engagement, baseTeam).Any(member =>
+        string.Equals(member.Email, email, StringComparison.OrdinalIgnoreCase)))
+        return Results.Conflict();
+
+    var created = new TeamMember(
+        $"TM-{Guid.NewGuid():N}"[..10],
+        name,
+        email,
+        organization,
+        request.Role?.Trim(),
+        user.Name,
+        clock.UtcNow);
+
+    if (scope == "client")
+    {
+        if (client is null)
+            return Results.NotFound();
+
+        client.Team.Add(created);
+        clients.Save(client);
+    }
+    else
+    {
+        engagement.Team.Add(created);
+    }
+
+    engagement.AddAudit(
+        user.Name,
+        user.Role,
+        $"Partecipante invitato: {name}",
+        AuditVisibility.All,
+        "Team aggiornato");
+
+    repository.Save(engagement);
+    return Results.Ok(created);
+});
+
+api.MapDelete("/engagements/{id}/team/{memberId}", (
+    string id,
+    string memberId,
+    HttpContext context,
+    IEngagementRepository repository,
+    IClientRepository clients) =>
+{
+    var user = GetUser(context);
+    var engagement = Find(repository, id, user);
+
+    if (engagement is null)
+        return Results.NotFound();
+
+    var member = engagement.Team
+        .FirstOrDefault(item => item.Id == memberId);
+    var source = "engagement";
+
+    if (member is null)
+    {
+        var client = clients.Get(engagement.ClientId);
+        member = client?.Team.FirstOrDefault(item => item.Id == memberId);
+        source = "client";
+    }
+
+    if (member is null)
+        return Results.NotFound();
+
+    // Rimuovono solo Manager e Cliente; il Cliente solo i partecipanti
+    // con organizzazione "Cliente".
+    if (!Team.CanRemove(user.Role, member))
+        return Forbidden();
+
+    if (source == "client")
+    {
+        var client = clients.Get(engagement.ClientId);
+
+        if (client is null)
+            return Results.NotFound();
+
+        client.Team.Remove(member);
+        clients.Save(client);
+    }
+    else
+    {
+        engagement.Team.Remove(member);
+    }
+
+    engagement.AddAudit(
+        user.Name,
+        user.Role,
+        $"Partecipante rimosso: {member.Name}",
+        AuditVisibility.All,
+        "Team aggiornato");
+
+    repository.Save(engagement);
+    return Results.NoContent();
+});
 api.MapGet("/engagements/{id}/mails", (
     string id,
     HttpContext context,
@@ -1180,6 +1661,8 @@ api.MapPost("/engagements/{id}/mails/{type}/send", (
     string type,
     HttpContext context,
     IEngagementRepository repository,
+    IClientRepository clients,
+    IAppSettingsRepository settings,
     IDateProvider clock) =>
 {
     var user = GetUser(context);
@@ -1194,8 +1677,19 @@ api.MapPost("/engagements/{id}/mails/{type}/send", (
     if (type is not ("start" or "end" or "deliver"))
         return Results.BadRequest("Tipo email non valido.");
 
-    if (engagement.DistributionList.Count == 0)
-        return Results.BadRequest("Distribution list vuota.");
+    var client = clients.Get(engagement.ClientId);
+    var baseList = client?.DistributionList ?? [];
+    var recipients = type == "deliver"
+        ? Distribution.EffectiveDeliverables(
+            engagement,
+            client?.DeliverablesDistributionList ?? [],
+            baseList)
+        : Distribution.Effective(engagement, baseList);
+
+    if (recipients.Count == 0)
+        return Results.BadRequest(type == "deliver"
+            ? "Distribution list deliverables vuota."
+            : "Distribution list notifiche vuota.");
 
     if (type != "deliver" && engagement.AcceptedProposal is null)
         return Results.BadRequest("Nessuna attività pianificata.");
@@ -1204,17 +1698,29 @@ api.MapPost("/engagements/{id}/mails/{type}/send", (
         !engagement.Reports.Any(report => report.Published))
         return Results.BadRequest("Nessun deliverable pubblicato.");
 
-    var recipients = string.Join(
+    var standard = MailTemplates.Standard(
+        settings.Get<MailTemplateSet>(MailTemplates.StandardKey));
+    var resolved = MailTemplates.Resolve(
+        type,
+        engagement,
+        standard,
+        client?.MailTemplates,
+        clock.Today);
+
+    var recipientList = string.Join(
         "; ",
-        engagement.DistributionList.Select(entry => entry.Email));
+        recipients.Select(entry => entry.Email));
 
     engagement.MailLog.Add(new MailLogEntry(
         $"M-{Guid.NewGuid():N}"[..10],
         type,
         clock.UtcNow,
-        recipients,
+        recipientList,
         false,
-        "All"));
+        "All",
+        resolved.Subject,
+        resolved.Body,
+        resolved.Source));
 
     engagement.AddAudit(
         user.Name,
@@ -1224,7 +1730,152 @@ api.MapPost("/engagements/{id}/mails/{type}/send", (
         $"Email ricevuta: {type}");
 
     repository.Save(engagement);
-    return Results.Ok(new { status = "ok", recipients });
+    return Results.Ok(new { status = "ok", recipients = recipientList });
+});
+
+api.MapGet("/engagements/{id}/mail-templates", (
+    string id,
+    HttpContext context,
+    IEngagementRepository repository,
+    IClientRepository clients,
+    IAppSettingsRepository settings,
+    IDateProvider clock) =>
+{
+    var user = GetUser(context);
+
+    // I template non sono visibili a Cliente, PMO e Auditor.
+    if (user.Role is not (Roles.Manager or Roles.Pentester))
+        return Forbidden();
+
+    var engagement = Find(repository, id, user);
+
+    if (engagement is null)
+        return Results.NotFound();
+
+    var client = clients.Get(engagement.ClientId);
+    var standardOverrides =
+        settings.Get<MailTemplateSet>(MailTemplates.StandardKey) ??
+        new MailTemplateSet();
+    var standard = MailTemplates.Standard(standardOverrides);
+
+    var templates = new[] { "start", "end", "deliver" }.Select(type =>
+    {
+        var resolved = MailTemplates.Resolve(
+            type,
+            engagement,
+            standard,
+            client?.MailTemplates,
+            clock.Today);
+
+        return new
+        {
+            Type = type,
+            Standard = standard.For(type),
+            StandardCustom = standardOverrides.For(type) is { IsBlank: false },
+            Client = client?.MailTemplates.For(type),
+            Engagement = engagement.MailTemplates.For(type),
+            Effective = new
+            {
+                resolved.Subject,
+                resolved.Body,
+                resolved.Source
+            }
+        };
+    });
+
+    return Results.Ok(new
+    {
+        Placeholders = MailTemplates.Placeholders,
+        CanEditStandard = user.Role == Roles.Manager,
+        CanEditClient = user.Role == Roles.Manager,
+        CanEditEngagement = user.Role is Roles.Manager or Roles.Pentester,
+        Templates = templates
+    });
+});
+
+api.MapPut("/engagements/{id}/mail-templates/{type}", (
+    string id,
+    string type,
+    MailTemplateUpdateRequest request,
+    HttpContext context,
+    IEngagementRepository repository,
+    IClientRepository clients,
+    IAppSettingsRepository settings) =>
+{
+    var user = GetUser(context);
+
+    if (user.Role is not (Roles.Manager or Roles.Pentester))
+        return Forbidden();
+
+    if (type is not ("start" or "end" or "deliver"))
+        return Results.BadRequest("Tipo email non valido.");
+
+    var engagement = Find(repository, id, user);
+
+    if (engagement is null)
+        return Results.NotFound();
+
+    var scope = (request.Scope ?? "engagement")
+        .Trim()
+        .ToLowerInvariant();
+
+    if (scope is not ("standard" or "client" or "engagement"))
+        return Results.BadRequest("Ambito non valido.");
+
+    // Solo il Manager modifica template standard e di cliente; il Pentester
+    // può personalizzare esclusivamente il template dell'engagement.
+    if (scope != "engagement" && user.Role != Roles.Manager)
+        return Forbidden();
+
+    var subject = request.Subject?.Trim() ?? string.Empty;
+    var body = request.Body?.Trim() ?? string.Empty;
+    var clear = request.Reset || (subject.Length == 0 && body.Length == 0);
+
+    var template = clear
+        ? null
+        : new MailTemplate { Subject = subject, Body = body };
+
+    switch (scope)
+    {
+        case "standard":
+        {
+            var overrides =
+                settings.Get<MailTemplateSet>(MailTemplates.StandardKey) ??
+                new MailTemplateSet();
+            overrides.Set(type, template);
+            settings.Save(MailTemplates.StandardKey, overrides);
+            break;
+        }
+        case "client":
+        {
+            var client = clients.Get(engagement.ClientId);
+
+            if (client is null)
+                return Results.NotFound();
+
+            client.MailTemplates.Set(type, template);
+            clients.Save(client);
+            break;
+        }
+        default:
+            engagement.MailTemplates.Set(type, template);
+            break;
+    }
+
+    engagement.AddAudit(
+        user.Name,
+        user.Role,
+        $"Template email '{type}' aggiornato ({scope})",
+        AuditVisibility.ProviderOnly,
+        "Template email aggiornato");
+
+    repository.Save(engagement);
+    return Results.Ok(new
+    {
+        status = "ok",
+        scope,
+        reset = clear
+    });
 });
 
 api.MapGet("/engagements/{id}/log", (
@@ -1337,6 +1988,7 @@ api.MapPost("/solicitations/{key}/send", (
     string key,
     HttpContext context,
     IEngagementRepository repository,
+    IClientRepository clients,
     IDateProvider clock) =>
 {
     var user = GetUser(context);
@@ -1354,8 +2006,12 @@ api.MapPost("/solicitations/{key}/send", (
     if (engagement is null)
         return Results.NotFound();
 
-    if (engagement.DistributionList.Count == 0)
-        return Results.BadRequest("Distribution list vuota.");
+    var recipients = Distribution.Effective(
+        engagement,
+        clients.Get(engagement.ClientId)?.DistributionList ?? []);
+
+    if (recipients.Count == 0)
+        return Results.BadRequest("Distribution list notifiche vuota.");
 
     engagement.MailLog.Add(new MailLogEntry(
         $"M-{Guid.NewGuid():N}"[..10],
@@ -1363,7 +2019,7 @@ api.MapPost("/solicitations/{key}/send", (
         clock.UtcNow,
         string.Join(
             "; ",
-            engagement.DistributionList.Select(entry => entry.Email)),
+            recipients.Select(entry => entry.Email)),
         false,
         "All"));
 
@@ -1434,6 +2090,12 @@ static string ClientScope(UserContext user) =>
 static bool SeesAllClients(UserContext user) =>
     user.IsInternal && string.IsNullOrEmpty(user.ClientId);
 
+static bool SelectsDeliverables(HttpContext context) =>
+    string.Equals(
+        context.Request.Query["kind"].FirstOrDefault(),
+        "deliverables",
+        StringComparison.OrdinalIgnoreCase);
+
 // Accetta "https://example.com", "www.example.com" o "example.com" e
 // restituisce l'URL normalizzato con schema. Vuoto = nessun sito.
 static bool TryNormalizeWebsite(string? value, out string? website)
@@ -1478,6 +2140,33 @@ static bool CanEditPreparation(
     UserContext user,
     EngagementWorkflow workflow) =>
     EngagementWorkflow.CanEditPreparation(
+        engagement,
+        user.Role,
+        workflow.Resolve(engagement));
+
+static bool CanEditCredentials(
+    Engagement engagement,
+    UserContext user,
+    EngagementWorkflow workflow) =>
+    EngagementWorkflow.CanEditCredentials(
+        engagement,
+        user.Role,
+        workflow.Resolve(engagement));
+
+static bool CanEditFinancials(
+    Engagement engagement,
+    UserContext user,
+    EngagementWorkflow workflow) =>
+    EngagementWorkflow.CanEditFinancials(
+        engagement,
+        user.Role,
+        workflow.Resolve(engagement));
+
+static bool CanApproveFinancials(
+    Engagement engagement,
+    UserContext user,
+    EngagementWorkflow workflow) =>
+    EngagementWorkflow.CanApproveFinancials(
         engagement,
         user.Role,
         workflow.Resolve(engagement));
@@ -1527,7 +2216,10 @@ static object Detail(
     UserContext user,
     EngagementWorkflow workflow,
     TodoResolver todos,
-    IDateProvider clock)
+    IDateProvider clock,
+    IReadOnlyList<DistributionEntry> baseDistribution,
+    IReadOnlyList<DistributionEntry> baseDeliverables,
+    IReadOnlyList<TeamMember> baseTeam)
 {
     var phase = workflow.Resolve(engagement, clock.Today);
 
@@ -1559,9 +2251,27 @@ static object Detail(
                 ? null
                 : engagement.OrderRef,
             engagement.DocumentoIngaggioFile,
-            BusinessCaseFile = user.Role == Roles.Client
+            Cost = user.Role == Roles.Client
                 ? null
-                : engagement.BusinessCaseFile,
+                : engagement.Cost,
+            Margin = user.Role == Roles.Client
+                ? null
+                : engagement.Margin,
+            FinancialsDone = engagement.FinancialsDone,
+            FinancialsApproved = engagement.FinancialsApproved,
+            FinancialsPending = engagement.FinancialsPending,
+            FinancialsSetByRole = user.Role == Roles.Client
+                ? null
+                : engagement.FinancialsSetByRole,
+            FinancialsSetBy = user.Role == Roles.Client
+                ? null
+                : engagement.FinancialsSetBy,
+            FinancialsApprovedBy = user.Role == Roles.Client
+                ? null
+                : engagement.FinancialsApprovedBy,
+            FinancialsApprovedDate = user.Role == Roles.Client
+                ? null
+                : engagement.FinancialsApprovedDate,
             engagement.ScopeDone,
             engagement.CredentialsDone,
             ReviewStatus = engagement.ReviewStatus,
@@ -1582,6 +2292,9 @@ static object Detail(
             engagement,
             phase,
             clock.Today),
+        PlanningNotice = user.Role is Roles.Client or Roles.PMO
+            ? EngagementWorkflow.PlanningNotice(engagement, clock.Today)
+            : null,
         TabStates = todos.ResolveTabs(engagement, user.Role, phase),
         Audit = VisibleAudit(engagement, user),
         Scope = engagement.Scope,
@@ -1589,6 +2302,23 @@ static object Detail(
             ? engagement.Credentials
             : null,
         DistributionList = engagement.DistributionList,
+        DistributionBase = baseDistribution,
+        DistributionEffective = Distribution.Effective(
+            engagement,
+            baseDistribution),
+        DeliverablesDistributionList =
+            engagement.DeliverablesDistributionList,
+        DeliverablesBase = baseDeliverables,
+        DeliverablesEffective = Distribution.EffectiveDeliverables(
+            engagement,
+            baseDeliverables,
+            baseDistribution),
+        DeliverablesFallback = Distribution.UsesNotificationFallback(
+            engagement,
+            baseDeliverables),
+        Team = engagement.Team,
+        TeamBase = baseTeam,
+        TeamEffective = Team.Effective(engagement, baseTeam),
         Mail = new
         {
             start = new
@@ -1618,6 +2348,15 @@ static object Detail(
             CanWrite = CanWrite(user),
             CanDecide = user.Role == Roles.Manager,
             CanCredentials = CanSeeCredentials(user),
+            CanEditCredentials = CanEditCredentials(
+                engagement, user, workflow),
+            CanEditFinancials = CanEditFinancials(
+                engagement, user, workflow),
+            CanApproveFinancials = CanApproveFinancials(
+                engagement, user, workflow),
+            CanInviteTeam = Team.CanInvite(user.Role),
+            CanRemoveTeam = user.Role is Roles.Manager or Roles.Client,
+            CanManageMailTemplates = user.Role is Roles.Manager or Roles.Pentester,
             CanManageMail = user.Role == Roles.PMO,
             CanManageSolicitations = user.Role == Roles.PMO,
             CanReview = user.Role == Roles.Manager,

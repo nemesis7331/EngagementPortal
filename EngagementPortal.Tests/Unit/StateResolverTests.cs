@@ -33,6 +33,9 @@ public sealed class StateResolverTests
             TimeSpan.Zero),
         HasManleva = true,
         OrderConfirmed = true,
+        Cost = 12000m,
+        Margin = 4800m,
+        FinancialsApproved = true,
         ScopeDone = true,
         CredentialsDone = true
     };
@@ -248,6 +251,43 @@ public sealed class StateResolverTests
     }
 
     [Fact]
+    public void Tabs_DocsWaitsForFinancialApproval()
+    {
+        var engagement = NewEngagement();
+        engagement.FinancialsApproved = false;
+
+        var manager = Resolver().ResolveTabs(engagement, Roles.Manager);
+        var pmo = Resolver().ResolveTabs(engagement, Roles.PMO);
+        var client = Resolver().ResolveTabs(engagement, Roles.Client);
+
+        Assert.Equal("todo", manager["docs"].State);
+        Assert.Contains("Approva", manager["docs"].Reason);
+        Assert.Equal("wait", pmo["docs"].State);
+        Assert.Contains("approvazione", pmo["docs"].Reason);
+        Assert.Equal("wait", client["docs"].State);
+        Assert.Contains("approvazione", client["docs"].Reason);
+        Assert.Equal("lock", client["plan"].State);
+    }
+
+    [Fact]
+    public void Tabs_DocsWaitsForFinancials()
+    {
+        var engagement = NewEngagement();
+        engagement.Cost = null;
+        engagement.Margin = null;
+
+        var pmo = Resolver().ResolveTabs(engagement, Roles.PMO);
+        var manager = Resolver().ResolveTabs(engagement, Roles.Manager);
+        var client = Resolver().ResolveTabs(engagement, Roles.Client);
+
+        Assert.Equal("todo", pmo["docs"].State);
+        Assert.Equal("todo", manager["docs"].State);
+        Assert.Equal("wait", client["docs"].State);
+        Assert.Contains("costi", client["docs"].Reason);
+        Assert.Equal("lock", client["plan"].State);
+    }
+
+    [Fact]
     public void Tabs_PlanIsLockedUntilDocsAreComplete()
     {
         var engagement = NewEngagement();
@@ -297,7 +337,7 @@ public sealed class StateResolverTests
     }
 
     [Fact]
-    public void Credentials_AvailableBeforePlanningOnlyToAllowedRoles()
+    public void Credentials_VisibleBeforePlanningToAllowedRoles()
     {
         var engagement = NewEngagement();
         engagement.CredentialsDone = false;
@@ -310,7 +350,8 @@ public sealed class StateResolverTests
 
         Assert.Equal("todo", pmo["cred"].State);
         Assert.Equal("todo", client["cred"].State);
-        Assert.Equal("lock", manager["cred"].State);
+        // Il Manager vede e compila le credenziali.
+        Assert.Equal("todo", manager["cred"].State);
         Assert.Equal("wait", pentester["cred"].State);
     }
 
@@ -334,16 +375,26 @@ public sealed class StateResolverTests
     }
 
     [Fact]
-    public void Tabs_CredentialsAreHiddenFromManager()
+    public void Tabs_ManagerCanEditCredentials()
     {
         var engagement = NewEngagement();
         AddAcceptedProposal(engagement, Today.AddDays(2), Today.AddDays(5));
 
         var manager = Resolver().ResolveTabs(engagement, Roles.Manager);
         var pentester = Resolver().ResolveTabs(engagement, Roles.Pentester);
+        var auditor = Resolver().ResolveTabs(engagement, Roles.Auditor);
 
-        Assert.Equal("lock", manager["cred"].State);
+        Assert.Equal("ok", manager["cred"].State);
         Assert.Equal("ok", pentester["cred"].State);
+        Assert.Equal("lock", auditor["cred"].State);
+        Assert.True(EngagementWorkflow.CanEditCredentials(
+            engagement,
+            Roles.Manager,
+            EngagementPhase.Scheduled));
+        Assert.False(EngagementWorkflow.CanEditPreparation(
+            engagement,
+            Roles.Manager,
+            EngagementPhase.Scheduled));
     }
 
     [Fact]

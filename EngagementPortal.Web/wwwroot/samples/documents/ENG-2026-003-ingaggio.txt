@@ -1,0 +1,5 @@
+Documento di ingaggio
+Engagement: ENG-2026-003 - Web Application Retest
+Cliente: Contoso
+
+Il presente documento definisce referenti, perimetro e finestre operative dell'ingaggio.

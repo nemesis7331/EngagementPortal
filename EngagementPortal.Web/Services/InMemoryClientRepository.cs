@@ -8,6 +8,7 @@ public interface IClientRepository
     ClientAccount? Get(string clientId);
     ClientAccount Add(string name, string? website);
     ClientAccount? Update(string clientId, string name, string? website);
+    void Save(ClientAccount account);
     ClientUser? AddUser(string clientId, string name, string email);
     bool RemoveUser(string clientId, string userId);
     bool Exists(string clientId);
@@ -74,6 +75,20 @@ public sealed class InMemoryClientRepository : IClientRepository
             account.Name = name.Trim();
             account.Website = website;
             return account;
+        }
+    }
+
+    public void Save(ClientAccount account)
+    {
+        lock (gate)
+        {
+            var index = clients.FindIndex(client =>
+                client.Id == account.Id);
+
+            if (index >= 0)
+                clients[index] = account;
+            else
+                clients.Add(account);
         }
     }
 
@@ -155,29 +170,53 @@ public sealed class InMemoryClientRepository : IClientRepository
             "contoso",
             "Contoso",
             "https://contoso.com",
+            "Security Team Contoso",
+            "security@contoso.example",
             ("Marta Rinaldi", "marta.rinaldi@contoso.example"),
             ("Anna Rossi", "anna.rossi@contoso.example")),
         NewClient(
             "fabrikam",
             "Fabrikam",
             "https://fabrikam.com",
+            "Security Team Fabrikam",
+            "security@fabrikam.example",
             ("Paolo Bassi", "paolo.bassi@fabrikam.example")),
         NewClient(
             "novabank",
             "Nova Bank",
             null,
+            "AppSec Nova Bank",
+            "appsec@novabank.example",
             ("Giulia Sala", "giulia.sala@novabank.example")),
         NewClient(
             "orion",
             "Orion Energia",
             "https://orionenergia.com",
-            ("Andrea Conti", "andrea.conti@orion.example"))
+            "Cloud Security Orion",
+            "cloud-security@orion.example",
+            ("Andrea Conti", "andrea.conti@orion.example")),
+        NewClient(
+            "tailspin",
+            "Tailspin Toys",
+            "https://tailspintoys.com",
+            "Security Team Tailspin",
+            "security@tailspin.example",
+            ("Laura Bianchi", "laura.bianchi@tailspin.example")),
+        NewClient(
+            "northwind",
+            "Northwind Traders",
+            "https://northwindtraders.com",
+            "SAP Security Northwind",
+            "sap-security@northwind.example",
+            ("Davide Greco", "davide.greco@northwind.example"))
     ];
 
     private static ClientAccount NewClient(
         string clientId,
         string name,
         string? website,
+        string deliverableName,
+        string deliverableEmail,
         params (string Name, string Email)[] users)
     {
         var account = new ClientAccount
@@ -193,7 +232,32 @@ public sealed class InMemoryClientRepository : IClientRepository
                 $"CU-{clientId}-{index + 1}",
                 users[index].Name,
                 users[index].Email));
+
+            // Base comune del cliente: parte dalle utenze del portale, poi
+            // il Manager può aggiungere o rimuovere destinatari.
+            account.DistributionList.Add(new DistributionEntry(
+                $"DL-B-{clientId}-{index + 1}",
+                users[index].Name,
+                users[index].Email,
+                "Cliente"));
+
+            account.Team.Add(new TeamMember(
+                $"TM-B-{clientId}-{index + 1}",
+                users[index].Name,
+                users[index].Email,
+                "Cliente",
+                "Referente cliente",
+                "Sistema",
+                DateTimeOffset.UtcNow));
         }
+
+        // La lista deliverables parte dal referente security del cliente:
+        // è separata da quella delle notifiche e si gestisce in autonomia.
+        account.DeliverablesDistributionList.Add(new DistributionEntry(
+            $"DL-D-{clientId}-1",
+            deliverableName,
+            deliverableEmail,
+            "Cliente"));
 
         return account;
     }

@@ -45,6 +45,9 @@ public sealed class SqlRepositoryTests
         Owner = "Provider Pentester",
         HasManleva = true,
         OrderConfirmed = true,
+        Cost = 12000m,
+        Margin = 4800m,
+        FinancialsApproved = true,
         Scope = new ScopeData
         {
             Host = "app.contoso.example",
@@ -193,7 +196,11 @@ public sealed class SqlRepositoryTests
         DatabaseBootstrap.Initialize(db, logger);
         DatabaseBootstrap.Initialize(db, logger);
 
-        Assert.Equal(7, db.Engagements.Count());
-        Assert.Equal(4, db.Clients.Count());
+        Assert.Equal(
+            InMemoryEngagementRepository.CreateSeed().Count,
+            db.Engagements.Count());
+        Assert.Equal(
+            InMemoryClientRepository.CreateSeed().Count,
+            db.Clients.Count());
     }
 }

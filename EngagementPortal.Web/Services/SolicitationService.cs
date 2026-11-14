@@ -18,7 +18,9 @@ public sealed record SolicitationDue(
     int Days,
     int ThresholdDays);
 
-public sealed class SolicitationService(EngagementWorkflow workflow)
+public sealed class SolicitationService(
+    EngagementWorkflow workflow,
+    IDateProvider clock)
 {
     private static readonly Dictionary<string, (string Label, string Subject, int Threshold, string Description)> Defaults = new()
     {
@@ -83,7 +85,7 @@ public sealed class SolicitationService(EngagementWorkflow workflow)
 
             var reportAge = lastReport is null
                 ? age
-                : Math.Max(0, (DateTimeOffset.UtcNow - lastReport.Date).Days);
+                : Math.Max(0, (clock.UtcNow - lastReport.Date).Days);
 
             Add("manleva", age, phase == EngagementPhase.Docs && !engagement.HasManleva);
             Add("order", age, phase == EngagementPhase.Docs && !engagement.OrderConfirmed);

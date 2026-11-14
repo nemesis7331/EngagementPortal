@@ -1,0 +1,5 @@
+Scheda tecnica con manleva firmata
+Engagement: ENG-2026-004 - Internal Red Team
+Cliente: Nova Bank
+
+Documento dimostrativo: esercitazione con regole di ingaggio concordate.

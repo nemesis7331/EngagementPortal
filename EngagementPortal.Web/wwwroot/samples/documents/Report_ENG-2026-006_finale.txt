@@ -1,0 +1,5 @@
+Report finale
+Engagement: ENG-2026-006 - Web Application Penetration Test
+Cliente: Nova Bank
+
+Deliverable pubblicato al cliente dopo la revisione del Manager.

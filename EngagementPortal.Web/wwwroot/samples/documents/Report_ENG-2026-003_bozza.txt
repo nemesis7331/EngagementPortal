@@ -1,0 +1,5 @@
+Report - bozza
+Engagement: ENG-2026-003 - Web Application Retest
+Cliente: Contoso
+
+Riepilogo findings e piano di remediation del retest.

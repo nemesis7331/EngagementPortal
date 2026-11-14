@@ -1,0 +1,5 @@
+Scheda tecnica con manleva firmata
+Engagement: ENG-2026-005 - Cloud Security Assessment
+Cliente: Orion Energia
+
+Documento dimostrativo: assessment sull'ambiente di pre-produzione.

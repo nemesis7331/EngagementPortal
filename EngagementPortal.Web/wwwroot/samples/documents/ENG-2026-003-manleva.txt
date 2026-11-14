@@ -1,0 +1,5 @@
+Scheda tecnica con manleva firmata
+Engagement: ENG-2026-003 - Web Application Retest
+Cliente: Contoso
+
+Documento dimostrativo: retest dopo la remediation delle vulnerabilita segnalate.

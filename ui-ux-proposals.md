@@ -507,7 +507,7 @@ Ombre: `--shadow`, `--shadow-xs`, `--shadow-lg`; overlay modale `--overlay`.
 
 **Icone**: set SVG unico (stile Bootstrap Icons) per le azioni e i tab; rimossi
 gli emoji (👥 ✉️ 📋 🔒) sostituiti da `i-users`, `i-mail`, `i-list`, `i-lock`.
-I badge testuali `SCH/ING/PO/BC/CRED/RPT` restano come etichette compatte.
+I badge testuali `SCH/ING/PO/EUR/CRED/RPT` restano come etichette compatte.
 
 **Pulizia**: rimossi CSS e funzioni non più usati dopo il passaggio alla
 variante B (`.kpis`, `.filters`, `.legend`, `.section-label`,

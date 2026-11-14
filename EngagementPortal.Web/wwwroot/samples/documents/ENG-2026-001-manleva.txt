@@ -1,0 +1,5 @@
+Scheda tecnica con manleva firmata
+Engagement: ENG-2026-001 - External Penetration Test
+Cliente: Contoso
+
+Documento dimostrativo: autorizza il provider a eseguire le attivita di test concordate.
