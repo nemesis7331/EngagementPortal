@@ -69,6 +69,10 @@ jobs:
           app-name: cyber-engagement-demo
           slot-name: Production
           package: publish
+          target-path: /home/site/wwwroot
+          clean: true
+          restart: true
+          startup-command: dotnet EngagementPortal.Web.dll
 
       - name: Verify deployment
         env:
