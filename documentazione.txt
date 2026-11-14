@@ -143,10 +143,10 @@ Per ciascun engagement e per ciascun ruolo, il sistema deve determinare **l'azio
 
 | Livello | Scelta |
 |---|---|
-| Backend | **ASP.NET Core 8/9** (Web API) |
+| Backend | **ASP.NET Core 10** (Web API) |
 | Frontend | **Blazor** (Server o WASM) per coerenza C#; alternativa SPA (Angular/React) + API |
 | Auth | **Microsoft Entra ID multi-tenant** tramite `Microsoft.Identity.Web` |
-| Dati | **Azure SQL** + **Entity Framework Core 8** |
+| Dati | **Azure SQL** + **Entity Framework Core 10** |
 | File | **Azure Blob Storage** (SAS token a breve scadenza) |
 | Segreti | **Azure Key Vault** |
 | Workflow | Libreria **Stateless** (FSM) o classe custom |

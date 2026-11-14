@@ -13,7 +13,7 @@ public sealed class InMemoryEngagementRepository :
     IEngagementRepository
 {
     private readonly object gate = new();
-    private readonly List<Engagement> engagements = Seed();
+    private readonly List<Engagement> engagements = CreateSeed();
 
     public IReadOnlyList<Engagement> List(
         string tenantId,
@@ -53,7 +53,7 @@ public sealed class InMemoryEngagementRepository :
         }
     }
 
-    private static List<Engagement> Seed()
+    public static List<Engagement> CreateSeed()
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
 

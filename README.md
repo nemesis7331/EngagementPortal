@@ -111,14 +111,83 @@ riporta esattamente i controlli applicati dalle API.
 
 ## Dati e persistenza
 
-L'applicazione **non usa un database**. I dati vivono in memoria tramite
-`InMemoryEngagementRepository` e `InMemoryClientRepository`: il seed demo viene
-ricreato a ogni avvio e tutte le modifiche (engagement, clienti, utenze, report,
-email) si perdono al riavvio.
+L'applicazione ha due modalità:
 
-Il codice è organizzato dietro le interfacce `IEngagementRepository` e
-`IClientRepository`, quindi la sostituzione con EF Core/SQL richiede solo una
-nuova implementazione e la registrazione in dependency injection.
+- **Azure SQL** (consigliata in produzione): attiva quando è configurata la
+  connection string `ConnectionStrings:EngagementPortal` (o la variabile
+  `SQLCONNSTR_EngagementPortal` di Azure App Service). I repository
+  `SqlEngagementRepository` e `SqlClientRepository` usano EF Core con
+  `Microsoft.EntityFrameworkCore.SqlServer`.
+- **In memoria** (fallback locale/demo): se non c'è connection string, usa
+  `InMemoryEngagementRepository` e `InMemoryClientRepository`. I dati si
+  perdono al riavvio.
+
+> Se la connection string è presente ma il database non è raggiungibile, l'app
+> termina all'avvio (fail-fast): meglio un errore evidente che un fallback
+> silenzioso su dati volatili.
+
+Con Azure SQL vengono create due tabelle:
+
+| Tabella | Chiave | Contenuto |
+| --- | --- | --- |
+| `Engagements` | `Id` | `TenantId`, `Payload` JSON dell'aggregato, `UpdatedAt` |
+| `Clients` | `TenantId` | `Name`, `Payload` JSON con le utenze, `UpdatedAt` |
+
+L'aggregato viene salvato come JSON per mantenere semplice il dominio: una riga
+per engagement e una per cliente. Al primo avvio `DatabaseBootstrap` crea lo
+schema con `EnsureCreated` e inserisce il seed demo solo se le tabelle sono
+vuote. Non ci sono migrazioni automatiche: se in futuro cambia lo schema delle
+tabelle, va aggiunta una migration EF Core.
+
+> Limite noto: la scrittura è last-write-wins sull'intero aggregato. Per un uso
+> concorrente intenso conviene normalizzare le tabelle o aggiungere un token di
+> concorrenza (`rowversion`).
+
+### Configurazione su Azure App Service
+
+1. Creare un Azure SQL Database (esempio con Azure CLI):
+
+   ```bash
+   az group create --name rg-engagement --location westeurope
+   az sql server create \
+     --name <sql-server> --resource-group rg-engagement \
+     --location westeurope \
+     --admin-user portaladmin --admin-password '<password-forte>'
+   az sql db create \
+     --resource-group rg-engagement --server <sql-server> \
+     --name engagementportal --service-objective Basic
+   az sql server firewall-rule create \
+     --resource-group rg-engagement --server <sql-server> \
+     --name AllowAzure --start-ip-address 0.0.0.0 --end-ip-address 0.0.0.0
+   ```
+
+   La regola `0.0.0.0` abilita i servizi Azure. Per la produzione è preferibile
+   un private endpoint o la managed identity con un utente contenuto nel DB.
+
+2. Impostare la connection string come **Application setting** dell'App Service
+   (nome con doppio underscore):
+
+   ```bash
+   az webapp config appsettings set \
+     --resource-group <rg-app> --name cyber-engagement-demo \
+     --settings ConnectionStrings__EngagementPortal="Server=tcp:<sql-server>.database.windows.net,1433;Initial Catalog=engagementportal;Persist Security Info=False;User ID=portaladmin;Password=<password-forte>;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+   ```
+
+   La password non va mai committata: `appsettings.json` contiene solo una
+   stringa vuota.
+
+3. Riavviare l'App Service. Al primo avvio vengono creati schema e dati demo.
+   `GET /health` e `GET /health/ready` riportano `storage: "azure-sql"`.
+
+In locale, senza connection string, l'app parte comunque in memoria:
+
+```bash
+dotnet run --project EngagementPortal.Web
+```
+
+Per provare la persistenza in locale basta esportare la variabile
+`ConnectionStrings__EngagementPortal` puntando a un SQL Server/Azure SQL
+raggiungibile.
 
 ## Interfaccia
 

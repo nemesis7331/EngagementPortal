@@ -1,10 +1,24 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using EngagementPortal.Web.Data;
 using EngagementPortal.Web.Domain;
 using EngagementPortal.Web.Services;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var connectionString =
+    builder.Configuration.GetConnectionString("EngagementPortal");
+
+if (string.IsNullOrWhiteSpace(connectionString))
+{
+    // Compatibilità con il formato "Connection strings" di Azure App Service.
+    connectionString =
+        Environment.GetEnvironmentVariable("SQLCONNSTR_EngagementPortal");
+}
+
+var useDatabase = !string.IsNullOrWhiteSpace(connectionString);
 
 builder.Services.AddProblemDetails();
 builder.Services.ConfigureHttpJsonOptions(options =>
@@ -12,15 +26,43 @@ builder.Services.ConfigureHttpJsonOptions(options =>
         new JsonStringEnumConverter()));
 
 builder.Services.AddSingleton<IDateProvider, SystemDateProvider>();
-builder.Services.AddSingleton<IEngagementRepository,
-    InMemoryEngagementRepository>();
-builder.Services.AddSingleton<IClientRepository,
-    InMemoryClientRepository>();
+
+if (useDatabase)
+{
+    builder.Services.AddDbContext<PortalDbContext>(options =>
+        options.UseSqlServer(
+            connectionString,
+            sql => sql.EnableRetryOnFailure(
+                maxRetryCount: 5,
+                maxRetryDelay: TimeSpan.FromSeconds(10),
+                errorNumbersToAdd: null)));
+
+    builder.Services.AddScoped<IEngagementRepository,
+        SqlEngagementRepository>();
+    builder.Services.AddScoped<IClientRepository,
+        SqlClientRepository>();
+}
+else
+{
+    // Fallback per sviluppo locale e test: nessun database configurato.
+    builder.Services.AddSingleton<IEngagementRepository,
+        InMemoryEngagementRepository>();
+    builder.Services.AddSingleton<IClientRepository,
+        InMemoryClientRepository>();
+}
+
 builder.Services.AddSingleton<EngagementWorkflow>();
 builder.Services.AddSingleton<TodoResolver>();
 builder.Services.AddSingleton<SolicitationService>();
 
 var app = builder.Build();
+
+if (useDatabase)
+{
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<PortalDbContext>();
+    DatabaseBootstrap.Initialize(db, app.Logger);
+}
 
 app.UseExceptionHandler();
 app.UseHttpsRedirection();
@@ -29,6 +71,7 @@ app.MapGet("/health", () => Results.Ok(new
 {
     status = "ok",
     service = "Cyber Engagement Portal",
+    storage = useDatabase ? "azure-sql" : "in-memory",
     version = typeof(Program).Assembly
         .GetName().Version?.ToString() ?? "unknown",
     time = DateTimeOffset.UtcNow
@@ -38,7 +81,7 @@ app.MapGet("/health/ready", (IEngagementRepository repository) =>
     Results.Ok(new
     {
         status = "ready",
-        storage = "in-memory",
+        storage = useDatabase ? "azure-sql" : "in-memory",
         engagements = repository.List(string.Empty, true).Count()
     }));
 

@@ -16,7 +16,7 @@ public interface IClientRepository
 public sealed class InMemoryClientRepository : IClientRepository
 {
     private readonly object gate = new();
-    private readonly List<ClientAccount> clients = Seed();
+    private readonly List<ClientAccount> clients = CreateSeed();
 
     public IReadOnlyList<ClientAccount> List()
     {
@@ -149,7 +149,7 @@ public sealed class InMemoryClientRepository : IClientRepository
             : slug;
     }
 
-    private static List<ClientAccount> Seed() =>
+    public static List<ClientAccount> CreateSeed() =>
     [
         NewClient(
             "tenant-contoso",
