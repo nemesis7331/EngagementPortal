@@ -61,6 +61,52 @@ public static class Roles
         role is Cybersec or Cyberdefence or Manager or Auditor;
 }
 
+public sealed class ScopeData
+{
+    public string? Host { get; set; }
+    public string? IpRange { get; set; }
+    public string? OutOfScope { get; set; }
+    public string? Window { get; set; }
+    public string? Contact { get; set; }
+    public string? Notes { get; set; }
+    public bool Done { get; set; }
+    public string? By { get; set; }
+    public DateTimeOffset? Date { get; set; }
+}
+
+public sealed class CredentialData
+{
+    public string? Vpn { get; set; }
+    public string? Users { get; set; }
+    public string? DeliveryMethod { get; set; }
+    public string? Notes { get; set; }
+    public bool Done { get; set; }
+    public string? By { get; set; }
+    public DateTimeOffset? Date { get; set; }
+}
+
+public sealed record DistributionEntry(
+    string Id,
+    string Name,
+    string Email,
+    string Organization);
+
+public sealed class MailSettings
+{
+    public bool Start { get; set; } = true;
+    public bool End { get; set; } = true;
+    public bool Deliver { get; set; } = true;
+}
+
+public sealed record MailLogEntry(
+    string Id,
+    string Type,
+    DateTimeOffset Date,
+    string Recipients,
+    bool Auto,
+    string Visibility);
+
+
 public sealed class Engagement
 {
     public required string Id { get; init; }
@@ -78,6 +124,16 @@ public sealed class Engagement
     public bool CredentialsDone { get; set; }
     public string? CredentialDeliveryMethod { get; set; }
     public string? SecretReference { get; set; }
+
+    public string? ManlevaFile { get; set; }
+    public string? DocumentoIngaggioFile { get; set; }
+    public string? OrderRef { get; set; }
+    public string? BusinessCaseFile { get; set; }
+    public ScopeData Scope { get; set; } = new();
+    public CredentialData Credentials { get; set; } = new();
+    public List<DistributionEntry> DistributionList { get; init; } = [];
+    public MailSettings Mail { get; set; } = new();
+    public List<MailLogEntry> MailLog { get; init; } = [];
 
     public List<Proposal> Proposals { get; init; } = [];
     public List<ReportFile> Reports { get; init; } = [];
@@ -109,8 +165,11 @@ public sealed class Proposal
     public required string Id { get; init; }
     public ProposalParty From { get; init; }
     public required string By { get; init; }
+    public string Kind { get; init; } = "initial";
     public DateOnly StartDate { get; init; }
     public DateOnly EndDate { get; init; }
+    public DateOnly Date { get; init; } =
+        DateOnly.FromDateTime(DateTime.UtcNow);
     public string? Note { get; init; }
     public ProposalStatus Status { get; set; } = ProposalStatus.Pending;
     public string? Reason { get; set; }
@@ -151,12 +210,6 @@ public sealed record DecideProposalRequest(
     bool Accept,
     string? Reason);
 
-public sealed record PreparationRequest(
-    bool ScopeDone,
-    bool CredentialsDone,
-    string? DeliveryMethod,
-    string? SecretReference);
-
 public sealed record AddReportRequest(
     string Name,
     string Type,
@@ -165,3 +218,37 @@ public sealed record AddReportRequest(
 public sealed record ReviewDecisionRequest(
     bool Approve,
     string? Comment);
+
+public sealed record OrderRequest(string? Ref);
+
+public sealed record ScopeRequest(
+    string? Host,
+    string? IpRange,
+    string? OutOfScope,
+    string? Window,
+    string? Contact,
+    string? Notes);
+
+public sealed record CredentialsRequest(
+    string? Vpn,
+    string? Users,
+    string? DeliveryMethod,
+    string? Notes);
+
+public sealed record DistributionEntryRequest(
+    string Name,
+    string Email,
+    string Organization);
+
+public sealed record SolicitationRuleRequest(
+    bool Enabled,
+    int ThresholdDays);
+
+public sealed record CreateEngagementRequest(
+    string Name,
+    string ClientName,
+    EngagementType Type,
+    string? TenantId,
+    string? Id);
+
+public sealed record DocumentRequest(string? FileName);

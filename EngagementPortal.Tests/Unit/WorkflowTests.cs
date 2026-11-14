@@ -154,6 +154,22 @@ public class WorkflowTests
     {
         var engagement = NewEngagement();
         engagement.ScopeDone = false;
+        engagement.CredentialsDone = true;
+        AddAcceptedProposal(engagement, Today.AddDays(2), Today.AddDays(5));
+
+        var todo = new TodoResolver(Workflow())
+            .Resolve(engagement, Roles.Client);
+
+        Assert.NotNull(todo);
+        Assert.Equal("Compila lo scope dell'attività", todo.Action);
+        Assert.Equal("scope", todo.TargetTab);
+    }
+
+    [Fact]
+    public void Todo_BothPreparationItemsMissing()
+    {
+        var engagement = NewEngagement();
+        engagement.ScopeDone = false;
         engagement.CredentialsDone = false;
         AddAcceptedProposal(engagement, Today.AddDays(2), Today.AddDays(5));
 
@@ -161,7 +177,7 @@ public class WorkflowTests
             .Resolve(engagement, Roles.Client);
 
         Assert.NotNull(todo);
-        Assert.Equal("Compila lo scope", todo.Action);
+        Assert.Equal("Fornisci scope e credenziali", todo.Action);
         Assert.Equal("scope", todo.TargetTab);
     }
 
@@ -177,7 +193,7 @@ public class WorkflowTests
             .Resolve(engagement, Roles.Client);
 
         Assert.NotNull(todo);
-        Assert.Equal("Inserisci le credenziali", todo.Action);
+        Assert.Equal("Fornisci le credenziali di accesso", todo.Action);
         Assert.Equal("cred", todo.TargetTab);
     }
 
@@ -193,17 +209,47 @@ public class WorkflowTests
     }
 
     [Fact]
-    public void Todo_Manager_PendingReview_EvenWhenRunning()
+    public void Todo_Manager_PendingReview_OnlyDuringReporting()
     {
         var engagement = NewEngagement();
         AddAcceptedProposal(engagement, Today.AddDays(-1), Today.AddDays(3));
         engagement.ReviewStatus = ReviewStatus.Pending;
 
+        Assert.Null(
+            new TodoResolver(Workflow())
+                .Resolve(engagement, Roles.Manager));
+
+        var reporting = NewEngagement();
+        AddAcceptedProposal(reporting, Today.AddDays(-5), Today.AddDays(-1));
+        reporting.ReviewStatus = ReviewStatus.Pending;
+
         var todo = new TodoResolver(Workflow())
-            .Resolve(engagement, Roles.Manager);
+            .Resolve(reporting, Roles.Manager);
 
         Assert.NotNull(todo);
-        Assert.Equal("Rivedi i deliverables", todo.Action);
+        Assert.Equal(
+            "Rivedi i deliverables prima della pubblicazione.",
+            todo.Action);
+    }
+
+    [Fact]
+    public void Todo_Reporting_UsesDraftsNotPublishedReports()
+    {
+        var engagement = NewEngagement();
+        AddAcceptedProposal(engagement, Today.AddDays(-5), Today.AddDays(-1));
+        engagement.Reports.Add(new ReportFile(
+            "R-001",
+            "draft.pdf",
+            "pdf",
+            1024,
+            DateTimeOffset.UtcNow,
+            false));
+
+        var todo = new TodoResolver(Workflow())
+            .Resolve(engagement, Roles.Cyberdefence);
+
+        Assert.NotNull(todo);
+        Assert.Equal("Invia in revisione", todo.Action);
     }
 
     [Fact]

@@ -58,12 +58,18 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
 
         var phase = workflow.Resolve(engagement);
 
-        if (role == Roles.Manager &&
-            engagement.ReviewStatus == ReviewStatus.Pending)
-            return new TodoItem("Rivedi i deliverables", "reports");
-
         var pending = engagement.Proposals
             .FirstOrDefault(p => p.Status == ProposalStatus.Pending);
+
+        if (role == Roles.Manager)
+        {
+            return phase == EngagementPhase.Reporting &&
+                   engagement.ReviewStatus == ReviewStatus.Pending
+                ? new TodoItem(
+                    "Rivedi i deliverables prima della pubblicazione.",
+                    "reports")
+                : null;
+        }
 
         var canDecide = pending is not null &&
             ((pending.From == ProposalParty.Client &&
@@ -72,53 +78,72 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
               role == Roles.Client));
 
         if (canDecide)
-            return new TodoItem("Accetta o rifiuta la proposta", "plan");
-
-        if (role == Roles.Client &&
-            phase == EngagementPhase.Docs &&
-            !engagement.HasManleva)
-            return new TodoItem("Firma e carica la manleva", "docs");
-
-        if (role is Roles.Cybersec or Roles.Cyberdefence &&
-            phase == EngagementPhase.Docs &&
-            !engagement.OrderConfirmed)
-            return new TodoItem("Registra ordine", "docs");
-
-        if (role is Roles.Client or Roles.Cybersec or Roles.Cyberdefence &&
-            phase == EngagementPhase.Planning)
-            return new TodoItem("Proponi date", "plan");
-
-        if (role is Roles.Client or Roles.Cyberdefence &&
-            phase == EngagementPhase.Prep)
         {
-            if (!engagement.ScopeDone)
-                return new TodoItem("Compila lo scope", "scope");
-
-            if (!engagement.CredentialsDone)
-                return new TodoItem("Inserisci le credenziali", "cred");
-
-            return new TodoItem("Completa la preparazione", "scope");
+            return new TodoItem(
+                pending!.Kind == "resched"
+                    ? "Richiesta di riprogrammazione: accetta o rifiuta."
+                    : "Proposta di pianificazione: accetta o rifiuta.",
+                "plan");
         }
 
-        if (role == Roles.Cyberdefence &&
-            phase == EngagementPhase.Reporting &&
-            !engagement.Reports.Any(report => report.Published))
-            return new TodoItem("Carica i deliverables", "reports");
+        if (phase == EngagementPhase.Docs)
+        {
+            if (!engagement.HasManleva &&
+                role is Roles.Client or Roles.Cybersec or Roles.Cyberdefence)
+                return new TodoItem(
+                    "Firma e carica la manleva",
+                    "docs");
 
-        if (role == Roles.Cyberdefence &&
-            phase == EngagementPhase.Reporting &&
-            engagement.ReviewStatus == ReviewStatus.None)
-            return new TodoItem("Invia in revisione", "reports");
+            if (!engagement.OrderConfirmed &&
+                role is Roles.Cybersec or Roles.Cyberdefence)
+                return new TodoItem("Registra ordine", "docs");
 
-        if (role == Roles.Cyberdefence &&
-            phase == EngagementPhase.Reporting &&
-            engagement.ReviewStatus == ReviewStatus.Changes)
-            return new TodoItem("Aggiorna e reinvia", "reports");
+            return null;
+        }
 
-        if (role == Roles.Cyberdefence &&
-            phase == EngagementPhase.Reporting &&
-            engagement.ReviewStatus == ReviewStatus.Approved)
-            return new TodoItem("Pubblica al cliente", "reports");
+        if (phase == EngagementPhase.Planning && pending is null)
+            return new TodoItem("Proponi date", "plan");
+
+        if (phase == EngagementPhase.Prep)
+        {
+            var needsScope = !engagement.ScopeDone;
+            var needsCredentials = !engagement.CredentialsDone &&
+                role is Roles.Client or Roles.Cyberdefence;
+
+            if (needsScope && needsCredentials)
+                return new TodoItem(
+                    "Fornisci scope e credenziali",
+                    "scope");
+
+            if (needsScope &&
+                role is Roles.Client or Roles.Cybersec or Roles.Cyberdefence)
+                return new TodoItem(
+                    "Compila lo scope dell'attività",
+                    "scope");
+
+            if (needsCredentials)
+                return new TodoItem(
+                    "Fornisci le credenziali di accesso",
+                    "cred");
+
+            return null;
+        }
+
+        if (phase == EngagementPhase.Reporting &&
+            role == Roles.Cyberdefence)
+        {
+            if (!engagement.Reports.Any(report => !report.Published))
+                return new TodoItem("Carica i deliverables", "reports");
+
+            if (engagement.ReviewStatus == ReviewStatus.None)
+                return new TodoItem("Invia in revisione", "reports");
+
+            if (engagement.ReviewStatus == ReviewStatus.Changes)
+                return new TodoItem("Aggiorna e reinvia", "reports");
+
+            if (engagement.ReviewStatus == ReviewStatus.Approved)
+                return new TodoItem("Pubblica al cliente", "reports");
+        }
 
         return null;
     }

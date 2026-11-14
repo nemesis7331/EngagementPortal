@@ -1,241 +1,1327 @@
 <!doctype html>
 <html lang="it">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1">
-    <title>Cyber Engagement Portal</title>
-    <style>
-        :root {
-            font-family: Segoe UI, Arial, sans-serif;
-            color: #132238;
-            background: #f4f7fb;
-        }
-        body { margin: 0; }
-        header {
-            background: #071b33;
-            color: white;
-            padding: 22px 32px;
-        }
-        header h1 { margin: 0; }
-        header p { margin: 6px 0 0; color: #a9c3dc; }
-        main {
-            max-width: 1200px;
-            margin: auto;
-            padding: 28px;
-        }
-        .toolbar,.stats,.grid {
-            display: flex;
-            gap: 14px;
-            flex-wrap: wrap;
-        }
-        select, button {
-            padding: 10px 12px;
-            border-radius: 8px;
-            border: 1px solid #bac9d8;
-            background: white;
-        }
-        button {
-            background: #0672ce;
-            color: white;
-            cursor: pointer;
-        }
-        .stat,.card,.notice {
-            background: white;
-            border: 1px solid #dce5ef;
-            border-radius: 14px;
-            padding: 18px;
-            box-shadow: 0 4px 14px #12304c12;
-        }
-        .stat { min-width: 180px; }
-        .stat strong {
-            display: block;
-            font-size: 28px;
-            color: #0672ce;
-        }
-        .grid { margin-top: 20px; }
-        .card {
-            flex: 1 1 310px;
-            cursor: pointer;
-        }
-        .card:hover { border-color: #0672ce; }
-        .chip {
-            display: inline-block;
-            padding: 4px 9px;
-            border-radius: 20px;
-            background: #e4f2ff;
-            color: #075f9d;
-            font-size: 12px;
-        }
-        .todo {
-            margin-top: 12px;
-            padding: 10px;
-            border-left: 4px solid #e9a900;
-            background: #fff8dd;
-        }
-        #detail { margin-top: 22px; }
-        pre {
-            white-space: pre-wrap;
-            overflow-wrap: anywhere;
-            font-size: 12px;
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cyber Engagement Portal</title>
+<style>
+:root{
+  --brand-950:#061d36;--brand-900:#0a2a4d;--brand-700:#0f4275;
+  --brand-600:#0d63b5;--brand-500:#2a86d8;--brand-100:#e1eefa;--brand-50:#f1f7fc;
+  --accent:#19c3d6;--accent-soft:#d6f4f8;--ink:#0a1b2e;--muted:#566a80;
+  --line:#dfe7ef;--bg:#f4f7fa;--card:#fff;
+  --ok:#0b7a55;--ok-bg:#def7ec;--warn:#8a5a00;--warn-bg:#fef3c7;
+  --err:#d1344a;--err-bg:#fde8ec;--info:#0d63b5;--info-bg:#e1eefa;
+  --radius:14px;--shadow:0 1px 2px rgba(6,29,54,.06),0 6px 20px rgba(6,29,54,.06);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;
+  background:var(--bg);color:var(--ink);font-size:14.5px;line-height:1.5}
+button{font:inherit;cursor:pointer}
+header{background:linear-gradient(100deg,var(--brand-950),var(--brand-900) 60%,var(--brand-700));
+  color:#fff;position:sticky;top:0;z-index:20}
+.hwrap{max-width:1200px;margin:auto;padding:12px 24px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px}
+.logo i{width:30px;height:30px;border-radius:9px;background:var(--accent);display:grid;
+  place-items:center;color:var(--brand-950);font-style:normal;font-weight:800}
+.logo small{display:block;font-weight:400;font-size:10.5px;opacity:.7;text-transform:uppercase;letter-spacing:.4px}
+.spacer{flex:1}
+.roleSw{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);
+  padding:5px 10px;border-radius:999px;font-size:12.5px}
+.roleSw select{background:transparent;border:0;color:#fff;font:inherit;padding:2px}
+main{max-width:1200px;margin:auto;padding:24px}
+h1{font-size:24px;margin:0 0 4px}
+h2{font-size:16px;margin:0 0 10px}
+h3{font-size:14.5px;margin:0 0 6px}
+.sub{color:var(--muted);font-size:13px;margin:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:18px;box-shadow:var(--shadow)}
+.grid{display:grid;gap:14px}
+.two{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.three{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.btn{border:1px solid transparent;border-radius:9px;padding:9px 14px;font-weight:600;font-size:13px;background:var(--brand-600);color:#fff}
+.btn:hover{filter:brightness(1.06)}
+.btn.sec{background:#fff;color:var(--brand-700);border-color:#c6d6e6}
+.btn.acc{background:var(--ok)}
+.btn.dng{background:var(--err)}
+.btn.sm{padding:6px 10px;font-size:12.5px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+select,input,textarea{font:inherit;padding:9px 11px;border-radius:9px;border:1px solid #c6d6e6;
+  background:#fff;color:var(--ink);width:100%}
+textarea{resize:vertical;min-height:74px}
+label{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin-bottom:5px}
+.topbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+.topbar .grow{flex:1}
+.pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap}
+.p-ok{background:var(--ok-bg);color:var(--ok)}
+.p-warn{background:var(--warn-bg);color:var(--warn)}
+.p-err{background:var(--err-bg);color:var(--err)}
+.p-info{background:var(--info-bg);color:var(--info)}
+.p-mute{background:#eef2f6;color:var(--muted)}
+.list{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(330px,1fr))}
+.eng-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:16px;box-shadow:var(--shadow);cursor:pointer;transition:.15s}
+.eng-card:hover{border-color:var(--brand-500);transform:translateY(-1px)}
+.eng-card h3{margin:8px 0 2px}
+.eng-card p{margin:0;color:var(--muted);font-size:13px}
+.todo{margin-top:12px;padding:9px 11px;border-left:4px solid #e9a900;background:var(--warn-bg);
+  border-radius:0 8px 8px 0;font-size:12.5px;color:#5c4300}
+.note{background:var(--brand-50);border:1px solid var(--brand-100);color:var(--brand-900);
+  padding:11px 13px;border-radius:10px;font-size:13px;margin-bottom:14px}
+.note.lock{background:#f7f9fb;border-color:var(--line);color:var(--muted)}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted)}
+tr:last-child td{border-bottom:0}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 14px}
+.tab{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 14px;
+  font-size:13px;font-weight:600;color:var(--muted)}
+.tab.on{background:var(--brand-900);border-color:var(--brand-900);color:#fff}
+.tab.lock{opacity:.55}
+.stepper{display:flex;gap:4px;flex-wrap:wrap}
+.step{flex:1;min-width:110px;padding:10px 12px;border-radius:10px;background:#f1f5f9;border:1px solid var(--line)}
+.step b{display:block;font-size:12.5px}
+.step span{font-size:11.5px;color:var(--muted)}
+.step.done{background:var(--ok-bg);border-color:#b7ebd3}
+.step.now{background:var(--info-bg);border-color:#b9d8f7}
+.doc{display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.doc:last-child{border-bottom:0}
+.doc .ico{width:46px;height:46px;border-radius:10px;background:var(--brand-100);color:var(--brand-700);
+  display:grid;place-items:center;font-size:11px;font-weight:800;flex:0 0 auto}
+.doc .t{flex:1;min-width:190px}
+.doc .t b{display:block}
+.doc .t span{color:var(--muted);font-size:12.5px}
+.rowact{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.prop{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;
+  padding:12px 0;border-bottom:1px solid var(--line)}
+.prop:last-child{border-bottom:0}
+.prop .d{flex:1;min-width:210px}
+.prop .d span{display:block;color:var(--muted);font-size:12.5px}
+.mailc{display:flex;gap:12px;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;
+  padding:12px 0;border-bottom:1px solid var(--line)}
+.mailc:last-child{border-bottom:0}
+.mailc .t{flex:1;min-width:220px}
+.mailc .t span{display:block;color:var(--muted);font-size:12.5px}
+.switch{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted)}
+.fgrid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+.fgrid .full{grid-column:1/-1}
+.tl{list-style:none;padding:0;margin:0}
+.tl li{padding:9px 0;border-bottom:1px solid var(--line);font-size:13px}
+.tl li span{display:block;color:var(--muted);font-size:12px}
+.empty{color:var(--muted);font-size:13px;padding:8px 0}
+.toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);background:var(--brand-950);
+  color:#fff;padding:11px 18px;border-radius:10px;font-size:13px;opacity:0;pointer-events:none;
+  transition:.2s;z-index:60;max-width:90vw}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+#modal{position:fixed;inset:0;background:rgba(6,29,54,.5);display:none;place-items:center;
+  padding:20px;z-index:50}
+#modal.show{display:grid}
+.mbox{background:#fff;border-radius:16px;padding:22px;max-width:520px;width:100%;
+  box-shadow:0 20px 60px rgba(6,29,54,.3)}
+.mact{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
+.welcome{background:linear-gradient(120deg,var(--brand-900),var(--brand-600));color:#fff;
+  border-radius:var(--radius);padding:22px;margin-bottom:18px}
+.welcome h1{color:#fff}
+.welcome p{color:#cfe2f4;margin:4px 0 0}
+.stats{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:14px 18px;
+  box-shadow:var(--shadow);min-width:150px}
+.stat strong{display:block;font-size:26px;color:var(--brand-600);line-height:1.1}
+.stat span{font-size:12.5px;color:var(--muted)}
+.crumb{border:0;background:transparent;color:var(--brand-600);font-weight:600;padding:0;margin-bottom:10px}
+.small{font-size:12.5px;color:var(--muted)}
+.mono{font-family:ui-monospace,Consolas,monospace;font-size:12px}
+</style>
 </head>
 <body>
 <header>
-    <h1>Cyber Engagement Portal</h1>
-    <p>Demo workflow engagement e isolamento tenant</p>
+  <div class="hwrap">
+    <div class="logo"><i>CE</i><div>Cyber Engagement Portal<small>workflow engagement</small></div></div>
+    <div class="spacer"></div>
+    <div class="roleSw">
+      <span>Ruolo</span>
+      <select id="role"></select>
+    </div>
+    <div class="roleSw">
+      <span>Tenant</span>
+      <select id="tenant"></select>
+    </div>
+    <div class="roleSw"><span id="user">—</span></div>
+  </div>
 </header>
 
 <main>
-    <div class="toolbar">
-        <label>
-            Ruolo:
-            <select id="role">
-                <option>Cyberdefence</option>
-                <option>Cybersec</option>
-                <option>Manager</option>
-                <option>Auditor</option>
-                <option>Client</option>
-            </select>
-        </label>
-
-        <label>
-            Tenant:
-            <select id="tenant">
-                <option value="tenant-provider">Provider</option>
-                <option value="tenant-contoso">Contoso</option>
-                <option value="tenant-fabrikam">Fabrikam</option>
-            </select>
-        </label>
-
-        <button onclick="loadDashboard()">Aggiorna</button>
-    </div>
-
-    <h2>Dashboard</h2>
-
-    <div class="stats">
-        <div class="stat">
-            <strong id="count">0</strong>
-            Engagement visibili
-        </div>
-        <div class="stat">
-            <strong id="todos">0</strong>
-            Azioni richieste
-        </div>
-    </div>
-
-    <div id="grid" class="grid"></div>
-    <div id="detail"></div>
+  <div id="view"></div>
 </main>
 
-<script>
-function query() {
-    const role = encodeURIComponent(
-        document.getElementById("role").value);
-    const tenant = encodeURIComponent(
-        document.getElementById("tenant").value);
+<div id="toast" class="toast"></div>
+<div id="modal"></div>
 
-    return `role=${role}&tenant=${tenant}`;
+<script>
+const ROLES = {
+  Client:       { label: 'Cliente',       tenant: 'tenant-contoso' },
+  Cybersec:     { label: 'Cybersec',      tenant: 'tenant-provider' },
+  Cyberdefence: { label: 'Cyberdefence',  tenant: 'tenant-provider' },
+  Manager:      { label: 'Manager',       tenant: 'tenant-provider' },
+  Auditor:      { label: 'Auditor',       tenant: 'tenant-provider' }
+};
+const TENANTS = [
+  ['tenant-provider', 'Provider'],
+  ['tenant-contoso', 'Contoso'],
+  ['tenant-fabrikam', 'Fabrikam'],
+  ['tenant-novabank', 'Nova Bank'],
+  ['tenant-orion', 'Orion Energia']
+];
+const TYPES = [
+  ['PenetrationTest', 'Penetration Test'],
+  ['VulnerabilityAssessment', 'Vulnerability Assessment'],
+  ['RedTeam', 'Red Team'],
+  ['CodeReview', 'Code Review'],
+  ['CloudSecurity', 'Cloud Security']
+];
+const STEPS = [
+  ['Scheda tecnica + Ordine', 'Scheda tecnica con manleva e ordine'],
+  ['Pianificazione', 'Proposta e accettazione'],
+  ['Scope e credenziali', 'Dati di accesso e perimetro'],
+  ['Esecuzione', 'Attività in corso'],
+  ['Report', 'Revisione e consegna']
+];
+const MAIL_META = {
+  start:   { t: 'Inizio attività', subj: 'Avvio attività', desc: 'Comunica alla distribution list l\'avvio dell\'attività.' },
+  end:     { t: 'Fine attività', subj: 'Conclusione attività', desc: 'Comunica alla distribution list la conclusione dell\'attività.' },
+  deliver: { t: 'Consegna deliverables', subj: 'Consegna deliverables', desc: 'Notifica la disponibilità dei report e degli altri deliverables.' }
+};
+
+const state = {
+  role: localStorage.getItem('cep.role') || 'Cyberdefence',
+  tenant: localStorage.getItem('cep.tenant') || 'tenant-provider',
+  list: [],
+  detail: null,
+  tab: 'overview',
+  rules: [],
+  due: [],
+  view: 'dashboard',
+  scope: null,
+  credentials: null
+};
+
+const $ = s => document.querySelector(s);
+const esc = v => String(v == null ? '' : v)
+  .replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fmt = d => {
+  if (!d) return '—';
+  const [y, m, g] = String(d).substring(0, 10).split('-');
+  return g && m && y ? `${g}/${m}/${y}` : d;
+};
+const fmtTime = d => d ? new Date(d).toLocaleString('it-IT', { dateStyle: 'short', timeStyle: 'short' }) : '—';
+const fmtSize = n => n >= 1048576 ? `${(n / 1048576).toFixed(1)} MB` : n >= 1024 ? `${Math.round(n / 1024)} KB` : `${n} B`;
+const today = () => new Date().toISOString().substring(0, 10);
+
+function toast(msg) {
+  const t = $('#toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => t.classList.remove('show'), 3000);
 }
 
+function qs(extra = {}) {
+  const p = new URLSearchParams({ role: state.role, tenant: state.tenant, ...extra });
+  return p.toString();
+}
+
+async function api(path, options = {}) {
+  const response = await fetch(path, {
+    ...options,
+    headers: { 'Content-Type': 'application/json', ...(options.headers || {}) }
+  });
+  if (!response.ok) {
+    let message = `Errore ${response.status}`;
+    try {
+      const body = await response.json();
+      message = body.detail || body.title || message;
+    } catch { /* non JSON */ }
+    throw new Error(message);
+  }
+  if (response.status === 204) return null;
+  const type = response.headers.get('content-type') || '';
+  return type.includes('json') ? response.json() : response;
+}
+
+function downloadResponse(response, fallbackName) {
+  return response.blob().then(blob => {
+    const disposition = response.headers.get('content-disposition') || '';
+    const match = /filename="?([^";]+)"?/i.exec(disposition);
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = match ? match[1] : fallbackName;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  });
+}
+
+function pickFile(accept) {
+  return new Promise(resolve => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    if (accept) input.accept = accept;
+    input.onchange = () => resolve(input.files[0] ? input.files[0].name : null);
+    input.click();
+  });
+}
+
+/* ====== modal ====== */
+function ask({ title, text, fields = [], ok = 'Conferma', danger = false }) {
+  return new Promise(resolve => {
+    const fieldsHtml = fields.map(f => `
+      <div class="fgrid" style="margin-top:12px">
+        <div class="${f.full ? 'full' : 'full'}">
+          <label for="m_${esc(f.id)}">${esc(f.label)}</label>
+          ${f.area
+            ? `<textarea id="m_${esc(f.id)}" placeholder="${esc(f.ph || '')}"></textarea>`
+            : f.type === 'select'
+              ? `<select id="m_${esc(f.id)}">${(f.options || [])
+                  .map(o => `<option value="${esc(o[0])}" ${o[0] === (f.value || (f.options[0] || [])[0]) ? 'selected' : ''}>${esc(o[1])}</option>`)
+                  .join('')}</select>`
+              : `<input id="m_${esc(f.id)}" type="${esc(f.type || 'text')}" value="${esc(f.value || '')}"
+                   placeholder="${esc(f.ph || '')}" ${f.min ? `min="${esc(f.min)}"` : ''}>`}
+        </div>
+      </div>`).join('');
+
+    $('#modal').innerHTML = `
+      <div class="mbox" role="dialog" aria-modal="true">
+        <h2>${esc(title)}</h2>
+        ${text ? `<p class="sub" style="margin-bottom:6px">${esc(text)}</p>` : ''}
+        ${fieldsHtml}
+        <div class="mact">
+          <button class="btn sec" data-modal="cancel">Annulla</button>
+          <button class="btn ${danger ? 'dng' : ''}" data-modal="ok">${esc(ok)}</button>
+        </div>
+      </div>`;
+    $('#modal').classList.add('show');
+
+    const close = value => {
+      $('#modal').classList.remove('show');
+      $('#modal').innerHTML = '';
+      document.removeEventListener('keydown', onKey);
+      resolve(value);
+    };
+    const confirm = () => {
+      const values = {};
+      fields.forEach(f => { values[f.id] = ($('#m_' + f.id)?.value || '').trim(); });
+      close(values);
+    };
+    const onKey = event => {
+      if (event.key === 'Escape') close(null);
+      if (event.key === 'Enter' && event.target && event.target.tagName === 'INPUT') confirm();
+    };
+    document.addEventListener('keydown', onKey);
+    $('#modal').querySelector('[data-modal="cancel"]').onclick = () => close(null);
+    $('#modal').querySelector('[data-modal="ok"]').onclick = confirm;
+    const first = fields[0] && $('#m_' + fields[0].id);
+    if (first) setTimeout(() => first.focus(), 30);
+  });
+}
+
+/* ====== navigation ====== */
+function setRole(role) {
+  state.role = role;
+  state.tenant = ROLES[role].tenant;
+  state.view = 'dashboard';
+  state.detail = null;
+  state.tab = 'overview';
+  localStorage.setItem('cep.role', role);
+  localStorage.setItem('cep.tenant', state.tenant);
+  $('#tenant').value = state.tenant;
+  loadDashboard();
+}
+
+function setTenant(tenant) {
+  state.tenant = tenant;
+  localStorage.setItem('cep.tenant', tenant);
+  if (state.view === 'detail' && state.detail) {
+    loadDetail(state.detail.engagement.id);
+  } else {
+    loadDashboard();
+  }
+}
+
+function goDashboard() {
+  state.view = 'dashboard';
+  state.detail = null;
+  state.tab = 'overview';
+  loadDashboard();
+}
+
+async function openDetail(id) {
+  state.view = 'detail';
+  state.tab = 'overview';
+  state.scope = null;
+  state.credentials = null;
+  await loadDetail(id);
+}
+
+async function setTab(tab) {
+  state.tab = tab;
+  if (state.detail) {
+    if (tab === 'scope') await loadScope();
+    if (tab === 'cred') await loadCredentials();
+  }
+  render();
+}
+
+/* ====== data ====== */
 async function loadDashboard() {
-    const response = await fetch(`/api/engagements?${query()}`);
-    const data = await response.json();
-
-    document.getElementById("count").textContent = data.length;
-    document.getElementById("todos").textContent =
-        data.filter(item => item.todo).length;
-
-    document.getElementById("grid").innerHTML =
-        data.map(item => `
-            <div class="card"
-                 onclick="loadDetail('${item.id}')">
-                <span class="chip">${item.phase}</span>
-                <h3>${item.name}</h3>
-                <p>${item.id} · ${item.clientName}</p>
-                <small>${item.type} · ${item.owner}</small>
-                ${item.todo
-                    ? `<div class="todo">
-                         <b>Azione richiesta</b><br>
-                         ${item.todo.action}
-                       </div>`
-                    : ""}
-            </div>
-        `).join("");
-
-    document.getElementById("detail").innerHTML = "";
+  try {
+    state.list = await api('/api/engagements?' + qs());
+    if (state.role === 'Cybersec') await loadSolicitations();
+    render();
+  } catch (error) {
+    toast(error.message);
+  }
 }
 
 async function loadDetail(id) {
-    const response =
-        await fetch(`/api/engagements/${id}?${query()}`);
-
-    if (!response.ok) {
-        document.getElementById("detail").innerHTML =
-            `<div class="notice">
-                Engagement non accessibile al tenant selezionato.
-             </div>`;
-        return;
-    }
-
-    const data = await response.json();
-
-    document.getElementById("detail").innerHTML = `
-        <div class="card">
-            <h2>${data.engagement.name}</h2>
-            <p>
-                <span class="chip">${data.phase}</span>
-                ${data.engagement.id} ·
-                ${data.engagement.clientName}
-            </p>
-            <p>
-                Manleva:
-                <b>${data.engagement.hasManleva
-                    ? "completato"
-                    : "mancante"}</b>
-                · Ordine:
-                <b>${data.engagement.orderConfirmed
-                    ? "confermato"
-                    : "mancante"}</b>
-            </p>
-            <p>
-                Scope:
-                <b>${data.engagement.scopeDone
-                    ? "completo"
-                    : "da completare"}</b>
-                · Credenziali:
-                <b>${data.engagement.credentialsDone
-                    ? "complete"
-                    : "da completare"}</b>
-            </p>
-            <p>
-                Report: <b>${data.engagement.reports.length}</b>
-                · Review:
-                <b>${data.engagement.reviewStatus}</b>
-            </p>
-            ${data.todo
-                ? `<div class="todo">
-                     <b>Azione richiesta:</b>
-                     ${data.todo.action}
-                   </div>`
-                : ""}
-            <h3>Audit visibile</h3>
-            <pre>${JSON.stringify(data.audit, null, 2)}</pre>
-        </div>
-    `;
+  try {
+    state.detail = await api(`/api/engagements/${encodeURIComponent(id)}?` + qs());
+    if (state.tab === 'scope') await loadScope();
+    if (state.tab === 'cred') await loadCredentials();
+    render();
+  } catch (error) {
+    toast(error.message);
+    goDashboard();
+  }
 }
 
-document.getElementById("role")
-    .addEventListener("change", event => {
-        document.getElementById("tenant").value =
-            event.target.value === "Client"
-                ? "tenant-contoso"
-                : "tenant-provider";
-        loadDashboard();
-    });
+async function refreshDetail() {
+  if (state.detail) await loadDetail(state.detail.engagement.id);
+  else await loadDashboard();
+}
 
-loadDashboard();
+async function loadScope() {
+  const id = state.detail.engagement.id;
+  state.scope = await api(`/api/engagements/${id}/scope?` + qs());
+}
+
+async function loadCredentials() {
+  const id = state.detail.engagement.id;
+  try {
+    state.credentials = await api(`/api/engagements/${id}/credentials?` + qs());
+  } catch {
+    state.credentials = { credentials: null, canEdit: false };
+  }
+}
+
+async function loadSolicitations() {
+  try {
+    state.rules = await api('/api/solicitations/rules?' + qs());
+    state.due = await api('/api/solicitations/due?' + qs());
+  } catch {
+    state.rules = [];
+    state.due = [];
+  }
+}
+
+/* ====== helpers ====== */
+const phaseLabel = p => ({
+  Docs: 'Documenti', Planning: 'Pianificazione', Prep: 'Preparazione',
+  Scheduled: 'Pianificato', Running: 'In esecuzione', Reporting: 'Reportistica', Done: 'Completato'
+}[p] || p);
+const reviewLabel = s => ({
+  None: ['Non inviata', 'p-mute'], Pending: ['In attesa del manager', 'p-warn'],
+  Approved: ['Approvata', 'p-ok'], Changes: ['Modifiche richieste', 'p-err']
+}[s] || [s, 'p-mute']);
+const proposalLabel = s => ({
+  Pending: ['In attesa', 'p-warn'], Accepted: ['Accettata', 'p-ok'],
+  Rejected: ['Rifiutata', 'p-err'], Superseded: ['Sostituita', 'p-mute'],
+  Replaced: ['Superata', 'p-mute']
+}[s] || [s, 'p-mute']);
+const phasePill = p => `<span class="pill ${p === 'Done' ? 'p-ok' : p === 'Reporting' ? 'p-info' : 'p-info'}">${esc(phaseLabel(p))}</span>`;
+const pill = ([text, cls]) => `<span class="pill ${cls}">${esc(text)}</span>`;
+
+function orgLabel(org) {
+  return org === 'Provider Cyberdefence' ? 'Provider Cyberdefence'
+    : org === 'Provider Cybersec' ? 'Provider Cybersec' : 'Cliente';
+}
+
+function stepHtml(stepIndex) {
+  return `<div class="stepper">${STEPS.map((s, i) => `
+    <div class="step ${i < stepIndex ? 'done' : i === stepIndex ? 'now' : ''}">
+      <b>${i + 1}. ${esc(s[0])}</b><span>${esc(s[1])}</span>
+    </div>`).join('')}</div>`;
+}
+
+/* ====== dashboard ====== */
+function renderDashboard() {
+  const data = state.list;
+  const todos = data.filter(e => e.todo).length;
+  const stats = `
+    <div class="stats">
+      <div class="stat"><strong>${data.length}</strong><span>Engagement visibili</span></div>
+      <div class="stat"><strong>${todos}</strong><span>Azioni richieste</span></div>
+      <div class="stat"><strong>${data.filter(e => e.phase === 'Done').length}</strong><span>Completati</span></div>
+    </div>`;
+
+  const createButton = ['Cybersec', 'Cyberdefence'].includes(state.role)
+    ? `<button class="btn" data-act="new-engagement">+ Nuovo engagement</button>` : '';
+  const solButton = state.role === 'Cybersec'
+    ? `<button class="btn sec" data-act="solicitations">Solleciti automatici${
+        state.due.length ? ` (${state.due.length})` : ''}</button>` : '';
+
+  const cards = data.length ? data.map(e => `
+    <div class="eng-card" data-act="open" data-id="${esc(e.id)}">
+      <div class="rowact">${phasePill(e.phase)}<span class="small">${esc(e.id)}</span></div>
+      <h3>${esc(e.name)}</h3>
+      <p>${esc(e.clientName)} · ${esc((TYPES.find(t => t[0] === e.type) || [e.type])[1])}</p>
+      <p class="small">Responsabile: ${esc(e.owner)}</p>
+      <p class="small">Periodo: ${e.periodStart ? `${fmt(e.periodStart)} – ${fmt(e.periodEnd)}` : 'da definire'} · Report: ${e.reportCount}</p>
+      ${e.todo ? `<div class="todo"><b>Azione richiesta:</b> ${esc(e.todo.action)}</div>` : ''}
+    </div>`).join('') : `<div class="card empty">Nessun engagement visibile per questo profilo e tenant.</div>`;
+
+  $('#view').innerHTML = `
+    <div class="welcome">
+      <h1>Dashboard</h1>
+      <p>Profilo ${esc(ROLES[state.role].label)} · tenant ${esc(state.tenant)}</p>
+    </div>
+    <div class="topbar">${stats}</div>
+    <div class="topbar"><div class="grow"></div>${solButton}${createButton}</div>
+    <div class="list">${cards}</div>`;
+}
+
+/* ====== solicitations ====== */
+function renderSolicitations() {
+  const rules = state.rules.map(rule => `
+    <tr>
+      <td><b>${esc(rule.label)}</b><div class="small">${esc(rule.description)}</div></td>
+      <td style="width:110px"><input type="number" min="1" max="60" id="rule_${esc(rule.key)}" value="${rule.thresholdDays}"></td>
+      <td style="width:90px"><input type="checkbox" id="on_${esc(rule.key)}" ${rule.enabled ? 'checked' : ''} style="width:auto"></td>
+      <td style="width:100px"><button class="btn sec sm" data-act="save-rule" data-key="${esc(rule.key)}">Salva</button></td>
+    </tr>`).join('');
+
+  const due = state.due.length ? state.due.map(item => `
+    <div class="prop">
+      <div class="d">
+        <b>${esc(item.label)}</b>
+        <span>${esc(item.engagementId)} · ${esc(item.clientName)} · ${item.days} giorni (soglia ${item.thresholdDays})</span>
+      </div>
+      <button class="btn sm" data-act="send-solicitation" data-key="${esc(item.key)}">Invia sollecito</button>
+    </div>`).join('') : `<div class="empty">Nessun sollecito dovuto oggi.</div>`;
+
+  $('#view').innerHTML = `
+    <button class="crumb" data-act="dashboard">← Dashboard</button>
+    <h1>Solleciti automatici</h1>
+    <p class="sub" style="margin-bottom:16px">Regole di promemoria verso clienti e team. Visibili al profilo Cybersec.</p>
+    <div class="card"><h2>Regole</h2><table><thead><tr><th>Regola</th><th>Soglia (giorni)</th><th>Attiva</th><th></th></tr></thead>
+      <tbody>${rules || '<tr><td colspan="4" class="empty">Nessuna regola.</td></tr>'}</tbody></table></div>
+    <div class="card" style="margin-top:16px"><h2>Solleciti dovuti (${state.due.length})</h2>${due}</div>`;
+}
+
+/* ====== detail ====== */
+function capabilities() {
+  return (state.detail && state.detail.capabilities) || {};
+}
+
+function renderDetail() {
+  const d = state.detail;
+  const e = d.engagement;
+  const tabs = [
+    ['overview', 'Panoramica'],
+    ['docs', 'Documenti'],
+    ['plan', 'Pianificazione'],
+    ['scope', 'Scope'],
+    ['cred', 'Credenziali'],
+    ['reports', 'Reportistica'],
+    ['dl', 'Distribution list'],
+    ['mail', 'Comunicazioni'],
+    ['log', 'Registro']
+  ];
+
+  const body = {
+    overview: tabOverview,
+    docs: tabDocs,
+    plan: tabPlan,
+    scope: tabScope,
+    cred: tabCred,
+    reports: tabReports,
+    dl: tabDl,
+    mail: tabMail,
+    log: tabLog
+  }[state.tab] || tabOverview;
+
+  $('#view').innerHTML = `
+    <button class="crumb" data-act="dashboard">← Tutti gli engagement</button>
+    <div class="topbar">
+      <div class="grow">
+        <h1>${esc(e.name)}</h1>
+        <p class="sub">${esc(e.id)} · ${esc(e.clientName)} · ${esc((TYPES.find(t => t[0] === e.type) || [e.type])[1])}</p>
+      </div>
+      ${phasePill(d.phase)}
+    </div>
+    <div class="card" style="margin-bottom:16px">${stepHtml(d.stepIndex)}</div>
+    ${d.todo ? `<div class="note"><b>Prossima azione:</b> ${esc(d.todo.action)}</div>` : ''}
+    <div class="tabs">${tabs.map(([key, label]) =>
+      `<button class="tab ${state.tab === key ? 'on' : ''}" data-act="tab" data-tab="${key}">${esc(label)}</button>`).join('')}</div>
+    ${body(d)}`;
+}
+
+function tabOverview(d) {
+  const e = d.engagement;
+  const rows = [
+    ['Codice', esc(e.id)],
+    ['Cliente', esc(e.clientName)],
+    ['Tipologia', esc((TYPES.find(t => t[0] === e.type) || [e.type])[1])],
+    ['Responsabile', esc(e.owner)],
+    ['Creato il', fmtTime(e.createdDate)],
+    ['Periodo', e.acceptedProposal ? `${fmt(e.acceptedProposal.startDate)} – ${fmt(e.acceptedProposal.endDate)}` : 'da definire'],
+    ['Ordine', e.orderConfirmed ? esc(e.orderRef || 'registrato') : 'non ricevuto'],
+    ['Revisione report', pill(reviewLabel(e.reviewStatus))]
+  ];
+  const audit = (d.audit || []).slice().sort((a, b) => String(b.date).localeCompare(String(a.date))).slice(0, 6);
+  return `
+    <div class="grid two">
+      <div class="card"><h2>Dettagli</h2><table>
+        ${rows.map(([k, v]) => `<tr><td class="small" style="width:42%">${k}</td><td><b>${v}</b></td></tr>`).join('')}
+      </table></div>
+      <div class="card"><h2>Ultime attività</h2>
+        ${audit.length ? `<ul class="tl">${audit.map(a => `<li>${esc(a.text)}<span>${fmtTime(a.date)} · ${esc(a.author)} (${esc(a.authorRole)})</span></li>`).join('')}</ul>`
+          : '<div class="empty">Nessuna attività registrata.</div>'}
+        <button class="btn sec sm" style="margin-top:10px" data-act="tab" data-tab="log">Registro completo</button>
+      </div>
+    </div>`;
+}
+
+function docRow(icon, title, subtitle, right) {
+  return `<div class="doc"><div class="ico">${esc(icon)}</div>
+    <div class="t"><b>${title}</b><span>${subtitle}</span></div>
+    <div class="rowact">${right}</div></div>`;
+}
+
+function tabDocs(d) {
+  const e = d.engagement;
+  const c = capabilities();
+  const providerTeam = ['Cybersec', 'Cyberdefence'].includes(state.role);
+  const writable = c.canWrite;
+
+  const manleva = docRow('DOC', 'Scheda tecnica con manleva',
+    e.manlevaFile ? `Firmato · ${esc(e.manlevaFile)}` : 'Da firmare e caricare da parte del cliente',
+    e.hasManleva ? pill(['Firmato', 'p-ok'])
+      : writable ? `<button class="btn sm" data-act="upload-manleva">Carica firmato${providerTeam ? ' (per conto del cliente)' : ''}</button>`
+        : pill(['In attesa cliente', 'p-warn']));
+
+  const ingaggio = docRow('DOC', 'Documento di ingaggio',
+    e.documentoIngaggioFile ? esc(e.documentoIngaggioFile) : 'Non ancora caricato',
+    e.documentoIngaggioFile ? pill(['Disponibile', 'p-ok'])
+      : providerTeam ? `<button class="btn sm" data-act="upload-ingaggio">Carica</button>` : pill(['Non disponibile', 'p-mute']));
+
+  const order = docRow('PO', 'Ordine',
+    e.orderConfirmed ? `Ricevuto · ${esc(e.orderRef || '')}` : 'In attesa di ricezione lato provider',
+    e.orderConfirmed ? pill(['Ricevuto', 'p-ok'])
+      : providerTeam ? `<button class="btn sm" data-act="register-order">Registra ordine ricevuto</button>` : pill(['In attesa provider', 'p-warn']));
+
+  const bc = docRow('BC', 'Business case',
+    e.businessCaseFile ? esc(e.businessCaseFile) : 'Non ancora caricato',
+    e.businessCaseFile ? pill(['Caricato', 'p-ok'])
+      : providerTeam ? `<button class="btn sm" data-act="upload-bc">Carica business case</button>` : pill(['Non caricato', 'p-mute']));
+
+  const cred = c.canCredentials ? docRow('CRED', 'Credenziali fornite',
+    e.credentialsDone ? 'Credenziali consegnate tramite canale sicuro' : 'Non ancora fornite',
+    e.credentialsDone ? pill(['Fornite', 'p-ok']) + ' <button class="btn sec sm" data-act="tab" data-tab="cred">Dettagli</button>'
+      : `<button class="btn sm" data-act="tab" data-tab="cred">${e.acceptedProposal ? 'Compila' : 'Dopo pianificazione'}</button>`) : '';
+
+  const published = (e.reports || []).filter(r => r.published).length;
+  const total = (e.reports || []).length;
+  const reports = docRow('RPT', 'Deliverables',
+    published ? `${published} pubblicati${total > published ? ` · ${total - published} in bozza` : ''}` : 'Nessun deliverable pubblicato',
+    published ? pill(['Disponibili', 'p-ok']) + ' <button class="btn sec sm" data-act="tab" data-tab="reports">Apri</button>'
+      : '<button class="btn sec sm" data-act="tab" data-tab="reports">Apri</button>');
+
+  return `
+    <div class="note">Puoi vedere: ${state.role === 'Cybersec' || state.role === 'Manager' || state.role === 'Auditor'
+      ? 'documenti, ordine e deliverables. Le credenziali non sono visibili a questo profilo.'
+      : state.role === 'Client' ? 'manleva, credenziali fornite e deliverables pubblicati.'
+      : 'tutti i file, comprese le credenziali.'}</div>
+    <div class="card"><h2>Documenti associati</h2>
+      ${manleva}${ingaggio}${providerTeam || state.role === 'Manager' || state.role === 'Auditor' ? order + bc : ''}${cred}${reports}
+    </div>
+    <p class="small" style="margin-top:12px">La pianificazione si sblocca quando la manleva firmata è caricata e l'ordine è registrato dal provider.</p>`;
+}
+
+function tabPlan(d) {
+  const e = d.engagement;
+  const c = capabilities();
+  const canPlan = e.hasManleva && e.orderConfirmed;
+  if (!canPlan) {
+    return `<div class="note lock"><b>Pianificazione bloccata.</b> Servono la manleva firmata dal cliente e l'ordine registrato dal provider.</div>`;
+  }
+  const pending = (e.proposals || []).find(p => p.status === 'Pending');
+  const accepted = e.acceptedProposal;
+
+  const canDecideProposal = p => p.status === 'Pending' &&
+    ((p.from === 'Client' && state.role === 'Cyberdefence') ||
+     (p.from === 'Provider' && state.role === 'Client'));
+
+  const list = (e.proposals || []).length ? [...e.proposals].reverse().map(p => `
+    <div class="prop">
+      <div class="d">
+        <b>${fmt(p.startDate)} → ${fmt(p.endDate)}</b>
+        ${p.kind === 'resched' ? '<span class="pill p-info">Riprogrammazione</span>' : ''}
+        <span>${p.from === 'Client' ? 'Cliente' : 'Provider'} · ${esc(p.by)} · ${fmt(p.date)}
+          ${p.note ? ` · “${esc(p.note)}”` : ''}${p.reason ? ` · Motivo: ${esc(p.reason)}` : ''}</span>
+      </div>
+      <div class="rowact">${pill(proposalLabel(p.status))}
+        ${canDecideProposal(p) ? `
+          <button class="btn acc sm" data-act="decide" data-pid="${esc(p.id)}" data-accept="1">Accetta</button>
+          <button class="btn dng sm" data-act="decide" data-pid="${esc(p.id)}" data-accept="0">Rifiuta</button>` : ''}
+      </div>
+    </div>`).join('') : '<div class="empty">Nessuna proposta ancora inviata.</div>';
+
+  let right;
+  if (accepted) {
+    const editable = c.canWrite && !pending &&
+      (state.role === 'Client' ? ['Prep', 'Scheduled'].includes(d.phase) : ['Prep', 'Scheduled', 'Running'].includes(d.phase));
+    right = `<h2>Pianificazione confermata</h2>
+      <div class="note"><b>${fmt(accepted.startDate)} → ${fmt(accepted.endDate)}</b><br>
+        Confermata${accepted.from === 'Client' ? ' da Cyberdefence' : ' dal cliente'}.</div>
+      ${pending ? `<p class="small">Richiesta di riprogrammazione in corso: decide ${pending.from === 'Client' ? 'Cyberdefence' : 'il cliente'}.</p>` : ''}
+      ${editable ? `<button class="btn sec" data-act="reschedule">Richiedi riprogrammazione</button>` : ''}`;
+  } else if (!c.canWrite) {
+    right = `<h2>Nuova proposta</h2><div class="note lock">Profilo in sola lettura: non puoi inviare proposte.</div>`;
+  } else if (pending) {
+    right = `<h2>Proposta in attesa</h2><div class="note">È già presente una proposta in attesa di risposta.</div>`;
+  } else {
+    right = `<h2>Nuova proposta</h2>
+      <p class="sub" style="margin-bottom:12px">Durata massima 60 giorni, inizio non nel passato.</p>
+      <div class="fgrid">
+        <div><label for="ps">Inizio attività</label><input type="date" id="ps" min="${today()}"></div>
+        <div><label for="pe">Fine attività</label><input type="date" id="pe" min="${today()}"></div>
+        <div class="full"><label for="pn">Note (vincoli, finestre di manutenzione…)</label><textarea id="pn" rows="2"></textarea></div>
+      </div>
+      <div style="margin-top:14px"><button class="btn" data-act="propose">${state.role === 'Client' ? 'Invia proposta al provider' : 'Invia proposta al cliente'}</button></div>`;
+  }
+
+  return `<div class="grid two" style="align-items:start">
+    <div class="card"><h2>Proposte e richieste</h2>${list}</div>
+    <div class="card">${right}</div>
+  </div>`;
+}
+
+function tabScope(d) {
+  const e = d.engagement;
+  if (!e.acceptedProposal) {
+    return `<div class="note lock"><b>Sezione bloccata.</b> Lo scope si compila dopo l'accettazione della pianificazione.</div>`;
+  }
+  const info = state.scope || { scope: e.scope || {}, canEdit: false };
+  const s = info.scope || {};
+  if (!info.canEdit) {
+    return `<div class="card"><h2>Scope ${s.done ? pill(['Fornito', 'p-ok']) : ''}</h2>
+      ${s.done ? `<p class="sub" style="margin-bottom:10px">Fornito da ${esc(s.by || '—')} il ${fmt(s.date)}.</p>` : ''}
+      <table>${[
+        ['Target (hostname / URL)', s.host || '—'],
+        ['Indirizzi / range IP', s.ipRange || '—'],
+        ['Fuori scope', s.outOfScope || '—'],
+        ['Finestra oraria e vincoli', s.window || '—'],
+        ['Referente tecnico', s.contact || '—'],
+        ['Note', s.notes || '—']
+      ].map(([k, v]) => `<tr><td class="small" style="width:34%">${k}</td><td><b>${esc(v)}</b></td></tr>`).join('')}</table>
+      ${s.done ? '' : '<div class="note lock" style="margin-top:12px">In attesa che lo scope venga fornito dal cliente.</div>'}
+    </div>`;
+  }
+  return `<div class="card"><h2>${s.done ? 'Modifica scope' : 'Compila lo scope'}</h2>
+    ${state.role !== 'Client' ? '<div class="note">Stai compilando per conto del cliente.</div>' : ''}
+    <div class="fgrid">
+      <div><label for="f_host">Target (hostname / URL)*</label><input id="f_host" value="${esc(s.host || '')}" placeholder="es. api-uat.cliente.it"></div>
+      <div><label for="f_ipRange">Indirizzi / range IP</label><input id="f_ipRange" value="${esc(s.ipRange || '')}" placeholder="es. 10.0.0.0/28"></div>
+      <div><label for="f_outOfScope">Fuori scope</label><input id="f_outOfScope" value="${esc(s.outOfScope || '')}" placeholder="Sistemi da non testare"></div>
+      <div><label for="f_window">Finestra oraria e vincoli</label><input id="f_window" value="${esc(s.window || '')}" placeholder="es. notturno 22:00-06:00"></div>
+      <div class="full"><label for="f_contact">Referente tecnico*</label><input id="f_contact" value="${esc(s.contact || '')}" placeholder="Nome, telefono"></div>
+      <div class="full"><label for="f_notes">Note</label><textarea id="f_notes" rows="2">${esc(s.notes || '')}</textarea></div>
+    </div>
+    <div style="margin-top:14px"><button class="btn" data-act="save-scope">Salva scope</button></div>
+  </div>`;
+}
+
+function tabCred(d) {
+  const e = d.engagement;
+  if (!e.acceptedProposal) {
+    return `<div class="note lock"><b>Sezione bloccata.</b> Le credenziali si forniscono dopo l'accettazione della pianificazione.</div>`;
+  }
+  const info = state.credentials || { credentials: e.credentials, canEdit: false };
+  if (!info.credentials) {
+    return `<div class="note lock"><b>Accesso non consentito.</b> Le credenziali non sono visibili al profilo ${esc(ROLES[state.role].label)}.</div>`;
+  }
+  const c = info.credentials;
+  if (!info.canEdit) {
+    return `<div class="card"><h2>Credenziali ${c.done ? pill(['Fornite', 'p-ok']) : ''}</h2>
+      ${c.done ? `<p class="sub" style="margin-bottom:10px">Fornite da ${esc(c.by || '—')} il ${fmt(c.date)}. Le password non sono conservate nel portale.</p>` : ''}
+      <table>${[
+        ['VPN', c.vpn || '—'],
+        ['Utenze di test', c.users || '—'],
+        ['Metodo di consegna dei segreti', c.deliveryMethod || '—'],
+        ['Note', c.notes || '—']
+      ].map(([k, v]) => `<tr><td class="small" style="width:34%">${k}</td><td><b>${esc(v)}</b></td></tr>`).join('')}</table>
+      ${c.done ? '' : '<div class="note lock" style="margin-top:12px">Credenziali non ancora fornite.</div>'}
+    </div>`;
+  }
+  return `<div class="card"><h2>${c.done ? 'Modifica credenziali' : 'Fornisci le credenziali'}</h2>
+    <div class="note">Non scrivere password in questo modulo: indica solo dove e come verranno consegnate.</div>
+    ${state.role === 'Cyberdefence' ? '<div class="note">Stai compilando come Cyberdefence per conto del cliente.</div>' : ''}
+    <div class="fgrid">
+      <div><label for="f_vpn">VPN (endpoint e profilo)*</label><input id="f_vpn" value="${esc(c.vpn || '')}" placeholder="es. vpn.cliente.it - profilo test"></div>
+      <div><label for="f_users">Utenze di test*</label><input id="f_users" value="${esc(c.users || '')}" placeholder="es. 2 utenze: utente e amministratore"></div>
+      <div class="full"><label for="f_deliveryMethod">Metodo di consegna dei segreti*</label>
+        <select id="f_deliveryMethod">
+          <option value="">Seleziona…</option>
+          ${['Vault aziendale', 'File cifrato (password su canale separato)', 'Altro (concordato con Cyberdefence)']
+            .map(o => `<option ${c.deliveryMethod === o ? 'selected' : ''}>${esc(o)}</option>`).join('')}
+        </select></div>
+      <div class="full"><label for="f_credNotes">Note</label><textarea id="f_credNotes" rows="2">${esc(c.notes || '')}</textarea></div>
+    </div>
+    <div style="margin-top:14px"><button class="btn" data-act="save-credentials">Salva credenziali</button></div>
+  </div>`;
+}
+
+function tabReports(d) {
+  const e = d.engagement;
+  const c = capabilities();
+  const provider = state.role !== 'Client';
+  const reports = e.reports || [];
+  const unpublished = reports.filter(r => !r.published).length;
+  const review = reviewLabel(e.reviewStatus);
+
+  let reviewCard = '';
+  if (provider) {
+    let action = '';
+    if (state.role === 'Cyberdefence' && unpublished &&
+        ['None', 'Changes'].includes(e.reviewStatus)) {
+      action = `<button class="btn" data-act="submit-review">Invia in revisione al manager</button>`;
+    }
+    if (state.role === 'Manager' && e.reviewStatus === 'Pending') {
+      action = `<button class="btn acc" data-act="review-decide" data-approve="1">Approva</button>
+        <button class="btn dng" data-act="review-decide" data-approve="0">Richiedi modifiche</button>`;
+    }
+    if (state.role === 'Cyberdefence' && unpublished && e.reviewStatus === 'Approved') {
+      action = `<button class="btn acc" data-act="publish">Pubblica al cliente</button>`;
+    }
+    reviewCard = `<div class="card" style="margin-bottom:16px"><h2>Revisione del manager ${pill(review)}</h2>
+      <p class="sub" style="margin-bottom:${action ? '12px' : '0'}">I deliverables non arrivano al cliente finché il manager non li approva.</p>
+      ${action}</div>`;
+  }
+
+  const list = reports.length ? reports.map(r => `
+    <div class="doc">
+      <div class="ico">${esc((r.type || 'FILE').substring(0, 4))}</div>
+      <div class="t"><b>${esc(r.name)}</b><span>${r.published ? `Pubblicato il ${fmtTime(r.date)}` : `Bozza del ${fmtTime(r.date)}`} · ${fmtSize(r.size)}</span></div>
+      <div class="rowact">${pill(r.published ? ['Pubblicato', 'p-ok'] : ['Bozza', 'p-mute'])}
+        <button class="btn sec sm" data-act="download-report" data-rid="${esc(r.id)}">Scarica</button>
+      </div>
+    </div>`).join('') : '<div class="empty">Nessun deliverable disponibile.</div>';
+
+  const upload = state.role === 'Cyberdefence' ? `
+    <div class="card" style="margin-top:16px"><h2>Carica deliverables</h2>
+      <p class="sub" style="margin-bottom:12px">I file caricati restano in bozza fino all'approvazione del manager. Un nuovo file azzera la revisione.</p>
+      <button class="btn sec" data-act="upload-report">Carica file</button>
+    </div>` : '';
+
+  return `${reviewCard}
+    <div class="card"><h2>Reportistica</h2>${list}</div>
+    ${upload}`;
+}
+
+function tabDl(d) {
+  const e = d.engagement;
+  const c = capabilities();
+  const entries = d.distributionList || [];
+  const writable = c.canWrite;
+  const clientCount = entries.filter(x => x.organization === 'Cliente').length;
+
+  const rows = entries.map(entry => {
+    const removable = writable && (state.role !== 'Client' || entry.organization === 'Cliente') &&
+      !(entry.organization === 'Cliente' && clientCount <= 1);
+    return `<tr>
+      <td><b>${esc(entry.name)}</b></td>
+      <td>${esc(entry.email)}</td>
+      <td>${pill([orgLabel(entry.organization), entry.organization === 'Cliente' ? 'p-info' : 'p-ok'])}</td>
+      <td style="text-align:right">${removable
+        ? `<button class="btn dng sm" data-act="remove-dl" data-entry="${esc(entry.id)}">Rimuovi</button>` : ''}</td>
+    </tr>`;
+  }).join('');
+
+  const addForm = writable ? `
+    <div class="card" style="margin-top:16px"><h2>Aggiungi destinatario</h2>
+      <div class="fgrid">
+        <div><label for="dl_name">Nome e cognome</label><input id="dl_name"></div>
+        <div><label for="dl_email">Email</label><input id="dl_email" placeholder="nome@dominio.it"></div>
+        ${state.role === 'Client' ? '' : `<div><label for="dl_org">Organizzazione</label>
+          <select id="dl_org">
+            <option>Cliente</option><option>Provider Cybersec</option><option>Provider Cyberdefence</option>
+          </select></div>`}
+      </div>
+      <div style="margin-top:14px"><button class="btn" data-act="add-dl">Aggiungi</button></div>
+    </div>` : '';
+
+  return `<div class="note">La distribution list è usata per le comunicazioni email dell'engagement.
+    ${writable ? '' : 'Il tuo profilo è in sola lettura.'}</div>
+    <div class="card"><h2>Distribution list · ${entries.length} destinatari</h2>
+      <table><thead><tr><th>Nome</th><th>Email</th><th>Organizzazione</th><th></th></tr></thead>
+      <tbody>${rows || '<tr><td colspan="4" class="empty">Nessun destinatario.</td></tr>'}</tbody></table>
+    </div>${addForm}`;
+}
+
+function tabMail(d) {
+  const e = d.engagement;
+  const c = capabilities();
+
+  if (state.role === 'Client') {
+    const log = (d.mailLog || []).filter(x => x.visibility === 'All');
+    return `<div class="card"><h2>Email ricevute</h2>
+      ${log.length ? `<ul class="tl">${log.map(m => `<li>${esc(mailSubject(m.type))}<span>${fmtTime(m.date)} · ${esc(m.recipients)}</span></li>`).join('')}</ul>`
+        : '<div class="empty">Nessuna email ricevuta per questo engagement.</div>'}</div>`;
+  }
+
+  const manage = c.canManageMail;
+  const accepted = e.acceptedProposal;
+  const published = (e.reports || []).some(r => r.published);
+
+  const cards = ['start', 'end', 'deliver'].map(key => {
+    const meta = MAIL_META[key];
+    const info = (d.mail && d.mail[key]) || {};
+    const enabled = typeof info[key] === 'boolean' ? info[key] : !!info.enabled;
+    const sent = info.sent;
+    const available = key === 'deliver' ? published : !!accepted;
+    const status = sent
+      ? pill(['Inviata', 'p-ok'])
+      : enabled ? pill(['Programmata', 'p-info']) : pill(['Invio automatico disattivato', 'p-warn']);
+    return `<div class="mailc">
+      <div class="t"><b>${esc(meta.t)}</b><span>${esc(meta.desc)}</span>
+        <span>Oggetto: [${esc(e.id)}] ${esc(meta.subj)}</span>
+        <div style="margin-top:8px">${status}</div></div>
+      <div style="display:grid;gap:8px;min-width:170px">
+        ${manage ? `<label class="switch"><input type="checkbox" data-act="toggle-mail" data-key="${key}" ${enabled ? 'checked' : ''} style="width:auto"> Invio automatico</label>
+          <button class="btn sec sm" data-act="send-mail" data-key="${key}" ${available ? '' : 'disabled title="Non ancora disponibile"'}>Invia ora</button>`
+        : `<span class="small">Invio automatico: <b>${enabled ? 'attivo' : 'disattivo'}</b></span>`}
+      </div>
+    </div>`;
+  }).join('');
+
+  const history = d.mailLog || [];
+  return `<div class="note">${manage
+    ? 'Come Cyberdefence controlli l\'invio automatico delle email alla distribution list.'
+    : 'Le comunicazioni sono gestite da Cyberdefence: puoi consultarne lo stato.'}</div>
+    <div class="card"><h2>Email automatiche</h2>${cards}</div>
+    <div class="card" style="margin-top:16px"><h2>Email inviate</h2>
+      ${history.length ? `<ul class="tl">${history.map(m => `<li>${esc(mailSubject(m.type))}
+        <span>${fmtTime(m.date)} · ${esc(m.recipients)} · ${m.auto ? 'invio automatico' : 'invio manuale'}</span></li>`).join('')}</ul>`
+        : '<div class="empty">Nessuna email ancora inviata.</div>'}</div>`;
+}
+
+function mailSubject(type) {
+  if (type === 'deliver') return 'Consegna deliverables';
+  if (type === 'start') return 'Avvio attività';
+  if (type === 'end') return 'Conclusione attività';
+  if (type.startsWith('solicitation:')) return `Sollecito: ${type.split(':')[1]}`;
+  return type;
+}
+
+function tabLog(d) {
+  const rows = (d.audit || []).slice().sort((a, b) => String(b.date).localeCompare(String(a.date)));
+  return `<div class="note">Registro delle attività con autore, data e ora.
+    ${state.role === 'Client' ? 'Mostra le attività che ti riguardano.' : 'Include accessi e download dei deliverables.'}</div>
+    <div class="card">
+      <div class="topbar" style="margin-bottom:8px"><h2 style="margin:0" class="grow">Registro · ${rows.length} eventi</h2>
+        <button class="btn sec sm" data-act="export-log">Esporta CSV</button></div>
+      <table><thead><tr><th>Data e ora</th><th>Autore</th><th>Profilo</th><th>Evento</th></tr></thead>
+      <tbody>${rows.length ? rows.map(a => `<tr>
+        <td style="white-space:nowrap">${fmtTime(a.date)}</td>
+        <td><b>${esc(a.author)}</b></td>
+        <td>${esc(a.authorRole)}</td>
+        <td>${esc(a.text)}</td></tr>`).join('')
+        : '<tr><td colspan="4" class="empty">Nessun evento.</td></tr>'}</tbody></table>
+    </div>`;
+}
+
+/* ====== render ====== */
+function render() {
+  $('#user').textContent = ROLES[state.role].label;
+  if (state.view === 'solicitations') renderSolicitations();
+  else if (state.view === 'detail' && state.detail) renderDetail();
+  else renderDashboard();
+}
+
+/* ====== actions ====== */
+const actions = {
+  dashboard: goDashboard,
+
+  open: el => openDetail(el.dataset.id),
+  tab: el => setTab(el.dataset.tab),
+
+  solicitations: async () => {
+    state.view = 'solicitations';
+    await loadSolicitations();
+    render();
+  },
+
+  'save-rule': async el => {
+    const key = el.dataset.key;
+    const body = {
+      enabled: $('#on_' + key).checked,
+      thresholdDays: Number($('#rule_' + key).value) || 1
+    };
+    try {
+      await api(`/api/solicitations/rules/${encodeURIComponent(key)}?` + qs(), {
+        method: 'PUT', body: JSON.stringify(body)
+      });
+      toast('Regola aggiornata');
+      await loadSolicitations();
+      render();
+    } catch (error) { toast(error.message); }
+  },
+
+  'send-solicitation': async el => {
+    try {
+      await api(`/api/solicitations/${encodeURIComponent(el.dataset.key)}/send?` + qs(), { method: 'POST' });
+      toast('Sollecito inviato');
+      await loadSolicitations();
+      render();
+    } catch (error) { toast(error.message); }
+  },
+
+  'new-engagement': async () => {
+    const clientTenants = TENANTS.filter(t => t[0] !== 'tenant-provider');
+    const v = await ask({
+      title: 'Nuovo engagement',
+      ok: 'Crea',
+      fields: [
+        { id: 'name', label: 'Nome engagement*' },
+        { id: 'clientName', label: 'Cliente*' },
+        { id: 'tenantId', label: 'Tenant cliente*', type: 'select', options: clientTenants },
+        { id: 'type', label: 'Tipologia', type: 'select', options: TYPES, value: 'PenetrationTest' }
+      ]
+    });
+    if (!v) return;
+    if (!v.name || !v.clientName || !v.tenantId) { toast('Compila tutti i campi obbligatori'); return; }
+    try {
+      await api('/api/engagements?' + qs(), {
+        method: 'POST',
+        body: JSON.stringify({
+          name: v.name,
+          clientName: v.clientName,
+          type: v.type || 'PenetrationTest',
+          tenantId: v.tenantId
+        })
+      });
+      toast('Engagement creato');
+      await loadDashboard();
+    } catch (error) { toast(error.message); }
+  },
+
+  'upload-manleva': async () => {
+    const name = await pickFile('.pdf,.p7m');
+    if (!name) return;
+    try {
+      await api(`/api/engagements/${id()}/manleva?` + qs(), {
+        method: 'POST', body: JSON.stringify({ fileName: name })
+      });
+      toast('Manleva caricata');
+      await refreshDetail();
+    } catch (error) { toast(error.message); }
+  },
+
+  'upload-ingaggio': async () => {
+    const name = await pickFile('.pdf');
+    if (!name) return;
+    try {
+      await api(`/api/engagements/${id()}/documento-ingaggio?` + qs(), {
+        method: 'POST', body: JSON.stringify({ fileName: name })
+      });
+      toast('Documento di ingaggio caricato');
+      await refreshDetail();
+    } catch (error) { toast(error.message); }
+  },
+
+  'register-order': async () => {
+    const v = await ask({
+      title: 'Registra ordine ricevuto',
+      fields: [{ id: 'ref', label: 'Riferimento ordine', value: 'PO-' + Math.floor(90000 + Math.random() * 9999) }]
+    });
+    if (!v) return;
+    if (!v.ref) { toast('Inserisci il riferimento ordine'); return; }
+    try {
+      await api(`/api/engagements/${id()}/order?` + qs(), {
+        method: 'POST', body: JSON.stringify({ ref: v.ref })
+      });
+      toast('Ordine registrato');
+      await refreshDetail();
+    } catch (error) { toast(error.message); }
+  },
+
+  'upload-bc': async () => {
+    const name = await pickFile('.pdf,.docx');
+    if (!name) return;
+    try {
+      await api(`/api/engagements/${id()}/business-case?` + qs(), {
+        method: 'POST', body: JSON.stringify({ fileName: name })
+      });
+      toast('Business case caricato');
+      await refreshDetail();
+    } catch (error) { toast(error.message); }
+  },
+
+  propose: async () => {
+    const startDate = $('#ps').value;
+    const endDate = $('#pe').value;
+    const note = $('#pn').value.trim();
+    if (!startDate || !endDate) { toast('Inserisci data di inizio e fine'); return; }
+    if (startDate < today()) { toast('La data di inizio non può essere nel passato'); return; }
+    if (endDate < startDate) { toast('La data di fine precede l\'inizio'); return; }
+    const days = Math.round((Date.parse(endDate) - Date.parse(startDate)) / 86400000);
+    if (days > 60) { toast('La durata massima è di 60 giorni'); return; }
+    try {
+      await api(`/api/engagements/${id()}/proposals?` + qs(), {
+        method: 'POST', body: JSON.stringify({ startDate, endDate, note })
+      });
+      toast('Proposta inviata');
+      await refreshDetail();
+    } catch (error) { toast(error.message); }
+  },
+
+  reschedule: async () => {
+    const accepted = state.detail.engagement.acceptedProposal;
+    const v = await ask({
+      title: 'Richiedi riprogrammazione',
+      text: `Attività attualmente pianificata dal ${fmt(accepted.startDate)} al ${fmt(accepted.endDate)}.`,
+      ok: 'Invia richiesta',
+      fields: [
+        { id: 'startDate', label: 'Nuovo inizio', type: 'date', min: today() },
+        { id: 'endDate', label: 'Nuova fine', type: 'date', min: today() },
+        { id: 'note', label: 'Motivazione*', area: true }
+      ]
+    });
+    if (!v) return;
+    if (!v.startDate || !v.endDate || !v.note) { toast('Compila date e motivazione'); return; }
+    try {
+      await api(`/api/engagements/${id()}/proposals?` + qs(), {
+        method: 'POST', body: JSON.stringify(v)
+      });
+      toast('Richiesta inviata');
+      await refreshDetail();
+    } catch (error) { toast(error.message); }
+  },
+
+  decide: async el => {
+    const accept = el.dataset.accept === '1';
+    let reason = null;
+    if (!accept) {
+      const v = await ask({
+        title: 'Rifiuta proposta',
+        ok: 'Rifiuta', danger: true,
+        fields: [{ id: 'reason', label: 'Motivazione*', area: true }]
+      });
+      if (!v) return;
+      if (!v.reason) { toast('Indica il motivo del rifiuto'); return; }
+      reason = v.reason;
+    }
+    try {
+      await api(`/api/engagements/${id()}/proposals/${encodeURIComponent(el.dataset.pid)}/decide?` + qs(), {
+        method: 'POST', body: JSON.stringify({ accept, reason })
+      });
+      toast(accept ? 'Proposta accettata' : 'Proposta rifiutata');
+      await refreshDetail();
+    } catch (error) { toast(error.message); }
+  },
+
+  'save-scope': async () => {
+    const body = {
+      host: $('#f_host').value.trim(),
+      ipRange: $('#f_ipRange').value.trim(),
+      outOfScope: $('#f_outOfScope').value.trim(),
+      window: $('#f_window').value.trim(),
+      contact: $('#f_contact').value.trim(),
+      notes: $('#f_notes').value.trim()
+    };
+    if (!body.host || !body.contact) { toast('Target e referente tecnico sono obbligatori'); return; }
+    try {
+      await api(`/api/engagements/${id()}/scope?` + qs(), {
+        method: 'PUT', body: JSON.stringify(body)
+      });
+      toast('Scope salvato');
+      await refreshDetail();
+      await loadScope();
+      render();
+    } catch (error) { toast(error.message); }
+  },
+
+  'save-credentials': async () => {
+    const body = {
+      vpn: $('#f_vpn').value.trim(),
+      users: $('#f_users').value.trim(),
+      deliveryMethod: $('#f_deliveryMethod').value,
+      notes: $('#f_credNotes').value.trim()
+    };
+    if (!body.vpn || !body.users || !body.deliveryMethod) {
+      toast('VPN, utenze e metodo di consegna sono obbligatori');
+      return;
+    }
+    try {
+      await api(`/api/engagements/${id()}/credentials?` + qs(), {
+        method: 'PUT', body: JSON.stringify(body)
+      });
+      toast('Credenziali salvate');
+      await refreshDetail();
+      await loadCredentials();
+      render();
+    } catch (error) { toast(error.message); }
+  },
+
+  'upload-report': async () => {
+    const name = await pickFile('.pdf,.xlsx,.docx');
+    if (!name) return;
+    const type = (name.split('.').pop() || 'PDF').toUpperCase().substring(0, 4);
+    const size = Math.floor(200_000 + Math.random() * 5_000_000);
+    try {
+      await api(`/api/engagements/${id()}/reports?` + qs(), {
+        method: 'POST', body: JSON.stringify({ name, type, size })
+      });
+      toast('Deliverable caricato come bozza');
+      await refreshDetail();
+    } catch (error) { toast(error.message); }
+  },
+
+  'download-report': async el => {
+    try {
+      const response = await fetch(`/api/engagements/${id()}/reports/${encodeURIComponent(el.dataset.rid)}/download?` + qs(), {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }
+      });
+      if (!response.ok) throw new Error(`Errore ${response.status}`);
+      await downloadResponse(response, 'deliverable.txt');
+      toast('Download avviato');
+      await refreshDetail();
+    } catch (error) { toast(error.message); }
+  },
+
+  'submit-review': async () => {
+    try {
+      await api(`/api/engagements/${id()}/review/submit?` + qs(), { method: 'POST' });
+      toast('Deliverables inviati in revisione');
+      await refreshDetail();
+    } catch (error) { toast(error.message); }
+  },
+
+  'review-decide': async el => {
+    const approve = el.dataset.approve === '1';
+    let comment = null;
+    if (!approve) {
+      const v = await ask({
+        title: 'Richiedi modifiche',
+        ok: 'Richiedi modifiche', danger: true,
+        fields: [{ id: 'comment', label: 'Cosa va corretto?*', area: true }]
+      });
+      if (!v) return;
+      if (!v.comment) { toast('Indica le modifiche richieste'); return; }
+      comment = v.comment;
+    }
+    try {
+      await api(`/api/engagements/${id()}/review/decide?` + qs(), {
+        method: 'POST', body: JSON.stringify({ approve, comment })
+      });
+      toast(approve ? 'Deliverables approvati' : 'Modifiche richieste');
+      await refreshDetail();
+    } catch (error) { toast(error.message); }
+  },
+
+  publish: async () => {
+    try {
+      const result = await api(`/api/engagements/${id()}/reports/publish?` + qs(), { method: 'POST' });
+      toast(`Deliverables pubblicati${result && result.published ? ` (${result.published})` : ''}`);
+      await refreshDetail();
+    } catch (error) { toast(error.message); }
+  },
+
+  'add-dl': async () => {
+    const name = $('#dl_name').value.trim();
+    const email = $('#dl_email').value.trim();
+    const organization = state.role === 'Client' ? 'Cliente' : $('#dl_org').value;
+    if (!name || !email) { toast('Inserisci nome ed email'); return; }
+    try {
+      await api(`/api/engagements/${id()}/distribution-list?` + qs(), {
+        method: 'POST', body: JSON.stringify({ name, email, organization })
+      });
+      toast('Destinatario aggiunto');
+      await refreshDetail();
+    } catch (error) { toast(error.message); }
+  },
+
+  'remove-dl': async el => {
+    try {
+      await api(`/api/engagements/${id()}/distribution-list/${encodeURIComponent(el.dataset.entry)}?` + qs(), {
+        method: 'DELETE'
+      });
+      toast('Destinatario rimosso');
+      await refreshDetail();
+    } catch (error) { toast(error.message); }
+  },
+
+  'toggle-mail': async el => {
+    try {
+      await api(`/api/engagements/${id()}/mails/${el.dataset.key}/toggle?` + qs(), { method: 'POST' });
+      toast('Impostazione aggiornata');
+      await refreshDetail();
+    } catch (error) { toast(error.message); }
+  },
+
+  'send-mail': async el => {
+    try {
+      const result = await api(`/api/engagements/${id()}/mails/${el.dataset.key}/send?` + qs(), { method: 'POST' });
+      toast(`Email inviata${result && result.recipients ? ' a ' + result.recipients : ''}`);
+      await refreshDetail();
+    } catch (error) { toast(error.message); }
+  },
+
+  'export-log': async () => {
+    try {
+      const response = await fetch(`/api/engagements/${id()}/log/export?` + qs());
+      if (!response.ok) throw new Error(`Errore ${response.status}`);
+      await downloadResponse(response, 'registro.csv');
+      toast('Registro esportato');
+    } catch (error) { toast(error.message); }
+  }
+};
+
+function id() {
+  return encodeURIComponent(state.detail.engagement.id);
+}
+
+document.addEventListener('click', event => {
+  const el = event.target.closest('[data-act]');
+  if (!el) return;
+  const action = actions[el.dataset.act];
+  if (action) {
+    event.preventDefault();
+    Promise.resolve(action(el)).catch(error => toast(error.message));
+  }
+});
+
+/* ====== init ====== */
+function init() {
+  const roleSelect = $('#role');
+  roleSelect.innerHTML = Object.entries(ROLES)
+    .map(([key, value]) => `<option value="${key}" ${key === state.role ? 'selected' : ''}>${esc(value.label)}</option>`)
+    .join('');
+  roleSelect.onchange = event => setRole(event.target.value);
+
+  const tenantSelect = $('#tenant');
+  tenantSelect.innerHTML = TENANTS
+    .map(([value, label]) => `<option value="${value}" ${value === state.tenant ? 'selected' : ''}>${esc(label)}</option>`)
+    .join('');
+  tenantSelect.onchange = event => setTenant(event.target.value);
+
+  if (!ROLES[state.role]) state.role = 'Cyberdefence';
+  if (!TENANTS.some(t => t[0] === state.tenant)) state.tenant = ROLES[state.role].tenant;
+  tenantSelect.value = state.tenant;
+
+  loadDashboard();
+}
+
+init();
 </script>
 </body>
 </html>
