@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="it">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1">
+    <title>Bip Engagement Portal</title>
+    <style>
+        :root {
+            font-family: Segoe UI, Arial, sans-serif;
+            color: #132238;
+            background: #f4f7fb;
+        }
+        body { margin: 0; }
+        header {
+            background: #071b33;
+            color: white;
+            padding: 22px 32px;
+        }
+        header h1 { margin: 0; }
+        header p { margin: 6px 0 0; color: #a9c3dc; }
+        main {
+            max-width: 1200px;
+            margin: auto;
+            padding: 28px;
+        }
+        .toolbar,.stats,.grid {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        select, button {
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid #bac9d8;
+            background: white;
+        }
+        button {
+            background: #0672ce;
+            color: white;
+            cursor: pointer;
+        }
+        .stat,.card,.notice {
+            background: white;
+            border: 1px solid #dce5ef;
+            border-radius: 14px;
+            padding: 18px;
+            box-shadow: 0 4px 14px #12304c12;
+        }
+        .stat { min-width: 180px; }
+        .stat strong {
+            display: block;
+            font-size: 28px;
+            color: #0672ce;
+        }
+        .grid { margin-top: 20px; }
+        .card {
+            flex: 1 1 310px;
+            cursor: pointer;
+        }
+        .card:hover { border-color: #0672ce; }
+        .chip {
+            display: inline-block;
+            padding: 4px 9px;
+            border-radius: 20px;
+            background: #e4f2ff;
+            color: #075f9d;
+            font-size: 12px;
+        }
+        .todo {
+            margin-top: 12px;
+            padding: 10px;
+            border-left: 4px solid #e9a900;
+            background: #fff8dd;
+        }
+        #detail { margin-top: 22px; }
+        pre {
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Bip Engagement Portal</h1>
+    <p>Demo workflow engagement e isolamento tenant</p>
+</header>
+
+<main>
+    <div class="toolbar">
+        <label>
+            Ruolo:
+            <select id="role">
+                <option>Cyberdefence</option>
+                <option>Cybersec</option>
+                <option>Manager</option>
+                <option>Auditor</option>
+                <option>Client</option>
+            </select>
+        </label>
+
+        <label>
+            Tenant:
+            <select id="tenant">
+                <option value="tenant-bip">Bip</option>
+                <option value="tenant-contoso">Contoso</option>
+                <option value="tenant-fabrikam">Fabrikam</option>
+            </select>
+        </label>
+
+        <button onclick="loadDashboard()">Aggiorna</button>
+    </div>
+
+    <h2>Dashboard</h2>
+
+    <div class="stats">
+        <div class="stat">
+            <strong id="count">0</strong>
+            Engagement visibili
+        </div>
+        <div class="stat">
+            <strong id="todos">0</strong>
+            Azioni richieste
+        </div>
+    </div>
+
+    <div id="grid" class="grid"></div>
+    <div id="detail"></div>
+</main>
+
+<script>
+function query() {
+    const role = encodeURIComponent(
+        document.getElementById("role").value);
+    const tenant = encodeURIComponent(
+        document.getElementById("tenant").value);
+
+    return `role=${role}&tenant=${tenant}`;
+}
+
+async function loadDashboard() {
+    const response = await fetch(`/api/engagements?${query()}`);
+    const data = await response.json();
+
+    document.getElementById("count").textContent = data.length;
+    document.getElementById("todos").textContent =
+        data.filter(item => item.todo).length;
+
+    document.getElementById("grid").innerHTML =
+        data.map(item => `
+            <div class="card"
+                 onclick="loadDetail('${item.id}')">
+                <span class="chip">${item.phase}</span>
+                <h3>${item.name}</h3>
+                <p>${item.id} · ${item.clientName}</p>
+                <small>${item.type} · ${item.owner}</small>
+                ${item.todo
+                    ? `<div class="todo">
+                         <b>Azione richiesta</b><br>
+                         ${item.todo.action}
+                       </div>`
+                    : ""}
+            </div>
+        `).join("");
+
+    document.getElementById("detail").innerHTML = "";
+}
+
+async function loadDetail(id) {
+    const response =
+        await fetch(`/api/engagements/${id}?${query()}`);
+
+    if (!response.ok) {
+        document.getElementById("detail").innerHTML =
+            `<div class="notice">
+                Engagement non accessibile al tenant selezionato.
+             </div>`;
+        return;
+    }
+
+    const data = await response.json();
+
+    document.getElementById("detail").innerHTML = `
+        <div class="card">
+            <h2>${data.engagement.name}</h2>
+            <p>
+                <span class="chip">${data.phase}</span>
+                ${data.engagement.id} ·
+                ${data.engagement.clientName}
+            </p>
+            <p>
+                STAF:
+                <b>${data.engagement.hasStaf
+                    ? "completato"
+                    : "mancante"}</b>
+                · Ordine:
+                <b>${data.engagement.orderConfirmed
+                    ? "confermato"
+                    : "mancante"}</b>
+            </p>
+            <p>
+                Scope:
+                <b>${data.engagement.scopeDone
+                    ? "completo"
+                    : "da completare"}</b>
+                · Credenziali:
+                <b>${data.engagement.credentialsDone
+                    ? "complete"
+                    : "da completare"}</b>
+            </p>
+            <p>
+                Report: <b>${data.engagement.reports.length}</b>
+                · Review:
+                <b>${data.engagement.reviewStatus}</b>
+            </p>
+            ${data.todo
+                ? `<div class="todo">
+                     <b>Azione richiesta:</b>
+                     ${data.todo.action}
+                   </div>`
+                : ""}
+            <h3>Audit visibile</h3>
+            <pre>${JSON.stringify(data.audit, null, 2)}</pre>
+        </div>
+    `;
+}
+
+document.getElementById("role")
+    .addEventListener("change", event => {
+        document.getElementById("tenant").value =
+            event.target.value === "Client"
+                ? "tenant-contoso"
+                : "tenant-bip";
+        loadDashboard();
+    });
+
+loadDashboard();
+</script>
+</body>
+</html>
