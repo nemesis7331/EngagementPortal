@@ -3528,6 +3528,9 @@ static object Summary(
             : engagement.Owner,
         Phase = phase,
         StepIndex = EngagementWorkflow.StepIndex(phase),
+        // Passi totali: sette, piu i due di retest quando il recheck e previsto.
+        StepCount = engagement.RetestPlanned ? 9 : 7,
+        RetestPlanned = engagement.RetestPlanned,
         Todo = todos.Resolve(engagement, user.Role),
         ActionState = todos.ResolveAction(
             engagement,
@@ -3791,6 +3794,9 @@ static object Detail(
         },
         Phase = phase,
         StepIndex = EngagementWorkflow.StepIndex(phase),
+        // Passi totali: sette, piu i due di retest quando il recheck e previsto.
+        StepCount = engagement.RetestPlanned ? 9 : 7,
+        RetestPlanned = engagement.RetestPlanned,
         Todo = todos.Resolve(engagement, user.Role),
         ActionState = todos.ResolveAction(
             engagement,
