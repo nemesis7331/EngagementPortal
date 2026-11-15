@@ -157,6 +157,66 @@ body.dense .sample{padding:8px}
 body.dense .obj-client .mark,body.dense .obj-person .av,body.dense .obj-eng .code{transform:scale(.92)}
 body.noicon .mark img,body.noicon .mark .init,body.noicon .obj-person .av{display:none}
 body.noicon .obj-client .mark{background:transparent;border:0}
+
+/* ---- scelta fatta ---- */
+.rec.scelta{border-color:var(--brand-500);background:var(--brand-50);color:var(--brand-700)}
+
+/* ---- 2b. ENGAGEMENT con barra del workflow (varianti su D) ---- */
+.obj-flow{display:grid;gap:5px;min-width:0;width:100%}
+.obj-flow .top{display:flex;align-items:center;gap:9px;min-width:0;flex-wrap:wrap}
+.obj-flow .segs{display:flex;gap:3px;flex:none}
+.obj-flow .segs i{display:block;width:15px;height:4px;border-radius:2px;background:var(--surface-2)}
+.obj-flow .segs i.done{background:var(--st-done)}
+.obj-flow .segs i.now{background:var(--brand-600)}
+.obj-flow .segs i.late{background:var(--st-action)}
+.obj-flow .dots{display:flex;gap:6px;align-items:center;flex:none}
+.obj-flow .dots i{display:block;width:8px;height:8px;border-radius:50%;background:var(--surface-2)}
+.obj-flow .dots i.done{background:var(--st-done)}
+.obj-flow .dots i.now{width:12px;height:12px;background:var(--brand-600);box-shadow:0 0 0 3px var(--brand-100)}
+.obj-flow .bar{height:6px;border-radius:3px;background:var(--surface-2);overflow:hidden;flex:1;min-width:70px}
+.obj-flow .bar i{display:block;height:100%;background:var(--brand-600);border-radius:3px}
+.obj-flow .count{font-size:10.5px;font-weight:800;color:var(--muted-2);letter-spacing:.02em;white-space:nowrap}
+.obj-flow .phase{font-size:11px;font-weight:800;color:var(--brand-700);white-space:nowrap}
+.obj-flow .lines{display:grid;gap:2px;min-width:0}
+.obj-flow .lines b{font-size:13.5px;font-weight:700;color:var(--brand-900);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.obj-flow .lines small{font-size:11px;color:var(--muted);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+
+/* ---- 7b. DELIVERABLE con icone ---- */
+.obj-doc{display:inline-flex;align-items:center;gap:8px;min-width:0}
+.obj-doc .ic{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;flex:none;border:1px solid var(--brand-100);background:var(--brand-50);color:var(--brand-700)}
+.obj-doc .ic svg{width:16px;height:16px;fill:currentColor}
+.obj-doc .nm{font-weight:700;color:var(--brand-900);font-size:13px;white-space:nowrap}
+.obj-doc .ver{font-size:10.5px;font-weight:800;color:var(--muted-2)}
+.obj-doc .col{display:grid;line-height:1.2;min-width:0}
+.obj-doc .meta{font-size:10.5px;color:var(--muted)}
+/* colore per tipologia */
+.ic.exec{background:#e7f1fc;border-color:#cfe0f5;color:#1a5f9e}
+.ic.tech{background:#f3eefc;border-color:#ddd0f7;color:#5b34b5}
+.ic.act{background:#eafaf1;border-color:#bcdfce;color:#0b6b45}
+.ic.retest{background:#e9f7fa;border-color:#bfe6ee;color:#0b6b7c}
+.ic.custom{background:#fff5d6;border-color:#ead48a;color:#8a5b00}
+/* variante monocromatica */
+.obj-doc.plain .ic{background:#fff;border-color:var(--line);color:var(--muted)}
+/* pastiglia */
+.obj-doc.pill{border:1px solid var(--line);background:var(--surface-3);border-radius:var(--radius-pill);padding:3px 12px 3px 5px}
+.obj-doc.pill .ic{width:22px;height:22px;border-radius:var(--radius-pill)}
+.obj-doc.pill .ic svg{width:13px;height:13px}
+/* stato pubblicato/bozza */
+.obj-doc .st{font-size:10.5px;font-weight:800;border-radius:var(--radius-pill);padding:1px 8px;border:1px solid}
+.obj-doc .st.ok{background:var(--st-done-bg);color:var(--st-done);border-color:var(--st-done-border)}
+.obj-doc .st.draft{background:var(--surface-2);color:var(--muted);border-color:var(--line)}
+/* card */
+.obj-doccard{display:grid;grid-template-columns:auto minmax(0,1fr);gap:11px;align-items:center;border:1px solid var(--line);border-radius:var(--radius-md);padding:11px;background:#fff;max-width:420px}
+.obj-doccard .ic{width:38px;height:38px;border-radius:11px}
+.obj-doccard .ic svg{width:20px;height:20px}
+.obj-doccard .t{min-width:0}
+.obj-doccard .t b{display:block;font-size:13.5px;color:var(--brand-900)}
+.obj-doccard .t span{display:block;font-size:11px;color:var(--muted)}
+.iconset{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.iconset .one{border:1px solid var(--line);border-radius:var(--radius-md);padding:11px;background:#fff;display:grid;gap:8px;justify-items:center;text-align:center}
+.iconset .one b{font-size:12.5px;color:var(--brand-900)}
+.iconset .one span{font-size:10.5px;color:var(--muted)}
+.iconset .one .row{display:flex;gap:9px;align-items:center}
 </style>
 </head>
 <body>
@@ -202,7 +262,7 @@ body.noicon .obj-client .mark{background:transparent;border:0}
     </div>
 
     <div class="opt">
-      <div class="opt-head"><span class="opt-tag">B</span><b>Pastiglia su fondo neutro</b><span class="d">quando il cliente è un riferimento fra tanti, dentro tabelle dense o filtri</span></div>
+      <div class="opt-head"><span class="opt-tag">B</span><b>Pastiglia su fondo neutro</b><span class="d">quando il cliente è un riferimento fra tanti, dentro tabelle dense o filtri</span><span class="rec scelta">scelta</span></div>
       <div class="sample"><span class="ctx">In una riga</span>
         <span class="obj-client chip"><span class="mark"><img src="https://www.google.com/s2/favicons?sz=64&domain=anthropic.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span><span class="name">Anthropic</span></span>
         <span class="obj-client chip"><span class="mark"><img src="https://www.google.com/s2/favicons?sz=64&domain=nvidia.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span><span class="name">Nvidia</span></span>
@@ -234,49 +294,141 @@ body.noicon .obj-client .mark{background:transparent;border:0}
   <!-- ===================== 2 · ENGAGEMENT ===================== -->
   <section class="card" id="engagement">
     <h2>2 · Engagement</h2>
-    <p class="sub">Il codice (ENG-2026-015) e il nome dell'attività viaggiano sempre insieme: proponiamo quattro modi per legarli.</p>
+    <p class="sub">Hai scelto la direzione <b>D</b> (riferimento + barra del workflow). Qui sotto trovi <b>sei varianti costruite su D</b>. In alto, per memoria, le tre alternative già viste.</p>
 
     <div class="opt">
-      <div class="opt-head"><span class="opt-tag">A</span><b>Codice + nome in linea</b><span class="d">righe di tabella, riferimenti rapidi</span><span class="rec">consigliata</span></div>
+      <div class="opt-head"><span class="opt-tag">A</span><b>Codice + nome in linea</b><span class="d">alternativa già vista</span></div>
       <div class="sample"><span class="ctx">In tabella</span>
         <span class="obj-eng"><span class="code">ENG-2026-015</span><span class="name">Internal Vulnerability Assessment</span></span>
       </div>
-      <div class="sample"><span class="ctx">In una card</span>
-        <span class="obj-eng"><span class="code">ENG-2026-006</span><span class="name">External Penetration Test</span></span>
-      </div>
     </div>
-
     <div class="opt">
-      <div class="opt-head"><span class="opt-tag">B</span><b>Nome sopra, codice sotto</b><span class="d">quando il nome è lungo: liste, pannelli, dettaglio</span></div>
+      <div class="opt-head"><span class="opt-tag">B</span><b>Nome sopra, codice sotto</b><span class="d">alternativa già vista</span></div>
       <div class="sample"><span class="ctx">In lista</span>
         <span class="obj-eng stacked"><span class="name">Internal Vulnerability Assessment</span><span class="code">ENG-2026-015</span></span>
       </div>
-      <ul class="notes"><li>Sfrutta due righe ma regge nomi lunghi senza tagli.</li></ul>
     </div>
-
     <div class="opt">
-      <div class="opt-head"><span class="opt-tag">C</span><b>Pallino di stato + nome + codice</b><span class="d">liste dove conta capire subito lo stato</span></div>
+      <div class="opt-head"><span class="opt-tag">C</span><b>Pallino di stato + nome + codice</b><span class="d">alternativa già vista</span></div>
       <div class="sample"><span class="ctx">In lista</span>
         <span class="obj-eng"><span class="dot a"></span><span class="name">Internal Vulnerability Assessment</span><span class="code">ENG-2026-015</span></span>
       </div>
-      <div class="sample"><span class="ctx">Concluso</span>
-        <span class="obj-eng"><span class="dot d"></span><span class="name">External Penetration Test</span><span class="code">ENG-2026-006</span></span>
-      </div>
-      <div class="sample"><span class="ctx">In attesa</span>
-        <span class="obj-eng"><span class="dot w"></span><span class="name">Web Application Penetration Test</span><span class="code">ENG-2026-007</span></span>
+    </div>
+
+    <h2 style="margin-top:20px">Su D · riferimento + barra del workflow</h2>
+    <p class="sub">Un segmento per passo: si legge quanto è lungo il percorso e a che punto è. Cambiano il colore dei segmenti, ciò che si scrive accanto e come si mostra l'attesa.</p>
+
+    <div class="opt">
+      <div class="opt-head"><span class="opt-tag">D</span><b>Barra a segmenti</b><span class="d">la base: nome, codice, segmenti sotto</span><span class="rec scelta">direzione scelta</span></div>
+      <div class="sample" style="align-items:flex-start"><span class="ctx">In lista</span>
+        <span class="obj-flow">
+          <span class="lines"><b>Internal Vulnerability Assessment</b><small>ENG-2026-015 · Anthropic</small></span>
+          <span class="segs"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i><i></i><i></i></span>
+        </span>
       </div>
     </div>
 
     <div class="opt">
-      <div class="opt-head"><span class="opt-tag">D</span><b>Con mini barra del workflow</b><span class="d">liste e calendario: mostra a colpo d'occhio a che punto è</span></div>
+      <div class="opt-head"><span class="opt-tag">D1</span><b>Barra + contatore</b><span class="d">aggiunge "6/9": dice quanto manca senza contare i segmenti</span></div>
       <div class="sample" style="align-items:flex-start"><span class="ctx">In lista</span>
-        <span class="obj-eng mini stacked">
-          <span class="name">Internal Vulnerability Assessment</span>
-          <span class="code">ENG-2026-015 · Anthropic</span>
-          <span class="steps"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span>
+        <span class="obj-flow">
+          <span class="top">
+            <span class="lines" style="flex:1"><b>Internal Vulnerability Assessment</b><small>ENG-2026-015 · Anthropic</small></span>
+            <span class="count">6/9</span>
+          </span>
+          <span class="segs"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i><i></i><i></i></span>
         </span>
       </div>
-      <ul class="notes"><li>La barra ha un segmento per passo: si legge "quanto manca" senza aprire l'attività.</li></ul>
+      <div class="sample" style="align-items:flex-start"><span class="ctx">Concluso</span>
+        <span class="obj-flow">
+          <span class="top">
+            <span class="lines" style="flex:1"><b>External Penetration Test</b><small>ENG-2026-006 · Nvidia</small></span>
+            <span class="count">9/9</span>
+          </span>
+          <span class="segs"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i></span>
+        </span>
+      </div>
+    </div>
+
+    <div class="opt">
+      <div class="opt-head"><span class="opt-tag">D2</span><b>Barra + fase corrente</b><span class="d">dice il nome del passo in cui si trova: più informativo del numero</span><span class="rec scelta">consigliata</span></div>
+      <div class="sample" style="align-items:flex-start"><span class="ctx">In lista</span>
+        <span class="obj-flow">
+          <span class="top">
+            <span class="lines" style="flex:1"><b>Internal Vulnerability Assessment</b><small>ENG-2026-015 · Anthropic</small></span>
+            <span class="phase">7 · Retest</span>
+          </span>
+          <span class="segs"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i><i></i><i></i></span>
+        </span>
+      </div>
+      <div class="sample" style="align-items:flex-start"><span class="ctx">In corso</span>
+        <span class="obj-flow">
+          <span class="top">
+            <span class="lines" style="flex:1"><b>Web Application Penetration Test</b><small>ENG-2026-007 · Anthropic</small></span>
+            <span class="phase">5 · Esecuzione</span>
+          </span>
+          <span class="segs"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i><i></i><i></i><i></i></span>
+        </span>
+      </div>
+      <ul class="notes"><li>Fase e numero vengono dal workflow già numerato da 0, quindi restano allineati al menu del dettaglio.</li></ul>
+    </div>
+
+    <div class="opt">
+      <div class="opt-head"><span class="opt-tag">D3</span><b>Pallini + fase</b><span class="d">più leggero dei segmenti, sta bene in righe alte poche decine di pixel</span></div>
+      <div class="sample" style="align-items:flex-start"><span class="ctx">In lista</span>
+        <span class="obj-flow">
+          <span class="top">
+            <span class="lines" style="flex:1"><b>Internal Vulnerability Assessment</b><small>ENG-2026-015 · Anthropic</small></span>
+            <span class="phase">7 · Retest</span>
+          </span>
+          <span class="dots"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i><i></i><i></i></span>
+        </span>
+      </div>
+    </div>
+
+    <div class="opt">
+      <div class="opt-head"><span class="opt-tag">D4</span><b>Barra continua + percentuale</b><span class="d">una sola barra: il modo più rapido per confrontare più engagement fra loro</span></div>
+      <div class="sample" style="align-items:flex-start"><span class="ctx">In lista</span>
+        <span class="obj-flow">
+          <span class="top">
+            <span class="lines" style="flex:1"><b>Internal Vulnerability Assessment</b><small>ENG-2026-015 · Anthropic</small></span>
+            <span class="count">67%</span>
+          </span>
+          <span class="bar"><i style="width:67%"></i></span>
+        </span>
+      </div>
+      <div class="sample" style="align-items:flex-start"><span class="ctx">In corso</span>
+        <span class="obj-flow">
+          <span class="top">
+            <span class="lines" style="flex:1"><b>Web Application Penetration Test</b><small>ENG-2026-007 · Anthropic</small></span>
+            <span class="count">56%</span>
+          </span>
+          <span class="bar"><i style="width:56%"></i></span>
+        </span>
+      </div>
+    </div>
+
+    <div class="opt">
+      <div class="opt-head"><span class="opt-tag">D5</span><b>Barra + stato in ritardo</b><span class="d">il segmento corrente diventa rosso quando il passo è fermo da giorni</span></div>
+      <div class="sample" style="align-items:flex-start"><span class="ctx">In ritardo</span>
+        <span class="obj-flow">
+          <span class="top">
+            <span class="lines" style="flex:1"><b>Internal Vulnerability Assessment</b><small>ENG-2026-015 · Anthropic</small></span>
+            <span class="phase" style="color:var(--st-action)">In attesa da 9 gg</span>
+          </span>
+          <span class="segs"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="late"></i><i></i><i></i></span>
+        </span>
+      </div>
+      <div class="sample" style="align-items:flex-start"><span class="ctx">Regolare</span>
+        <span class="obj-flow">
+          <span class="top">
+            <span class="lines" style="flex:1"><b>Web Application Penetration Test</b><small>ENG-2026-007 · Anthropic</small></span>
+            <span class="phase">In corso</span>
+          </span>
+          <span class="segs"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i><i></i><i></i><i></i></span>
+        </span>
+      </div>
+      <ul class="notes"><li>Unisce l'oggetto "stato" dentro l'engagement: in molte righe potresti togliere la colonna Stato.</li></ul>
     </div>
   </section>
 
@@ -286,7 +438,7 @@ body.noicon .obj-client .mark{background:transparent;border:0}
     <p class="sub">Utenti interni, clienti, partecipanti esterni. L'iniziale nel cerchio è colorata per ruolo: così si distingue a colpo d'occhio chi è il Pentester, chi il Manager, chi il cliente.</p>
 
     <div class="opt">
-      <div class="opt-head"><span class="opt-tag">A</span><b>Avatar per ruolo + nome + ruolo</b><span class="d">elenchi utenti, team, destinatari</span><span class="rec">consigliata</span></div>
+      <div class="opt-head"><span class="opt-tag">A</span><b>Avatar per ruolo + nome + ruolo</b><span class="d">elenchi utenti, team, destinatari</span><span class="rec scelta">scelta</span></div>
       <div class="sample"><span class="ctx">In elenco</span>
         <span class="obj-person"><span class="av pentester">SC</span><span class="col"><span class="nm">Sara Conti</span><span class="role">Pentester</span></span></span>
         <span class="obj-person"><span class="av manager">GM</span><span class="col"><span class="nm">Giorgio Marino</span><span class="role">Manager</span></span></span>
@@ -344,7 +496,7 @@ body.noicon .obj-client .mark{background:transparent;border:0}
     </div>
 
     <div class="opt">
-      <div class="opt-head"><span class="opt-tag">C</span><b>Solo sigla</b><span class="d">tabelle molto dense, tooltip con il nome completo</span></div>
+      <div class="opt-head"><span class="opt-tag">C</span><b>Solo sigla</b><span class="d">tabelle molto dense, tooltip con il nome completo</span><span class="rec scelta">scelta</span></div>
       <div class="sample"><span class="ctx">In tabella</span>
         <span class="obj-type" title="Penetration Test"><span class="sq pt">PT</span></span>
         <span class="obj-type" title="Vulnerability Assessment"><span class="sq va">VA</span></span>
@@ -360,7 +512,7 @@ body.noicon .obj-client .mark{background:transparent;border:0}
     <p class="sub">Lo stato dell'attività (da gestire, in attesa, in corso…) e il passo del workflow. Oggi convivono pill di colori diversi fra liste, KPI e dettaglio.</p>
 
     <div class="opt">
-      <div class="opt-head"><span class="opt-tag">A</span><b>Pastiglia con pallino</b><span class="d">default: liste, KPI, dettaglio</span><span class="rec">consigliata</span></div>
+      <div class="opt-head"><span class="opt-tag">A</span><b>Pastiglia con pallino</b><span class="d">default: liste, KPI, dettaglio</span><span class="rec scelta">scelta</span></div>
       <div class="sample"><span class="ctx">In lista</span>
         <span class="obj-state action"><i></i>Da gestire</span>
         <span class="obj-state wait"><i></i>In attesa di terzi</span>
@@ -403,7 +555,7 @@ body.noicon .obj-client .mark{background:transparent;border:0}
     </div>
 
     <div class="opt">
-      <div class="opt-head"><span class="opt-tag">B</span><b>Periodo in riquadro</b><span class="d">dettaglio e pannelli, dove contorna il dato</span></div>
+      <div class="opt-head"><span class="opt-tag">B</span><b>Periodo in riquadro</b><span class="d">dettaglio e pannelli, dove contorna il dato</span><span class="rec scelta">scelta</span></div>
       <div class="sample"><span class="ctx">Nel dettaglio</span>
         <span class="obj-period box">05/01/2026 <span class="arrow">→</span> 16/01/2026</span>
         <span class="obj-period box" style="border-color:var(--st-progress-border);background:var(--st-progress-bg)">Retest 20/01/2026 → 22/01/2026</span>
@@ -422,59 +574,144 @@ body.noicon .obj-client .mark{background:transparent;border:0}
   <!-- ===================== 7 · DELIVERABLE ===================== -->
   <section class="card" id="report">
     <h2>7 · Deliverable / report</h2>
-    <p class="sub">Le tipologie di report (Executive, Technical, Activity, Retest) e la loro versione, con lo stato di pubblicazione.</p>
+    <p class="sub">Il quadratino vuoto diventa <b>un'icona per tipologia</b>: così si riconosce il deliverable prima di leggere il nome. Sotto, il set di icone e quattro composizioni che le usano.</p>
 
     <div class="opt">
-      <div class="opt-head"><span class="opt-tag">A</span><b>Documento + nome + versione</b><span class="d">scheda Report, KPI, registro</span><span class="rec">consigliata</span></div>
-      <div class="sample"><span class="ctx">Nel dettaglio</span>
-        <span class="obj-report ok"><span class="rd"></span>Executive <span class="ver">v2</span></span>
-        <span class="obj-report"><span class="rd"></span>Technical <span class="ver">v3</span></span>
-        <span class="obj-report draft"><span class="rd"></span>Activity <span class="ver">bozza</span></span>
-        <span class="obj-report ok"><span class="rd"></span>Retest <span class="ver">v1</span></span>
+      <div class="opt-head"><span class="opt-tag">i</span><b>Il set di icone</b><span class="d">Executive (sintesi), Technical (dettaglio tecnico), Activity (log), Retest (verifica dopo i fix), Custom (concordato)</span></div>
+      <div class="iconset">
+        <div class="one">
+          <div class="row">
+            <span class="obj-doc"><span class="ic exec"><svg viewBox="0 0 16 16"><path d="M4 11H2v3h2zm5-4H7v7h2zm5-5v12h-2V2zm-2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM6 7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1zm-5 4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1z"/></svg></span></span>
+            <span class="obj-doc plain"><span class="ic"><svg viewBox="0 0 16 16"><path d="M4 11H2v3h2zm5-4H7v7h2zm5-5v12h-2V2zm-2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM6 7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1zm-5 4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1z"/></svg></span></span>
+          </div>
+          <b>Executive</b><span>sintesi per il management</span>
+        </div>
+        <div class="one">
+          <div class="row">
+            <span class="obj-doc"><span class="ic tech"><svg viewBox="0 0 16 16"><path d="M10.478 1.647a.5.5 0 1 0-.956-.294l-4 13a.5.5 0 0 0 .956.294zM4.854 4.146a.5.5 0 0 1 0 .708L1.707 8l3.147 3.146a.5.5 0 0 1-.708.708l-3.5-3.5a.5.5 0 0 1 0-.708l3.5-3.5a.5.5 0 0 1 .708 0m6.292 0a.5.5 0 0 0 0 .708L14.293 8l-3.147 3.146a.5.5 0 0 0 .708.708l3.5-3.5a.5.5 0 0 0 0-.708l-3.5-3.5a.5.5 0 0 0-.708 0"/></svg></span></span>
+            <span class="obj-doc plain"><span class="ic"><svg viewBox="0 0 16 16"><path d="M10.478 1.647a.5.5 0 1 0-.956-.294l-4 13a.5.5 0 0 0 .956.294zM4.854 4.146a.5.5 0 0 1 0 .708L1.707 8l3.147 3.146a.5.5 0 0 1-.708.708l-3.5-3.5a.5.5 0 0 1 0-.708l3.5-3.5a.5.5 0 0 1 .708 0m6.292 0a.5.5 0 0 0 0 .708L14.293 8l-3.147 3.146a.5.5 0 0 0 .708.708l3.5-3.5a.5.5 0 0 0 0-.708l-3.5-3.5a.5.5 0 0 0-.708 0"/></svg></span></span>
+          </div>
+          <b>Technical</b><span>dettaglio tecnico ed evidenze</span>
+        </div>
+        <div class="one">
+          <div class="row">
+            <span class="obj-doc"><span class="ic act"><svg viewBox="0 0 16 16"><path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5M3.854 2.146a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 3.293l1.146-1.147a.5.5 0 0 1 .708 0m0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 7.293l1.146-1.147a.5.5 0 0 1 .708 0m0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0"/></svg></span></span>
+            <span class="obj-doc plain"><span class="ic"><svg viewBox="0 0 16 16"><path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5M3.854 2.146a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 3.293l1.146-1.147a.5.5 0 0 1 .708 0m0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 7.293l1.146-1.147a.5.5 0 0 1 .708 0m0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0"/></svg></span></span>
+          </div>
+          <b>Activity</b><span>log delle attività svolte</span>
+        </div>
+        <div class="one">
+          <div class="row">
+            <span class="obj-doc"><span class="ic retest"><svg viewBox="0 0 16 16"><path d="M5.072.56C6.157.265 7.31 0 8 0s1.843.265 2.928.56c1.11.3 2.229.655 2.887.87a1.54 1.54 0 0 1 1.044 1.262c.596 4.477-.787 7.795-2.465 9.99a11.8 11.8 0 0 1-2.517 2.453 7 7 0 0 1-1.048.625c-.28.132-.581.24-.829.24s-.548-.108-.829-.24a7 7 0 0 1-1.048-.625 11.8 11.8 0 0 1-2.517-2.453C1.928 10.487.545 7.169 1.141 2.692A1.54 1.54 0 0 1 2.185 1.43 63 63 0 0 1 5.072.56"/><path d="M10.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0"/></svg></span></span>
+            <span class="obj-doc plain"><span class="ic"><svg viewBox="0 0 16 16"><path d="M5.072.56C6.157.265 7.31 0 8 0s1.843.265 2.928.56c1.11.3 2.229.655 2.887.87a1.54 1.54 0 0 1 1.044 1.262c.596 4.477-.787 7.795-2.465 9.99a11.8 11.8 0 0 1-2.517 2.453 7 7 0 0 1-1.048.625c-.28.132-.581.24-.829.24s-.548-.108-.829-.24a7 7 0 0 1-1.048-.625 11.8 11.8 0 0 1-2.517-2.453C1.928 10.487.545 7.169 1.141 2.692A1.54 1.54 0 0 1 2.185 1.43 63 63 0 0 1 5.072.56"/><path d="M10.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0"/></svg></span></span>
+          </div>
+          <b>Retest</b><span>verifica dopo i fix</span>
+        </div>
+        <div class="one">
+          <div class="row">
+            <span class="obj-doc"><span class="ic custom"><svg viewBox="0 0 16 16"><path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356z"/></svg></span></span>
+            <span class="obj-doc plain"><span class="ic"><svg viewBox="0 0 16 16"><path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356z"/></svg></span></span>
+          </div>
+          <b>Custom</b><span>deliverable concordato</span>
+        </div>
+      </div>
+      <ul class="notes">
+        <li>A sinistra il quadratino <b>colorato per tipologia</b>, a destra la versione <b>monocromatica</b> (grigio): la prima aiuta a distinguere a colpo d'occhio, la seconda è più sobria dove ci sono già molti colori.</li>
+        <li>Le icone sono le stesse in tutto il portale: elenco report, scheda engagement, KPI, setup e registro.</li>
+      </ul>
+    </div>
+
+    <div class="opt">
+      <div class="opt-head"><span class="opt-tag">A</span><b>Icona + nome + versione</b><span class="d">elenco deliverable nella scheda Report</span><span class="rec scelta">consigliata</span></div>
+      <div class="sample"><span class="ctx">In elenco</span>
+        <span class="obj-doc"><span class="ic exec"><svg viewBox="0 0 16 16"><path d="M4 11H2v3h2zm5-4H7v7h2zm5-5v12h-2V2zm-2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM6 7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1zm-5 4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1z"/></svg></span><span class="nm">Executive</span><span class="ver">v2</span></span>
+        <span class="obj-doc"><span class="ic tech"><svg viewBox="0 0 16 16"><path d="M10.478 1.647a.5.5 0 1 0-.956-.294l-4 13a.5.5 0 0 0 .956.294zM4.854 4.146a.5.5 0 0 1 0 .708L1.707 8l3.147 3.146a.5.5 0 0 1-.708.708l-3.5-3.5a.5.5 0 0 1 0-.708l3.5-3.5a.5.5 0 0 1 .708 0m6.292 0a.5.5 0 0 0 0 .708L14.293 8l-3.147 3.146a.5.5 0 0 0 .708.708l3.5-3.5a.5.5 0 0 0 0-.708l-3.5-3.5a.5.5 0 0 0-.708 0"/></svg></span><span class="nm">Technical</span><span class="ver">v3</span></span>
+        <span class="obj-doc"><span class="ic act"><svg viewBox="0 0 16 16"><path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5M3.854 2.146a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 3.293l1.146-1.147a.5.5 0 0 1 .708 0m0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 7.293l1.146-1.147a.5.5 0 0 1 .708 0m0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0"/></svg></span><span class="nm">Activity</span><span class="ver">bozza</span></span>
+        <span class="obj-doc"><span class="ic retest"><svg viewBox="0 0 16 16"><path d="M5.072.56C6.157.265 7.31 0 8 0s1.843.265 2.928.56c1.11.3 2.229.655 2.887.87a1.54 1.54 0 0 1 1.044 1.262c.596 4.477-.787 7.795-2.465 9.99a11.8 11.8 0 0 1-2.517 2.453 7 7 0 0 1-1.048.625c-.28.132-.581.24-.829.24s-.548-.108-.829-.24a7 7 0 0 1-1.048-.625 11.8 11.8 0 0 1-2.517-2.453C1.928 10.487.545 7.169 1.141 2.692A1.54 1.54 0 0 1 2.185 1.43 63 63 0 0 1 5.072.56"/><path d="M10.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0"/></svg></span><span class="nm">Retest</span><span class="ver">v1</span></span>
+      </div>
+      <ul class="notes"><li>La versione (v2, v3, bozza) sta a destra in piccolo: non ruba spazio al nome.</li></ul>
+    </div>
+
+    <div class="opt">
+      <div class="opt-head"><span class="opt-tag">B</span><b>Pastiglia con icona</b><span class="d">tipologie previste nel Setup, filtri, elenchi brevi</span></div>
+      <div class="sample"><span class="ctx">Nel setup</span>
+        <span class="obj-doc pill"><span class="ic exec"><svg viewBox="0 0 16 16"><path d="M4 11H2v3h2zm5-4H7v7h2zm5-5v12h-2V2zm-2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM6 7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1zm-5 4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1z"/></svg></span><span class="nm">Executive</span></span>
+        <span class="obj-doc pill"><span class="ic tech"><svg viewBox="0 0 16 16"><path d="M10.478 1.647a.5.5 0 1 0-.956-.294l-4 13a.5.5 0 0 0 .956.294zM4.854 4.146a.5.5 0 0 1 0 .708L1.707 8l3.147 3.146a.5.5 0 0 1-.708.708l-3.5-3.5a.5.5 0 0 1 0-.708l3.5-3.5a.5.5 0 0 1 .708 0m6.292 0a.5.5 0 0 0 0 .708L14.293 8l-3.147 3.146a.5.5 0 0 0 .708.708l3.5-3.5a.5.5 0 0 0 0-.708l-3.5-3.5a.5.5 0 0 0-.708 0"/></svg></span><span class="nm">Technical</span></span>
+        <span class="obj-doc pill"><span class="ic act"><svg viewBox="0 0 16 16"><path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5M3.854 2.146a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 3.293l1.146-1.147a.5.5 0 0 1 .708 0m0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 7.293l1.146-1.147a.5.5 0 0 1 .708 0m0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0"/></svg></span><span class="nm">Activity</span></span>
       </div>
     </div>
 
     <div class="opt">
-      <div class="opt-head"><span class="opt-tag">B</span><b>Pastiglia</b><span class="d">elenchi di tipologie previste, setup, filtri</span></div>
-      <div class="sample"><span class="ctx">Nel setup</span>
-        <span class="obj-report pill">Executive</span>
-        <span class="obj-report pill">Technical</span>
-        <span class="obj-report pill">Activity</span>
+      <div class="opt-head"><span class="opt-tag">C</span><b>Icona + nome + stato, senza badge separato</b><span class="d">quando la riga ha spazio per una sola pastiglia</span></div>
+      <div class="sample"><span class="ctx">In elenco</span>
+        <span class="obj-doc"><span class="ic exec"><svg viewBox="0 0 16 16"><path d="M4 11H2v3h2zm5-4H7v7h2zm5-5v12h-2V2zm-2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM6 7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1zm-5 4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1z"/></svg></span><span class="nm">Executive</span><span class="st ok">Pubblicato</span></span>
+        <span class="obj-doc"><span class="ic act"><svg viewBox="0 0 16 16"><path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5M3.854 2.146a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 3.293l1.146-1.147a.5.5 0 0 1 .708 0m0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 7.293l1.146-1.147a.5.5 0 0 1 .708 0m0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0"/></svg></span><span class="nm">Activity</span><span class="st draft">Bozza</span></span>
+      </div>
+    </div>
+
+    <div class="opt">
+      <div class="opt-head"><span class="opt-tag">D</span><b>Card del report</b><span class="d">dove il deliverable è il contenuto principale: scheda Report e KPI</span></div>
+      <div class="sample" style="align-items:stretch">
+        <div class="obj-doccard">
+          <span class="ic tech"><svg viewBox="0 0 16 16"><path d="M10.478 1.647a.5.5 0 1 0-.956-.294l-4 13a.5.5 0 0 0 .956.294zM4.854 4.146a.5.5 0 0 1 0 .708L1.707 8l3.147 3.146a.5.5 0 0 1-.708.708l-3.5-3.5a.5.5 0 0 1 0-.708l3.5-3.5a.5.5 0 0 1 .708 0m6.292 0a.5.5 0 0 0 0 .708L14.293 8l-3.147 3.146a.5.5 0 0 0 .708.708l3.5-3.5a.5.5 0 0 0 0-.708l-3.5-3.5a.5.5 0 0 0-.708 0"/></svg></span>
+          <span class="t"><b>Technical · v3</b><span>Report_ENG-2026-015_finale.txt · 2 KB · pubblicato il 21/10/2026</span></span>
+        </div>
+        <div class="obj-doccard">
+          <span class="ic retest"><svg viewBox="0 0 16 16"><path d="M5.072.56C6.157.265 7.31 0 8 0s1.843.265 2.928.56c1.11.3 2.229.655 2.887.87a1.54 1.54 0 0 1 1.044 1.262c.596 4.477-.787 7.795-2.465 9.99a11.8 11.8 0 0 1-2.517 2.453 7 7 0 0 1-1.048.625c-.28.132-.581.24-.829.24s-.548-.108-.829-.24a7 7 0 0 1-1.048-.625 11.8 11.8 0 0 1-2.517-2.453C1.928 10.487.545 7.169 1.141 2.692A1.54 1.54 0 0 1 2.185 1.43 63 63 0 0 1 5.072.56"/><path d="M10.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0"/></svg></span>
+          <span class="t"><b>Retest · v1</b><span>Report_ENG-2026-006_retest.txt · inviato senza revisione</span></span>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- ===================== SET CONSIGLIATO ===================== -->
   <section class="card" id="set">
-    <h2>Set consigliato, messo insieme</h2>
-    <p class="sub">Le varianti segnate "consigliata" combinate dove servono: ecco come apparirebbe una riga di elenco e l'intestazione di un dettaglio.</p>
+    <h2>Set con le tue scelte</h2>
+    <p class="sub">Composizione con le varianti scelte: <b>cliente B</b>, <b>persona A</b>, <b>tipo C</b>, <b>stato A</b>, <b>periodo B</b> — più <b>engagement</b> e <b>deliverable</b>, che stiamo ancora scegliendo.</p>
 
     <div class="opt">
-      <div class="opt-head"><b>Riga di elenco engagement</b><span class="d">oggetti: engagement (B) + cliente (A) + tipo (A) + periodo (A) + stato (A)</span></div>
-      <div style="display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr) 132px 150px;gap:12px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:var(--radius-md);padding:12px">
-        <span class="obj-eng stacked"><span class="name">Internal Vulnerability Assessment</span><span class="code">ENG-2026-015</span></span>
-        <span class="obj-client"><span class="mark"><img src="https://www.google.com/s2/favicons?sz=64&domain=anthropic.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span><span class="name">Anthropic</span></span>
-        <span class="obj-type"><span class="sq va">VA</span></span>
-        <span class="obj-period"><svg viewBox="0 0 16 16"><path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857z"/><path d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/></svg>05/01 <span class="arrow">→</span> 16/01</span>
-        <span class="obj-state wait days" style="grid-column:1/-1;justify-self:start">In attesa di terzi <em>9 gg</em></span>
+      <div class="opt-head"><b>Riga di elenco engagement</b><span class="d">engagement D2 (in prova) + cliente B + tipo C + periodo B + stato A</span></div>
+      <div style="display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr) 90px 150px 130px;gap:12px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:var(--radius-md);padding:12px">
+        <span class="obj-flow">
+          <span class="top">
+            <span class="lines" style="flex:1"><b>Internal Vulnerability Assessment</b><small>ENG-2026-015 · Anthropic</small></span>
+            <span class="phase">7 · Retest</span>
+          </span>
+          <span class="segs"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i><i></i><i></i></span>
+        </span>
+        <span class="obj-client chip"><span class="mark"><img src="https://www.google.com/s2/favicons?sz=64&domain=anthropic.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span><span class="name">Anthropic</span></span>
+        <span class="obj-type" title="Vulnerability Assessment"><span class="sq va">VA</span></span>
+        <span class="obj-period box">05/01/2026 <span class="arrow">→</span> 16/01/2026</span>
+        <span class="obj-state wait"><i></i>In attesa</span>
       </div>
     </div>
 
     <div class="opt">
-      <div class="opt-head"><b>Intestazione di dettaglio</b><span class="d">oggetti: engagement (A) + cliente (C) + tipo (B) + periodo (B) + stato (C) + persona (A)</span></div>
-      <div style="background:#fff;border:1px solid var(--line);border-radius:var(--radius-md);padding:14px;display:grid;gap:11px">
-        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-          <span class="obj-eng"><span class="code">ENG-2026-015</span><span class="name" style="font-size:17px;font-weight:800">Internal Vulnerability Assessment</span></span>
-          <span class="obj-client tag"><span class="mark"><img src="https://www.google.com/s2/favicons?sz=64&domain=anthropic.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span><span class="col"><span class="name">Anthropic</span><span class="host">www.anthropic.com</span></span></span>
+      <div class="opt-head"><b>Intestazione di dettaglio</b><span class="d">engagement D2 + cliente B + tipo C + periodo B + stato A + persona A + deliverable A</span></div>
+      <div style="background:#fff;border:1px solid var(--line);border-radius:var(--radius-md);padding:14px;display:grid;gap:12px">
+        <div style="display:grid;gap:5px;max-width:620px">
+          <span class="obj-flow">
+            <span class="top">
+              <span class="lines" style="flex:1"><b style="font-size:17px">Internal Vulnerability Assessment</b><small>ENG-2026-015 · Anthropic</small></span>
+              <span class="phase">7 · Retest</span>
+            </span>
+            <span class="segs"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i><i></i><i></i></span>
+          </span>
         </div>
-        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-          <span class="obj-type pill">Vulnerability Assessment</span>
+        <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap">
+          <span class="obj-client chip"><span class="mark"><img src="https://www.google.com/s2/favicons?sz=64&domain=anthropic.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span><span class="name">Anthropic</span></span>
+          <span class="obj-type" title="Vulnerability Assessment"><span class="sq va">VA</span></span>
           <span class="obj-period box">05/01/2026 <span class="arrow">→</span> 16/01/2026</span>
-          <span class="obj-state wait days">In attesa di terzi <em>9 gg</em></span>
+          <span class="obj-state wait"><i></i>In attesa</span>
           <span class="obj-person"><span class="av pentester">SC</span><span class="col"><span class="nm">Sara Conti</span><span class="role">Pentester</span></span></span>
         </div>
+        <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap">
+          <span class="obj-doc"><span class="ic exec"><svg viewBox="0 0 16 16"><path d="M4 11H2v3h2zm5-4H7v7h2zm5-5v12h-2V2zm-2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM6 7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1zm-5 4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1z"/></svg></span><span class="nm">Executive</span><span class="ver">v2</span><span class="st ok">Pubblicato</span></span>
+          <span class="obj-doc"><span class="ic retest"><svg viewBox="0 0 16 16"><path d="M5.072.56C6.157.265 7.31 0 8 0s1.843.265 2.928.56c1.11.3 2.229.655 2.887.87a1.54 1.54 0 0 1 1.044 1.262c.596 4.477-.787 7.795-2.465 9.99a11.8 11.8 0 0 1-2.517 2.453 7 7 0 0 1-1.048.625c-.28.132-.581.24-.829.24s-.548-.108-.829-.24a7 7 0 0 1-1.048-.625 11.8 11.8 0 0 1-2.517-2.453C1.928 10.487.545 7.169 1.141 2.692A1.54 1.54 0 0 1 2.185 1.43 63 63 0 0 1 5.072.56"/><path d="M10.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0"/></svg></span><span class="nm">Retest</span><span class="ver">v1</span><span class="st draft">Bozza</span></span>
+        </div>
       </div>
     </div>
+
 
     <h2 style="margin-top:18px">Dove li useremmo</h2>
     <table class="cmp">
