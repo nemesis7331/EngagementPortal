@@ -21,12 +21,16 @@ App Service a ogni push su `main`.
   clienti/engagement**. Il Manager vede tutto e amministra; PMO, Pentester,
   Auditor e utenti Cliente vedono solo ciò che è assegnato (filtro lato API).
   Il PMO può assegnare utenti solo entro i propri clienti.
-- **Amministrazione**: area unica per Manager e PMO raggiungibile dall'header,
-  con rail categorie e dettaglio contestuale. Sezioni: **Utenti** (tabella
-  essenziale Utente · Ruolo · Clienti, con dettaglio a destra), **Clienti**,
-  **Mailing list** (liste notifiche e deliverables per cliente ed engagement,
-  con editor destinatari), **Template mail** (standard e override per cliente)
-  e **Impostazioni** (retention, 2FA, solleciti).
+- **Navigazione unica**: sidebar globale collassabile (228 → 64 px) per tutto
+  il portale — Engagement, Clienti, Calendario, Solleciti, Amministrazione.
+  Lo stato del menu resta memorizzato; su mobile diventa un drawer.
+- **Calendario**: vista da oggi a fine mese successivo con gli engagement
+  **pianificati** (blu) e **proposti** (ambra), filtrati per visibilità utente.
+  Clic su un evento: apre l'engagement; per le proposte porta alla pianificazione.
+- **Amministrazione**: sezioni **Utenti**, **Clienti**, **Mailing list**
+  (notifiche e deliverables per cliente ed engagement, con editor destinatari),
+  **Template mail** (standard e override per cliente) e **Impostazioni**
+  (retention, 2FA, solleciti), raggiungibili dalla sidebar globale.
 - **Retention deliverables**: i report vengono cancellati automaticamente
   **90 giorni** dopo la pubblicazione (valore demo, configurabile).
 - **Team**: partecipanti esterni per cliente (base comune) e per engagement.

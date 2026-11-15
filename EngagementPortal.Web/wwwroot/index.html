@@ -72,7 +72,7 @@
   --row-action:#fffafa;
   --row-wait:#fffdf5;
   --row-done:#fbfffc;
-  --page-max:1280px;
+  --page-max:1440px;
   --shadow:0 1px 2px rgba(6,29,54,.06),0 6px 20px rgba(6,29,54,.06);
   --shadow-xs:0 1px 2px rgba(0,0,0,.25);
   --shadow-lg:0 20px 60px rgba(6,29,54,.35);
@@ -82,7 +82,7 @@
 body{margin:0;font-family:var(--font-sans);background:var(--bg);color:var(--ink);font-size:var(--fs-base);line-height:var(--lh-base);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;font-variant-numeric:tabular-nums}
 button{font:inherit;cursor:pointer}
 /* Header */
-body > header{background:linear-gradient(100deg,var(--brand-950),var(--brand-900) 60%,var(--brand-700));color:#fff;position:sticky;top:0;z-index:20}
+.shell-main > header{background:linear-gradient(100deg,var(--brand-950),var(--brand-900) 60%,var(--brand-700));color:#fff;position:sticky;top:0;z-index:20}
 .hwrap{max-width:var(--page-max);margin:auto;padding:12px 16px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
 .logo{display:flex;align-items:center;gap:10px;font-weight:var(--fw-bold);font-size:var(--fs-xl);letter-spacing:0}
 .logo i{width:30px;height:30px;border-radius:var(--radius-md);background:var(--accent);display:grid;place-items:center;color:var(--brand-950);font-style:normal;font-weight:var(--fw-black)}
@@ -90,6 +90,73 @@ body > header{background:linear-gradient(100deg,var(--brand-950),var(--brand-900
 .spacer{flex:1}
 .user{display:flex;align-items:center;gap:10px;font-size:var(--fs-md)}
 .avatar{width:34px;height:34px;border-radius:50%;background:var(--brand-500);display:grid;place-items:center;font-weight:var(--fw-bold)}
+/* ====== SHELL: SIDEBAR GLOBALE ====== */
+.shell{display:grid;grid-template-columns:228px minmax(0,1fr);min-height:100vh}
+.shell-main{min-width:0;display:flex;flex-direction:column}
+.app-side{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:10px;padding:14px 10px;background:linear-gradient(180deg,var(--brand-950),var(--brand-900) 65%,#08243f);color:#c9d9e7;z-index:40;overflow-y:auto;overflow-x:hidden;transition:width .18s ease,padding .18s ease}
+.app-side-head{display:flex;align-items:center;gap:8px;padding:2px 6px 8px;min-width:0}
+.app-logo{display:flex;align-items:center;gap:9px;color:#fff;font-weight:var(--fw-bold);font-size:12.5px;min-width:0}
+.app-logo i{width:30px;height:30px;border-radius:var(--radius-md);background:var(--accent);color:var(--brand-950);display:grid;place-items:center;font-style:normal;font-weight:var(--fw-black);flex:none;font-size:var(--fs-sm)}
+.app-logo small{display:block;font-size:var(--fs-2xs);letter-spacing:var(--tracking-caps);text-transform:uppercase;color:#9db8ce;font-weight:var(--fw-regular)}
+.app-logo .logo-txt{min-width:0;white-space:normal;line-height:1.2;font-size:12px;overflow-wrap:break-word}
+.side-close{display:none;margin-left:auto;width:30px;height:30px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:#fff;border-radius:8px;align-items:center;justify-content:center;font-size:20px;line-height:1}
+.app-nav{display:grid;gap:10px}
+.nav-group{display:grid;gap:2px}
+.nav-group[hidden]{display:none}
+.nav-label{font-size:var(--fs-2xs);letter-spacing:var(--tracking-caps);text-transform:uppercase;color:#7d9bb4;font-weight:var(--fw-bold);padding:4px 8px 5px;white-space:nowrap}
+.nav-item{display:flex;align-items:center;gap:9px;width:100%;border:0;background:none;color:#b9cee0;border-radius:var(--radius-md);padding:9px 9px;text-align:left;font-size:var(--fs-md);font-weight:var(--fw-semibold);white-space:nowrap;transition:background .15s,color .15s}
+.nav-item:hover{background:rgba(255,255,255,.07);color:#fff}
+.nav-item.on{background:#123e63;color:#fff;box-shadow:inset 3px 0 0 var(--accent)}
+.nav-item:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.nav-item[hidden]{display:none}
+.nav-ico{width:16px;height:16px;fill:currentColor;opacity:.92;flex:none}
+.nav-txt{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.app-side-foot{margin-top:auto;padding-top:10px}
+.side-collapse{display:flex;align-items:center;gap:9px;width:100%;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);color:#c9d9e7;border-radius:var(--radius-md);padding:8px 9px;font-size:var(--fs-sm);font-weight:var(--fw-semibold)}
+.side-collapse:hover{background:rgba(255,255,255,.09);color:#fff}
+.side-collapse svg{flex:none;transition:transform .18s}
+.side-scrim{display:none}
+.hside{width:34px;height:34px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.08);color:#fff;border-radius:8px;display:grid;place-items:center;flex:none}
+.hside:hover{background:rgba(255,255,255,.16)}
+.header-section{display:flex;flex-direction:column;line-height:1.15;min-width:0}
+.header-section span{font-size:var(--fs-2xs);letter-spacing:var(--tracking-caps);text-transform:uppercase;color:#9db8ce;font-weight:var(--fw-bold)}
+.header-section b{font-size:var(--fs-lg);color:#fff;font-weight:var(--fw-semibold);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:340px}
+.hbrand{display:none}
+@media(max-width:1500px){
+  .demo-switch label{font-size:0;gap:0}
+  .demo-switch select{font-size:var(--fs-sm);max-width:170px}
+  .demo-switch #role{max-width:120px}
+  .demo-switch #client{max-width:165px}
+}
+@media(max-width:1200px){
+  .hwrap .user > div:last-child{display:none}
+}
+@media(max-width:900px){
+  .demo-switch select{max-width:none}
+}
+@media(min-width:901px){
+  body.side-collapsed .shell{grid-template-columns:64px minmax(0,1fr)}
+  body.side-collapsed .app-side{padding:14px 8px}
+  body.side-collapsed .app-logo{justify-content:center}
+  body.side-collapsed .app-logo .logo-txt,
+  body.side-collapsed .nav-label,
+  body.side-collapsed .nav-txt{display:none}
+  body.side-collapsed .nav-item{justify-content:center;padding:10px 0;gap:0}
+  body.side-collapsed .side-collapse{justify-content:center;padding:8px 0;gap:0}
+  body.side-collapsed .side-collapse svg{transform:rotate(180deg)}
+}
+@media(max-width:900px){
+  .shell{grid-template-columns:minmax(0,1fr)}
+  .app-side{position:fixed;top:0;left:0;bottom:0;width:272px;max-width:86vw;height:100dvh;transform:translateX(-100%);transition:transform .2s ease;z-index:70;box-shadow:18px 0 40px rgba(6,29,54,.28)}
+  body.side-open .app-side{transform:none}
+  .side-scrim{position:fixed;inset:0;background:rgba(6,29,54,.5);z-index:60}
+  body.side-open .side-scrim{display:block}
+  .side-close{display:flex}
+  .app-side-foot{display:none}
+  .hbrand{display:flex}
+  .header-section{display:none}
+  .hwrap{padding:10px 12px;gap:10px}
+}
 /* Layout */
 main{max-width:var(--page-max);margin:24px auto 60px;padding:0 16px}
 h1{font-size:var(--fs-3xl);line-height:var(--lh-tight);margin:0 0 4px;color:var(--brand-900)}
@@ -318,6 +385,9 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .cav img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#fff;padding:4px}
 .client-cell{display:flex;align-items:center;gap:9px;min-width:0}
 .client-cell span{overflow-wrap:anywhere}
+.listcard{overflow-x:auto}
+.listcard .client-cell{min-width:110px}
+.listcard .client-cell span{white-space:nowrap;overflow-wrap:normal}
 .client-link{border:0;background:none;padding:0;text-align:left;color:inherit;border-radius:6px;max-width:100%}
 .client-link span{color:var(--brand-600);font-weight:var(--fw-semibold)}
 .client-link:hover span{text-decoration:underline}
@@ -710,6 +780,62 @@ tr.row.is-done td:first-child{box-shadow:inset 3px 0 var(--st-done)}
   .inline-actions .btn{width:100%}
   .inline-actions .hint{max-width:none}
 }
+@media(max-width:1560px){
+  .home-cols{grid-template-columns:1fr}
+  .home-side{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+  .home-side .focus-card:nth-of-type(n+3){display:none}
+  .home-side .wrow:nth-of-type(n+3){display:none}
+}
+@media(max-width:900px){
+  .home-side{grid-template-columns:1fr}
+  .home-side .focus-card:nth-of-type(n+3){display:grid}
+  .home-side .wrow:nth-of-type(n+3){display:flex}
+}
+/* ====== CALENDARIO ====== */
+.cal-head{display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:12px}
+.cal-head > div{flex:1;min-width:220px}
+.cal-head h1{margin-bottom:3px}
+.cal-head .sub{margin:0}
+.cal-legend{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 14px;font-size:var(--fs-sm);color:var(--muted)}
+.cal-legend .lg{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--line);border-radius:var(--radius-pill);padding:4px 10px;font-weight:var(--fw-semibold)}
+.cal-legend .lg i{width:9px;height:9px;border-radius:3px;flex:none}
+.cal-legend .lg b{color:var(--brand-900)}
+.cal-legend .lg.planned i{background:#2a86d8}
+.cal-legend .lg.proposed i{background:#d9a514}
+.cal-legend .hint{margin-left:auto;color:var(--muted);font-size:var(--fs-xs)}
+.cal-grid{display:grid;grid-template-columns:1fr;gap:16px;align-items:start}
+.cal-month{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:14px;min-width:0;box-shadow:var(--shadow)}
+.cal-month-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:10px}
+.cal-month-head h2{font-size:var(--fs-lg);margin:0;text-transform:capitalize}
+.cal-month-head span{font-size:var(--fs-xs);color:var(--muted)}
+.cal-week,.cal-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.cal-week{margin-bottom:4px}
+.cal-dow{font-size:var(--fs-2xs);text-transform:uppercase;letter-spacing:var(--tracking-caps);color:var(--muted);font-weight:var(--fw-bold);text-align:center;padding:2px 0}
+.cal-day{min-height:96px;border:1px solid var(--line-soft);border-radius:8px;padding:4px 5px;background:#fff;display:flex;flex-direction:column;gap:3px;min-width:0}
+.cal-day.out{background:var(--surface-3);border-color:transparent}
+.cal-day.past{background:var(--surface-3);opacity:.55}
+.cal-day.today{border-color:var(--brand-500);box-shadow:0 0 0 2px var(--brand-100)}
+.cal-day .n{font-size:var(--fs-2xs);font-weight:var(--fw-bold);color:var(--muted);line-height:1.2}
+.cal-day.today .n{color:var(--brand-700)}
+.cal-ev{display:block;width:100%;border:1px solid;border-radius:5px;padding:2px 5px;font-size:10px;line-height:1.25;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:var(--fw-semibold)}
+.cal-ev.planned{background:#e7f1fc;border-color:#cfe0f5;color:#1a5f9e}
+.cal-ev.planned:hover{background:#d8e9fa}
+.cal-ev.proposed{background:#fff5d6;border-color:#ead48a;color:#8a5b00}
+.cal-ev.proposed:hover{background:#ffedb8}
+.cal-ev:focus-visible{outline:2px solid var(--brand-500);outline-offset:1px}
+.cal-more{font-size:9px;color:var(--muted);font-weight:var(--fw-semibold);padding-left:2px}
+.cal-empty{background:var(--brand-50);border:1px solid var(--brand-100);border-radius:var(--radius-md);padding:12px 14px;color:var(--brand-700);font-size:var(--fs-sm);margin-bottom:14px}
+@media(max-width:1200px){.cal-grid{grid-template-columns:1fr}}
+@media(max-width:700px){
+  .cal-month{padding:10px;overflow-x:auto}
+  .cal-week,.cal-days{min-width:560px}
+  .cal-day{min-height:68px;padding:3px}
+  .cal-ev{font-size:9px;padding:1px 3px}
+  .cal-more{font-size:8px}
+}
+@media(max-width:1500px){
+  .demo-switch select{font-size:var(--fs-sm)}
+}
 </style>
 </head>
 <body>
@@ -727,28 +853,64 @@ tr.row.is-done td:first-child{box-shadow:inset 3px 0 var(--st-done)}
   <symbol id="i-list" viewBox="0 0 16 16"><path d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"/></symbol>
   <symbol id="i-lock" viewBox="0 0 16 16"><path d="M8 1a2 2 0 0 1 2 2v2H6V3a2 2 0 0 1 2-2m3 4V3a3 3 0 1 0-6 0v2H3.5A1.5 1.5 0 0 0 2 6.5v7A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5v-7A1.5 1.5 0 0 0 12.5 5z"/></symbol>
 </svg>
-<header>
-  <div class="hwrap">
-    <div class="logo"><i>CE</i><div>Cyber Engagement Portal<small>Area clienti</small></div></div>
-    <div class="spacer"></div>
-    <button class="btn sec admin-nav" data-act="admin" id="adminNav" hidden>Amministrazione</button>
-    <div class="demo-switch" role="group" aria-label="Modalità demo">
-      <span class="demo-tag">Demo</span>
-      <label for="demoUser">Utente
-        <select id="demoUser" aria-label="Utente demo"></select>
-      </label>
-      <label for="role">Profilo
-        <select id="role" aria-label="Profilo demo"></select>
-      </label>
-      <label for="client">Cliente
-        <select id="client" aria-label="Cliente demo"></select>
-      </label>
+<div class="shell">
+  <aside class="app-side" id="appSide" aria-label="Navigazione principale">
+    <div class="app-side-head">
+      <div class="logo app-logo"><i>CE</i><div class="logo-txt">Cyber Engagement Portal<small>Area clienti</small></div></div>
+      <button class="side-close" data-act="side-close" aria-label="Chiudi menu">×</button>
     </div>
-    <div class="user"><div class="avatar" id="av">–</div><div><div id="uname" style="font-weight:var(--fw-semibold)"></div><div id="urole" style="opacity:.7;font-size:var(--fs-sm)"></div></div></div>
-  </div>
-</header>
+    <nav class="app-nav">
+      <div class="nav-group" data-group="portal">
+        <div class="nav-label">Portale</div>
+        <button class="nav-item" data-act="nav" data-nav="list" data-view="list" title="Engagement"><svg class="nav-ico" aria-hidden="true"><use href="#i-list"></use></svg><span class="nav-txt">Engagement</span></button>
+        <button class="nav-item" data-act="nav" data-nav="clients" data-view="clients" title="Clienti"><svg class="nav-ico" aria-hidden="true"><use href="#i-team"></use></svg><span class="nav-txt">Clienti</span></button>
+        <button class="nav-item" data-act="nav" data-nav="calendar" data-view="calendar" title="Calendario"><svg class="nav-ico" aria-hidden="true"><use href="#i-cal"></use></svg><span class="nav-txt">Calendario</span></button>
+        <button class="nav-item" data-act="nav" data-nav="solicitations" data-view="solicitations" title="Solleciti"><svg class="nav-ico" aria-hidden="true"><use href="#i-play"></use></svg><span class="nav-txt">Solleciti</span></button>
+      </div>
+      <div class="nav-group" data-group="admin" hidden>
+        <div class="nav-label">Amministrazione</div>
+        <button class="nav-item" data-act="nav" data-nav="admin-users" data-view="admin" data-tab="users" title="Utenti"><svg class="nav-ico" aria-hidden="true"><use href="#i-users"></use></svg><span class="nav-txt">Utenti</span></button>
+        <button class="nav-item" data-act="nav" data-nav="admin-mailing" data-view="admin" data-tab="mailing" title="Mailing list"><svg class="nav-ico" aria-hidden="true"><use href="#i-mail"></use></svg><span class="nav-txt">Mailing list</span></button>
+        <button class="nav-item" data-act="nav" data-nav="admin-templates" data-view="admin" data-tab="templates" title="Template mail"><svg class="nav-ico" aria-hidden="true"><use href="#i-doc"></use></svg><span class="nav-txt">Template mail</span></button>
+        <button class="nav-item" data-act="nav" data-nav="admin-settings" data-view="admin" data-tab="settings" title="Impostazioni"><svg class="nav-ico" aria-hidden="true"><use href="#i-lock"></use></svg><span class="nav-txt">Impostazioni</span></button>
+      </div>
+    </nav>
+    <div class="app-side-foot">
+      <button class="side-collapse" data-act="side-collapse" title="Comprimi menu ( [ )">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M10.5 3.5 6 8l4.5 4.5-1 1L4.5 8l5-5.5z"></path></svg>
+        <span class="nav-txt">Comprimi menu</span>
+      </button>
+    </div>
+  </aside>
+  <div class="side-scrim" data-act="side-close" aria-hidden="true"></div>
+  <div class="shell-main">
+    <header>
+      <div class="hwrap">
+        <button class="hside" data-act="side-toggle" id="sideToggle" aria-label="Comprimi menu" aria-expanded="true" title="Comprimi menu ( [ )">
+          <svg width="17" height="17" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M3 4.5h14v1.6H3zM3 9.2h14v1.6H3zM3 13.9h14v1.6H3z"></path></svg>
+        </button>
+        <div class="logo hbrand"><i>CE</i><div>Cyber Engagement Portal</div></div>
+        <div class="header-section"><span id="headerKicker">Portale</span><b id="headerSection">Engagement</b></div>
+        <div class="spacer"></div>
+        <div class="demo-switch" role="group" aria-label="Modalità demo">
+          <span class="demo-tag">Demo</span>
+          <label for="demoUser">Utente
+            <select id="demoUser" aria-label="Utente demo"></select>
+          </label>
+          <label for="role">Profilo
+            <select id="role" aria-label="Profilo demo"></select>
+          </label>
+          <label for="client">Cliente
+            <select id="client" aria-label="Cliente demo"></select>
+          </label>
+        </div>
+        <div class="user"><div class="avatar" id="av">–</div><div><div id="uname" style="font-weight:var(--fw-semibold)"></div><div id="urole" style="opacity:.7;font-size:var(--fs-sm)"></div></div></div>
+      </div>
+    </header>
 
-<main id="app" tabindex="-1"></main>
+    <main id="app" tabindex="-1"></main>
+  </div>
+</div>
 <div id="toast" role="status" aria-live="polite"></div>
 <div id="modal" class="modal"></div>
 
@@ -826,6 +988,7 @@ const VISIBILITY = {
 const state = {
   role: localStorage.getItem('cep.role') || 'Pentester',
   clientId: localStorage.getItem('cep.client') || '',
+  sideCollapsed: localStorage.getItem('cep.sideCollapsed') === '1',
   view: 'list',
   listTab: 'eng',
   listFilter: 'all',
@@ -850,6 +1013,7 @@ const state = {
   loading: false,
   error: null,
   list: [],
+  calendarProposals: [],
   clients: [],
   detail: null,
   tab: 'docs',
@@ -1125,15 +1289,111 @@ function updateHeader() {
   $('#uname').textContent = name;
   $('#urole').textContent = roleLabel;
   $('#av').textContent = initialsOf(name);
-  const adminNav = $('#adminNav');
-  if (adminNav) adminNav.hidden = !(state.role === 'Manager' || state.role === 'PMO');
+  updateNav();
+  applyShell();
   syncHeaderOffset();
+}
+
+function isMobileShell() {
+  return window.matchMedia('(max-width: 900px)').matches;
+}
+
+function applyShell() {
+  const mobile = isMobileShell();
+  const open = document.body.classList.contains('side-open');
+  if (!mobile) document.body.classList.remove('side-open');
+  document.body.classList.toggle('side-collapsed', !!state.sideCollapsed && !mobile);
+
+  const toggle = $('#sideToggle');
+  if (toggle) {
+    const expanded = mobile ? open : !state.sideCollapsed;
+    toggle.setAttribute('aria-expanded', String(expanded));
+    toggle.setAttribute('aria-label', mobile
+      ? (open ? 'Chiudi menu' : 'Apri menu')
+      : (state.sideCollapsed ? 'Espandi menu' : 'Comprimi menu'));
+    toggle.title = mobile
+      ? (open ? 'Chiudi menu' : 'Apri menu')
+      : (state.sideCollapsed ? 'Espandi menu ( [ )' : 'Comprimi menu ( [ )');
+  }
+
+  const foot = $('.side-collapse');
+  if (foot) foot.title = state.sideCollapsed ? 'Espandi menu ( [ )' : 'Comprimi menu ( [ )';
+}
+
+function closeSideOnMobile() {
+  if (!isMobileShell()) return;
+  document.body.classList.remove('side-open');
+  applyShell();
+}
+
+function updateNav() {
+  const internal = isInternalRole();
+  const admin = state.role === 'Manager' || state.role === 'PMO';
+
+  document.querySelectorAll('[data-nav]').forEach(item => {
+    const view = item.dataset.view;
+    let show = true;
+    if (view === 'clients' || view === 'solicitations') show = internal;
+    if (view === 'admin') show = admin;
+    item.hidden = !show;
+  });
+
+  const adminGroup = document.querySelector('[data-group="admin"]');
+  if (adminGroup) adminGroup.hidden = !admin;
+
+  const key = state.view === 'admin'
+    ? `admin-${state.adminTab}`
+    : state.view === 'detail'
+      ? 'list'
+      : state.view === 'users'
+        ? 'admin-users'
+        : state.view;
+
+  document.querySelectorAll('[data-nav]').forEach(item => {
+    const on = item.dataset.nav === key;
+    item.classList.toggle('on', on);
+    if (on) item.setAttribute('aria-current', 'page');
+    else item.removeAttribute('aria-current');
+  });
+
+  const kicker = $('#headerKicker');
+  const section = $('#headerSection');
+  if (!kicker || !section) return;
+
+  const adminTabs = {
+    users: 'Utenti',
+    clients: 'Clienti',
+    mailing: 'Mailing list',
+    templates: 'Template mail',
+    settings: 'Impostazioni'
+  };
+
+  if (state.view === 'admin') {
+    kicker.textContent = 'Amministrazione';
+    section.textContent = adminTabs[state.adminTab] || 'Utenti';
+    return;
+  }
+
+  if (state.view === 'detail' && state.detail) {
+    kicker.textContent = 'Engagement';
+    section.textContent = state.detail.engagement.id;
+    return;
+  }
+
+  kicker.textContent = 'Portale';
+  section.textContent = {
+    list: 'Engagement',
+    clients: 'Clienti',
+    calendar: 'Calendario',
+    solicitations: 'Solleciti',
+    users: 'Utenti'
+  }[state.view] || 'Engagement';
 }
 
 // Il dettaglio usa rail e contesto sticky: l'offset deve seguire l'altezza
 // reale dell'header (che cambia quando va a capo su schermi stretti).
 function syncHeaderOffset() {
-  const header = document.querySelector('header');
+  const header = document.querySelector('.shell-main > header');
   if (!header) return;
   document.documentElement.style.setProperty('--app-header-h', `${header.offsetHeight}px`);
 }
@@ -1297,6 +1557,7 @@ function setClient(clientId) {
     else loadDetail(state.detail.engagement.id);
   }
   else if (state.view === 'clients') loadClients().then(render);
+  else if (state.view === 'calendar') loadCalendar();
   else loadList();
 }
 
@@ -1349,6 +1610,34 @@ async function loadList() {
     state.loading = false;
     render();
   }
+}
+
+async function loadCalendar() {
+  state.calendarProposals = [];
+  await loadList();
+
+  const pending = (state.list || []).filter(e => e.pendingProposal);
+  if (!pending.length) return;
+
+  const details = await Promise.all(pending.map(e =>
+    api(`/api/engagements/${encodeURIComponent(e.id)}?` + qs()).catch(() => null)));
+
+  state.calendarProposals = details.filter(Boolean).flatMap(d => {
+    const e = d.engagement || {};
+    return (e.proposals || [])
+      .filter(p => p.status === 'Pending' && p.startDate)
+      .map(p => ({
+        id: e.id,
+        name: e.name,
+        client: e.clientName,
+        kind: 'proposed',
+        start: String(p.startDate).slice(0, 10),
+        end: String(p.endDate || p.startDate).slice(0, 10),
+        from: p.from
+      }));
+  });
+
+  if (state.view === 'calendar') renderCalendar();
 }
 
 async function loadDetail(id) {
@@ -1797,12 +2086,9 @@ function renderList() {
     ? `Engagement di ${esc(clientLabel(state.clientId))}`
     : (isClient() ? 'Il tuo cliente' : 'Tutti i clienti');
 
-  const canUsers = state.role === 'Manager' || state.role === 'PMO';
-  const headActions = canUsers
-    ? `<button class="btn sec" data-act="admin">Amministrazione</button>${canCreateEngagement() ? '<button class="btn pri" data-act="new-engagement">+ Nuovo engagement</button>' : ''}`
-    : isInternalRole()
-      ? '<button class="btn sec" data-act="clients">Clienti e utenze</button>'
-      : '';
+  const headActions = canCreateEngagement()
+    ? '<button class="btn pri" data-act="new-engagement">+ Nuovo engagement</button>'
+    : '';
 
   const tile = (key, cls, count, label) =>
     `<button class="tile ${cls} ${state.listFilter === key ? 'on' : ''}" data-act="list-filter" data-filter="${key}" aria-pressed="${state.listFilter === key}"><b>${count}</b><span>${label}</span></button>`;
@@ -3294,16 +3580,6 @@ function renderAdmin() {
     return;
   }
 
-  const counts = {
-    users: state.users.length,
-    clients: state.clients.length,
-    mailing: state.adminMailing.length || '—',
-    templates: state.adminTemplates
-      ? 1 + (state.adminTemplates.clients || []).length
-      : '—',
-    settings: '—'
-  };
-
   const content = {
     users: adminUsersHTML,
     clients: adminClientsHTML,
@@ -3340,15 +3616,7 @@ function renderAdmin() {
       <div class="head-acts">${headAction}</div>
     </div>
     ${state.adminError ? `<div class="errorbox"><span>${esc(state.adminError)}</span><button class="btn sec sm" data-act="admin-tab" data-tab="${esc(state.adminTab)}">Riprova</button></div>` : ''}
-    <div class="admin-shell">
-      <nav class="admin-rail" aria-label="Categorie amministrazione">
-        ${ADMIN_TABS.map(([key, icon, label]) => `
-          <button class="${state.adminTab === key ? 'on' : ''}" data-act="admin-tab" data-tab="${key}">
-            <span class="ico">${icon}</span>${label}<span class="cnt">${counts[key]}</span>
-          </button>`).join('')}
-      </nav>
-      <section class="admin-main">${content()}</section>
-    </div>`;
+    <section class="admin-main">${content()}</section>`;
 }
 
 function adminUsersHTML() {
@@ -3549,6 +3817,154 @@ async function saveAdminTemplate(reset) {
   }
 }
 
+/* ====== CALENDARIO ====== */
+function calYmd(d) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+function calDate(key) {
+  const [y, m, d] = String(key).slice(0, 10).split('-').map(Number);
+  return new Date(y, (m || 1) - 1, d || 1);
+}
+
+function calLongDate(d) {
+  return new Intl.DateTimeFormat('it-IT', { day: 'numeric', month: 'long', year: 'numeric' }).format(d);
+}
+
+function calMonthLabel(d) {
+  const label = d.toLocaleDateString('it-IT', { month: 'long', year: 'numeric' });
+  return label.charAt(0).toUpperCase() + label.slice(1);
+}
+
+function calendarEvents(list) {
+  const events = [];
+  const seen = new Set();
+
+  for (const e of list) {
+    const planned = e.acceptedProposal ||
+      (e.periodStart ? { startDate: e.periodStart, endDate: e.periodEnd } : null);
+
+    if (planned && planned.startDate) {
+      events.push({
+        id: e.id,
+        name: e.name,
+        client: e.clientName,
+        kind: 'planned',
+        start: String(planned.startDate).slice(0, 10),
+        end: String(planned.endDate || planned.startDate).slice(0, 10)
+      });
+    }
+
+    for (const p of (e.proposals || [])) {
+      if (p.status !== 'Pending' || !p.startDate) continue;
+      const start = String(p.startDate).slice(0, 10);
+      const end = String(p.endDate || p.startDate).slice(0, 10);
+      const key = `${e.id}|${start}|${end}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      events.push({
+        id: e.id,
+        name: e.name,
+        client: e.clientName,
+        kind: 'proposed',
+        start,
+        end,
+        from: p.from
+      });
+    }
+  }
+
+  return events.filter(ev => ev.end >= ev.start);
+}
+
+function renderCalendarMonth(month, events, todayKey) {
+  const year = month.getFullYear();
+  const index = month.getMonth();
+  const first = new Date(year, index, 1);
+  const offset = (first.getDay() + 6) % 7;
+  const total = new Date(year, index + 1, 0).getDate();
+  const monthStart = calYmd(first);
+  const monthEnd = calYmd(new Date(year, index + 1, 0));
+  const count = events.filter(ev =>
+    ev.start <= monthEnd && ev.end >= monthStart && ev.end >= todayKey).length;
+
+  const cells = [];
+
+  for (let i = 0; i < offset; i += 1) {
+    cells.push('<div class="cal-day out" aria-hidden="true"></div>');
+  }
+
+  for (let day = 1; day <= total; day += 1) {
+    const date = new Date(year, index, day);
+    const key = calYmd(date);
+    const past = key < todayKey;
+    const dayEvents = past
+      ? []
+      : events
+        .filter(ev => key >= ev.start && key <= ev.end)
+        .sort((a, b) => (a.kind === 'proposed' ? 0 : 1) - (b.kind === 'proposed' ? 0 : 1));
+    const shown = dayEvents.slice(0, 3);
+
+    cells.push(`<div class="cal-day${past ? ' past' : ''}${key === todayKey ? ' today' : ''}">
+      <span class="n">${day}</span>
+      ${shown.map(ev => `<button class="cal-ev ${ev.kind}" data-act="open-action" data-id="${esc(ev.id)}" data-tab="${ev.kind === 'proposed' ? 'plan' : ''}" title="${esc(ev.name)} · ${esc(ev.client)} · ${ev.kind === 'planned' ? 'Pianificato' : 'Proposto'} · ${fmt(ev.start)} – ${fmt(ev.end)}">${esc(ev.name)}</button>`).join('')}
+      ${dayEvents.length > 3 ? `<span class="cal-more">+${dayEvents.length - 3} altri</span>` : ''}
+    </div>`);
+  }
+
+  const trailing = (7 - ((offset + total) % 7)) % 7;
+  for (let i = 0; i < trailing; i += 1) {
+    cells.push('<div class="cal-day out" aria-hidden="true"></div>');
+  }
+
+  return `<section class="cal-month">
+    <div class="cal-month-head"><h2>${calMonthLabel(first)}</h2><span>${count} eventi</span></div>
+    <div class="cal-week">${['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'].map(d => `<div class="cal-dow">${d}</div>`).join('')}</div>
+    <div class="cal-days">${cells.join('')}</div>
+  </section>`;
+}
+
+function renderCalendar() {
+  const now = new Date();
+  const todayKey = calYmd(now);
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const endDate = new Date(now.getFullYear(), now.getMonth() + 2, 0);
+  const endKey = calYmd(endDate);
+
+  const all = [...calendarEvents(state.list || []), ...(state.calendarProposals || [])];
+  const unique = [...new Map(all.map(ev => [`${ev.id}|${ev.kind}|${ev.start}|${ev.end}`, ev])).values()];
+  const visible = unique.filter(ev => ev.end >= todayKey && ev.start <= endKey);
+  const planned = visible.filter(ev => ev.kind === 'planned').length;
+  const proposed = visible.filter(ev => ev.kind === 'proposed').length;
+
+  const months = [
+    startOfMonth,
+    new Date(now.getFullYear(), now.getMonth() + 1, 1)
+  ];
+
+  $('#app').innerHTML = `
+    <div class="cal-head">
+      <div>
+        <p class="side-kicker">Portale</p>
+        <h1>Calendario</h1>
+        <p class="sub">Da oggi a ${esc(calLongDate(endDate))} · ${state.clientId ? `cliente ${esc(clientLabel(state.clientId))}` : 'engagement visibili per il tuo profilo'}</p>
+      </div>
+      <div class="head-acts">
+        <button class="btn sec" data-act="nav" data-view="list">Vai alla lista</button>
+      </div>
+    </div>
+    ${state.error ? `<div class="errorbox"><span>${esc(state.error)}</span><button class="btn sec sm" data-act="nav" data-view="calendar">Riprova</button></div>` : ''}
+    <div class="cal-legend">
+      <span class="lg planned"><i></i>Pianificati <b>${planned}</b></span>
+      <span class="lg proposed"><i></i>Proposti <b>${proposed}</b></span>
+      <span class="hint">Clicca un evento per aprire l'engagement</span>
+    </div>
+    ${!visible.length ? '<div class="cal-empty">Nessun engagement proposto o pianificato nel periodo.</div>' : ''}
+    <div class="cal-grid">
+      ${months.map(month => renderCalendarMonth(month, visible, todayKey)).join('')}
+    </div>`;
+}
+
 function renderClients() {
   const manage = canManageClients();
   const items = state.clients || [];
@@ -3644,6 +4060,7 @@ function render() {
   if (state.view === 'clients') renderClients();
   else if (state.view === 'users') renderUsers();
   else if (state.view === 'admin') renderAdmin();
+  else if (state.view === 'calendar') renderCalendar();
   else if (state.view === 'solicitations') renderSolicitations();
   else if (state.view === 'detail' && state.detail) renderDetail();
   else renderList();
@@ -3656,6 +4073,67 @@ function engagedId() {
 
 const actions = {
   list: backToList,
+  nav: el => {
+    const view = el.dataset.view;
+    closeSideOnMobile();
+
+    if (view === 'admin') {
+      state.view = 'admin';
+      state.adminTab = el.dataset.tab || 'users';
+      state.adminError = null;
+      updateHeader();
+      loadAdmin();
+      return;
+    }
+
+    if (view === 'clients') {
+      state.view = 'clients';
+      loadClients().then(render);
+      return;
+    }
+
+    if (view === 'calendar') {
+      state.view = 'calendar';
+      loadCalendar();
+      return;
+    }
+
+    if (view === 'solicitations') {
+      state.view = 'solicitations';
+      loadSolicitations().then(render);
+      return;
+    }
+
+    backToList();
+  },
+  'side-toggle': () => {
+    if (isMobileShell()) {
+      const open = document.body.classList.toggle('side-open');
+      applyShell();
+      if (open) {
+        setTimeout(() => {
+          const first = document.querySelector('#appSide .nav-item:not([hidden])');
+          if (first) first.focus();
+        }, 40);
+      }
+      return;
+    }
+
+    state.sideCollapsed = !state.sideCollapsed;
+    localStorage.setItem('cep.sideCollapsed', state.sideCollapsed ? '1' : '0');
+    applyShell();
+  },
+  'side-collapse': () => {
+    if (isMobileShell()) {
+      closeSideOnMobile();
+      return;
+    }
+
+    state.sideCollapsed = !state.sideCollapsed;
+    localStorage.setItem('cep.sideCollapsed', state.sideCollapsed ? '1' : '0');
+    applyShell();
+  },
+  'side-close': () => closeSideOnMobile(),
   clients: () => {
     state.view = 'clients';
     loadClients().then(render);
@@ -3701,6 +4179,7 @@ const actions = {
   'admin-tab': el => {
     state.adminTab = el.dataset.tab || 'users';
     state.adminError = null;
+    updateHeader();
     loadAdmin();
   },
   'admin-select-list': el => {
@@ -4691,11 +5170,29 @@ document.addEventListener('change', event => {
   }
 });
 
+/* ====== SHELL: SCORCIATOIE ====== */
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && document.body.classList.contains('side-open')) {
+    closeSideOnMobile();
+    return;
+  }
+
+  if (event.key !== '[' || event.metaKey || event.ctrlKey || event.altKey) return;
+  const tag = (event.target.tagName || '').toLowerCase();
+  if (tag === 'input' || tag === 'textarea' || event.target.isContentEditable) return;
+  event.preventDefault();
+  actions['side-toggle']();
+});
+
+window.addEventListener('resize', applyShell);
+
 /* ====== INIT ====== */
 function init() {
   // Ruolo assente o non riconosciuto: come lato server si parte dal profilo
   // meno privilegiato (Cliente), non da un utente interno.
   if (!ROLES[state.role]) state.role = 'Client';
+
+  applyShell();
 
   const roleSelect = $('#role');
   roleSelect.innerHTML = Object.entries(ROLES)
