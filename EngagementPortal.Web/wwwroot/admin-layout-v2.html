@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Amministrazione · 5 layout densi</title>
+<style>
+:root{
+  --navy:#08243f; --navy-2:#0b3050; --ink:#0c1c2c; --muted:#5c7183; --muted-2:#8194a6;
+  --line:#e2e9f0; --line-2:#eef3f7; --bg:#eef2f6; --card:#fff; --surface:#f7f9fb;
+  --blue:#0b5fa5; --blue-600:#0a5493; --blue-100:#e3eef9; --teal:#0e9fb5; --teal-100:#d8f3f7;
+  --green:#0a7d4f; --green-bg:#e2f6ec; --green-line:#a9e3c4;
+  --amber:#8a5b00; --amber-bg:#fff5d6; --amber-line:#ead48a;
+  --red:#b42318; --red-bg:#fde8e6; --red-line:#f5b5ae;
+  --violet:#5533b8; --violet-bg:#ece7fb;
+  --r:12px; --r-sm:8px;
+  --shadow:0 1px 2px rgba(8,36,63,.06), 0 8px 24px rgba(8,36,63,.08);
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+button{font:inherit;cursor:pointer;color:inherit}
+h1,h2,h3,h4,p{margin:0}
+a{color:var(--blue)}
+.ic{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ic.sm{width:14px;height:14px}
+.site-top{display:flex;align-items:center;gap:12px;padding:11px 22px;background:var(--navy);color:#fff;position:sticky;top:0;z-index:50}
+.site-top .logo{width:30px;height:30px;border-radius:9px;background:var(--teal);display:grid;place-items:center;color:var(--navy);font-weight:800;font-size:12px}
+.site-top b{font-size:13.5px}
+.site-top small{display:block;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#9db8ce}
+.site-top .meta{margin-left:auto;font-size:11.5px;color:#9db8ce}
+.wrap{max-width:1320px;margin:0 auto;padding:26px 18px 90px}
+.intro{max-width:1000px}
+h1{font-size:32px;line-height:1.12;letter-spacing:-.025em;color:var(--navy);margin:0 0 8px}
+.lede{font-size:16px;color:var(--muted);max-width:900px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.chip{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:12px;color:var(--muted);font-weight:600}
+.chip b{color:var(--navy)}
+.diag{display:grid;grid-template-columns:120px 18px 150px 18px minmax(0,1fr);gap:0;align-items:stretch;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;margin:22px 0 8px;box-shadow:var(--shadow)}
+.diag .part{border-radius:8px;padding:10px 12px;font-size:11.5px;line-height:1.35}
+.diag .rail{background:#e8eef5;color:#4a5f72;width:120px}
+.diag .list{background:#dce8f3;color:#33536d;width:150px}
+.diag .table{background:var(--teal-100);color:#0a6b78;flex:1;display:flex;align-items:center;justify-content:center;font-weight:700}
+.diag .gap{width:18px;display:grid;place-items:center;color:var(--muted-2);font-size:10px}
+.diag .note{grid-column:1/-1;margin-top:10px;font-size:12px;color:var(--muted)}
+.diag .note b{color:var(--red)}
+.switcher{display:flex;gap:8px;flex-wrap:wrap;margin:22px 0 12px}
+.switcher button{display:flex;align-items:center;gap:9px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:9px 13px;color:var(--muted);font-weight:650;font-size:12.5px;transition:.15s}
+.switcher button:hover{border-color:#b9cbdd}
+.switcher button.on{border-color:var(--blue);color:var(--navy);box-shadow:0 0 0 3px var(--blue-100);background:#fff}
+.switcher .k{width:23px;height:23px;border-radius:7px;background:var(--surface);border:1px solid var(--line);display:grid;place-items:center;font-size:11px;font-weight:800;color:var(--muted)}
+.switcher button.on .k{background:var(--blue);border-color:var(--blue);color:#fff}
+.switcher .hint{font-size:10.5px;color:var(--muted-2);font-weight:500}
+.proposal{display:none;padding-top:14px}
+.proposal.active{display:block}
+.p-head{display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-bottom:4px}
+.p-tag{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);border:1px solid var(--teal-100);background:#fff;border-radius:999px;padding:4px 10px;margin-top:4px}
+.p-head h2{font-size:24px;letter-spacing:-.02em;color:var(--navy)}
+.p-desc{max-width:920px;color:var(--muted);margin:6px 0 12px}
+.p-metrics{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.p-metrics span{background:#fff;border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-size:11.5px;color:var(--muted)}
+.p-metrics b{color:var(--navy)}
+/* ===== MOCK SHELL ===== */
+.mock{position:relative;height:680px;background:var(--surface);border:1px solid #cfdae5;border-radius:16px;overflow:hidden;box-shadow:var(--shadow);font-size:12.5px}
+.mock *::-webkit-scrollbar{width:10px;height:10px}
+.mock *::-webkit-scrollbar-thumb{background:#cfdae5;border-radius:8px;border:3px solid transparent;background-clip:content-box}
+.m-top{display:flex;align-items:center;gap:12px;height:52px;padding:0 14px;background:#fff;border-bottom:1px solid var(--line)}
+.m-brand{display:flex;align-items:center;gap:9px;font-weight:750;color:var(--navy);font-size:13px;white-space:nowrap}
+.m-brand i{width:26px;height:26px;border-radius:8px;background:var(--navy);color:#fff;display:grid;place-items:center;font-style:normal;font-size:10px;font-weight:800}
+.m-crumb{color:var(--muted-2);font-size:12px;display:flex;gap:7px;align-items:center;white-space:nowrap}
+.m-crumb b{color:var(--ink);font-weight:650}
+.m-glob{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:8px;height:32px;padding:0 10px;color:var(--muted-2);min-width:180px;margin-left:auto}
+.m-glob span{font-size:12px}
+.m-glob kbd{margin-left:auto;font:600 10px var(--mono);border:1px solid var(--line);background:#fff;border-radius:5px;padding:1px 5px;color:var(--muted)}
+.m-top-actions{margin-left:auto;display:flex;align-items:center;gap:7px}
+.icon-btn{width:30px;height:30px;border:1px solid var(--line);background:#fff;border-radius:7px;display:grid;place-items:center;color:var(--muted)}
+.icon-btn:hover{background:var(--surface);color:var(--navy)}
+.m-av{width:28px;height:28px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;font-size:10px;font-weight:800}
+.m-body{display:flex;height:calc(100% - 52px);min-height:0}
+.m-side{width:228px;background:var(--navy);color:#c9d9e7;display:flex;flex-direction:column;padding:12px 10px;flex:none}
+.side-label{font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;color:#7d9bb4;padding:4px 9px 8px;font-weight:800}
+.side-item{display:flex;align-items:center;gap:9px;width:100%;border:0;background:none;color:#b9cee0;padding:8px 9px;border-radius:7px;text-align:left;font-size:12.5px;font-weight:550}
+.side-item:hover{background:rgba(255,255,255,.06);color:#fff}
+.side-item.on{background:#123e63;color:#fff;box-shadow:inset 2px 0 0 var(--teal)}
+.side-item .side-cnt{margin-left:auto;font-size:10.5px;background:rgba(255,255,255,.09);border-radius:999px;padding:1px 6px;color:#c9d9e7}
+.side-item.on .side-cnt{background:rgba(14,159,181,.22);color:#9ee7f0}
+.side-sep{height:1px;background:rgba(255,255,255,.09);margin:10px 6px}
+.side-foot{margin-top:auto;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);border-radius:9px;padding:9px 10px;font-size:10.5px;color:#9db8ce;line-height:1.4}
+.side-foot b{color:#fff;font-family:var(--mono);font-size:10px;border:1px solid rgba(255,255,255,.2);border-radius:4px;padding:1px 5px}
+.m-main{flex:1;min-width:0;padding:14px 16px;display:flex;flex-direction:column;gap:11px;overflow:auto}
+.m-pagehead{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.m-pagehead h2{font-size:19px;letter-spacing:-.01em;color:var(--navy);line-height:1.2}
+.m-pagehead p{font-size:11.5px;color:var(--muted);margin-top:1px}
+.m-actions{margin-left:auto;display:flex;gap:7px}
+.btn{border:1px solid transparent;border-radius:7px;padding:7px 12px;font-weight:650;font-size:12px;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;text-decoration:none}
+.btn.pri{background:var(--blue);color:#fff}.btn.pri:hover{background:var(--blue-600)}
+.btn.sec{background:#fff;border-color:var(--line);color:var(--navy)}.btn.sec:hover{background:var(--surface)}
+.btn.gho{background:none;color:var(--blue);padding:4px 2px}
+.btn.sm{padding:5px 9px;font-size:11.5px;border-radius:6px}
+.btn.dark{background:var(--navy);color:#fff}
+/* KPIs */
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:9px;padding:9px 11px;min-width:0}
+.kpi span{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted-2);font-weight:700}
+.kpi b{font-size:19px;color:var(--navy);line-height:1.2}
+.kpi i{font-style:normal;font-size:10px;font-weight:700;margin-left:5px;color:var(--green)}
+.kpi.warn b{color:var(--amber)}
+/* table card */
+.m-card{background:#fff;border:1px solid var(--line);border-radius:10px;min-width:0;display:flex;flex-direction:column;overflow:hidden;flex:1}
+.toolbar{display:flex;align-items:center;gap:7px;padding:9px 10px;border-bottom:1px solid var(--line-2);flex-wrap:wrap}
+.tsearch{display:flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:7px;height:30px;padding:0 9px;min-width:190px;flex:1;max-width:310px;color:var(--muted-2);background:#fff}
+.tsearch input{border:0;outline:0;width:100%;font:inherit;font-size:12px;background:none;color:var(--ink)}
+.tsel{height:30px;border:1px solid var(--line);border-radius:7px;background:#fff;font:inherit;font-size:11.5px;color:var(--ink);padding:0 7px}
+.tcount{margin-left:auto;font-size:11px;color:var(--muted-2);white-space:nowrap}
+.table-scroll{overflow:auto;flex:1;min-height:0}
+.dtable{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;min-width:760px}
+.dtable th{position:sticky;top:0;z-index:2;background:#fbfcfe;text-align:left;font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted-2);font-weight:800;padding:8px 9px;border-bottom:1px solid var(--line)}
+.dtable th.sortable::after{content:"↕";margin-left:5px;font-size:9px;color:#b7c6d4}
+.dtable td{padding:8px 9px;border-bottom:1px solid var(--line-2);vertical-align:middle;white-space:nowrap}
+.dtable tbody tr{cursor:pointer}
+.dtable tbody tr:hover td{background:#f7fbfe}
+.dtable tbody tr.on td{background:#eef7fd}
+.dtable tbody tr.on td:first-child{box-shadow:inset 2px 0 0 var(--blue)}
+.dtable .who{display:flex;align-items:center;gap:8px;min-width:0}
+.dtable .who .t{min-width:0}
+.dtable .who .t b{display:block;font-size:12px;font-weight:650;color:var(--navy);line-height:1.25}
+.dtable .who .t span{display:block;font-size:10.5px;color:var(--muted-2);overflow:hidden;text-overflow:ellipsis;max-width:190px}
+.av{width:28px;height:28px;border-radius:50%;background:#dbeaf8;color:#0a4a7f;display:grid;place-items:center;font-size:10.5px;font-weight:800;flex:none}
+.av.manager{background:var(--teal-100);color:#08707d}
+.av.client{background:#f1ecfb;color:var(--violet)}
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:750;letter-spacing:.02em;padding:2px 7px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--muted);white-space:nowrap}
+.badge::before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.75}
+.badge.mgr{border-color:var(--teal-100);background:var(--teal-100);color:#08707d}
+.badge.pmo{border-color:#cfe0f5;background:#e7f1fc;color:#1a5f9e}
+.badge.pen{border-color:#d7e3f2;background:#eef4fb;color:#3b648c}
+.badge.aud{border-color:#e3ddf5;background:#f2eefc;color:var(--violet)}
+.badge.cli{border-color:#ead9f7;background:#f7f0fd;color:#7a3fa8}
+.badge.ok{border-color:var(--green-line);background:var(--green-bg);color:var(--green)}
+.badge.off{border-color:var(--line);background:#f4f6f9;color:var(--muted-2)}
+.cl-chips{display:flex;gap:3px;flex-wrap:nowrap;align-items:center;max-width:230px;overflow:hidden}
+.cl{font-size:10px;border:1px solid var(--line);background:var(--surface);border-radius:5px;padding:1px 6px;color:var(--muted);white-space:nowrap}
+.cl.more{background:#fff;border-style:dashed}
+.num{font-variant-numeric:tabular-nums;font-weight:650;color:var(--navy)}
+.dim{color:var(--muted-2)}
+.chk{width:14px;height:14px;accent-color:var(--blue);margin:0;cursor:pointer}
+.row-menu{width:24px;height:24px;border:0;background:none;border-radius:5px;color:var(--muted-2);display:grid;place-items:center}
+.row-menu:hover{background:var(--surface);color:var(--navy)}
+.tfoot{display:flex;align-items:center;gap:10px;padding:7px 10px;border-top:1px solid var(--line-2);font-size:11px;color:var(--muted-2)}
+.pager{margin-left:auto;display:flex;gap:4px}
+.pager button{min-width:24px;height:24px;border:1px solid var(--line);background:#fff;border-radius:5px;font-size:11px;color:var(--muted)}
+.pager button.on{background:var(--blue);border-color:var(--blue);color:#fff}
+/* drawer */
+.scrim{position:absolute;inset:0;background:rgba(8,36,63,.22);z-index:8}
+.drawer{position:absolute;top:0;right:0;bottom:0;width:470px;max-width:92%;background:#fff;border-left:1px solid var(--line);box-shadow:-18px 0 40px rgba(8,36,63,.16);z-index:9;display:flex;flex-direction:column}
+.drawer[hidden],.scrim[hidden]{display:none}
+.d-head{padding:14px 16px 12px;border-bottom:1px solid var(--line-2)}
+.d-top{display:flex;align-items:center;gap:8px}
+.d-top .x{margin-left:auto}
+.d-person{display:flex;align-items:center;gap:11px;margin-top:10px}
+.d-person .av{width:42px;height:42px;font-size:13px}
+.d-person h3{font-size:16px;color:var(--navy)}
+.d-person p{font-size:11.5px;color:var(--muted)}
+.d-tabs{display:flex;gap:2px;margin-top:12px}
+.d-tabs button{border:0;background:none;font-size:11.5px;font-weight:650;color:var(--muted);padding:6px 9px;border-radius:6px}
+.d-tabs button.on{background:var(--blue-100);color:var(--blue)}
+.d-body{padding:14px 16px;overflow:auto;flex:1;display:grid;gap:10px;align-content:start}
+.d-sec{border:1px solid var(--line);border-radius:8px;padding:10px 11px}
+.d-sec h4{font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted-2);font-weight:800;display:flex;justify-content:space-between;gap:8px;margin-bottom:7px}
+.d-sec h4 span{font-size:10px;color:var(--muted-2);text-transform:none;letter-spacing:0}
+.kv{display:grid;grid-template-columns:96px 1fr;gap:5px 10px;font-size:12px}
+.kv dt{color:var(--muted-2)}
+.kv dd{margin:0;color:var(--ink);font-weight:600;text-align:right}
+.d-chips{display:flex;gap:4px;flex-wrap:wrap}
+/* scheda a tutto schermo (proposta A) */
+.detailbox{position:absolute;inset:4% 4.5%;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 30px 90px rgba(8,36,63,.32);z-index:9;display:flex;flex-direction:column;overflow:hidden}
+.detailbox[hidden]{display:none}
+.db-head{display:flex;align-items:flex-start;gap:13px;padding:15px 18px;border-bottom:1px solid var(--line-2);flex:none}
+.db-head .av{width:50px;height:50px;font-size:15px}
+.db-id{flex:1;min-width:0}
+.db-id h3{font-size:20px;color:var(--navy);letter-spacing:-.01em;line-height:1.2}
+.db-id p{font-size:12px;color:var(--muted-2)}
+.db-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:5px;font-size:11px}
+.db-head-actions{display:flex;gap:6px;align-items:center}
+.db-body{flex:1;overflow:auto;padding:14px 18px;display:grid;grid-template-columns:250px minmax(0,1fr) 270px;gap:12px;align-content:start;min-height:0}
+.db-col{display:grid;gap:10px;align-content:start;min-width:0}
+.db-sec{border:1px solid var(--line);border-radius:9px;padding:10px 11px;background:#fff;min-width:0}
+.db-sec h4{display:flex;justify-content:space-between;gap:8px;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted-2);font-weight:800;margin:0 0 7px}
+.db-sec h4 span{text-transform:none;letter-spacing:0;font-weight:650;font-size:10px;color:var(--muted-2)}
+.db-sec .kv{grid-template-columns:92px 1fr;font-size:11.5px}
+.db-sec .line{display:flex;justify-content:space-between;gap:8px;font-size:11.5px;padding:3px 0;border-bottom:1px dashed var(--line-2)}
+.db-sec .line:last-child{border-bottom:0}
+.db-sec .line span{color:var(--muted-2)}
+.db-sec .line b{color:var(--navy);font-weight:650}
+.db-sec .eng-list{gap:3px}
+.db-sec .note{font-size:10.5px;padding:7px 8px}
+.db-foot{display:flex;align-items:center;gap:7px;padding:11px 18px;border-top:1px solid var(--line-2);flex:none}
+.db-foot .hint{margin-right:auto;font-size:10.5px;color:var(--muted-2)}
+@media(max-width:1120px){
+  .db-body{grid-template-columns:1fr 1fr}
+  .db-col:last-child{grid-column:1/-1;grid-template-columns:1fr 1fr}
+  .detailbox{inset:3% 3.5%}
+}
+@media(max-width:720px){
+  .db-body{grid-template-columns:1fr}
+  .db-col:last-child{grid-template-columns:1fr}
+  .db-head-actions .btn{display:none}
+}
+.insp-foot{padding:11px 16px;border-top:1px solid var(--line-2);display:flex;gap:7px;background:#fff}
+.insp-foot .btn{flex:1;justify-content:center}
+.note{background:var(--blue-100);border:1px solid #cfe2f4;border-radius:8px;padding:9px 10px;font-size:11px;color:#155a92;line-height:1.45}
+.note b{color:#0b4775}
+/* ===== MOCK B ===== */
+.b-shell{display:flex;flex-direction:column;height:100%}
+.b-shell .b-top{height:48px;flex:none}
+.b-body{display:flex;flex:1;min-height:0}
+.icon-rail{width:58px;background:#fff;border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;padding:9px 0;gap:6px;flex:none}
+.icon-rail .ir-logo{width:30px;height:30px;border-radius:8px;background:var(--navy);color:#fff;display:grid;place-items:center;font-size:9px;font-weight:800;margin-bottom:8px}
+.ir-btn{width:36px;height:36px;border:1px solid transparent;background:none;border-radius:9px;display:grid;place-items:center;color:var(--muted-2)}
+.ir-btn:hover{background:var(--surface);color:var(--navy)}
+.ir-btn.on{background:var(--blue-100);color:var(--blue);border-color:#cfe2f4}
+.ir-sep{width:24px;height:1px;background:var(--line);margin:4px 0}
+.b-list{width:296px;background:#fff;border-right:1px solid var(--line);display:flex;flex-direction:column;flex:none}
+.b-list-head{padding:11px 12px 8px;display:flex;align-items:center;gap:8px}
+.b-list-head h3{font-size:14px;color:var(--navy)}
+.b-list-head .btn{margin-left:auto}
+.b-tabs{display:flex;gap:4px;padding:0 12px 8px}
+.b-tabs button{border:1px solid var(--line);background:#fff;border-radius:999px;font-size:10.5px;font-weight:650;color:var(--muted);padding:3px 8px}
+.b-tabs button.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.b-search{margin:0 12px 8px;height:30px;display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:7px;padding:0 8px;color:var(--muted-2)}
+.b-search input{border:0;outline:0;background:none;font:inherit;font-size:11.5px;width:100%}
+.b-rows{overflow:auto;padding:0 7px 10px;display:grid;gap:2px;align-content:start}
+.b-row{display:flex;align-items:center;gap:8px;border:1px solid transparent;background:none;border-radius:8px;padding:8px 8px;text-align:left;width:100%}
+.b-row:hover{background:var(--surface)}
+.b-row.on{background:#eef7fd;border-color:#d5e8f7}
+.b-row .t{min-width:0;flex:1}
+.b-row .t b{display:block;font-size:12px;font-weight:650;color:var(--navy);line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.b-row .t span{display:block;font-size:10.5px;color:var(--muted-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.b-row .end{display:grid;gap:3px;justify-items:end;flex:none}
+.b-row .end .mini-role{font-size:9.5px;font-weight:700;color:var(--muted)}
+.b-detail{flex:1;min-width:0;display:flex;flex-direction:column;background:#fbfdff}
+.dt-head{padding:14px 18px 10px;border-bottom:1px solid var(--line);background:#fff}
+.dt-title{display:flex;align-items:center;gap:11px}
+.dt-title .av{width:40px;height:40px;font-size:12px}
+.dt-title h3{font-size:18px;color:var(--navy)}
+.dt-title p{font-size:11.5px;color:var(--muted)}
+.dt-title .acts{margin-left:auto;display:flex;gap:6px}
+.dt-tabs{display:flex;gap:2px;margin-top:12px}
+.dt-tabs button{border:0;background:none;padding:6px 9px;font-size:11.5px;font-weight:650;color:var(--muted);border-bottom:2px solid transparent}
+.dt-tabs button.on{color:var(--blue);border-bottom-color:var(--blue)}
+.dt-body{padding:14px 18px;overflow:auto;flex:1;display:grid;gap:10px;align-content:start}
+.dt-cols{display:grid;grid-template-columns:1.25fr 1fr;gap:10px;align-items:start}
+.dt-card{background:#fff;border:1px solid var(--line);border-radius:9px;padding:11px 12px}
+.dt-card h4{font-size:9.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted-2);font-weight:800;margin-bottom:8px;display:flex;justify-content:space-between;gap:6px}
+.dt-card h4 span{text-transform:none;letter-spacing:0;font-weight:650;font-size:10px}
+.eng-list{display:grid;gap:4px}
+.eng{display:flex;align-items:center;gap:8px;border:1px solid var(--line-2);border-radius:6px;padding:5px 7px;font-size:11px;background:var(--surface)}
+.eng .id{font-family:var(--mono);font-size:10px;color:var(--muted-2)}
+.eng b{font-weight:600;color:var(--navy);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+.st{font-size:9.5px;font-weight:750;padding:1px 6px;border-radius:999px;white-space:nowrap}
+.st.done{background:var(--green-bg);color:var(--green)}
+.st.wip{background:#e7f1fc;color:#1a5f9e}
+.st.wait{background:var(--amber-bg);color:var(--amber)}
+.dt-foot{padding:10px 18px;border-top:1px solid var(--line);background:#fff;display:flex;gap:7px;align-items:center}
+.dt-foot .hint{font-size:10.5px;color:var(--muted-2);margin-right:auto}
+/* ===== MOCK C ===== */
+.c-main{flex:1;min-width:0;padding:14px 16px;display:flex;flex-direction:column;gap:10px;overflow:auto}
+.c-tablecard{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;flex:1;min-height:0}
+.band td{padding:0!important;background:#f4f9fe!important;border-bottom:1px solid #cfe2f4!important;white-space:normal}
+.band-in{padding:12px 14px;display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:12px}
+.band-sec h5{font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--blue);font-weight:800;margin-bottom:6px}
+.band-sec .line{display:flex;justify-content:space-between;gap:8px;font-size:11.5px;padding:3px 0;border-bottom:1px dashed #dbe7f2}
+.band-sec .line:last-child{border-bottom:0}
+.band-sec .line span{color:var(--muted-2)}
+.band-sec .line b{font-weight:650;color:var(--navy)}
+.band-actions{grid-column:1/-1;display:flex;gap:7px;align-items:center;border-top:1px solid #dbe7f2;padding-top:9px}
+.band-actions .hint{font-size:10.5px;color:var(--muted-2);margin-right:auto}
+.expander{width:22px;height:22px;border:1px solid var(--line);background:#fff;border-radius:5px;display:grid;place-items:center;color:var(--muted);transition:.15s}
+tr.on .expander{transform:rotate(90deg);border-color:#cfe2f4;color:var(--blue);background:#eef7fd}
+/* ===== MOCK D ===== */
+.d-shell{display:flex;flex-direction:column;height:100%;background:#fff}
+.d-top{height:50px;flex:none;display:flex;align-items:center;gap:10px;padding:0 12px;border-bottom:1px solid var(--line);background:#fff}
+.d-top .vsep{width:1px;height:22px;background:var(--line)}
+.d-viewtabs{display:flex;gap:3px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:2px}
+.d-viewtabs button{border:0;background:none;border-radius:6px;padding:5px 9px;font-size:11px;font-weight:650;color:var(--muted);display:flex;align-items:center;gap:5px}
+.d-viewtabs button.on{background:#fff;color:var(--navy);box-shadow:0 1px 2px rgba(8,36,63,.1)}
+.d-shell-body{display:flex;flex:1;min-height:0}
+.d-rail{width:52px;border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;gap:5px;padding:8px 0;flex:none}
+.d-rail .ir-btn{width:34px;height:34px}
+.d-content{flex:1;min-width:0;display:flex;flex-direction:column}
+.d-toolbar{display:flex;align-items:center;gap:7px;padding:8px 12px;border-bottom:1px solid var(--line-2);flex-wrap:wrap}
+.fchip{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);background:#fff;border-radius:6px;padding:4px 8px;font-size:10.5px;color:var(--muted);font-weight:600}
+.fchip b{color:var(--navy)}
+.fchip.on{border-color:#cfe2f4;background:#eef7fd;color:var(--blue)}
+.d-grid-wrap{flex:1;overflow:auto;min-height:0}
+.dgrid{border-collapse:separate;border-spacing:0;width:100%;min-width:820px;font-size:11.5px}
+.dgrid th{position:sticky;top:0;z-index:3;background:#f8fafc;border-bottom:1px solid var(--line);text-align:left;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted-2);padding:7px 8px;font-weight:800;white-space:nowrap}
+.dgrid th:first-child,.dgrid td:first-child{position:sticky;left:0;z-index:2;background:#fff;border-right:1px solid var(--line)}
+.dgrid th:first-child{z-index:4;background:#f8fafc}
+.dgrid td{border-bottom:1px solid var(--line-2);padding:6px 8px;white-space:nowrap;vertical-align:middle}
+.dgrid tbody tr:hover td{background:#f8fbfe}
+.dgrid tbody tr:hover td:first-child{background:#f8fbfe}
+.dgrid td.cell{cursor:text}
+.dgrid td.cell:focus{outline:2px solid var(--blue);outline-offset:-2px;background:#fff}
+.dgrid .num{font-size:11px}
+.dgrid .who{display:flex;align-items:center;gap:7px}
+.dgrid .who .t b{font-size:11.5px;color:var(--navy);font-weight:650}
+.dgrid .who .t span{font-size:10px;color:var(--muted-2)}
+.bulkbar{display:flex;align-items:center;gap:8px;background:var(--navy);color:#fff;padding:7px 12px;font-size:11px;min-height:38px}
+.bulkbar[hidden]{display:none}
+.bulkbar b{color:#fff}
+.bulkbar .btn{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.18);color:#fff}
+.bulkbar .x{margin-left:auto;border:0;background:none;color:#b9cee0;display:grid;place-items:center}
+.peek{position:absolute;top:50px;right:0;bottom:0;width:392px;background:#fff;border-left:1px solid var(--line);box-shadow:-14px 0 30px rgba(8,36,63,.12);z-index:7;display:flex;flex-direction:column}
+.peek[hidden]{display:none}
+.peek .d-head{padding:12px 14px}
+.peek .d-body{padding:12px 14px}
+.density-compact .dgrid td{padding:3px 8px}
+.density-compact .dgrid .av{width:22px;height:22px;font-size:9px}
+/* ===== MOCK E ===== */
+.e-shell{display:flex;height:100%;background:#0a1e33;color:#dbe7f2}
+.e-rail{width:62px;border-right:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;align-items:center;gap:6px;padding:11px 0;flex:none}
+.e-rail .ir-logo{width:32px;height:32px;border-radius:9px;background:var(--teal);color:#062036;display:grid;place-items:center;font-size:9px;font-weight:800;margin-bottom:10px}
+.e-rail .ir-btn{width:38px;height:38px;color:#8fa9c0;border-radius:9px}
+.e-rail .ir-btn:hover{background:rgba(255,255,255,.07);color:#fff}
+.e-rail .ir-btn.on{background:rgba(14,159,181,.16);color:#7fe3ef}
+.e-main{flex:1;min-width:0;display:flex;flex-direction:column}
+.e-top{height:52px;display:flex;align-items:center;gap:10px;padding:0 16px;border-bottom:1px solid rgba(255,255,255,.08);flex:none}
+.e-top .where{font-size:12px;color:#8fa9c0}
+.e-top .where b{color:#fff;font-weight:650}
+.e-kbd{margin-left:auto;display:flex;align-items:center;gap:8px}
+.e-kbd .searchbtn{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:6px 10px;color:#9db8ce;font-size:11.5px;min-width:240px}
+.e-kbd .searchbtn kbd{margin-left:auto;font:600 10px var(--mono);color:#dbe7f2;border:1px solid rgba(255,255,255,.18);border-radius:4px;padding:1px 5px}
+.e-content{padding:16px 18px;overflow:auto;display:grid;gap:12px;align-content:start}
+.e-hi{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.e-hi h2{font-size:22px;color:#fff;letter-spacing:-.015em}
+.e-hi p{font-size:11.5px;color:#8fa9c0;margin-top:2px}
+.e-hi .btn{margin-left:auto}
+.e-hi .btn.lite{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#fff}
+.e-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.e-kpi{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:10px;padding:10px 12px}
+.e-kpi span{font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:#8fa9c0;font-weight:750}
+.e-kpi b{display:block;font-size:21px;color:#fff;line-height:1.25}
+.e-kpi i{font-style:normal;font-size:10px;color:#6ee7b7}
+.e-cols{display:grid;grid-template-columns:1.45fr 1fr;gap:9px;align-items:start}
+.e-card{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.09);border-radius:10px;padding:11px 12px}
+.e-card h3{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:#8fa9c0;font-weight:800;display:flex;justify-content:space-between;gap:8px;margin-bottom:8px}
+.e-card h3 span{text-transform:none;letter-spacing:0;font-weight:600;color:#7fe3ef;font-size:10px}
+.e-row{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.e-row:last-child{border-bottom:0}
+.e-row .t{flex:1;min-width:0}
+.e-row b{display:block;font-size:11.5px;color:#eaf3fa;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.e-row span{display:block;font-size:10px;color:#8fa9c0}
+.e-row .tag{font-size:9px;font-weight:750;border-radius:999px;padding:1px 6px;white-space:nowrap}
+.tag.red{background:rgba(244,63,94,.16);color:#fda4af}
+.tag.amber{background:rgba(245,158,11,.16);color:#fcd34d}
+.tag.green{background:rgba(16,185,129,.15);color:#6ee7b7}
+.e-recent{display:grid;gap:2px}
+.e-recent button{display:flex;align-items:center;gap:8px;border:0;background:none;color:#9db8ce;padding:6px 7px;border-radius:7px;text-align:left;font-size:11px}
+.e-recent button:hover{background:rgba(255,255,255,.06);color:#fff}
+.e-recent .av{width:24px;height:24px;font-size:9px;background:rgba(14,159,181,.16);color:#7fe3ef}
+.palette-wrap{position:absolute;inset:0;background:rgba(4,14,25,.55);backdrop-filter:blur(2px);z-index:10;display:grid;place-items:start center;padding-top:72px}
+.palette-wrap[hidden]{display:none}
+.palette{width:min(560px,92%);background:#0d2742;border:1px solid rgba(255,255,255,.14);border-radius:14px;box-shadow:0 30px 80px rgba(0,0,0,.5);overflow:hidden}
+.pal-in{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.1);color:#8fa9c0}
+.pal-in input{flex:1;background:none;border:0;outline:0;color:#fff;font:inherit;font-size:13px}
+.pal-in kbd{font:600 10px var(--mono);color:#9db8ce;border:1px solid rgba(255,255,255,.18);border-radius:4px;padding:1px 5px}
+.pal-list{max-height:320px;overflow:auto;padding:6px}
+.pal-item{display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;color:#dbe7f2;padding:8px 9px;border-radius:8px;text-align:left;font-size:12px}
+.pal-item:hover,.pal-item.sel{background:rgba(14,159,181,.16)}
+.pal-item .t{flex:1;min-width:0}
+.pal-item b{display:block;font-weight:600;color:#fff;font-size:12px}
+.pal-item span{display:block;font-size:10.5px;color:#8fa9c0}
+.pal-item .kind{font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:#7fe3ef;font-weight:800}
+.pal-foot{display:flex;gap:12px;padding:8px 14px;border-top:1px solid rgba(255,255,255,.1);font-size:10px;color:#7d94a8}
+.pal-foot kbd{font:600 9.5px var(--mono);border:1px solid rgba(255,255,255,.16);border-radius:3px;padding:1px 4px;margin-right:4px}
+.e-note{margin-top:2px;font-size:11px;color:#8fa9c0}
+/* pros/cons + comparison */
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.pc > div{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.pc h5{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted-2);font-weight:800;margin:0 0 6px}
+.pc ul{margin:0;padding-left:17px;font-size:12.5px;color:var(--muted)}
+.pc li{margin-bottom:3px}
+.pc .good ul{color:#15603f}
+.pc .bad ul{color:#845200}
+.verdict{display:flex;gap:10px;align-items:flex-start;background:linear-gradient(135deg,#0b3050,#0a4a6b);color:#d9e8f3;border-radius:12px;padding:13px 15px;margin-top:12px;font-size:12.5px;line-height:1.5}
+.verdict .ic{color:#7fe3ef;margin-top:2px}
+.verdict b{color:#fff}
+.cmp{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;margin-top:34px;box-shadow:var(--shadow)}
+.cmp h2{font-size:20px;color:var(--navy);margin-bottom:4px}
+.cmp p{font-size:12.5px;color:var(--muted);margin-bottom:12px}
+.cmp table{width:100%;border-collapse:collapse;font-size:12px}
+.cmp th,.cmp td{text-align:left;padding:8px 9px;border-bottom:1px solid var(--line-2);vertical-align:top}
+.cmp th{font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted-2)}
+.cmp td:first-child{font-weight:650;color:var(--navy)}
+.cmp tr:last-child td{border-bottom:0}
+.reco{margin-top:14px;background:#f3f9fd;border:1px solid #cfe2f4;border-radius:10px;padding:13px 15px;font-size:13px;color:#155a92;line-height:1.55}
+.reco b{color:#0b4775}
+.src{margin-top:18px;font-size:11.5px;color:var(--muted-2)}
+.src b{color:var(--muted);display:block;margin-bottom:4px;font-size:11px;text-transform:uppercase;letter-spacing:.07em}
+.src ul{margin:0;padding-left:16px;line-height:1.7}
+.toast{position:fixed;right:22px;bottom:22px;background:var(--navy);color:#fff;padding:10px 15px;border-radius:9px;font-size:12.5px;box-shadow:0 12px 34px rgba(8,36,63,.3);opacity:0;transform:translateY(8px);transition:.18s;pointer-events:none;z-index:200}
+.toast.show{opacity:1;transform:translateY(0)}
+@media(max-width:1120px){
+  .m-side{width:200px}
+  .b-list{width:266px}
+  .drawer{width:430px}
+  .col-last{display:none}
+  .dtable{min-width:700px}
+  .dtable .who .t span{max-width:150px}
+}
+@media(max-width:960px){
+  .wrap{padding:20px 12px 70px}
+  .diag{grid-template-columns:1fr;gap:6px}
+  .diag .rail,.diag .list,.diag .table{width:auto}
+  .diag .gap{height:12px;width:auto}
+  .m-side{display:none}
+  .b-list{width:250px}
+  .kpis,.e-kpis{grid-template-columns:1fr 1fr}
+  .band-in,.dt-cols,.e-cols{grid-template-columns:1fr}
+  .mock{height:620px}
+  .switcher button .hint{display:none}
+}
+@media(max-width:720px){
+  .pc{grid-template-columns:1fr}
+  .b-list{display:none}
+  .peek{width:100%}
+  .drawer{width:100%}
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.6-3 2.8-4.6 5.5-4.6S13.9 16 14.5 19"/><path d="M16 6.4a3 3 0 0 1 0 5.8"/><path d="M17.5 14.6c2 .5 3.2 1.9 3.6 4.4"/></symbol>
+  <symbol id="i-building" viewBox="0 0 24 24"><path d="M4 21V5.5A1.5 1.5 0 0 1 5.5 4h7A1.5 1.5 0 0 1 14 5.5V21"/><path d="M14 10h4.5A1.5 1.5 0 0 1 20 11.5V21"/><path d="M2.5 21h19"/><path d="M7 8h4M7 12h4M7 16h4M17 13h1M17 17h1"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h4"/><path d="M9 13h6M9 17h6"/></symbol>
+  <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 15V10a6 6 0 1 0-12 0v5l-1.5 2.5h15z"/><path d="M10 20a2.2 2.2 0 0 0 4 0"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v10"/><path d="m8 11 4 4 4-4"/><path d="M4 19h16"/></symbol>
+  <symbol id="i-filter" viewBox="0 0 24 24"><path d="M4 5h16l-6 7v6l-4 2v-8z"/></symbol>
+  <symbol id="i-columns" viewBox="0 0 24 24"><rect x="3" y="5" width="8" height="14" rx="1.5"/><rect x="13" y="5" width="8" height="14" rx="1.5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></symbol>
+  <symbol id="i-dots" viewBox="0 0 24 24"><circle cx="6" cy="12" r="1.3" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none"/><circle cx="18" cy="12" r="1.3" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+  <symbol id="i-chev-d" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-cmd" viewBox="0 0 24 24"><path d="M9 6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3z"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 5 6v6c0 4.2 3 7.6 7 9 4-1.4 7-4.8 7-9V6z"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4.5l3 2"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="4" width="7" height="7" rx="1"/><rect x="4" y="13" width="7" height="7" rx="1"/><rect x="13" y="13" width="7" height="7" rx="1"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12"/><path d="M4 6h.01M4 12h.01M4 18h.01"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4l10.5-10.5a2.1 2.1 0 0 0-3-3L5 17z"/><path d="m14 6 3 3"/></symbol>
+  <symbol id="i-external" viewBox="0 0 24 24"><path d="M14 4h6v6"/><path d="M20 4 11 13"/><path d="M18 14v5H5V6h5"/></symbol>
+  <symbol id="i-inbox" viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M4 13h4l2 3h4l2-3h4"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 4 2.4 4.9 5.4.8-3.9 3.8.9 5.4-4.8-2.5-4.8 2.5.9-5.4L4.2 9.7l5.4-.8z"/></symbol>
+</svg>
+
+<header class="site-top">
+  <div class="logo">CE</div>
+  <div><b>Cyber Engagement Portal</b><small>Amministrazione · 5 layout</small></div>
+  <div class="meta">Densità prima di tutto · 1280 px di riferimento</div>
+</header>
+
+<main class="wrap">
+  <section class="intro">
+    <h1>Cinque modi per non sprecare un pixel</h1>
+    <p class="lede">
+      Il layout attuale tiene aperti <b>196 px di rail</b> e <b>340 px di dettaglio</b> anche quando non servono:
+      la tabella resta con ~680 px e sotto i 1100 px il dettaglio va a capo. Qui sotto cinque ossature standard
+      (admin panel, inbox, inline, data grid, command center) pensate per dare più dati e meno chrome.
+    </p>
+    <div class="chips">
+      <span class="chip"><b>5</b> pattern reali</span>
+      <span class="chip"><b>0</b> pannelli permanenti inutili</span>
+      <span class="chip"><b>44 px</b> righe → 12–14 visibili</span>
+      <span class="chip"><b>⌘K</b> dove serve</span>
+    </div>
+    <div class="diag">
+      <div class="part rail">Rail<br><b>196 px</b></div>
+      <div class="gap">+</div>
+      <div class="part list">Lista / dettaglio<br><b>340 px</b></div>
+      <div class="gap">=</div>
+      <div class="part table">Tabella ~680 px <span style="font-weight:500;opacity:.8">· 536 px di chrome permanente</span></div>
+      <div class="note"><b>Oggi:</b> il dettaglio occupa 340 px anche da vuoto. Le proposte qui sotto spostano il dettaglio in un drawer, in una banda inline, in una peek panel o in un comando: si apre <b>solo quando serve</b>.</div>
+    </div>
+    <div class="switcher" role="tablist" aria-label="Layout proposti">
+      <button class="on" data-v="a" role="tab" aria-selected="true"><span class="k">A</span>Classic admin <span class="hint">· topbar + sidebar + KPI</span></button>
+      <button data-v="b" role="tab" aria-selected="false"><span class="k">B</span>Inbox split <span class="hint">· rail icone + lista + dettaglio</span></button>
+      <button data-v="c" role="tab" aria-selected="false"><span class="k">C</span>Inline expand <span class="hint">· zero pannelli</span></button>
+      <button data-v="d" role="tab" aria-selected="false"><span class="k">D</span>Data grid <span class="hint">· bulk + editing</span></button>
+      <button data-v="e" role="tab" aria-selected="false"><span class="k">E</span>Command center <span class="hint">· ⌘K + peek</span></button>
+    </div>
+  </section>
+
+  <!-- ===== A ===== -->
+  <section class="proposal active" id="p-a">
+    <div class="p-head"><span class="p-tag">Proposta A · standard</span><h2>Classic admin + scheda a tutto schermo</h2></div>
+    <p class="p-desc">La struttura che tutti conoscono: topbar globale, sidebar scura da 228 px, KPI compatti, toolbar e tabella full width. Il dettaglio non è un drawer stretto con i tab: è un <b>pannello centrale che occupa quasi tutto lo schermo</b> e mostra profilo, permessi, clienti, engagement, mailing list, sicurezza e attività <b>in un colpo d'occhio</b>.</p>
+    <div class="p-metrics"><span><b>Pannello ~90%</b></span><span><b>0 tab</b></span><span><b>Tabella ~990 px</b></span><span><b>Tutto</b> in una vista</span></div>
+
+    <div class="mock" data-mock="a">
+      <div class="m-top">
+        <div class="m-brand"><i>CE</i>Cyber Engagement Portal</div>
+        <div class="m-crumb">Amministrazione <span>/</span> <b>Utenti</b></div>
+        <div class="m-glob"><svg class="ic sm"><use href="#i-search"/></svg><span>Cerca utenti, clienti, azioni…</span><kbd>⌘K</kbd></div>
+        <div class="m-top-actions">
+          <button class="icon-btn" data-toast="Notifiche (demo)"><svg class="ic sm"><use href="#i-bell"/></svg></button>
+          <span class="m-av">GM</span>
+        </div>
+      </div>
+      <div class="m-body">
+        <aside class="m-side">
+          <div class="side-label">Amministrazione</div>
+          <button class="side-item on" data-sect="Utenti"><svg class="ic sm"><use href="#i-users"/></svg>Utenti<span class="side-cnt">13</span></button>
+          <button class="side-item" data-sect="Clienti"><svg class="ic sm"><use href="#i-building"/></svg>Clienti<span class="side-cnt">6</span></button>
+          <button class="side-item" data-sect="Mailing list"><svg class="ic sm"><use href="#i-mail"/></svg>Mailing list<span class="side-cnt">42</span></button>
+          <button class="side-item" data-sect="Template mail"><svg class="ic sm"><use href="#i-file"/></svg>Template mail<span class="side-cnt">7</span></button>
+          <button class="side-item" data-sect="Impostazioni"><svg class="ic sm"><use href="#i-sliders"/></svg>Impostazioni</button>
+          <div class="side-sep"></div>
+          <button class="side-item" data-sect="Audit"><svg class="ic sm"><use href="#i-shield"/></svg>Audit</button>
+          <button class="side-item" data-sect="Esportazioni"><svg class="ic sm"><use href="#i-download"/></svg>Esportazioni</button>
+          <div class="side-foot"><b>⌘K</b> salta a un utente o a un'azione senza usare il mouse.</div>
+        </aside>
+        <section class="m-main">
+          <div class="m-pagehead">
+            <div><h2>Utenti</h2><p>13 persone · 10 interne · 3 utenze cliente</p></div>
+            <div class="m-actions">
+              <button class="btn sec sm" data-toast="Esporta CSV (demo)"><svg class="ic sm"><use href="#i-download"/></svg>Esporta</button>
+              <button class="btn pri sm" data-toast="Nuovo utente (demo)"><svg class="ic sm"><use href="#i-plus"/></svg>Utente</button>
+            </div>
+          </div>
+          <div class="kpis">
+            <div class="kpi"><span>Attivi</span><b>11</b><i>+2</i></div>
+            <div class="kpi"><span>Clienti</span><b>6</b></div>
+            <div class="kpi warn"><span>Senza assegnazioni</span><b>2</b></div>
+            <div class="kpi"><span>Ultimo accesso</span><b>oggi</b></div>
+          </div>
+          <div class="m-card">
+            <div class="toolbar">
+              <div class="tsearch"><svg class="ic sm"><use href="#i-search"/></svg><input placeholder="Cerca nome, email, cliente…" aria-label="Cerca utenti"></div>
+              <select class="tsel" aria-label="Ruolo"><option>Tutti i ruoli</option><option>Manager</option><option>PMO</option><option>Pentester</option><option>Auditor</option><option>Cliente</option></select>
+              <select class="tsel" aria-label="Stato"><option>Tutti</option><option>Attivi</option><option>Disattivati</option></select>
+              <button class="btn sec sm" data-toast="Filtri avanzati (demo)"><svg class="ic sm"><use href="#i-filter"/></svg>Filtri</button>
+              <button class="icon-btn" title="Colonne" data-toast="Scegli colonne (demo)"><svg class="ic sm"><use href="#i-columns"/></svg></button>
+              <button class="icon-btn" title="Densità" data-density="a"><svg class="ic sm"><use href="#i-list"/></svg></button>
+              <span class="tcount">13 utenti</span>
+            </div>
+            <div class="table-scroll">
+              <table class="dtable" id="a-table">
+                <thead><tr>
+                  <th style="width:30px"><input type="checkbox" class="chk" data-all="a" aria-label="Seleziona tutti"></th>
+                  <th class="sortable">Utente</th><th>Ruolo</th><th>Clienti</th><th>Engagement</th><th>Stato</th><th class="sortable col-last">Ultimo accesso</th><th style="width:30px"></th>
+                </tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+            <div class="tfoot"><span>1–8 di 13</span><div class="pager"><button>‹</button><button class="on">1</button><button>2</button><button>›</button></div></div>
+          </div>
+        </section>
+      </div>
+      <div class="scrim" data-scrim="a" hidden></div>
+      <section class="detailbox" data-drawer="a" hidden aria-label="Scheda utente">
+        <header class="db-head">
+          <span class="av" id="a-drawer-av">GM</span>
+          <div class="db-id">
+            <h3 id="a-drawer-name">Giorgio Marino</h3>
+            <p id="a-drawer-mail">giorgio.marino@provider.example</p>
+            <div class="db-meta">
+              <span class="badge" id="a-drawer-role">Manager</span>
+              <span class="badge ok" id="a-drawer-status">Attivo</span>
+              <span class="dim" id="a-drawer-last">Ultimo accesso oggi 09:42</span>
+            </div>
+          </div>
+          <div class="db-head-actions">
+            <button class="btn sec sm" data-toast="Invito inviato (demo)"><svg class="ic sm"><use href="#i-mail"/></svg>Invia invito</button>
+            <button class="btn sec sm" data-toast="Modalità modifica (demo)"><svg class="ic sm"><use href="#i-edit"/></svg>Modifica</button>
+            <button class="icon-btn" data-close="a" aria-label="Chiudi"><svg class="ic sm"><use href="#i-x"/></svg></button>
+          </div>
+        </header>
+        <div class="db-body" id="a-drawer-body"></div>
+        <footer class="db-foot">
+          <span class="hint">Le modifiche valgono solo per questo utente · nessuna tab</span>
+          <button class="btn sec" data-toast="Modifiche annullate (demo)">Annulla</button>
+          <button class="btn pri" data-toast="Utente salvato (demo)">Salva utente</button>
+        </footer>
+      </section>
+    </div>
+
+    <div class="pc">
+      <div class="good"><h5>Perché funziona</h5><ul><li>È il pattern che ogni admin riconosce: zero apprendimento.</li><li>La scheda grande mostra tutto subito: niente tab da scoprire.</li><li>La tabella resta full width finché la scheda è chiusa.</li><li>KPI e azioni stanno sopra la tabella, dove servono.</li></ul></div>
+      <div class="bad"><h5>Da valutare</h5><ul><li>La scheda copre quasi tutta la tabella mentre è aperta.</li><li>Molte informazioni insieme: serve una buona gerarchia visiva.</li><li>Su schermi piccoli la scheda passa a 2 o 1 colonna.</li></ul></div>
+    </div>
+    <div class="verdict"><svg class="ic"><use href="#i-check"/></svg><div><b>Ideale se</b> vuoi la scelta più sicura e standard, con una tabella larga e una scheda che mostra tutto in una volta. È la base da cui partire.</div></div>
+  </section>
+
+  <!-- ===== B ===== -->
+  <section class="proposal" id="p-b">
+    <div class="p-head"><span class="p-tag">Proposta B · densità</span><h2>Inbox split: rail icone + lista + dettaglio</h2></div>
+    <p class="p-desc">Il pattern di Outlook e Linear: 58 px di icone, 296 px di lista compatta, tutto il resto al dettaglio. Niente sidebar larga e niente drawer: si passa da un utente all'altro con ↑/↓ e il dettaglio è sempre pieno. 354 px di chrome in tutto.</p>
+    <div class="p-metrics"><span><b>354 px</b> di chrome</span><span><b>~894 px</b> al dettaglio</span><span><b>0</b> overlay</span><span><b>8</b> righe in 320 px</span></div>
+
+    <div class="mock" data-mock="b">
+      <div class="b-shell">
+        <div class="m-top b-top">
+          <div class="m-brand"><i>CE</i>Cyber Engagement Portal</div>
+          <div class="m-crumb">Amministrazione <span>/</span> <b>Utenti</b></div>
+          <div class="m-top-actions">
+            <div class="m-glob" style="margin-left:0;min-width:200px"><svg class="ic sm"><use href="#i-search"/></svg><span>Cerca…</span><kbd>⌘K</kbd></div>
+            <button class="icon-btn" data-toast="Notifiche (demo)"><svg class="ic sm"><use href="#i-bell"/></svg></button>
+            <span class="m-av">GM</span>
+          </div>
+        </div>
+        <div class="b-body">
+          <aside class="icon-rail">
+            <div class="ir-logo">CE</div>
+            <button class="ir-btn on" title="Utenti" data-sect="Utenti"><svg class="ic"><use href="#i-users"/></svg></button>
+            <button class="ir-btn" title="Clienti" data-sect="Clienti"><svg class="ic"><use href="#i-building"/></svg></button>
+            <button class="ir-btn" title="Mailing list" data-sect="Mailing list"><svg class="ic"><use href="#i-mail"/></svg></button>
+            <button class="ir-btn" title="Template" data-sect="Template mail"><svg class="ic"><use href="#i-file"/></svg></button>
+            <button class="ir-btn" title="Impostazioni" data-sect="Impostazioni"><svg class="ic"><use href="#i-sliders"/></svg></button>
+            <div class="ir-sep"></div>
+            <button class="ir-btn" title="Audit" data-sect="Audit"><svg class="ic"><use href="#i-shield"/></svg></button>
+          </aside>
+          <section class="b-list">
+            <div class="b-list-head"><h3>Utenti <span class="dim" style="font-size:10.5px">13</span></h3><button class="btn pri sm" data-toast="Nuovo utente (demo)"><svg class="ic sm"><use href="#i-plus"/></svg></button></div>
+            <div class="b-tabs"><button class="on">Tutti 13</button><button>Interni 10</button><button>Clienti 3</button></div>
+            <div class="b-search"><svg class="ic sm"><use href="#i-search"/></svg><input placeholder="Cerca utente…" aria-label="Cerca utenti"></div>
+            <div class="b-rows" id="b-rows"></div>
+          </section>
+          <section class="b-detail">
+            <div class="dt-head">
+              <div class="dt-title">
+                <span class="av" id="b-av">SC</span>
+                <div><h3 id="b-name">Sara Conti</h3><p id="b-sub">Pentester · 2 clienti · 7 engagement</p></div>
+                <div class="acts"><button class="btn sec sm" data-toast="Modifica (demo)"><svg class="ic sm"><use href="#i-edit"/></svg>Modifica</button><button class="btn pri sm" data-toast="Salva (demo)">Salva</button></div>
+              </div>
+              <div class="dt-tabs" data-tabs="b"><button class="on" data-tab="panoramica">Panoramica</button><button data-tab="assegnazioni">Assegnazioni</button><button data-tab="attivita">Attività</button></div>
+            </div>
+            <div class="dt-body" id="b-body"></div>
+            <div class="dt-foot"><span class="hint">↑ ↓ per cambiare utente · Invio per aprire</span><span class="badge ok">Attivo</span></div>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <div class="pc">
+      <div class="good"><h5>Perché funziona</h5><ul><li>Chrome minimo: 354 px contro 536 px di oggi.</li><li>Dettaglio ampio e sempre visibile per chi lavora sulle persone.</li><li>Cambio utente a un click o con le frecce.</li><li>Le categorie restano icone: nessuna sidebar da 200 px.</li></ul></div>
+      <div class="bad"><h5>Da valutare</h5><ul><li>La lista stretta mostra meno colonne: ruolo e clienti stanno nel dettaglio.</li><li>Con 42 mailing list la lista diventa lunga: servono filtri forti.</li><li>Meno adatta al confronto tra molte righe.</li></ul></div>
+    </div>
+    <div class="verdict"><svg class="ic"><use href="#i-check"/></svg><div><b>Ideale se</b> l'uso quotidiano è "apri una persona e lavoraci". È la proposta che elimina meglio lo spreco, senza overlay.</div></div>
+  </section>
+
+  <!-- ===== C ===== -->
+  <section class="proposal" id="p-c">
+    <div class="p-head"><span class="p-tag">Proposta C · zero pannelli</span><h2>Inline expand: il dettaglio è una riga</h2></div>
+    <p class="p-desc">La tabella resta full width e cliccando una riga si apre una banda di dettaglio <b>sotto la riga stessa</b>, con profilo, assegnazioni e azioni. Nessun drawer, nessuna peek, nessuno scorrimento laterale: il contesto è esattamente dove hai cliccato.</p>
+    <div class="p-metrics"><span><b>Tabella ~1010 px</b></span><span><b>0</b> overlay</span><span><b>1 click</b> espandi</span><span><b>3</b> colonne nel dettaglio</span></div>
+
+    <div class="mock" data-mock="c">
+      <div class="m-top">
+        <div class="m-brand"><i>CE</i>Cyber Engagement Portal</div>
+        <div class="m-crumb">Amministrazione <span>/</span> <b>Utenti</b></div>
+        <div class="m-glob"><svg class="ic sm"><use href="#i-search"/></svg><span>Cerca utenti, clienti, azioni…</span><kbd>⌘K</kbd></div>
+        <div class="m-top-actions"><button class="icon-btn" data-toast="Notifiche (demo)"><svg class="ic sm"><use href="#i-bell"/></svg></button><span class="m-av">GM</span></div>
+      </div>
+      <div class="m-body">
+        <aside class="m-side">
+          <div class="side-label">Amministrazione</div>
+          <button class="side-item on" data-sect="Utenti"><svg class="ic sm"><use href="#i-users"/></svg>Utenti<span class="side-cnt">13</span></button>
+          <button class="side-item" data-sect="Clienti"><svg class="ic sm"><use href="#i-building"/></svg>Clienti<span class="side-cnt">6</span></button>
+          <button class="side-item" data-sect="Mailing list"><svg class="ic sm"><use href="#i-mail"/></svg>Mailing list<span class="side-cnt">42</span></button>
+          <button class="side-item" data-sect="Template mail"><svg class="ic sm"><use href="#i-file"/></svg>Template mail<span class="side-cnt">7</span></button>
+          <button class="side-item" data-sect="Impostazioni"><svg class="ic sm"><use href="#i-sliders"/></svg>Impostazioni</button>
+          <div class="side-foot"><b>Hai cliccato</b> una riga? Il dettaglio si apre lì sotto. Esc o click di nuovo per chiudere.</div>
+        </aside>
+        <section class="c-main">
+          <div class="m-pagehead">
+            <div><h2>Utenti</h2><p>13 persone · clicca una riga per aprire il dettaglio inline</p></div>
+            <div class="m-actions"><button class="btn sec sm" data-toast="Esporta (demo)"><svg class="ic sm"><use href="#i-download"/></svg>Esporta</button><button class="btn pri sm" data-toast="Nuovo utente (demo)"><svg class="ic sm"><use href="#i-plus"/></svg>Utente</button></div>
+          </div>
+          <div class="c-tablecard">
+            <div class="toolbar">
+              <div class="tsearch"><svg class="ic sm"><use href="#i-search"/></svg><input placeholder="Cerca nome, email, cliente…" aria-label="Cerca utenti"></div>
+              <select class="tsel"><option>Tutti i ruoli</option><option>Manager</option><option>PMO</option><option>Pentester</option><option>Cliente</option></select>
+              <button class="btn sec sm" data-toast="Filtri (demo)"><svg class="ic sm"><use href="#i-filter"/></svg>Filtri</button>
+              <button class="icon-btn" title="Colonne" data-toast="Colonne (demo)"><svg class="ic sm"><use href="#i-columns"/></svg></button>
+              <span class="tcount">13 utenti · 2 senza clienti</span>
+            </div>
+            <div class="table-scroll">
+              <table class="dtable" id="c-table">
+                <thead><tr><th style="width:26px"></th><th>Utente</th><th>Ruolo</th><th>Clienti</th><th>Engagement</th><th>Stato</th><th class="col-last">Ultimo accesso</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+            <div class="tfoot"><span>1–8 di 13</span><span class="dim" style="margin-left:auto">Dettaglio inline · nessun overlay</span></div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <div class="pc">
+      <div class="good"><h5>Perché funziona</h5><ul><li>Zero pixel riservati al dettaglio: la tabella è larghissima.</li><li>Il dettaglio non copre nulla e resta nel contesto della riga.</li><li>Funziona benissimo su laptop: niente drawer che taglia le colonne.</li><li>Facile da implementare e da rendere accessibile.</li></ul></div>
+      <div class="bad"><h5>Da valutare</h5><ul><li>Una sola riga aperta per volta (per non perdere il segno).</li><li>Con dettagli molto lunghi la banda spinge in basso le righe.</li><li>Editing multi-campo: meglio un "Apri scheda" per i casi complessi.</li></ul></div>
+    </div>
+    <div class="verdict"><svg class="ic"><use href="#i-check"/></svg><div><b>Ideale se</b> vuoi il massimo della densità con la minima complessità. È la mia raccomandazione come default per Utenti, Clienti e Mailing list.</div></div>
+  </section>
+
+  <!-- ===== D ===== -->
+  <section class="proposal" id="p-d">
+    <div class="p-head"><span class="p-tag">Proposta D · power admin</span><h2>Data grid: bulk, inline edit, peek</h2></div>
+    <p class="p-desc">Quando l'admin lavora per lotti: griglia full-bleed con prima colonna congelata, celle modificabili, selezione multipla e barra azioni contestuale. La peek panel da 392 px si apre solo su richiesta (o doppio click) e non è mai permanente.</p>
+    <div class="p-metrics"><span><b>~1190 px</b> di griglia</span><span><b>Bulk</b> con select-all</span><span><b>Inline</b> edit a basso rischio</span><span><b>Peek</b> on demand</span></div>
+
+    <div class="mock" data-mock="d">
+      <div class="d-shell">
+        <div class="d-top">
+          <div class="m-brand"><i>CE</i>Admin</div>
+          <div class="vsep"></div>
+          <div class="d-viewtabs"><button class="on" data-toast="Vista tabella (demo)"><svg class="ic sm"><use href="#i-grid"/></svg>Griglia</button><button data-toast="Vista kanban (demo)"><svg class="ic sm"><use href="#i-columns"/></svg>Vista</button></div>
+          <div class="fchip on"><b>Utenti</b> 13</div>
+          <div class="fchip"><b>Ruolo</b> Tutti <svg class="ic sm"><use href="#i-chev-d"/></svg></div>
+          <div class="fchip"><b>Cliente</b> Tutti <svg class="ic sm"><use href="#i-chev-d"/></svg></div>
+          <div class="fchip" data-toast="Aggiungi filtro (demo)"><svg class="ic sm"><use href="#i-plus"/></svg>Filtro</div>
+          <div class="m-top-actions">
+            <button class="icon-btn" title="Colonne" data-toast="Colonne (demo)"><svg class="ic sm"><use href="#i-columns"/></svg></button>
+            <button class="icon-btn" title="Densità" data-density="d"><svg class="ic sm"><use href="#i-list"/></svg></button>
+            <button class="btn pri sm" data-toast="Nuovo utente (demo)"><svg class="ic sm"><use href="#i-plus"/></svg>Utente</button>
+          </div>
+        </div>
+        <div class="d-shell-body">
+          <aside class="d-rail">
+            <button class="ir-btn on" title="Utenti" data-sect="Utenti"><svg class="ic"><use href="#i-users"/></svg></button>
+            <button class="ir-btn" title="Clienti" data-sect="Clienti"><svg class="ic"><use href="#i-building"/></svg></button>
+            <button class="ir-btn" title="Mailing" data-sect="Mailing list"><svg class="ic"><use href="#i-mail"/></svg></button>
+            <button class="ir-btn" title="Template" data-sect="Template mail"><svg class="ic"><use href="#i-file"/></svg></button>
+            <button class="ir-btn" title="Impostazioni" data-sect="Impostazioni"><svg class="ic"><use href="#i-sliders"/></svg></button>
+          </aside>
+          <div class="d-content">
+            <div class="d-toolbar">
+              <div class="tsearch"><svg class="ic sm"><use href="#i-search"/></svg><input placeholder="Filtra righe… ( / )" aria-label="Filtra righe"></div>
+              <button class="btn sec sm" data-toast="Viste salvate (demo)"><svg class="ic sm"><use href="#i-star"/></svg>Viste salvate</button>
+              <button class="btn sec sm" data-toast="Esporta (demo)"><svg class="ic sm"><use href="#i-download"/></svg>Esporta</button>
+              <span class="tcount">8 righe · celle modificabili</span>
+            </div>
+            <div class="d-grid-wrap" id="d-grid">
+              <table class="dgrid">
+                <thead><tr>
+                  <th style="width:30px"><input type="checkbox" class="chk" data-all="d" aria-label="Seleziona tutti"></th>
+                  <th>Utente</th><th>Ruolo</th><th>Clienti</th><th>Engagement</th><th>Stato</th><th class="col-last">Ultimo accesso</th><th style="width:28px"></th>
+                </tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+            <div class="bulkbar" id="d-bulk" hidden><span><b id="d-count">0</b> selezionati</span><button class="btn sm" data-toast="Assegna cliente (demo)">Assegna cliente</button><button class="btn sm" data-toast="Cambia ruolo (demo)">Cambia ruolo</button><button class="btn sm" data-toast="Disattiva (demo)">Disattiva</button><span class="dim" style="color:#9db8ce">Le modifiche sono in anteprima</span><button class="x" data-clear="d" aria-label="Deseleziona"><svg class="ic sm"><use href="#i-x"/></svg></button></div>
+          </div>
+          <aside class="peek" id="d-peek" hidden>
+            <div class="d-head">
+              <div class="d-top"><span class="badge" id="d-peek-role">Pentester</span><button class="icon-btn" data-peek-close aria-label="Chiudi"><svg class="ic sm"><use href="#i-x"/></svg></button></div>
+              <div class="d-person"><span class="av" id="d-peek-av">SC</span><div><h3 id="d-peek-name">Sara Conti</h3><p id="d-peek-mail">sara.conti@provider.example</p></div></div>
+            </div>
+            <div class="d-body" id="d-peek-body"></div>
+            <div class="insp-foot"><button class="btn sec" data-toast="Chiudi (demo)">Chiudi</button><button class="btn pri" data-toast="Salva (demo)">Salva</button></div>
+          </aside>
+        </div>
+      </div>
+    </div>
+
+    <div class="pc">
+      <div class="good"><h5>Perché funziona</h5><ul><li>Massima densità: 8 colonne e ~20 righe visibili.</li><li>Bulk con select-all, contatore e azioni contestuali.</li><li>Inline edit per i campi a basso rischio; peek per il resto.</li><li>Viste salvate, filtri a chip, export: strumenti da power user.</li></ul></div>
+      <div class="bad"><h5>Da valutare</h5><ul><li>Più complessa da costruire e da testare.</li><li>Inline edit richiede validazione e undo.</li><li>Poco adatta a chi entra raramente nell'area.</li></ul></div>
+    </div>
+    <div class="verdict"><svg class="ic"><use href="#i-check"/></svg><div><b>Ideale se</b> il Manager passa ore a fare assegnazioni e pulizia dati. Può convivere con A/C come "modalità avanzata".</div></div>
+  </section>
+
+  <!-- ===== E ===== -->
+  <section class="proposal" id="p-e">
+    <div class="p-head"><span class="p-tag">Proposta E · command first</span><h2>Command center: ⌘K e peek</h2></div>
+    <p class="p-desc">Il chrome scompare: 62 px di icone, una home con ciò che richiede attenzione e una palette globale per saltare a qualsiasi utente, cliente o azione. Il dettaglio è una peek panel che si apre dal risultato. È il pattern di Linear e Raycast, applicato all'admin.</p>
+    <div class="p-metrics"><span><b>62 px</b> di navigazione</span><span><b>⌘K</b> per tutto</span><span><b>Peek</b> contestuale</span><span><b>0</b> menu annidati</span></div>
+
+    <div class="mock" data-mock="e">
+      <div class="e-shell">
+        <aside class="e-rail">
+          <div class="ir-logo">CE</div>
+          <button class="ir-btn on" title="Home" data-toast="Home (demo)"><svg class="ic"><use href="#i-grid"/></svg></button>
+          <button class="ir-btn" title="Utenti" data-toast="Utenti (demo)"><svg class="ic"><use href="#i-users"/></svg></button>
+          <button class="ir-btn" title="Clienti" data-toast="Clienti (demo)"><svg class="ic"><use href="#i-building"/></svg></button>
+          <button class="ir-btn" title="Mailing" data-toast="Mailing list (demo)"><svg class="ic"><use href="#i-mail"/></svg></button>
+          <button class="ir-btn" title="Template" data-toast="Template (demo)"><svg class="ic"><use href="#i-file"/></svg></button>
+          <button class="ir-btn" title="Impostazioni" data-toast="Impostazioni (demo)"><svg class="ic"><use href="#i-sliders"/></svg></button>
+          <div class="ir-sep" style="background:rgba(255,255,255,.1)"></div>
+          <button class="ir-btn" title="Audit" data-toast="Audit (demo)"><svg class="ic"><use href="#i-shield"/></svg></button>
+        </aside>
+        <div class="e-main">
+          <div class="e-top">
+            <div class="where">Amministrazione <span style="opacity:.5">/</span> <b>Panoramica</b></div>
+            <div class="e-kbd">
+              <button class="searchbtn" data-palette> <svg class="ic sm"><use href="#i-search"/></svg> Cerca o esegui un comando… <kbd>⌘K</kbd></button>
+              <button class="icon-btn" style="background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:#9db8ce" data-toast="Notifiche (demo)"><svg class="ic sm"><use href="#i-bell"/></svg></button>
+              <span class="m-av" style="background:var(--teal);color:#062036">GM</span>
+            </div>
+          </div>
+          <div class="e-content">
+            <div class="e-hi">
+              <div><h2>Buongiorno, Giorgio</h2><p>3 cose richiedono attenzione · ultimo aggiornamento 09:42</p></div>
+              <button class="btn lite" data-palette><svg class="ic sm"><use href="#i-cmd"/></svg>Apri comandi</button>
+            </div>
+            <div class="e-kpis">
+              <div class="e-kpi"><span>Utenti attivi</span><b>11</b><i>su 13</i></div>
+              <div class="e-kpi"><span>Clienti</span><b>6</b><i>2 nuovi</i></div>
+              <div class="e-kpi"><span>Liste mail</span><b>42</b><i>18 engagement</i></div>
+              <div class="e-kpi"><span>Template</span><b>7</b><i>1 override</i></div>
+            </div>
+            <div class="e-cols">
+              <div class="e-card">
+                <h3>Da controllare <span>3</span></h3>
+                <div class="e-row"><span class="av" style="background:rgba(244,63,94,.16);color:#fda4af">MV</span><span class="t"><b>Marco Verdi senza clienti</b><span>2 engagement visibili · assegna un cliente</span></span><span class="tag amber">Assegna</span></div>
+                <div class="e-row"><span class="av" style="background:rgba(245,158,11,.16);color:#fcd34d">CL</span><span class="t"><b>2 clienti senza mailing list notifiche</b><span>Tailspin Toys · Northwind Traders</span></span><span class="tag red">Manca</span></div>
+                <div class="e-row"><span class="av" style="background:rgba(14,159,181,.16);color:#7fe3ef">TP</span><span class="t"><b>1 override template da rivedere</b><span>Contoso · mail di avvio</span></span><span class="tag green">Pronto</span></div>
+              </div>
+              <div class="e-card">
+                <h3>Accessi rapidi <span>⌘K</span></h3>
+                <div class="e-recent" id="e-recent"></div>
+              </div>
+            </div>
+            <div class="e-note">Prova <b>⌘K</b> (o Ctrl+K): la palette filtra utenti e azioni mentre scrivi. Esc chiude, Invio apre il primo risultato.</div>
+          </div>
+        </div>
+        <div class="palette-wrap" id="e-palette" hidden>
+          <div class="palette">
+            <div class="pal-in"><svg class="ic"><use href="#i-search"/></svg><input id="e-pal-input" placeholder="Cerca utenti, clienti, azioni…" aria-label="Palette comandi"><kbd>Esc</kbd></div>
+            <div class="pal-list" id="e-pal-list"></div>
+            <div class="pal-foot"><span><kbd>↑</kbd><kbd>↓</kbd> naviga</span><span><kbd>↵</kbd> apri</span><span><kbd>esc</kbd> chiudi</span><span style="margin-left:auto">13 utenti · 6 clienti · 42 liste</span></div>
+          </div>
+        </div>
+        <aside class="peek" style="top:52px" id="e-peek" hidden>
+          <div class="d-head">
+            <div class="d-top"><span class="badge" id="e-peek-role">Pentester</span><button class="icon-btn" data-peek-close aria-label="Chiudi"><svg class="ic sm"><use href="#i-x"/></svg></button></div>
+            <div class="d-person"><span class="av" id="e-peek-av">SC</span><div><h3 id="e-peek-name">Sara Conti</h3><p id="e-peek-mail">sara.conti@provider.example</p></div></div>
+          </div>
+          <div class="d-body" id="e-peek-body"></div>
+          <div class="insp-foot"><button class="btn sec" data-toast="Chiudi (demo)">Chiudi</button><button class="btn pri" data-toast="Apri scheda (demo)">Apri scheda</button></div>
+        </aside>
+      </div>
+    </div>
+
+    <div class="pc">
+      <div class="good"><h5>Perché funziona</h5><ul><li>Zero spazio sprecato per la navigazione: 62 px.</li><li>Chi usa l'area tutti i giorni non tocca quasi mai il mouse.</li><li>La home mette in evidenza le anomalie, non i menu.</li><li>La palette è anche un modo per scoprire le azioni.</li></ul></div>
+      <div class="bad"><h5>Da valutare</h5><ul><li>Richiede che le persone imparino ⌘K (con fallback visibile).</li><li>Meno adatta a chi entra di rado o da tablet.</li><li>Va progettata con cura la lista dei comandi e i permessi.</li></ul></div>
+    </div>
+    <div class="verdict"><svg class="ic"><use href="#i-check"/></svg><div><b>Ideale se</b> vuoi stupire e hai power user. Lo vedo bene come <b>strato sopra</b> A o C, non come unica navigazione.</div></div>
+  </section>
+
+  <section class="cmp">
+    <h2>Confronto, senza fumo</h2>
+    <p>Misure su viewport 1280 px, portale max 1280 px. "Chrome" = pixel permanenti sottratti ai dati.</p>
+    <table>
+      <thead><tr><th></th><th>A · Classic</th><th>B · Inbox split</th><th>C · Inline</th><th>D · Data grid</th><th>E · Command</th></tr></thead>
+      <tbody>
+        <tr><td>Chrome permanente</td><td>228 px</td><td>354 px</td><td>228 px</td><td>52 px</td><td>62 px</td></tr>
+        <tr><td>Spazio tabella/dati</td><td>~990 px</td><td>~894 px (dettaglio)</td><td>~1010 px</td><td>~1190 px</td><td>~1180 px</td></tr>
+        <tr><td>Dettaglio</td><td>Scheda 90%</td><td>Sempre visibile</td><td>Banda inline</td><td>Peek 392 px</td><td>Peek 392 px</td></tr>
+        <tr><td>Click per modificare</td><td>2</td><td>1</td><td>2</td><td>1 (cella)</td><td>2 + ⌘K</td></tr>
+        <tr><td>Confronto tra righe</td><td>Ottimo</td><td>Medio</td><td>Ottimo</td><td>Massimo</td><td>Medio</td></tr>
+        <tr><td>Bulk / massa</td><td>Base</td><td>No</td><td>No</td><td>Completo</td><td>Comandi</td></tr>
+        <tr><td>Curva di apprendimento</td><td>Bassa</td><td>Bassa</td><td>Bassa</td><td>Media</td><td>Alta</td></tr>
+        <tr><td>Mobile / tablet</td><td>Buono</td><td>Medio</td><td>Ottimo</td><td>Debole</td><td>Debole</td></tr>
+      </tbody>
+    </table>
+    <div class="reco">
+      <b>La mia raccomandazione:</b> ossatura <b>A</b> (standard, riconoscibile) + <b>C</b> come comportamento base delle tabelle:
+      il dettaglio si apre inline, senza pannelli permanenti. <b>D</b> diventa la “modalità avanzata” per le assegnazioni in blocco,
+      <b>E</b> uno strato ⌘K sopra tutto, <b>B</b> la variante per chi lavora una persona alla volta.
+      Così la tabella resta larga, il dettaglio non occupa spazio da vuoto e l'area resta familiare.
+    </div>
+  </section>
+
+  <section class="src">
+    <b>Pattern e fonti consultate</b>
+    <ul>
+      <li>Pencil &amp; Paper — <a href="https://www.pencilandpaper.io/articles/ux-pattern-analysis-enterprise-data-tables" target="_blank" rel="noopener">Data table UX patterns</a>: quick-view sidebar, full screen, sticky header, bulk actions.</li>
+      <li>Setproduct — <a href="https://www.setproduct.com/blog/sidebar-navigation-ui-design" target="_blank" rel="noopener">Sidebar navigation</a>: rail + panel sotto i 320 px, 1040 px di contenuto su laptop 1366.</li>
+      <li>Setproduct — <a href="https://www.setproduct.com/blog/data-table-ui-design" target="_blank" rel="noopener">Data table design 2026</a>: toolbar, inline edit vs pannello, bulk toolbar.</li>
+      <li>NN/g — <a href="https://www.nngroup.com/videos/bulk-actions-design-guidelines" target="_blank" rel="noopener">Bulk actions</a>: select-all, barra contestuale, feedback e undo.</li>
+      <li>Helios (HashiCorp) — <a href="https://helios.hashicorp.design/patterns/table-multi-select" target="_blank" rel="noopener">Table multi-select</a>: contatore, azioni consolidate, conferma per azioni distruttive.</li>
+      <li>Eleken — <a href="https://www.eleken.co/blog-posts/admin-dashboard-ui" target="_blank" rel="noopener">Admin dashboard principles</a>: gerarchia, inline editing, progressive disclosure.</li>
+    </ul>
+  </section>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===== dati ===== */
+const USERS = [
+  { id:'gm', name:'Giorgio Marino', email:'giorgio.marino@provider.example', role:'Manager',   clients:['Tutti i clienti'], clientCount:6, eng:15, status:'Attivo', last:'oggi 09:42' },
+  { id:'lf', name:'Luca Ferri',     email:'luca.ferri@provider.example',     role:'PMO',       clients:['Contoso','Fabrikam'], clientCount:2, eng:8,  status:'Attivo', last:'oggi 08:15' },
+  { id:'sc', name:'Sara Conti',     email:'sara.conti@provider.example',     role:'Pentester', clients:['Contoso','Nova Bank'], clientCount:2, eng:7,  status:'Attivo', last:'ieri 18:20' },
+  { id:'mv', name:'Marco Verdi',    email:'marco.verdi@provider.example',    role:'Pentester', clients:[], clientCount:0, eng:2,  status:'Attivo', last:'ieri 16:03' },
+  { id:'ef', name:'Elena Fabbri',   email:'elena.fabbri@provider.example',   role:'Pentester', clients:['Fabrikam'], clientCount:1, eng:4,  status:'Attivo', last:'12 nov' },
+  { id:'pg', name:'Paolo Galli',    email:'paolo.galli@provider.example',    role:'Auditor',   clients:['Nova Bank'], clientCount:1, eng:3,  status:'Attivo', last:'10 nov' },
+  { id:'mr', name:'Marta Rinaldi',  email:'marta.rinaldi@contoso.example',   role:'Cliente',   clients:['Contoso'], clientCount:1, eng:4,  status:'Attivo', last:'—' },
+  { id:'ar', name:'Anna Rossi',     email:'anna.rossi@contoso.example',      role:'Cliente',   clients:['Contoso'], clientCount:1, eng:4,  status:'Attivo', last:'—' }
+];
+const ROLE_CLASS = { Manager:'mgr', PMO:'pmo', Pentester:'pen', Auditor:'aud', Cliente:'cli' };
+const ENGAGEMENTS = {
+  gm:['ENG-2026-001','ENG-2026-002','ENG-2026-003'],
+  lf:['ENG-2026-001','ENG-2026-003','ENG-2026-004','ENG-2026-008'],
+  sc:['ENG-2026-001','ENG-2026-003','ENG-2026-006','ENG-2026-008'],
+  mv:['ENG-2026-011','ENG-2026-015'],
+  ef:['ENG-2026-003','ENG-2026-004'],
+  pg:['ENG-2026-002'],
+  mr:['ENG-2026-001','ENG-2026-003'],
+  ar:['ENG-2026-001','ENG-2026-003']
+};
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const initials = n => n.split(' ').filter(Boolean).map(x=>x[0]).join('').slice(0,2).toUpperCase();
+const avClass = r => r==='Manager' ? 'manager' : r==='Cliente' ? 'client' : '';
+const badge = r => `<span class="badge ${ROLE_CLASS[r]||''}">${esc(r)}</span>`;
+const clientsCell = u => u.clientCount === 0
+  ? '<span class="dim">—</span>'
+  : `<div class="cl-chips">${u.clients.slice(0,2).map(c=>`<span class="cl">${esc(c)}</span>`).join('')}${u.clients.length>2?`<span class="cl more">+${u.clients.length-2}</span>`:''}</div>`;
+
+/* ===== toast ===== */
+let toastTimer;
+function toast(msg){
+  const t = $('#toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 2100);
+}
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-toast]');
+  if (el) { e.preventDefault(); toast(el.dataset.toast); }
+});
+
+/* ===== switcher ===== */
+$$('.switcher button').forEach(btn => btn.addEventListener('click', () => {
+  $$('.switcher button').forEach(b => { b.classList.toggle('on', b===btn); b.setAttribute('aria-selected', String(b===btn)); });
+  $$('.proposal').forEach(p => p.classList.toggle('active', p.id === 'p-' + btn.dataset.v));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}));
+
+/* ===== sidebar demo ===== */
+$$('[data-sect]').forEach(btn => btn.addEventListener('click', () => {
+  const group = btn.parentElement;
+  group.querySelectorAll('[data-sect]').forEach(b => b.classList.toggle('on', b===btn));
+  if (btn.dataset.sect !== 'Utenti') toast(btn.dataset.sect + ' · mock della sezione');
+}));
+
+/* ===== A: tabella + drawer ===== */
+function renderA(){
+  $('#a-table tbody').innerHTML = USERS.map(u => `
+    <tr data-user="${u.id}">
+      <td><input type="checkbox" class="chk" aria-label="Seleziona ${esc(u.name)}"></td>
+      <td><div class="who"><span class="av ${avClass(u.role)}">${initials(u.name)}</span><span class="t"><b>${esc(u.name)}</b><span>${esc(u.email)}</span></span></div></td>
+      <td>${badge(u.role)}</td>
+      <td>${clientsCell(u)}</td>
+      <td><span class="num">${u.eng}</span></td>
+      <td><span class="badge ok">${u.status}</span></td>
+      <td class="dim col-last">${esc(u.last)}</td>
+      <td><button class="row-menu" data-toast="Azioni riga (demo)"><svg class="ic sm"><use href="#i-dots"/></svg></button></td>
+    </tr>`).join('');
+}
+function detailBodyA(u){
+  const clients = u.clients.length
+    ? u.clients.map(c=>`<span class="cl">${esc(c)}</span>`).join('')
+    : '<span class="dim" style="font-size:11px">Nessun cliente</span>';
+  const engs = ENGAGEMENTS[u.id] || [];
+  const engNames = ['External Penetration Test','Web Application Retest','Payment API Review','Cloud Configuration Review'];
+
+  return `<div class="db-col">
+    <section class="db-sec"><h4>Profilo</h4><dl class="kv">
+      <dt>Ruolo</dt><dd>${esc(u.role)}</dd>
+      <dt>Stato</dt><dd>${u.status}</dd>
+      <dt>Ultimo accesso</dt><dd>${esc(u.last)}</dd>
+      <dt>Creato</dt><dd>02 set 2025</dd>
+    </dl></section>
+    <section class="db-sec"><h4>Permessi</h4><dl class="kv">
+      <dt>Clienti</dt><dd>${u.role==='Manager'?'Tutti':u.clientCount}</dd>
+      <dt>Engagement</dt><dd>${u.role==='Manager'?'Tutti':u.eng}</dd>
+      <dt>Costi</dt><dd>${u.role==='Manager'||u.role==='PMO'?'Sì':'No'}</dd>
+      <dt>Utenti</dt><dd>${u.role==='Manager'?'Amministra':'Sola lettura'}</dd>
+    </dl></section>
+    <section class="db-sec"><h4>Sicurezza</h4>
+      <div class="d-chips"><span class="badge ok">2FA attiva</span><span class="badge ok">Password ok</span></div>
+      <div class="line" style="margin-top:7px"><span>Sessioni attive</span><b>2</b></div>
+      <div class="line"><span>Ultimo cambio password</span><b>12 ott</b></div>
+    </section>
+  </div>
+  <div class="db-col">
+    <section class="db-sec"><h4>Clienti <span>${u.clientCount}</span></h4><div class="d-chips">${clients}</div>
+      <button class="btn sec sm" style="margin-top:9px" data-toast="Gestisci assegnazioni (demo)">Gestisci assegnazioni</button></section>
+    <section class="db-sec"><h4>Engagement visibili <span>${u.eng}</span></h4>
+      <div class="eng-list">${engs.slice(0,4).map((id,i)=>`<div class="eng"><span class="id">${id}</span><b>${engNames[i]||'Engagement'}</b><span class="st ${i===0?'done':i===1?'wip':'wait'}">${['Report','Scope','Credenziali','Scope'][i]}</span></div>`).join('')||'<span class="dim" style="font-size:11px">Nessuno</span>'}</div>
+      ${u.eng>4?`<div class="line" style="margin-top:4px"><span>Altri engagement</span><b>${u.eng-4}</b></div>`:''}</section>
+    <section class="db-sec"><h4>Mailing list</h4>
+      <div class="line"><span>Notifiche</span><b>${u.clientCount*2} liste</b></div>
+      <div class="line"><span>Deliverables</span><b>${u.clientCount} liste</b></div>
+    </section>
+  </div>
+  <div class="db-col">
+    <section class="db-sec"><h4>Attività recente</h4>
+      <div class="line"><span>Accesso al portale</span><b>${esc(u.last)}</b></div>
+      <div class="line"><span>Report scaricato</span><b>12 nov</b></div>
+      <div class="line"><span>Assegnazione aggiornata</span><b>08 nov</b></div>
+      <div class="line"><span>Invito accettato</span><b>02 nov</b></div>
+    </section>
+    <section class="db-sec"><h4>Note interne</h4><div class="note">${u.role==='Manager'?'Referente amministrativo del portale.':'Referente operativo per il perimetro assegnato.'}</div></section>
+  </div>`;
+}
+function openA(u){
+  $('#a-drawer-name').textContent = u.name;
+  $('#a-drawer-mail').textContent = u.email;
+  $('#a-drawer-av').textContent = initials(u.name);
+  const role = $('#a-drawer-role');
+  role.className = 'badge ' + (ROLE_CLASS[u.role]||'');
+  role.textContent = u.role;
+  const status = $('#a-drawer-status');
+  status.textContent = u.status;
+  $('#a-drawer-last').textContent = 'Ultimo accesso ' + u.last;
+  $('#a-drawer-body').innerHTML = detailBodyA(u);
+  $('[data-drawer="a"]').hidden = false;
+  $('[data-scrim="a"]').hidden = false;
+  $$('#a-table tbody tr').forEach(tr=>tr.classList.toggle('on', tr.dataset.user===u.id));
+}
+function closeA(){
+  $('[data-drawer="a"]').hidden = true;
+  $('[data-scrim="a"]').hidden = true;
+  $$('#a-table tbody tr').forEach(tr=>tr.classList.remove('on'));
+}
+renderA();
+$('#a-table tbody').addEventListener('click', e => {
+  if (e.target.closest('.chk') || e.target.closest('.row-menu')) return;
+  const tr = e.target.closest('tr[data-user]');
+  if (!tr) return;
+  openA(USERS.find(u=>u.id===tr.dataset.user));
+});
+$('[data-close="a"]').addEventListener('click', closeA);
+$('[data-scrim="a"]').addEventListener('click', closeA);
+
+/* ===== B: inbox split ===== */
+function renderBList(){
+  $('#b-rows').innerHTML = USERS.map(u => `
+    <button class="b-row ${u.id==='sc'?'on':''}" data-user="${u.id}">
+      <span class="av ${avClass(u.role)}">${initials(u.name)}</span>
+      <span class="t"><b>${esc(u.name)}</b><span>${esc(u.email)}</span></span>
+      <span class="end"><span class="mini-role">${esc(u.role)}</span><span class="cl">${u.clientCount===0?'—':u.clientCount+' clienti'}</span></span>
+    </button>`).join('');
+}
+function detailB(u, tab){
+  if (tab==='assegnazioni') {
+    return `<div class="dt-cols">
+      <div class="dt-card"><h4>Clienti <span>${u.clientCount}</span></h4><div class="d-chips">${u.clients.length?u.clients.map(c=>`<span class="cl">${esc(c)}</span>`).join(''):'<span class="dim" style="font-size:11px">Nessun cliente</span>'}</div></div>
+      <div class="dt-card"><h4>Engagement <span>${u.eng}</span></h4><div class="eng-list">${(ENGAGEMENTS[u.id]||[]).map(id=>`<div class="eng"><span class="id">${id}</span><b>Engagement collegato</b></div>`).join('')||'<span class="dim" style="font-size:11px">Nessuno</span>'}</div></div>
+    </div>
+    <div class="dt-card"><h4>Perimetro</h4><p style="font-size:11.5px;color:var(--muted)">${u.role==='Manager'?'Accesso globale a clienti ed engagement.':'Accesso limitato alle assegnazioni. Costi e margine non visibili.'}</p>
+    <button class="btn sec sm" style="margin-top:8px" data-toast="Modifica assegnazioni (demo)">Modifica assegnazioni</button></div>`;
+  }
+  if (tab==='attivita') {
+    return `<div class="dt-card"><h4>Ultimi eventi</h4><dl class="kv"><dt>Accesso</dt><dd>${esc(u.last)}</dd><dt>Report</dt><dd>12 nov 14:20</dd><dt>Assegnazione</dt><dd>08 nov</dd></dl></div>
+      <div class="note">Audit conservato 90 giorni. Retention configurabile in produzione.</div>`;
+  }
+  return `<div class="dt-cols">
+    <div class="dt-card"><h4>Profilo</h4><dl class="kv"><dt>Ruolo</dt><dd>${esc(u.role)}</dd><dt>Stato</dt><dd>${u.status}</dd><dt>Clienti</dt><dd>${u.clientCount}</dd><dt>Engagement</dt><dd>${u.eng}</dd><dt>Ultimo accesso</dt><dd>${esc(u.last)}</dd></dl></div>
+    <div class="dt-card"><h4>Clienti</h4><div class="d-chips">${u.clients.length?u.clients.map(c=>`<span class="cl">${esc(c)}</span>`).join(''):'<span class="dim" style="font-size:11px">Nessun cliente</span>'}</div>
+      <h4 style="margin-top:10px">Engagement</h4><div class="d-chips">${(ENGAGEMENTS[u.id]||[]).map(id=>`<span class="cl">${id}</span>`).join('')||'<span class="dim" style="font-size:11px">Nessuno</span>'}</div></div>
+  </div>
+  <div class="dt-card"><h4>Accesso</h4><p style="font-size:11.5px;color:var(--muted)">${u.role==='Manager'?'Accesso globale: tutti i clienti e tutti gli engagement.':'Vede solo ciò che è assegnato; costi e margine esclusi.'}</p></div>
+  <div class="dt-card"><h4>Attività recente <span>ultimi 3 eventi</span></h4><div class="eng-list">
+    <div class="eng"><span class="id">09:42</span><b>Accesso al portale</b><span class="st done">ok</span></div>
+    <div class="eng"><span class="id">12 nov</span><b>Report scaricato</b><span class="st wip">ENG-003</span></div>
+    <div class="eng"><span class="id">08 nov</span><b>Assegnazione aggiornata</b><span class="st wait">Contoso</span></div>
+  </div></div>`;
+}
+function selectB(u){
+  $('#b-av').textContent = initials(u.name);
+  $('#b-name').textContent = u.name;
+  $('#b-sub').textContent = `${u.role} · ${u.clientCount} clienti · ${u.eng} engagement`;
+  $$('[data-tabs="b"] button').forEach(b=>b.classList.toggle('on', b.dataset.tab==='panoramica'));
+  $('#b-body').innerHTML = detailB(u,'panoramica');
+  $$('#b-rows .b-row').forEach(r=>r.classList.toggle('on', r.dataset.user===u.id));
+}
+renderBList();
+selectB(USERS.find(u=>u.id==='sc'));
+$('#b-rows').addEventListener('click', e => {
+  const row = e.target.closest('.b-row');
+  if (row) selectB(USERS.find(u=>u.id===row.dataset.user));
+});
+$$('[data-tabs="b"] button').forEach(b => b.addEventListener('click', () => {
+  $$('[data-tabs="b"] button').forEach(x=>x.classList.toggle('on',x===b));
+  const u = USERS.find(x=>x.name === $('#b-name').textContent) || USERS[0];
+  $('#b-body').innerHTML = detailB(u,b.dataset.tab);
+}));
+
+/* ===== C: inline expand ===== */
+function renderC(){
+  $('#c-table tbody').innerHTML = USERS.map(u => `
+    <tr data-user="${u.id}">
+      <td><button class="expander" aria-label="Espandi"><svg class="ic sm"><use href="#i-chev"/></svg></button></td>
+      <td><div class="who"><span class="av ${avClass(u.role)}">${initials(u.name)}</span><span class="t"><b>${esc(u.name)}</b><span>${esc(u.email)}</span></span></div></td>
+      <td>${badge(u.role)}</td>
+      <td>${clientsCell(u)}</td>
+      <td><span class="num">${u.eng}</span></td>
+      <td><span class="badge ok">${u.status}</span></td>
+      <td class="dim col-last">${esc(u.last)}</td>
+    </tr>`).join('');
+}
+function band(u){
+  return `<tr class="band"><td colspan="7"><div class="band-in">
+    <div class="band-sec"><h5>Profilo</h5>
+      <div class="line"><span>Ruolo</span><b>${esc(u.role)}</b></div>
+      <div class="line"><span>Stato</span><b>${u.status}</b></div>
+      <div class="line"><span>Ultimo accesso</span><b>${esc(u.last)}</b></div>
+      <div class="line"><span>2FA</span><b>Attiva</b></div>
+    </div>
+    <div class="band-sec"><h5>Clienti · ${u.clientCount}</h5>
+      <div class="d-chips" style="margin-bottom:6px">${u.clients.length?u.clients.map(c=>`<span class="cl">${esc(c)}</span>`).join(''):'<span class="dim" style="font-size:11px">Nessun cliente</span>'}</div>
+      <div class="line"><span>Engagement</span><b>${u.eng}</b></div>
+      <div class="line"><span>Liste mail</span><b>${u.clientCount*2}</b></div>
+    </div>
+    <div class="band-sec"><h5>Engagement visibili</h5>
+      <div class="d-chips">${(ENGAGEMENTS[u.id]||[]).map(id=>`<span class="cl">${id}</span>`).join('')||'<span class="dim" style="font-size:11px">Nessuno</span>'}</div>
+    </div>
+    <div class="band-actions"><span class="hint">${u.role==='Manager'?'Accesso globale: nessuna assegnazione necessaria.':'Le modifiche valgono solo per questo utente.'}</span>
+      <button class="btn sec sm" data-toast="Modifica assegnazioni (demo)">Assegnazioni</button>
+      <button class="btn sec sm" data-toast="Apri scheda completa (demo)"><svg class="ic sm"><use href="#i-external"/></svg>Scheda completa</button>
+      <button class="btn pri sm" data-toast="Salvato (demo)">Salva</button>
+    </div>
+  </div></td></tr>`;
+}
+renderC();
+$('#c-table tbody').addEventListener('click', e => {
+  const tr = e.target.closest('tr[data-user]');
+  if (!tr) return;
+  const existing = tr.nextElementSibling;
+  if (existing && existing.classList.contains('band')) {
+    existing.remove(); tr.classList.remove('on'); return;
+  }
+  $$('#c-table tbody tr.band').forEach(b=>b.remove());
+  $$('#c-table tbody tr.on').forEach(r=>r.classList.remove('on'));
+  tr.classList.add('on');
+  tr.insertAdjacentHTML('afterend', band(USERS.find(u=>u.id===tr.dataset.user)));
+});
+
+/* ===== D: grid + bulk + peek ===== */
+function renderD(){
+  $('#d-grid tbody').innerHTML = USERS.map(u => `
+    <tr data-user="${u.id}">
+      <td><input type="checkbox" class="chk" data-row="d" aria-label="Seleziona ${esc(u.name)}"></td>
+      <td><div class="who"><span class="av ${avClass(u.role)}">${initials(u.name)}</span><span class="t"><b>${esc(u.name)}</b></span></div></td>
+      <td class="cell" contenteditable="false">${esc(u.role)}</td>
+      <td class="cell" contenteditable="false">${esc(u.clients.join(', ')||'—')}</td>
+      <td class="cell num" contenteditable="false">${u.eng}</td>
+      <td class="cell" contenteditable="false">${u.status}</td>
+      <td class="cell dim col-last" contenteditable="false">${esc(u.last)}</td>
+      <td><button class="row-menu" data-peek="${u.id}" aria-label="Dettaglio"><svg class="ic sm"><use href="#i-external"/></svg></button></td>
+    </tr>`).join('');
+}
+function peekD(u){
+  $('#d-peek-name').textContent = u.name;
+  $('#d-peek-mail').textContent = u.email;
+  $('#d-peek-av').textContent = initials(u.name);
+  const role = $('#d-peek-role'); role.className = 'badge ' + (ROLE_CLASS[u.role]||''); role.textContent = u.role;
+  $('#d-peek-body').innerHTML = `<div class="d-sec"><h4>Righe selezionate</h4><p style="font-size:11.5px;color:var(--muted)">Modifica inline nella griglia; qui i campi che richiedono più spazio.</p></div>
+    <div class="d-sec"><h4>Assegnazioni</h4><div class="d-chips">${u.clients.length?u.clients.map(c=>`<span class="cl">${esc(c)}</span>`).join(''):'<span class="dim" style="font-size:11px">Nessun cliente</span>'}</div></div>
+    <div class="d-sec"><h4>Engagement</h4><div class="d-chips">${(ENGAGEMENTS[u.id]||[]).map(id=>`<span class="cl">${id}</span>`).join('')||'<span class="dim" style="font-size:11px">Nessuno</span>'}</div></div>`;
+  $('#d-peek').hidden = false;
+}
+renderD();
+function syncBulkD(){
+  const n = $$('[data-row="d"]:checked').length;
+  $('#d-count').textContent = n;
+  $('#d-bulk').hidden = n === 0;
+}
+$('#d-grid').addEventListener('change', e => {
+  if (e.target.matches('[data-row="d"]')) syncBulkD();
+  if (e.target.matches('[data-all="d"]')) {
+    $$('[data-row="d"]').forEach(c => c.checked = e.target.checked);
+    syncBulkD();
+  }
+});
+$('[data-clear="d"]').addEventListener('click', () => {
+  $$('[data-row="d"]').forEach(c=>c.checked=false);
+  const all = $('[data-all="d"]'); if (all) all.checked = false;
+  syncBulkD();
+});
+$('#d-grid').addEventListener('dblclick', e => {
+  const cell = e.target.closest('td.cell');
+  if (!cell) return;
+  cell.setAttribute('contenteditable','true');
+  cell.focus();
+  document.getSelection()?.selectAllChildren(cell);
+});
+$('#d-grid').addEventListener('blur', e => {
+  const cell = e.target.closest('td.cell');
+  if (cell) cell.setAttribute('contenteditable','false');
+}, true);
+$('#d-grid').addEventListener('click', e => {
+  const btn = e.target.closest('[data-peek]');
+  if (btn) peekD(USERS.find(u=>u.id===btn.dataset.peek));
+});
+$('#d-peek [data-peek-close]').addEventListener('click', () => { $('#d-peek').hidden = true; });
+$$('[data-density]').forEach(b => b.addEventListener('click', () => {
+  if (b.dataset.density === 'd') {
+    $('#d-grid').classList.toggle('density-compact');
+    toast('Densità ' + ($('#d-grid').classList.contains('density-compact') ? 'compatta' : 'normale'));
+  } else {
+    toast('Densità compatta (demo)');
+  }
+}));
+
+/* ===== E: palette + peek ===== */
+const PALETTE = [
+  ...USERS.map(u => ({ kind:'Utente', label:u.name, sub:u.email, user:u })),
+  { kind:'Cliente', label:'Contoso', sub:'4 engagement · 2 utenze', toast:'Cliente Contoso (demo)' },
+  { kind:'Cliente', label:'Fabrikam', sub:'4 engagement · 1 utenza', toast:'Cliente Fabrikam (demo)' },
+  { kind:'Cliente', label:'Nova Bank', sub:'3 engagement', toast:'Cliente Nova Bank (demo)' },
+  { kind:'Azione', label:'Nuovo utente', sub:'Crea un utente interno', toast:'Nuovo utente (demo)' },
+  { kind:'Azione', label:'Nuovo cliente', sub:'Anagrafica e dominio', toast:'Nuovo cliente (demo)' },
+  { kind:'Azione', label:'Invia solleciti', sub:'Regole e destinatari', toast:'Solleciti (demo)' },
+  { kind:'Azione', label:'Esporta utenti CSV', sub:'Tutte le colonne', toast:'Export (demo)' },
+  { kind:'Impostazione', label:'Retention deliverables', sub:'90 giorni', toast:'Retention (demo)' },
+  { kind:'Impostazione', label:'2FA download report', sub:'Richiesta per i clienti', toast:'2FA (demo)' }
+];
+function renderRecent(){
+  $('#e-recent').innerHTML = USERS.slice(0,4).map(u => `
+    <button data-user="${u.id}"><span class="av">${initials(u.name)}</span><span class="t"><b>${esc(u.name)}</b><span>${esc(u.role)} · ${u.clientCount} clienti</span></span><svg class="ic sm" style="color:#7fe3ef"><use href="#i-arrow"/></svg></button>`).join('');
+}
+renderRecent();
+$('#e-recent').addEventListener('click', e => {
+  const b = e.target.closest('[data-user]');
+  if (b) { peekE(USERS.find(u=>u.id===b.dataset.user)); }
+});
+function peekE(u){
+  $('#e-peek-name').textContent = u.name;
+  $('#e-peek-mail').textContent = u.email;
+  $('#e-peek-av').textContent = initials(u.name);
+  const role = $('#e-peek-role'); role.className = 'badge ' + (ROLE_CLASS[u.role]||''); role.textContent = u.role;
+  $('#e-peek-body').innerHTML = `<div class="d-sec"><h4>Profilo</h4><dl class="kv"><dt>Ruolo</dt><dd>${esc(u.role)}</dd><dt>Clienti</dt><dd>${u.clientCount}</dd><dt>Engagement</dt><dd>${u.eng}</dd><dt>Ultimo accesso</dt><dd>${esc(u.last)}</dd></dl></div>
+    <div class="d-sec"><h4>Clienti</h4><div class="d-chips">${u.clients.length?u.clients.map(c=>`<span class="cl">${esc(c)}</span>`).join(''):'<span class="dim" style="font-size:11px">Nessun cliente</span>'}</div></div>
+    <div class="d-sec"><h4>Engagement</h4><div class="d-chips">${(ENGAGEMENTS[u.id]||[]).map(id=>`<span class="cl">${id}</span>`).join('')||'<span class="dim" style="font-size:11px">Nessuno</span>'}</div></div>`;
+  $('#e-peek').hidden = false;
+}
+$('#e-peek [data-peek-close]').addEventListener('click', () => { $('#e-peek').hidden = true; });
+let palIndex = 0, palFiltered = PALETTE;
+function palRender(){
+  $('#e-pal-list').innerHTML = palFiltered.length ? palFiltered.map((p,i)=>`
+    <button class="pal-item ${i===palIndex?'sel':''}" data-pal="${i}">
+      <span class="kind">${esc(p.kind)}</span>
+      <span class="t"><b>${esc(p.label)}</b><span>${esc(p.sub)}</span></span>
+      <svg class="ic sm"><use href="#i-arrow"/></svg>
+    </button>`).join('') : '<div style="padding:14px;color:#8fa9c0;font-size:12px">Nessun risultato.</div>';
+}
+function palOpen(){
+  $('#e-palette').hidden = false;
+  $('#e-pal-input').value = '';
+  palFiltered = PALETTE; palIndex = 0; palRender();
+  setTimeout(()=>$('#e-pal-input').focus(), 30);
+}
+function palClose(){ $('#e-palette').hidden = true; }
+function palRun(p){
+  palClose();
+  if (p.user) peekE(p.user); else toast(p.toast);
+}
+$$('[data-palette]').forEach(b=>b.addEventListener('click', palOpen));
+$('#e-palette').addEventListener('click', e => { if (e.target.id === 'e-palette') palClose(); });
+$('#e-pal-input').addEventListener('input', e => {
+  const q = e.target.value.toLowerCase().trim();
+  palFiltered = PALETTE.filter(p => (p.label + ' ' + p.sub + ' ' + p.kind).toLowerCase().includes(q));
+  palIndex = 0; palRender();
+});
+$('#e-pal-list').addEventListener('click', e => {
+  const b = e.target.closest('[data-pal]');
+  if (b) palRun(palFiltered[Number(b.dataset.pal)]);
+});
+document.addEventListener('keydown', e => {
+  const paletteOpen = !$('#e-palette').hidden;
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+    if (!$('#p-e').classList.contains('active')) return;
+    e.preventDefault(); paletteOpen ? palClose() : palOpen(); return;
+  }
+  if (e.key === 'Escape') {
+    if (paletteOpen) { palClose(); return; }
+    if (!$('[data-drawer="a"]').hidden) { closeA(); return; }
+    if (!$('#d-peek').hidden) { $('#d-peek').hidden = true; return; }
+    if (!$('#e-peek').hidden) { $('#e-peek').hidden = true; return; }
+    $$('#c-table tbody tr.band').forEach(b=>b.remove());
+    $$('#c-table tbody tr.on').forEach(r=>r.classList.remove('on'));
+  }
+  if (!paletteOpen) return;
+  if (e.key === 'ArrowDown') { e.preventDefault(); palIndex = Math.min(palIndex+1, palFiltered.length-1); palRender(); }
+  if (e.key === 'ArrowUp') { e.preventDefault(); palIndex = Math.max(palIndex-1, 0); palRender(); }
+  if (e.key === 'Enter' && palFiltered[palIndex]) { e.preventDefault(); palRun(palFiltered[palIndex]); }
+});
+</script>
+</body>
+</html>

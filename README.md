@@ -21,6 +21,12 @@ App Service a ogni push su `main`.
   clienti/engagement**. Il Manager vede tutto e amministra; PMO, Pentester,
   Auditor e utenti Cliente vedono solo ciò che è assegnato (filtro lato API).
   Il PMO può assegnare utenti solo entro i propri clienti.
+- **Amministrazione**: area unica per Manager e PMO raggiungibile dall'header,
+  con rail categorie e dettaglio contestuale. Sezioni: **Utenti** (tabella
+  essenziale Utente · Ruolo · Clienti, con dettaglio a destra), **Clienti**,
+  **Mailing list** (liste notifiche e deliverables per cliente ed engagement,
+  con editor destinatari), **Template mail** (standard e override per cliente)
+  e **Impostazioni** (retention, 2FA, solleciti).
 - **Retention deliverables**: i report vengono cancellati automaticamente
   **90 giorni** dopo la pubblicazione (valore demo, configurabile).
 - **Team**: partecipanti esterni per cliente (base comune) e per engagement.
@@ -332,7 +338,9 @@ Il selettore **Utente demo** in alto permette di provare i diversi profili: Mana
 PMO, Pentester, Auditor e utenti Cliente. La visibilità è per **assegnazione**:
 il Manager vede tutti i clienti/engagement, gli altri solo quelli assegnati.
 La sezione **Utenti e accessi** è gestita da **Manager e PMO** (il PMO solo
-entro i propri clienti); clienti ed engagement visibili sono cliccabili. Gli
+entro i propri clienti); clienti ed engagement visibili sono cliccabili. L'area
+**Amministrazione** raccoglie le stesse persone con clienti, mailing list,
+template mail e impostazioni in un'unica schermata. Gli
 utenti interni hanno **un solo ruolo**, le assegnazioni **non scadono** e il
 Cliente **non vede** nomi/ruoli dei pentester assegnati.
 
@@ -408,4 +416,8 @@ Aprire `http://localhost:5xxx` (la porta è indicata nel log di avvio).
 - `EngagementPortal.Web/wwwroot/engagement-users-detail-variants.html` — 4 varianti
   interattive del dettaglio utente (lista a sinistra, pannello dinamico a destra)
 - `EngagementPortal.Web/wwwroot/admin-layout-proposals.html` — 6 proposte di layout
-  per l'area Amministrazione (utenti, clienti, mailing list, template mail)
+  per l'area Amministrazione (la variante A, rail + dettaglio contestuale, è
+  quella implementata nell'app)
+- `EngagementPortal.Web/wwwroot/admin-layout-v2.html` — 5 layout densi per
+  l'Amministrazione (classic admin, inbox split, inline expand, data grid,
+  command center), con mock interattivi

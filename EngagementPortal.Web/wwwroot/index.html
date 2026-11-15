@@ -318,6 +318,12 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .cav img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#fff;padding:4px}
 .client-cell{display:flex;align-items:center;gap:9px;min-width:0}
 .client-cell span{overflow-wrap:anywhere}
+.client-link{border:0;background:none;padding:0;text-align:left;color:inherit;border-radius:6px;max-width:100%}
+.client-link span{color:var(--brand-600);font-weight:var(--fw-semibold)}
+.client-link:hover span{text-decoration:underline}
+.client-link:focus-visible{outline:2px solid var(--brand-500);outline-offset:2px}
+.client-card{scroll-margin-top:calc(var(--app-header-h, 64px) + 14px);transition:box-shadow .2s,border-color .2s}
+.client-card.focus{border-color:var(--brand-500);box-shadow:0 0 0 3px var(--brand-100),var(--shadow)}
 tr.row.is-action{background:var(--row-action)}
 tr.row.is-waiting{background:var(--row-wait)}
 tr.row.is-done{background:var(--row-done)}
@@ -511,6 +517,67 @@ tr.row.is-done td:first-child{box-shadow:inset 3px 0 var(--st-done)}
 .user-perms{display:grid;grid-template-columns:auto minmax(0,1fr);gap:5px 12px;margin:0;font-size:var(--fs-sm)}
 .user-perms dt{color:var(--muted)}
 .user-perms dd{margin:0;text-align:right;color:var(--brand-900);font-weight:650}
+/* ====== AMMINISTRAZIONE ====== */
+.admin-head{display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap;margin:14px 0 16px}
+.admin-head > div:first-child{flex:1;min-width:220px}
+.admin-head .side-kicker{margin:0 0 2px}
+.admin-head h1{margin:0 0 3px}
+.admin-head .sub{margin:0}
+.admin-shell{display:grid;grid-template-columns:196px minmax(0,1fr);gap:16px;align-items:start}
+.admin-rail{border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden;position:sticky;top:14px}
+.admin-rail button{display:flex;align-items:center;gap:9px;width:100%;border:0;border-bottom:1px solid var(--line-soft);background:#fff;padding:11px 13px;text-align:left;color:var(--muted);font-size:var(--fs-sm);font-weight:600}
+.admin-rail button:last-child{border-bottom:0}
+.admin-rail button:hover{background:var(--surface-2)}
+.admin-rail button.on{background:var(--brand-50);box-shadow:inset 3px 0 0 var(--brand-600);color:var(--brand-700)}
+.admin-rail .ico{width:26px;height:26px;border-radius:7px;background:var(--brand-100);color:var(--brand-700);display:grid;place-items:center;font-size:9px;font-weight:800;flex:none}
+.admin-rail .cnt{margin-left:auto;display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 5px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);font-size:var(--fs-2xs);color:var(--muted);font-weight:700}
+.admin-rail button.on .cnt{background:var(--brand-100);border-color:var(--brand-100);color:var(--brand-700)}
+.admin-main{min-width:0}
+.admin-main .search{position:relative;margin:0}
+.admin-main .search input{width:100%;margin:0;padding:9px 12px 9px 36px;border-radius:var(--radius-pill);font-size:var(--fs-md)}
+.admin-main .search-ico{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:15px;height:15px;fill:var(--muted);pointer-events:none}
+.tablewrap{overflow:auto}
+.admin-split{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:14px;align-items:start}
+.admin-split .card{min-width:0}
+.admin-panel{position:sticky;top:14px}
+.admin-table{table-layout:fixed}
+.admin-users-table th:nth-child(2),.admin-users-table td:nth-child(2){width:112px}
+.admin-users-table th:nth-child(3),.admin-users-table td:nth-child(3){width:140px}
+.admin-table td{padding:10px 10px}
+.admin-table th{padding:9px 10px}
+.admin-row{cursor:pointer}
+.admin-table .user{min-width:0}
+.admin-table .user > span:last-child{min-width:0}
+.admin-table .user .nm,.admin-table .user .em{max-width:230px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.admin-row.on td{background:var(--brand-50);box-shadow:inset 0 -2px 0 var(--brand-600)}
+.admin-row.on td:first-child{box-shadow:inset 3px 0 0 var(--brand-600),inset 0 -2px 0 var(--brand-600)}
+.user .nm{display:block;font-size:var(--fs-md);font-weight:650;color:var(--brand-900);line-height:1.25}
+.user .em{display:block;font-size:var(--fs-xs);color:var(--muted)}
+.client-link .nm{color:var(--brand-600)}
+.client-link:hover .nm{text-decoration:underline}
+.cntpill{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 6px;border-radius:var(--radius-pill);background:var(--surface-3);border:1px solid var(--line);font-size:var(--fs-xs);color:var(--muted);font-weight:700}
+.badge{display:inline-flex;align-items:center;font-size:var(--fs-xs);font-weight:700;padding:2px 8px;border-radius:var(--radius-pill);border:1px solid var(--line);background:var(--surface-3);color:var(--muted);white-space:nowrap}
+.badge.mgr{border-color:var(--brand-100);background:var(--brand-100);color:var(--brand-700)}
+.badge.int{border-color:var(--st-progress-border);background:var(--st-progress-bg);color:var(--st-progress)}
+.badge.ext{border-color:var(--st-wait-border);background:var(--st-wait-bg);color:var(--st-wait)}
+.badge.ok{border-color:var(--st-done-border);background:var(--st-done-bg);color:var(--st-done)}
+.admin-main .users-split{margin-top:0;grid-template-columns:minmax(280px,340px) minmax(0,1fr)}
+.admin-tablecard{padding:14px}
+.admin-main .tabs2 .btn{padding:4px 10px;font-size:var(--fs-xs)}
+.admin-main .tabs2 .btn.on{border-color:var(--brand-600);background:var(--brand-100);color:var(--brand-700)}
+@media(max-width:1100px){
+  .admin-split{grid-template-columns:minmax(0,1fr)}
+  .admin-panel{position:static}
+  .admin-split .tablewrap{max-height:420px;overflow:auto}
+}
+@media(max-width:980px){
+  .admin-main .users-split{grid-template-columns:1fr}
+}
+@media(max-width:820px){
+  .admin-shell{grid-template-columns:1fr}
+  .admin-rail{position:static;display:flex;overflow:auto}
+  .admin-rail button{min-width:140px;border-bottom:0;border-right:1px solid var(--line-soft)}
+}
 @media(max-width:980px){
   .users-split{grid-template-columns:1fr}
   .users-rows{max-height:none}
@@ -664,6 +731,7 @@ tr.row.is-done td:first-child{box-shadow:inset 3px 0 var(--st-done)}
   <div class="hwrap">
     <div class="logo"><i>CE</i><div>Cyber Engagement Portal<small>Area clienti</small></div></div>
     <div class="spacer"></div>
+    <button class="btn sec admin-nav" data-act="admin" id="adminNav" hidden>Amministrazione</button>
     <div class="demo-switch" role="group" aria-label="Modalità demo">
       <span class="demo-tag">Demo</span>
       <label for="demoUser">Utente
@@ -772,6 +840,13 @@ const state = {
   usersError: null,
   selectedUserId: '',
   userQuery: '',
+  adminTab: 'users',
+  adminMailing: [],
+  adminMailingQuery: '',
+  adminTemplates: null,
+  adminMailingId: '',
+  adminTemplateTarget: { scope: 'standard', clientId: '', type: 'start' },
+  adminError: null,
   loading: false,
   error: null,
   list: [],
@@ -1050,6 +1125,8 @@ function updateHeader() {
   $('#uname').textContent = name;
   $('#urole').textContent = roleLabel;
   $('#av').textContent = initialsOf(name);
+  const adminNav = $('#adminNav');
+  if (adminNav) adminNav.hidden = !(state.role === 'Manager' || state.role === 'PMO');
   syncHeaderOffset();
 }
 
@@ -1721,10 +1798,10 @@ function renderList() {
     : (isClient() ? 'Il tuo cliente' : 'Tutti i clienti');
 
   const canUsers = state.role === 'Manager' || state.role === 'PMO';
-  const headActions = canCreateEngagement()
-    ? `${canUsers ? '<button class="btn sec" data-act="users">Utenti e accessi</button>' : ''}<button class="btn sec" data-act="clients">Clienti e utenze</button><button class="btn pri" data-act="new-engagement">+ Nuovo engagement</button>`
+  const headActions = canUsers
+    ? `<button class="btn sec" data-act="admin">Amministrazione</button>${canCreateEngagement() ? '<button class="btn pri" data-act="new-engagement">+ Nuovo engagement</button>' : ''}`
     : isInternalRole()
-      ? `${canUsers ? '<button class="btn sec" data-act="users">Utenti e accessi</button>' : ''}<button class="btn sec" data-act="clients">Clienti e utenze</button>`
+      ? '<button class="btn sec" data-act="clients">Clienti e utenze</button>'
       : '';
 
   const tile = (key, cls, count, label) =>
@@ -1768,7 +1845,7 @@ function renderList() {
     return `<tr class="row${rowClass(e)}" data-act="open" data-id="${esc(e.id)}">
       <td data-label="Engagement"><button class="linkb rowname" data-act="open" data-id="${esc(e.id)}"><b>${esc(e.name)}</b></button>
         <span class="rowmeta">${esc(e.id)} <span class="kind">${esc(typeLabel(e.type))}</span></span></td>
-      ${isClient() ? '' : `<td data-label="Cliente"><span class="client-cell">${clientAvatar(clientFor(e))}<span>${esc(e.clientName)}</span></span></td>`}
+      ${isClient() ? '' : `<td data-label="Cliente"><button class="client-cell client-link" data-act="client-card" data-client="${esc(e.clientId)}" title="Apri la scheda di ${esc(e.clientName)}">${clientAvatar(clientFor(e))}<span>${esc(e.clientName)}</span></button></td>`}
       <td data-label="Fase">${phaseCell(e)}</td>
       <td data-label="Stato">${statusCellCompact(e)}</td>
       <td data-label="Ritardo">${delayCellCompact(e)}</td>
@@ -2997,6 +3074,7 @@ async function loadUsers() {
     state.users = [];
   }
   if (state.view === 'users') renderUsers();
+  else if (state.view === 'admin' && state.adminTab === 'users') renderAdmin();
 }
 
 function renderUsers() {
@@ -3176,6 +3254,301 @@ function userPermissions(user) {
   return `<div class="user-block"><h3>Permessi</h3><dl class="user-perms">${rows.map(([label, value]) => `<dt>${label}</dt><dd>${value}</dd>`).join('')}</dl></div>`;
 }
 
+/* ====== AMMINISTRAZIONE ====== */
+const ADMIN_TABS = [
+  ['users', 'UT', 'Utenti'],
+  ['clients', 'CL', 'Clienti'],
+  ['mailing', 'ML', 'Mailing list'],
+  ['templates', 'TP', 'Template mail'],
+  ['settings', 'ST', 'Impostazioni']
+];
+
+async function loadAdmin() {
+  if (state.role !== 'Manager' && state.role !== 'PMO') return;
+
+  state.adminError = null;
+
+  try {
+    if (!state.clients.length) await loadClients();
+    if (!state.users.length) await loadUsers();
+
+    if (state.adminTab === 'mailing') {
+      state.adminMailing = await api('/api/admin/mailing-lists?' + qs());
+      if (!state.adminMailing.some(item => item.id === state.adminMailingId))
+        state.adminMailingId = state.adminMailing[0]?.id || '';
+    }
+
+    if (state.adminTab === 'templates') {
+      state.adminTemplates = await api('/api/admin/mail-templates?' + qs());
+    }
+  } catch (error) {
+    state.adminError = error.message;
+  }
+
+  renderAdmin();
+}
+
+function renderAdmin() {
+  if (state.role !== 'Manager' && state.role !== 'PMO') {
+    $('#app').innerHTML = `<div class="note lockbox"><b>Amministrazione riservata a Manager e PMO.</b></div>`;
+    return;
+  }
+
+  const counts = {
+    users: state.users.length,
+    clients: state.clients.length,
+    mailing: state.adminMailing.length || '—',
+    templates: state.adminTemplates
+      ? 1 + (state.adminTemplates.clients || []).length
+      : '—',
+    settings: '—'
+  };
+
+  const content = {
+    users: adminUsersHTML,
+    clients: adminClientsHTML,
+    mailing: adminMailingHTML,
+    templates: adminTemplatesHTML,
+    settings: adminSettingsHTML
+  }[state.adminTab] || adminUsersHTML;
+
+  const headAction = state.adminTab === 'users' && state.role === 'Manager'
+    ? '<button class="btn pri" data-act="new-user">+ Utente</button>'
+    : state.adminTab === 'clients' && state.role === 'Manager'
+      ? '<button class="btn pri" data-act="new-client">+ Cliente</button>'
+      : '';
+
+  const title = {
+    users: 'Utenti e accessi',
+    clients: 'Clienti',
+    mailing: 'Mailing list',
+    templates: 'Template mail',
+    settings: 'Impostazioni'
+  }[state.adminTab] || 'Utenti e accessi';
+
+  const subtitle = {
+    users: 'Persone interne e cliente · visibilità per assegnazione',
+    clients: 'Anagrafiche, utenze, team e mailing list base',
+    mailing: 'Liste notifiche e deliverables · base cliente e engagement',
+    templates: 'Template standard, per cliente e per engagement',
+    settings: 'Retention, solleciti e sicurezza'
+  }[state.adminTab] || '';
+
+  $('#app').innerHTML = `
+    <div class="admin-head">
+      <div><p class="side-kicker">Amministrazione</p><h1>${esc(title)}</h1><p class="sub">${esc(subtitle)}</p></div>
+      <div class="head-acts">${headAction}</div>
+    </div>
+    ${state.adminError ? `<div class="errorbox"><span>${esc(state.adminError)}</span><button class="btn sec sm" data-act="admin-tab" data-tab="${esc(state.adminTab)}">Riprova</button></div>` : ''}
+    <div class="admin-shell">
+      <nav class="admin-rail" aria-label="Categorie amministrazione">
+        ${ADMIN_TABS.map(([key, icon, label]) => `
+          <button class="${state.adminTab === key ? 'on' : ''}" data-act="admin-tab" data-tab="${key}">
+            <span class="ico">${icon}</span>${label}<span class="cnt">${counts[key]}</span>
+          </button>`).join('')}
+      </nav>
+      <section class="admin-main">${content()}</section>
+    </div>`;
+}
+
+function adminUsersHTML() {
+  const query = normText(state.userQuery);
+  const filtered = state.users.filter(user =>
+    !query || normText([
+      user.name, user.email, user.role,
+      ...(user.clients || []).map(client => client.name)
+    ].join(' ')).includes(query));
+  const selected = state.users.find(user =>
+    user.id === state.selectedUserId) || filtered[0] || null;
+
+  if (selected) state.selectedUserId = selected.id;
+
+  const roleBadge = role => `<span class="badge ${role === 'Manager' ? 'mgr' : role === 'Cliente' ? 'ext' : 'int'}">${esc(ROLE_LABEL[role] || role)}</span>`;
+
+  const rows = filtered.length
+    ? filtered.map(user => `
+      <tr class="hover admin-row ${selected?.id === user.id ? 'on' : ''}" data-act="select-user" data-id="${esc(user.id)}">
+        <td><div class="user"><span class="avatar">${esc(initialsOf(user.name))}</span><span><span class="nm">${esc(user.name)}</span><span class="em">${esc(user.email)}</span></span></div></td>
+        <td>${roleBadge(user.role)}</td>
+        <td>${user.isManager
+          ? 'Tutti <span class="cntpill">' + user.effectiveClientIds.length + '</span>'
+          : user.effectiveClientIds.length
+            ? esc((user.clients || []).map(client => client.name).join(', ')) + ' <span class="cntpill">' + user.effectiveClientIds.length + '</span>'
+            : '— <span class="cntpill">0</span>'}</td>
+      </tr>`).join('')
+    : '<tr><td colspan="3" class="empty">Nessun utente corrisponde alla ricerca.</td></tr>';
+
+  const detail = selected ? renderUserDetail(selected) : '<div class="empty">Seleziona un utente.</div>';
+
+  return `<div class="admin-split">
+    <section class="card admin-tablecard">
+      <div class="sec-head"><h3>Utenti <span class="cnt">${filtered.length}</span></h3><span class="tiny">Engagement e azioni nel dettaglio</span></div>
+      <div class="search" style="margin-bottom:10px"><svg class="search-ico" aria-hidden="true"><use href="#i-search"></use></svg>
+        <input type="search" id="user-search" value="${esc(state.userQuery)}" placeholder="Cerca nome, email, ruolo o cliente…" aria-label="Cerca utenti">
+      </div>
+      <div class="tablewrap"><table class="admin-table admin-users-table"><thead><tr><th>Utente</th><th>Ruolo</th><th>Clienti</th></tr></thead><tbody>${rows}</tbody></table></div>
+    </section>
+    <aside class="card users-detail admin-panel">${detail}</aside>
+  </div>`;
+}
+
+function adminClientsHTML() {
+  const manage = state.role === 'Manager';
+  const rows = state.clients.map(client => `<tr class="hover">
+    <td><button class="user client-link" data-act="client-card" data-client="${esc(client.id)}" title="Apri la scheda di ${esc(client.name)}"><span class="avatar">${esc(initialsOf(client.name))}</span><span><span class="nm">${esc(client.name)}</span><span class="em">${esc(client.website || client.id)}</span></span></button></td>
+    <td>${(client.users || []).length}</td>
+    <td>${(client.team || []).length}</td>
+    <td>${(client.distributionList || []).length} / ${(client.deliverablesDistributionList || []).length}</td>
+    <td><span class="cntpill">${client.engagementCount || 0}</span></td>
+    <td style="text-align:right;white-space:nowrap">
+      <button class="btn ghost sm" data-act="open-client" data-client="${esc(client.id)}">Engagement</button>
+      ${manage ? `<button class="btn ghost sm" data-act="rename-client" data-client="${esc(client.id)}">Modifica</button>` : ''}
+      <button class="btn ghost sm" data-act="client-card" data-client="${esc(client.id)}">Scheda</button>
+    </td>
+  </tr>`).join('');
+
+  return `<div class="card admin-tablecard"><div class="sec-head"><h3>Clienti <span class="cnt">${state.clients.length}</span></h3><span class="tiny">Notifiche / Deliverables</span></div>
+    <div class="tablewrap"><table><thead><tr><th>Cliente</th><th>Utenze</th><th>Team</th><th>Liste</th><th>Engagement</th><th></th></tr></thead><tbody>
+      ${rows || '<tr><td colspan="6" class="empty">Nessun cliente.</td></tr>'}
+    </tbody></table></div></div>`;
+}
+
+function adminMailingHTML() {
+  const query = normText(state.adminMailingQuery);
+  const lists = state.adminMailing.filter(item =>
+    !query || normText(`${item.ownerName} ${item.kindLabel} ${item.scope}`).includes(query));
+  const selected = state.adminMailing.find(item => item.id === state.adminMailingId) || lists[0] || null;
+
+  if (selected) state.adminMailingId = selected.id;
+
+  const rows = lists.length
+    ? lists.map(item => `<tr class="hover admin-row ${selected?.id === item.id ? 'on' : ''}" data-act="admin-select-list" data-id="${esc(item.id)}">
+        <td><div class="user"><span class="avatar">${esc(item.scope === 'client' ? 'CL' : 'EN')}</span><span><span class="nm">${esc(item.ownerName)}</span><span class="em">${esc(item.kindLabel)}</span></span></div></td>
+        <td><span class="badge ${item.scope === 'client' ? 'ext' : 'int'}">${item.scope === 'client' ? 'Cliente' : 'Engagement'}</span></td>
+        <td><span class="cntpill">${(item.recipients || []).length}</span></td>
+      </tr>`).join('')
+    : '<tr><td colspan="3" class="empty">Nessuna mailing list.</td></tr>';
+
+  let detail = '<div class="empty">Seleziona una lista.</div>';
+  if (selected) {
+    const recipients = selected.recipients || [];
+    const chips = recipients.length
+      ? recipients.map(entry => `<span class="user-chip">
+          <span class="user-chip-main">${esc(entry.name)} · ${esc(entry.email)} <span style="opacity:.65">(${esc(entry.organization)})</span></span>
+          <button class="user-chip-x" data-act="admin-remove-recipient" data-entry="${esc(entry.id)}">×</button>
+        </span>`).join('')
+      : '<span class="tiny">Nessun destinatario specifico.</span>';
+
+    detail = `<div class="udetail-head"><span class="avatar lg">${selected.scope === 'client' ? 'CL' : 'EN'}</span><div class="t"><h2>${esc(selected.ownerName)}</h2><p class="sub">${esc(selected.kindLabel)} · ${selected.scope === 'client' ? 'base cliente' : 'engagement'} · ${recipients.length} destinatari specifici</p></div></div>
+      <div class="user-block"><h3>Destinatari</h3><p class="hint">Base cliente + engagement sono uniti nella lista effettiva; qui modifichi questa lista.</p><div class="user-chips">${chips}</div>
+      <div class="fgrid" style="margin-top:12px">
+        <div class="full"><label for="admin_dl_n">Nome e cognome</label><input type="text" id="admin_dl_n" placeholder="Nuovo destinatario"></div>
+        <div class="full"><label for="admin_dl_e">Email</label><input type="text" id="admin_dl_e" placeholder="nome@dominio.it"></div>
+        <div class="full"><label for="admin_dl_o">Organizzazione</label><select class="f" id="admin_dl_o"><option>Cliente</option><option>Provider PMO</option><option>Provider Pentester</option></select></div>
+      </div>
+      <div class="inline-actions"><button class="btn sec sm" data-act="admin-add-recipient">+ Aggiungi destinatario</button></div></div>
+      <div class="user-visibility"><b>Lista effettiva:</b> ${(selected.effective || []).length} indirizzi, base inclusa.
+        ${(selected.base || []).length ? `<br><span class="tiny">Base cliente: ${selected.base.map(entry => esc(entry.email)).join('; ')}</span>` : ''}</div>`;
+  }
+
+  return `<div class="admin-split">
+    <section class="card admin-tablecard">
+      <div class="sec-head"><h3>Liste <span class="cnt">${lists.length}</span></h3><span class="tiny">Notifiche e deliverables</span></div>
+      <div class="search" style="margin-bottom:10px"><svg class="search-ico" aria-hidden="true"><use href="#i-search"></use></svg><input type="search" id="admin-mail-search" value="${esc(state.adminMailingQuery)}" placeholder="Cerca cliente, engagement o tipo…" aria-label="Cerca mailing list"></div>
+      <div class="tablewrap"><table class="admin-table"><thead><tr><th>Lista</th><th>Ambito</th><th>Dest.</th></tr></thead><tbody>${rows}</tbody></table></div>
+    </section>
+    <aside class="card users-detail admin-panel">${detail}</aside>
+  </div>`;
+}
+
+function adminTemplatesHTML() {
+  const data = state.adminTemplates;
+  if (!data) return '<div class="card"><div class="empty">Caricamento…</div></div>';
+
+  const target = state.adminTemplateTarget;
+  const targets = [
+    { key: 'standard', label: 'Standard (globale)', scope: 'standard' },
+    ...(data.clients || []).map(client => ({
+      key: `client:${client.id}`,
+      label: client.name,
+      scope: 'client',
+      clientId: client.id
+    }))
+  ];
+  const selected = targets.find(item =>
+    item.key === (target.scope === 'standard'
+      ? 'standard'
+      : `client:${target.clientId}`)) || targets[0];
+
+  const templates = selected.scope === 'standard'
+    ? data.standard
+    : (data.clients || []).find(client => client.id === selected.clientId)?.templates || [];
+  const template = templates.find(item => item.type === target.type) || { type: target.type, subject: '', body: '' };
+  const canManage = !!data.canManage;
+
+  const list = targets.map(item => `<button class="user-row ${selected.key === item.key ? 'on' : ''}" data-act="admin-template-target" data-scope="${item.scope}" data-client="${esc(item.clientId || '')}">
+    <span class="avatar">${item.scope === 'standard' ? 'ST' : 'CL'}</span>
+    <span class="who"><span class="nm">${esc(item.label)}</span><span class="em">${item.scope === 'standard' ? 'template globale' : 'override cliente'}</span></span>
+  </button>`).join('');
+
+  const typeTabs = ['start', 'end', 'deliver'].map(type =>
+    `<button class="btn sec sm ${target.type === type ? 'on' : ''}" data-act="admin-template-type" data-type="${type}">${MAIL_META[type].t}</button>`).join('');
+
+  return `<div class="users-split">
+    <section class="card users-list"><div class="users-list-head"><h2>Template <span class="cnt">${targets.length}</span></h2></div><div class="users-rows">${list}</div></section>
+    <section class="card users-detail">
+      <div class="udetail-head"><span class="avatar lg">${selected.scope === 'standard' ? 'ST' : 'CL'}</span><div class="t"><h2>${esc(selected.label)}</h2><p class="sub">Oggetto e corpo · ${selected.scope === 'standard' ? 'standard globale' : 'override del cliente'}</p></div>${canManage ? pill(['Modificabile', 'ok']) : pill(['Sola lettura', 'blocked'])}</div>
+      <div class="tabs2" style="display:flex;gap:5px;margin-bottom:10px">${typeTabs}</div>
+      <div class="user-block"><h3>${esc(MAIL_META[target.type].t)}</h3>
+        <div class="fgrid">
+          <div class="full"><label for="admin_tpl_subject">Oggetto</label><input type="text" id="admin_tpl_subject" value="${esc(template.subject)}" ${canManage ? '' : 'readonly'}></div>
+          <div class="full"><label for="admin_tpl_body">Corpo</label><textarea id="admin_tpl_body" rows="8" ${canManage ? '' : 'readonly'}>${esc(template.body)}</textarea></div>
+        </div>
+        <p class="hint">Variabili: ${esc((state.adminTemplates.placeholders || []).join(', '))}. Se il cliente lascia vuoto, eredita il template standard.</p>
+        ${canManage ? `<div class="inline-actions"><button class="btn pri sm" data-act="admin-save-template">Salva</button><button class="btn sec sm" data-act="admin-reset-template">Ripristina</button></div>` : ''}
+      </div>
+    </section>
+  </div>`;
+}
+
+function adminSettingsHTML() {
+  return `<div class="card"><h2>Retention deliverables</h2>
+    <p class="sub">Policy informativa: i deliverables vengono cancellati automaticamente dopo <b>90 giorni</b> dalla pubblicazione. Il valore è configurabile in produzione.</p>
+    <div class="note waiting" style="margin-top:12px"><b>Nota:</b> il job di cancellazione non è ancora attivo in questa alpha.</div>
+  </div>
+  <div class="card" style="margin-top:14px"><h2>Sicurezza e accessi</h2>
+    <div class="detail-table" style="display:grid;gap:9px">
+      <div><b>2FA download report</b><br><span class="hint">Placeholder demo: qualsiasi codice di 6 cifre. In produzione va collegato all'authenticator.</span></div>
+      <div><b>Visibilità</b><br><span class="hint">Manager vede tutto; PMO e altri solo il perimetro assegnato.</span></div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:14px"><h2>Solleciti automatici</h2>
+    <p class="sub">Regole, soglie e invio dei solleciti.</p>
+    <button class="btn sec" data-act="list-tab" data-tab="rem">Apri solleciti</button>
+  </div>`;
+}
+
+async function saveAdminTemplate(reset) {
+  const target = state.adminTemplateTarget;
+  const subject = reset ? null : ($('#admin_tpl_subject')?.value || '');
+  const body = reset ? null : ($('#admin_tpl_body')?.value || '');
+  const path = target.scope === 'standard'
+    ? `/api/admin/mail-templates/standard/${encodeURIComponent(target.type)}`
+    : `/api/admin/mail-templates/client/${encodeURIComponent(target.clientId)}/${encodeURIComponent(target.type)}`;
+
+  try {
+    await api(path + '?' + qs(), {
+      method: 'PUT',
+      body: JSON.stringify({ subject, body, reset: !!reset })
+    });
+    state.adminTemplates = await api('/api/admin/mail-templates?' + qs());
+    renderAdmin();
+    toast(reset ? 'Template ripristinato' : 'Template salvato');
+  } catch (error) {
+    toast(error.message);
+  }
+}
+
 function renderClients() {
   const manage = canManageClients();
   const items = state.clients || [];
@@ -3217,7 +3590,7 @@ function renderClients() {
         }).join('')}</ul>`
       : '<div class="empty" style="padding:8px 0">Nessun partecipante esterno.</div>';
 
-    return `<div class="card client-card">
+    return `<div class="card client-card" id="client-${esc(client.id)}" tabindex="-1">
       <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start">
         <div style="display:flex;gap:12px;align-items:flex-start;min-width:0">
           ${clientAvatar(client, 'lg')}
@@ -3270,6 +3643,7 @@ function render() {
   updateHeader();
   if (state.view === 'clients') renderClients();
   else if (state.view === 'users') renderUsers();
+  else if (state.view === 'admin') renderAdmin();
   else if (state.view === 'solicitations') renderSolicitations();
   else if (state.view === 'detail' && state.detail) renderDetail();
   else renderList();
@@ -3286,6 +3660,24 @@ const actions = {
     state.view = 'clients';
     loadClients().then(render);
   },
+  'client-card': async el => {
+    const clientId = el.dataset.client;
+    if (!clientId) return;
+    state.view = 'clients';
+    if (!state.clients.length) await loadClients();
+    render();
+    requestAnimationFrame(() => {
+      const card = document.getElementById(`client-${clientId}`);
+      if (!card) {
+        toast('Scheda cliente non disponibile');
+        return;
+      }
+      card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      card.focus({ preventScroll: true });
+      card.classList.add('focus');
+      setTimeout(() => card.classList.remove('focus'), 1800);
+    });
+  },
   users: () => {
     if (state.role !== 'Manager' && state.role !== 'PMO') {
       toast('Sezione riservata a Manager e PMO');
@@ -3296,6 +3688,79 @@ const actions = {
     state.selectedUserId = state.selectedUserId || state.userId;
     loadUsers();
   },
+  admin: () => {
+    if (state.role !== 'Manager' && state.role !== 'PMO') {
+      toast('Amministrazione riservata a Manager e PMO');
+      return;
+    }
+    state.view = 'admin';
+    state.adminTab = 'users';
+    state.adminError = null;
+    loadAdmin();
+  },
+  'admin-tab': el => {
+    state.adminTab = el.dataset.tab || 'users';
+    state.adminError = null;
+    loadAdmin();
+  },
+  'admin-select-list': el => {
+    state.adminMailingId = el.dataset.id || '';
+    renderAdmin();
+  },
+  'admin-add-recipient': async () => {
+    const list = state.adminMailing.find(item => item.id === state.adminMailingId);
+    if (!list) return;
+    const name = $('#admin_dl_n').value.trim();
+    const email = $('#admin_dl_e').value.trim();
+    const organization = $('#admin_dl_o').value;
+    if (!name || !email || !email.includes('@') || !email.includes('.')) {
+      toast('Inserisci nome ed email valida');
+      return;
+    }
+    const base = list.scope === 'client'
+      ? `/api/clients/${encodeURIComponent(list.ownerId)}/distribution-list`
+      : `/api/engagements/${encodeURIComponent(list.ownerId)}/distribution-list`;
+    try {
+      await api(base + '?' + qs({ kind: list.kind }), {
+        method: 'POST',
+        body: JSON.stringify({ name, email, organization })
+      });
+      toast('Destinatario aggiunto');
+      state.adminMailing = await api('/api/admin/mailing-lists?' + qs());
+      renderAdmin();
+    } catch (error) { toast(error.message); }
+  },
+  'admin-remove-recipient': async el => {
+    const list = state.adminMailing.find(item => item.id === state.adminMailingId);
+    if (!list) return;
+    const base = list.scope === 'client'
+      ? `/api/clients/${encodeURIComponent(list.ownerId)}/distribution-list`
+      : `/api/engagements/${encodeURIComponent(list.ownerId)}/distribution-list`;
+    try {
+      await api(`${base}/${encodeURIComponent(el.dataset.entry)}?` + qs({ kind: list.kind }), { method: 'DELETE' });
+      toast('Destinatario rimosso');
+      state.adminMailing = await api('/api/admin/mailing-lists?' + qs());
+      renderAdmin();
+    } catch (error) { toast(error.message); }
+  },
+  'admin-template-target': el => {
+    const scope = el.dataset.scope || 'standard';
+    state.adminTemplateTarget = {
+      scope,
+      clientId: scope === 'client' ? (el.dataset.client || '') : '',
+      type: state.adminTemplateTarget.type
+    };
+    renderAdmin();
+  },
+  'admin-template-type': el => {
+    state.adminTemplateTarget = {
+      ...state.adminTemplateTarget,
+      type: el.dataset.type || 'start'
+    };
+    renderAdmin();
+  },
+  'admin-save-template': () => saveAdminTemplate(false),
+  'admin-reset-template': () => saveAdminTemplate(true),
   'select-user': el => {
     state.selectedUserId = el.dataset.id;
     renderUsers();
@@ -4166,8 +4631,19 @@ document.addEventListener('click', event => {
 document.addEventListener('input', event => {
   if (event.target.id === 'user-search') {
     state.userQuery = event.target.value;
-    renderUsers();
+    if (state.view === 'admin') renderAdmin(); else renderUsers();
     const input = $('#user-search');
+    if (input) {
+      input.focus();
+      const end = input.value.length;
+      try { input.setSelectionRange(end, end); } catch { /* noop */ }
+    }
+    return;
+  }
+  if (event.target.id === 'admin-mail-search') {
+    state.adminMailingQuery = event.target.value;
+    renderAdmin();
+    const input = $('#admin-mail-search');
     if (input) {
       input.focus();
       const end = input.value.length;

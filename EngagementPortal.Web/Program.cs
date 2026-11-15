@@ -384,6 +384,194 @@ api.MapDelete("/users/{id}/assignments/{type}/{targetId}", (
     return Results.NoContent();
 });
 
+api.MapGet("/admin/mailing-lists", (
+    HttpContext context,
+    IClientRepository clients,
+    IEngagementRepository engagements) =>
+{
+    var current = GetUser(context);
+
+    if (current.Role is not (Roles.Manager or Roles.PMO))
+        return Forbidden();
+
+    var result = new List<object>();
+
+    foreach (var client in clients.List().Where(client =>
+        Access.CanAccessClient(current, client.Id)))
+    {
+        result.Add(new
+        {
+            Id = $"client:{client.Id}:notifications",
+            Scope = "client",
+            OwnerId = client.Id,
+            OwnerName = client.Name,
+            Kind = "notifications",
+            KindLabel = "Notifiche",
+            Recipients = client.DistributionList,
+            Base = Array.Empty<DistributionEntry>(),
+            Effective = client.DistributionList
+        });
+        result.Add(new
+        {
+            Id = $"client:{client.Id}:deliverables",
+            Scope = "client",
+            OwnerId = client.Id,
+            OwnerName = client.Name,
+            Kind = "deliverables",
+            KindLabel = "Deliverables",
+            Recipients = client.DeliverablesDistributionList,
+            Base = Array.Empty<DistributionEntry>(),
+            Effective = client.DeliverablesDistributionList
+        });
+    }
+
+    foreach (var engagement in Access.VisibleEngagements(
+        engagements,
+        current))
+    {
+        var client = clients.Get(engagement.ClientId);
+        var baseNotifications = client?.DistributionList ?? [];
+        var baseDeliverables =
+            client?.DeliverablesDistributionList ?? [];
+
+        result.Add(new
+        {
+            Id = $"engagement:{engagement.Id}:notifications",
+            Scope = "engagement",
+            OwnerId = engagement.Id,
+            OwnerName = $"{engagement.Id} · {engagement.Name}",
+            Kind = "notifications",
+            KindLabel = "Notifiche",
+            Recipients = engagement.DistributionList,
+            Base = baseNotifications,
+            Effective = Distribution.Effective(
+                engagement,
+                baseNotifications)
+        });
+        result.Add(new
+        {
+            Id = $"engagement:{engagement.Id}:deliverables",
+            Scope = "engagement",
+            OwnerId = engagement.Id,
+            OwnerName = $"{engagement.Id} · {engagement.Name}",
+            Kind = "deliverables",
+            KindLabel = "Deliverables",
+            Recipients = engagement.DeliverablesDistributionList,
+            Base = baseDeliverables,
+            Effective = Distribution.EffectiveDeliverables(
+                engagement,
+                baseDeliverables,
+                baseNotifications)
+        });
+    }
+
+    return Results.Ok(result);
+});
+
+api.MapGet("/admin/mail-templates", (
+    HttpContext context,
+    IClientRepository clients,
+    IAppSettingsRepository settings) =>
+{
+    var current = GetUser(context);
+
+    if (current.Role is not (Roles.Manager or Roles.PMO))
+        return Forbidden();
+
+    var standard = MailTemplates.Standard(
+        settings.Get<MailTemplateSet>(MailTemplates.StandardKey));
+    var types = new[] { "start", "end", "deliver" };
+
+    return Results.Ok(new
+    {
+        standard = types.Select(type => new
+        {
+            Type = type,
+            Subject = standard.For(type)?.Subject ?? string.Empty,
+            Body = standard.For(type)?.Body ?? string.Empty
+        }),
+        clients = clients.List()
+            .Where(client =>
+                current.Role == Roles.Manager ||
+                Access.CanAccessClient(current, client.Id))
+            .Select(client => new
+            {
+                client.Id,
+                client.Name,
+                Templates = types.Select(type => new
+                {
+                    Type = type,
+                    Subject = client.MailTemplates.For(type)?.Subject
+                        ?? string.Empty,
+                    Body = client.MailTemplates.For(type)?.Body
+                        ?? string.Empty
+                })
+            }),
+        CanManage = current.Role == Roles.Manager
+    });
+});
+
+api.MapPut("/admin/mail-templates/standard/{type}", (
+    string type,
+    AdminTemplateRequest request,
+    HttpContext context,
+    IAppSettingsRepository settings) =>
+{
+    var current = GetUser(context);
+
+    if (current.Role != Roles.Manager)
+        return Forbidden();
+
+    if (type is not ("start" or "end" or "deliver"))
+        return Results.BadRequest("Tipo template non valido.");
+
+    var overrides = settings.Get<MailTemplateSet>(
+        MailTemplates.StandardKey) ?? new MailTemplateSet();
+
+    overrides.Set(type, request.Reset
+        ? null
+        : new MailTemplate
+        {
+            Subject = request.Subject?.Trim() ?? string.Empty,
+            Body = request.Body?.Trim() ?? string.Empty
+        });
+
+    settings.Save(MailTemplates.StandardKey, overrides);
+    return Results.Ok(new { status = "ok" });
+});
+
+api.MapPut("/admin/mail-templates/client/{clientId}/{type}", (
+    string clientId,
+    string type,
+    AdminTemplateRequest request,
+    HttpContext context,
+    IClientRepository clients) =>
+{
+    var current = GetUser(context);
+
+    if (current.Role != Roles.Manager)
+        return Forbidden();
+
+    if (type is not ("start" or "end" or "deliver"))
+        return Results.BadRequest("Tipo template non valido.");
+
+    var client = clients.Get(clientId);
+
+    if (client is null)
+        return Results.NotFound();
+
+    client.MailTemplates.Set(type, request.Reset
+        ? null
+        : new MailTemplate
+        {
+            Subject = request.Subject?.Trim() ?? string.Empty,
+            Body = request.Body?.Trim() ?? string.Empty
+        });
+
+    clients.Save(client);
+    return Results.Ok(new { status = "ok" });
+});
+
 api.MapPost("/clients", (
     CreateClientRequest request,
     HttpContext context,
@@ -522,13 +710,16 @@ api.MapPost("/clients/{clientId}/distribution-list", (
 {
     var user = GetUser(context);
 
-    if (user.Role != Roles.Manager)
+    if (user.Role is not (Roles.Manager or Roles.PMO))
         return Forbidden();
 
     var account = clients.Get(clientId);
 
     if (account is null)
         return Results.NotFound();
+
+    if (!Access.CanAccessClient(user, account.Id))
+        return Forbidden();
 
     var list = SelectsDeliverables(context)
         ? account.DeliverablesDistributionList
@@ -572,13 +763,16 @@ api.MapDelete("/clients/{clientId}/distribution-list/{entryId}", (
 {
     var user = GetUser(context);
 
-    if (user.Role != Roles.Manager)
+    if (user.Role is not (Roles.Manager or Roles.PMO))
         return Forbidden();
 
     var account = clients.Get(clientId);
 
     if (account is null)
         return Results.NotFound();
+
+    if (!Access.CanAccessClient(user, account.Id))
+        return Forbidden();
 
     var list = SelectsDeliverables(context)
         ? account.DeliverablesDistributionList

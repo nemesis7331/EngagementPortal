@@ -343,6 +343,11 @@ public sealed record MailTemplateUpdateRequest(
     string? Body,
     bool Reset = false);
 
+public sealed record AdminTemplateRequest(
+    string? Subject,
+    string? Body,
+    bool Reset = false);
+
 public sealed class ClientAccount
 {
     public required string Id { get; init; }
