@@ -81,13 +81,14 @@ th,td{text-align:left;padding:8px 8px;border-bottom:1px solid var(--line-soft);v
 th{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)}
 td b{color:var(--brand-900)}
 tr.sel td{background:var(--brand-50);box-shadow:inset 0 -2px 0 var(--brand-600)}
+tr[data-user]{cursor:pointer}
 tr.hover:hover td{background:var(--surface-2)}
 .user{display:flex;align-items:center;gap:8px;min-width:0}
 .user .nm{display:block;font-size:12.5px;font-weight:650;color:var(--brand-900);line-height:1.2}
 .user .em{display:block;font-size:10.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .cntpill{display:inline-grid;place-items:center;min-width:19px;height:19px;padding:0 5px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);font-size:10.5px;color:var(--muted);font-weight:700}
 /* A rail */
-.admin-grid{display:grid;grid-template-columns:188px minmax(0,1fr) 300px;gap:12px;align-items:start}
+.admin-grid{display:grid;grid-template-columns:188px minmax(0,1fr) 340px;gap:12px;align-items:start}
 .rail{border:1px solid var(--line);border-radius:11px;background:#fff;overflow:hidden}
 .rail .rh{padding:10px 12px 6px;font-size:9.5px;letter-spacing:.7px;text-transform:uppercase;color:var(--muted);font-weight:800;border-bottom:1px solid var(--line-soft)}
 .rail button{display:flex;align-items:center;gap:8px;width:100%;border:0;border-bottom:1px solid var(--line-soft);background:#fff;padding:10px 12px;text-align:left;color:var(--muted);font-size:12.5px}
@@ -177,7 +178,8 @@ tr.hover:hover td{background:var(--surface-2)}
 .next ul{margin:8px 0 0;padding-left:18px;color:var(--muted);font-size:13px}
 .toast{position:fixed;right:24px;bottom:24px;background:var(--brand-900);color:#fff;padding:11px 16px;border-radius:10px;font-size:13px;box-shadow:var(--shadow-lg);opacity:0;transform:translateY(8px);transition:.2s;pointer-events:none;z-index:100}
 .toast.show{opacity:1;transform:translateY(0)}
-@media(max-width:1100px){.admin-grid{grid-template-columns:170px minmax(0,1fr)}.admin-grid .inspector{grid-column:1/-1}.hub{grid-template-columns:1fr 1fr}}
+@media(max-width:1100px){.hub{grid-template-columns:1fr 1fr}}
+@media(max-width:960px){.admin-grid{grid-template-columns:170px minmax(0,1fr)}.admin-grid .inspector{grid-column:1/-1}}
 @media(max-width:920px){.split{grid-template-columns:1fr}.drawer{width:340px}.principles{grid-template-columns:1fr 1fr}}
 @media(max-width:760px){.wrap{padding:20px 12px 70px}.admin-grid{grid-template-columns:1fr}.rail{display:flex;overflow:auto}.rail .rh{display:none}.rail button{min-width:130px;border-bottom:0;border-right:1px solid var(--line-soft)}.drawer{width:100%;border-radius:17px}.hub{grid-template-columns:1fr}.callouts{grid-template-columns:1fr}.proscons{grid-template-columns:1fr}.principles{grid-template-columns:1fr}}
 </style>
@@ -220,8 +222,8 @@ tr.hover:hover td{background:var(--surface-2)}
   <!-- A -->
   <section class="proposal active" id="p-a">
     <div class="prop-head"><span class="tag">Proposta A</span><h2>Rail categorie + tabella + ispettore</h2></div>
-    <p class="prop-desc">La categoria resta a sinistra, la tabella occupa il centro e il dettaglio della riga selezionata sta a destra. È il layout più prevedibile: non si perde mai il contesto e le modifiche frequenti sono a portata di mano.</p>
-    <div class="metrics"><span class="metric"><b>1 click</b> categoria</span><span class="metric"><b>1 click</b> riga</span><span class="metric">Dettaglio sempre visibile</span><span class="metric">Tabelle dense</span></div>
+    <p class="prop-desc">La categoria resta a sinistra, la tabella occupa il centro e il dettaglio della riga selezionata sta a destra. La tabella è volutamente essenziale: <b>utente, ruolo e clienti</b>; engagement, stato e azioni vivono nel dettaglio. Meno colonne, più spazio ai dati che servono davvero.</p>
+    <div class="metrics"><span class="metric"><b>3 colonne</b> essenziali</span><span class="metric"><b>1 click</b> riga</span><span class="metric">Dettaglio più ampio (340 px)</span><span class="metric">Niente pulsante Apri</span></div>
     <div class="mock">
       <div class="mockbar"><span class="dots"><i></i><i></i><i></i></span><span class="name">amministrazione · utenti · profilo Manager</span></div>
       <div class="pagehead"><div class="t"><h3>Utenti e accessi</h3><p class="sub">13 utenti · 6 clienti · 15 engagement</p></div><div class="actions"><button class="btn sec sm" data-toast="Esporta CSV (demo)">Esporta</button><button class="btn pri sm" data-toast="Nuovo utente (demo)">+ Utente</button></div></div>
@@ -237,14 +239,14 @@ tr.hover:hover td{background:var(--surface-2)}
         <div class="card2">
           <div class="toolbar"><div class="searchbox"><input placeholder="Cerca utente, email, cliente…" aria-label="Cerca utenti"><span class="tiny">13</span></div><select aria-label="Ruolo"><option>Tutti i ruoli</option><option>Manager</option><option>PMO</option><option>Pentester</option><option>Auditor</option></select><button class="btn sec sm" data-toast="Filtri (demo)">Filtri</button></div>
           <table>
-            <thead><tr><th>Utente</th><th>Ruolo</th><th>Clienti</th><th>Engagement</th><th>Stato</th><th></th></tr></thead>
+            <thead><tr><th>Utente</th><th>Ruolo</th><th>Clienti</th></tr></thead>
             <tbody>
-              <tr class="hover" data-user="gm"><td><div class="user"><span class="avatar">GM</span><span><span class="nm">Giorgio Marino</span><span class="em">giorgio.marino@provider.example</span></span></div></td><td><span class="badge mgr">Manager</span></td><td>Tutti <span class="cntpill">6</span></td><td><span class="cntpill">15</span></td><td><span class="badge ok">Attivo</span></td><td><button class="btn ghost sm">Apri</button></td></tr>
-              <tr class="hover" data-user="lf"><td><div class="user"><span class="avatar">LF</span><span><span class="nm">Luca Ferri</span><span class="em">luca.ferri@provider.example</span></span></div></td><td><span class="badge int">PMO</span></td><td>Contoso, Fabrikam <span class="cntpill">2</span></td><td><span class="cntpill">8</span></td><td><span class="badge ok">Attivo</span></td><td><button class="btn ghost sm">Apri</button></td></tr>
-              <tr class="hover sel" data-user="sc"><td><div class="user"><span class="avatar">SC</span><span><span class="nm">Sara Conti</span><span class="em">sara.conti@provider.example</span></span></div></td><td><span class="badge int">Pentester</span></td><td>Contoso, Nova Bank <span class="cntpill">2</span></td><td><span class="cntpill">7</span></td><td><span class="badge ok">Attivo</span></td><td><button class="btn ghost sm">Apri</button></td></tr>
-              <tr class="hover" data-user="mv"><td><div class="user"><span class="avatar">MV</span><span><span class="nm">Marco Verdi</span><span class="em">marco.verdi@provider.example</span></span></div></td><td><span class="badge int">Pentester</span></td><td>— <span class="cntpill">0</span></td><td><span class="cntpill">2</span></td><td><span class="badge ok">Attivo</span></td><td><button class="btn ghost sm">Apri</button></td></tr>
-              <tr class="hover" data-user="ef"><td><div class="user"><span class="avatar">EF</span><span><span class="nm">Elena Fabbri</span><span class="em">elena.fabbri@provider.example</span></span></div></td><td><span class="badge int">Pentester</span></td><td>Fabrikam <span class="cntpill">1</span></td><td><span class="cntpill">4</span></td><td><span class="badge ok">Attivo</span></td><td><button class="btn ghost sm">Apri</button></td></tr>
-              <tr class="hover" data-user="pg"><td><div class="user"><span class="avatar">PG</span><span><span class="nm">Paolo Galli</span><span class="em">paolo.galli@provider.example</span></span></div></td><td><span class="badge">Auditor</span></td><td>Nova Bank <span class="cntpill">1</span></td><td><span class="cntpill">3</span></td><td><span class="badge ok">Attivo</span></td><td><button class="btn ghost sm">Apri</button></td></tr>
+              <tr class="hover" data-user="gm"><td><div class="user"><span class="avatar">GM</span><span><span class="nm">Giorgio Marino</span><span class="em">giorgio.marino@provider.example</span></span></div></td><td><span class="badge mgr">Manager</span></td><td>Tutti <span class="cntpill">6</span></td></tr>
+              <tr class="hover" data-user="lf"><td><div class="user"><span class="avatar">LF</span><span><span class="nm">Luca Ferri</span><span class="em">luca.ferri@provider.example</span></span></div></td><td><span class="badge int">PMO</span></td><td>Contoso, Fabrikam <span class="cntpill">2</span></td></tr>
+              <tr class="hover sel" data-user="sc"><td><div class="user"><span class="avatar">SC</span><span><span class="nm">Sara Conti</span><span class="em">sara.conti@provider.example</span></span></div></td><td><span class="badge int">Pentester</span></td><td>Contoso, Nova Bank <span class="cntpill">2</span></td></tr>
+              <tr class="hover" data-user="mv"><td><div class="user"><span class="avatar">MV</span><span><span class="nm">Marco Verdi</span><span class="em">marco.verdi@provider.example</span></span></div></td><td><span class="badge int">Pentester</span></td><td>— <span class="cntpill">0</span></td></tr>
+              <tr class="hover" data-user="ef"><td><div class="user"><span class="avatar">EF</span><span><span class="nm">Elena Fabbri</span><span class="em">elena.fabbri@provider.example</span></span></div></td><td><span class="badge int">Pentester</span></td><td>Fabrikam <span class="cntpill">1</span></td></tr>
+              <tr class="hover" data-user="pg"><td><div class="user"><span class="avatar">PG</span><span><span class="nm">Paolo Galli</span><span class="em">paolo.galli@provider.example</span></span></div></td><td><span class="badge">Auditor</span></td><td>Nova Bank <span class="cntpill">1</span></td></tr>
             </tbody>
           </table>
         </div>
@@ -257,7 +259,7 @@ tr.hover:hover td{background:var(--surface-2)}
         </aside>
       </div>
     </div>
-    <div class="callouts"><div class="callout"><b>1 · Contesto</b>La categoria resta a sinistra: si passa da Utenti a Mailing list con un click.</div><div class="callout"><b>2 · Riga → dettaglio</b>L’ispettore cambia senza aprire pagine o drawer.</div><div class="callout"><b>3 · Densità</b>La tabella usa tutta la larghezza disponibile; il dettaglio è stretto ma sufficiente.</div></div>
+    <div class="callouts"><div class="callout"><b>1 · Contesto</b>La categoria resta a sinistra: si passa da Utenti a Mailing list con un click.</div><div class="callout"><b>2 · Riga → dettaglio</b>L’ispettore cambia senza aprire pagine o drawer. La riga è cliccabile per intero.</div><div class="callout"><b>3 · Solo l’essenziale</b>Utente, ruolo e clienti in tabella; engagement, stato e azioni nel dettaglio a destra, più ampio.</div></div>
     <div class="proscons"><div class="pc good"><h5>Perché funziona</h5><ul><li>Nessuna perdita di contesto.</li><li>Azioni frequenti sempre visibili.</li><li>Scala bene su desktop e tablet larghi.</li></ul></div><div class="pc bad"><h5>Da valutare</h5><ul><li>Su laptop piccoli il dettaglio può essere stretto.</li><li>Richiede una rail categorie ben organizzata.</li></ul></div></div>
   </section>
 
