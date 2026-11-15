@@ -73,7 +73,7 @@ public static class SeedData
     {
         var engagement = New(
             "ENG-2026-001", "anthropic", "Anthropic",
-            "External Penetration Test", EngagementType.PenetrationTest, 6);
+            "PT perimetro esterno", EngagementType.PenetrationTest, 6);
 
         Docs(engagement, "PO-2026-0142");
         Financials(engagement, 12000m, 46m);
@@ -89,7 +89,7 @@ public static class SeedData
     {
         var engagement = New(
             "ENG-2026-002", "nvidia", "Nvidia",
-            "Cloud Security Review", EngagementType.CloudSecurity, 9);
+            "VA ambiente Azure", EngagementType.CloudSecurity, 9);
 
         engagement.DocumentoIngaggioFile =
             $"samples/documents/{engagement.Id}-ingaggio.txt";
@@ -102,7 +102,7 @@ public static class SeedData
     {
         var engagement = New(
             "ENG-2026-003", "anthropic", "Anthropic",
-            "Web Application Retest", EngagementType.PenetrationTest, 25);
+            "WAPT portale clienti (retest)", EngagementType.PenetrationTest, 25);
 
         Docs(engagement, "PO-2026-0107");
         Financials(engagement, 9000m, 46m);
@@ -147,7 +147,7 @@ public static class SeedData
     {
         var engagement = New(
             "ENG-2026-004", "nvidia", "Nvidia",
-            "Internal Red Team", EngagementType.RedTeam, 12);
+            "RT rete interna", EngagementType.RedTeam, 12);
 
         Docs(engagement, "PO-2026-0188");
         Financials(engagement, 18000m, 46m);
@@ -170,7 +170,7 @@ public static class SeedData
     {
         var engagement = New(
             "ENG-2026-005", "anthropic", "Anthropic",
-            "Cloud Security Assessment", EngagementType.CloudSecurity, 4);
+            "VA cloud pre-produzione", EngagementType.CloudSecurity, 4);
 
         Docs(engagement, "PO-2026-0201");
         Financials(engagement, 15000m, 46m);
@@ -194,7 +194,7 @@ public static class SeedData
     {
         var engagement = New(
             "ENG-2026-006", "nvidia", "Nvidia",
-            "Web Application Penetration Test",
+            "WAPT sito vetrina",
             EngagementType.PenetrationTest, 40);
 
         Docs(engagement, "PO-2026-0091");
@@ -254,7 +254,7 @@ public static class SeedData
     {
         var engagement = New(
             "ENG-2026-015", "anthropic", "Anthropic",
-            "Internal Vulnerability Assessment",
+            "VA rete interna",
             EngagementType.VulnerabilityAssessment, 45);
 
         Docs(engagement, "PO-2026-0088");
@@ -297,7 +297,7 @@ public static class SeedData
     {
         var engagement = New(
             "ENG-2026-007", "anthropic", "Anthropic",
-            "Cloud Configuration Review", EngagementType.CloudSecurity, 5);
+            "VA configurazione M365", EngagementType.CloudSecurity, 5);
 
         Docs(engagement, "PO-2026-0197");
         Financials(engagement, 11000m, 46m);
@@ -313,7 +313,7 @@ public static class SeedData
     {
         var engagement = New(
             "ENG-2026-008", "nvidia", "Nvidia",
-            "Payment API Security Review", EngagementType.CodeReview, 8);
+            "CR API pagamenti", EngagementType.CodeReview, 8);
 
         Docs(engagement, "PO-2026-0164");
         Financials(engagement, 14000m, 46m);
@@ -334,7 +334,7 @@ public static class SeedData
     {
         var engagement = New(
             "ENG-2026-009", "anthropic", "Anthropic",
-            "Mobile App Penetration Test",
+            "PT app mobile",
             EngagementType.PenetrationTest, 3);
 
         Docs(engagement, "PO-2026-0210");
@@ -354,14 +354,14 @@ public static class SeedData
     {
         var engagement = New(
             "ENG-2026-010", "nvidia", "Nvidia",
-            "OT Network Segmentation Review",
+            "VA rete OT",
             EngagementType.VulnerabilityAssessment, 15);
 
         Docs(engagement, "PO-2026-0177");
         Financials(engagement, 24000m, 46m);
         Scope(engagement,
             "scada.nvidia.example", "10.60.0.0/16",
-            "Sistemi di controllo", "Notturno 22:00-06:00",
+            "Rete corporate", "Notturno 22:00-06:00",
             "ot-security@nvidia.example",
             "Verifica della segmentazione rete OT", 12);
         Credentials(engagement,
@@ -380,7 +380,7 @@ public static class SeedData
     {
         var engagement = New(
             "ENG-2026-011", "anthropic", "Anthropic",
-            "Third-Party Risk Assessment",
+            "VA fornitore critico",
             EngagementType.VulnerabilityAssessment, 20);
 
         Docs(engagement, "PO-2026-0129");
@@ -414,7 +414,7 @@ public static class SeedData
     {
         var engagement = New(
             "ENG-2026-012", "nvidia", "Nvidia",
-            "Supply Chain Security Review",
+            "VA supply chain",
             EngagementType.CloudSecurity, 2);
 
         Docs(engagement, "PO-2026-0215");
@@ -432,7 +432,7 @@ public static class SeedData
     {
         var engagement = New(
             "ENG-2026-013", "anthropic", "Anthropic",
-            "E-commerce Red Team", EngagementType.RedTeam, 10);
+            "RT e-commerce", EngagementType.RedTeam, 10);
 
         Docs(engagement, "PO-2026-0194");
         Financials(engagement, 30000m, 46m);
@@ -456,7 +456,7 @@ public static class SeedData
     {
         var engagement = New(
             "ENG-2026-014", "nvidia", "Nvidia",
-            "SAP S/4HANA Security Assessment",
+            "VA SAP S/4HANA",
             EngagementType.VulnerabilityAssessment, 18);
 
         Docs(engagement, "PO-2026-0151");
