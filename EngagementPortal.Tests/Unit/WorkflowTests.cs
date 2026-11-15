@@ -628,6 +628,30 @@ public class WorkflowTests
         Assert.Equal(EngagementPhase.Done, workflow.Resolve(engagement));
     }
 
+    [Fact]
+    public void RetestClosedWithoutExecution_ClosesTheEngagement()
+    {
+        var engagement = PublishedEngagement();
+        engagement.RetestPlanned = true;
+        engagement.RetestRequestedDate =
+            new DateTimeOffset(Today.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero);
+
+        var workflow = Workflow();
+        var todos = new TodoResolver(workflow);
+
+        // In attesa della richiesta di date: l'attività non si chiude da sola.
+        Assert.Equal(EngagementPhase.Retest, workflow.Resolve(engagement));
+
+        // Se il retest non si fa, PMO o Manager lo chiudono senza esecuzione.
+        engagement.RetestClosedDate =
+            new DateTimeOffset(Today.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero);
+        engagement.RetestClosedByName = "Luca Ferri";
+
+        Assert.Equal(EngagementPhase.Done, workflow.Resolve(engagement));
+        Assert.Null(todos.Resolve(engagement, Roles.PMO));
+        Assert.Null(todos.Resolve(engagement, Roles.Client));
+    }
+
     private static Engagement PublishedEngagement()
     {
         var engagement = NewEngagement();

@@ -279,6 +279,10 @@ public sealed class Engagement
     public ReportFile? RetestReport { get; set; }
     public DateTimeOffset? RetestReportSentDate { get; set; }
 
+    /// <summary>Chiusura senza retest: l'attività si conclude comunque.</summary>
+    public DateTimeOffset? RetestClosedDate { get; set; }
+    public string? RetestClosedByName { get; set; }
+
     public bool ReportsComplete => DeliverableTypes.All(type =>
         Reports.Any(report => report.IsLatest &&
             string.Equals(report.Kind, type, StringComparison.OrdinalIgnoreCase)));
@@ -290,7 +294,6 @@ public sealed class Engagement
 
     public bool ScopeDone { get; set; }
     public bool CredentialsDone { get; set; }
-    public string? CredentialDeliveryMethod { get; set; }
     public string? SecretReference { get; set; }
 
     public string? ManlevaFile { get; set; }

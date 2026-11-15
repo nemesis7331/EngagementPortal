@@ -56,9 +56,6 @@ public static class MailTemplates
         !string.IsNullOrWhiteSpace(type) &&
         Types.Any(item => item.Key == type);
 
-    public static MailTemplateType? Type(string type) =>
-        Types.FirstOrDefault(item => item.Key == type);
-
     public static MailTemplateSet Defaults() => new()
     {
         Start = new MailTemplate
@@ -292,8 +289,7 @@ public static class MailTemplates
         return new ResolvedMailTemplate(
             Render(pick.Template.SubjectFor(pick.Language), replacements),
             Render(pick.Template.BodyFor(pick.Language), replacements),
-            pick.Source,
-            pick.Template);
+                pick.Source);
     }
 
     /// <summary>
@@ -335,8 +331,7 @@ public static class MailTemplates
         return new ResolvedMailTemplate(
             Render(pick.Template.SubjectFor(pick.Language), replacements),
             Render(pick.Template.BodyFor(pick.Language), replacements),
-            pick.Source,
-            pick.Template);
+                pick.Source);
     }
 
     private static (MailTemplate Template, string Source, string Language) PickFrom(
@@ -406,8 +401,7 @@ public static class MailTemplates
         return new ResolvedMailTemplate(
             Render(pick.Template.SubjectFor(pick.Language), replacements),
             Render(pick.Template.BodyFor(pick.Language), replacements),
-            pick.Source,
-            pick.Template);
+                pick.Source);
     }
 
     public static IReadOnlyDictionary<string, string> Replacements(
@@ -437,8 +431,7 @@ public static class MailTemplates
 public sealed record ResolvedMailTemplate(
     string Subject,
     string Body,
-    string Source,
-    MailTemplate Template);
+    string Source);
 
 public sealed record MailTemplateType(
     string Key,

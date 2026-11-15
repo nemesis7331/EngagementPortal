@@ -544,7 +544,6 @@ public static class SeedData
         int daysAgo)
     {
         engagement.CredentialsDone = true;
-        engagement.CredentialDeliveryMethod = deliveryMethod;
         engagement.SecretReference = $"kv://demo/{engagement.Id}";
         engagement.Credentials = new CredentialData
         {

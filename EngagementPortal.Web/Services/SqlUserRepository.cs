@@ -65,17 +65,4 @@ public sealed class SqlUserRepository(
         record.UpdatedAt = clock.UtcNow;
         db.SaveChanges();
     }
-
-    public bool Remove(string id)
-    {
-        var record = db.Users
-            .SingleOrDefault(item => item.Id == id);
-
-        if (record is null)
-            return false;
-
-        db.Users.Remove(record);
-        db.SaveChanges();
-        return true;
-    }
 }

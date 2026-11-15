@@ -97,6 +97,10 @@ public sealed class EngagementWorkflow(IDateProvider clock)
         if (engagement.RetestReportSentDate is not null)
             return EngagementPhase.Done;
 
+        // Chiusura esplicita senza retest: l'attività è comunque conclusa.
+        if (engagement.RetestClosedDate is not null)
+            return EngagementPhase.Done;
+
         // Report caricato (o retest eseguito): resta solo da inviarlo.
         if (engagement.RetestReport is not null ||
             engagement.RetestCompletedDate is not null)

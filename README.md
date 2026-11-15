@@ -47,7 +47,10 @@ App Service a ogni push su `main`.
   completati** e **una sola volta**; le date seguono lo stesso giro del
   planning (proposta di PMO/cliente, approvazione del Manager); il Pentester
   conclude il retest, carica il report e lo **invia al cliente senza
-  approvazione**. Un solo invio del report: il secondo viene rifiutato.
+  approvazione**. Il report è unico: un secondo caricamento viene rifiutato, e
+  dopo l'invio non si può più sostituire. Se il retest non si fa, PMO o Manager
+  possono **chiudere l'attività senza esecuzione** (`/retest/close`), così non
+  resta in attesa per sempre.
 - **Report versionati**: il Pentester carica una versione per **ogni tipologia**
   definita nel setup. Una nuova versione diventa l'ultima e le precedenti
   restano nello storico; revisione e pubblicazione richiedono tutte le tipologie.
@@ -263,7 +266,9 @@ riporta esattamente i controlli applicati dalle API.
 - Retest: il **Cliente** richiede il retest (una sola volta, a fix completati);
   **PMO e Cliente** propongono le date, il **Manager** le approva; il
   **Pentester** conclude il retest, carica il report e lo invia al cliente
-  **senza revisione**.
+  **senza revisione**; **PMO o Manager** possono chiudere l'attività senza
+  retest. L'email di consegna dei report si invia dal **PMO** (il Manager
+  pubblica i report, e la pubblicazione genera da sé l'email).
 - Catalogo tipi di attività: lettura per i profili interni, modifica dei default
   a **Manager e PMO**.
 
@@ -450,6 +455,7 @@ Le API sono esposte sotto `/api` e documentate in `documentazione.txt`
 | POST | `/api/engagements/{id}/retest/request` (solo cliente, una volta) |
 | POST | `/api/engagements/{id}/retest/propose` · `/retest/decide` |
 | POST | `/api/engagements/{id}/retest/report` · `/retest/send` (senza revisione) |
+| POST | `/api/engagements/{id}/retest/close` (chiude senza esecuzione) |
 | GET/PUT | `/api/activity-types` · `/activity-types/{key}` (default dei tipi) |
 | GET/POST/DELETE | `/api/engagements/{id}/distribution-list` (`?kind=notifications\|deliverables`) |
 | GET | `/api/engagements/{id}/mails` |

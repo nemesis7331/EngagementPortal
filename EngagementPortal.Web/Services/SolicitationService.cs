@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using EngagementPortal.Web.Domain;
 
 namespace EngagementPortal.Web.Services;
@@ -155,8 +156,8 @@ public sealed class SolicitationService(EngagementWorkflow workflow)
             "Promemoria ravvicinato: senza credenziali l'attività non parte.")
     ];
 
-    private readonly Dictionary<string, bool> _enabled =
-        Rules.ToDictionary(rule => rule.Key, rule => rule.Enabled);
+    private readonly ConcurrentDictionary<string, bool> _enabled = new(
+        Rules.ToDictionary(rule => rule.Key, rule => rule.Enabled));
 
     public IReadOnlyList<SolicitationRule> All() =>
         Rules.Select(rule => rule with { Enabled = _enabled[rule.Key] }).ToList();
@@ -212,7 +213,7 @@ public sealed class SolicitationService(EngagementWorkflow workflow)
 
         return entry is null
             ? null
-            : DateOnly.FromDateTime(entry.Date.LocalDateTime);
+            : DateOnly.FromDateTime(entry.Date.UtcDateTime);
     }
 
     public IReadOnlyList<SolicitationDue> Due(
@@ -229,10 +230,13 @@ public sealed class SolicitationService(EngagementWorkflow workflow)
                 ? startDate.DayNumber - today.DayNumber
                 : (int?)null;
 
+            var reportRule = Rule("rep")!;
+            var reviewRule = Rule("rev")!;
+
             Add(
                 "rep",
                 days: end is { } endDate && !engagement.ReportsComplete
-                    ? BusinessDays(endDate.AddDays(1), today)
+                    ? LateDays(reportRule, endDate, today)
                     : 0,
                 applies: end is not null && !engagement.ReportsComplete,
                 daysToStart: null);
@@ -240,7 +244,7 @@ public sealed class SolicitationService(EngagementWorkflow workflow)
             Add(
                 "rev",
                 days: engagement.ReviewStatus == ReviewStatus.Pending
-                    ? DaysSince(ReviewSince(engagement), today)
+                    ? LateDays(reviewRule, ReviewSince(engagement), today)
                     : 0,
                 applies: engagement.ReviewStatus == ReviewStatus.Pending,
                 daysToStart: null);
@@ -429,12 +433,24 @@ public sealed class SolicitationService(EngagementWorkflow workflow)
 
     private static DateOnly ReviewSince(Engagement engagement) =>
         engagement.ReviewRequestedDate is { } requested
-            ? DateOnly.FromDateTime(requested.LocalDateTime)
+            ? DateOnly.FromDateTime(requested.UtcDateTime)
             : engagement.Reports.Count > 0
                 ? DateOnly.FromDateTime(
-                    engagement.Reports.Max(report => report.Date).LocalDateTime)
-                : DateOnly.FromDateTime(engagement.CreatedDate.LocalDateTime);
+                    engagement.Reports.Max(report => report.Date).UtcDateTime)
+                : DateOnly.FromDateTime(engagement.CreatedDate.UtcDateTime);
 
     private static int DaysSince(DateOnly since, DateOnly today) =>
         Math.Max(0, today.DayNumber - since.DayNumber);
+
+    /// <summary>
+    /// Giorni oltre la soglia: lavorativi o di calendario secondo la regola,
+    /// così il flag <see cref="SolicitationRule.CountBusinessDays"/> comanda.
+    /// </summary>
+    private static int LateDays(
+        SolicitationRule rule,
+        DateOnly from,
+        DateOnly today) =>
+        rule.CountBusinessDays
+            ? BusinessDays(from.AddDays(1), today)
+            : DaysSince(from, today);
 }

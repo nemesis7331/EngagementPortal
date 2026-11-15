@@ -1,86 +1,81 @@
 # Cyber Engagement Portal — To-do list
 
-Backlog delle funzionalità. Le voci **fatte** restano in fondo come riferimento.
+## Revisione del codice — Fase 1 ✅ FATTA
+
+Quattro agenti hanno analizzato il codice (codice morto client e server, bug,
+mantenibilità). La Fase 1 è stata completata.
+
+### Bug corretti
+- **Retest**: il report non si può più sovrascrivere — 409 se già caricato o se
+  già inviato al cliente (prima l'invio veniva perso); la proposta di date non
+  cancella più quella pendente (409); durata massima 60 giorni come il planning.
+- **Chiusura senza retest**: nuovo `POST /engagements/{id}/retest/close` per
+  PMO/Manager, così l'attività non resta in attesa per sempre se il cliente non
+  chiede mai il retest.
+- **Recheck**: il flag non si può più cambiare su un'attività conclusa, né dopo
+  la richiesta del cliente.
+- **Routing**: una seconda navigazione durante un caricamento non viene più
+  persa; l'identità della demo (`role`/`user`/`client`) viene letta dall'URL,
+  quindi un refresh non fa più ricadere sul profilo di default.
+- **Clienti**: la ricerca filtra anche il pannello (prima restava il cliente non
+  più visibile).
+- **Mailing list**: il cliente scelto in header filtra l'elenco; cambiando
+  cliente in Amministrazione l'elenco si ricarica.
+- **Concorrenza e tempo**: `_enabled` dei solleciti è una `ConcurrentDictionary`;
+  base temporale unica (`UtcDateTime`); `clock` al posto di `UtcNow` dove
+  serviva; `StringComparison` sul confronto dei nomi.
+- **Validazioni**: email uniforme (`IsEmail`), sonda `/health/ready` senza dati,
+  email di consegna solo PMO (allineata alla matrice permessi).
+
+### Codice morto rimosso
+- Client: 8 funzioni mai chiamate (`clientAvatar`, `statusText`, `tabReason`,
+  `vstepper`, `cprogress`, `kpiPhaseLabel`, `runReason`, `isEditing`), **44
+  regole CSS** di layout abbandonati, la `.mini i` duplicata e la media query
+  `1500px` ripetuta.
+- Server: `MailTemplates.Type`, `Access.VisibleClients`, `IUserRepository.Remove`
+  e le due implementazioni, `Engagement.CredentialDeliveryMethod`,
+  `ResolvedMailTemplate.Template`, due parametri di endpoint mai usati;
+  `SolicitationRule.CountBusinessDays` ora **comanda davvero** il calcolo.
+
+### Oggetti standard collegati
+- **7C**: l'elenco report usa icona per tipologia, nome, versione e stato.
+- **2B3**: la mailing list usa la pastiglia compatta dell'engagement (tipo, nome,
+  logo cliente, anello di avanzamento).
+
+### Verifiche
+- Build: 0 errori, 0 avvisi. Test: **82/82**.
+- Nota: il bug del report di retest è stato riprodotto e confermato nei dati
+  prima della correzione.
 
 ---
 
-## 1. Retest e report dei retest — ✅ FATTO
+## Fase 2 — da fare (manutenibilità)
 
-Due passi in coda all'esecuzione, presenti **solo se il recheck è previsto**.
+1. **`GET /api/meta`** con deliverable, tipi di attività, tipi di template
+   (con `icon` e `listKind`), passi del workflow, organizzazioni e soglie; il JS
+   li legge all'avvio e si eliminano le costanti duplicate. **Una costante per
+   volta, con fallback.**
+2. **Estrarre gli endpoint** da `Program.cs` (~40 route) in moduli per area.
+3. **Estrarre CSS e JS** da `index.html` (un solo `<style>` e un solo
+   `<script>`), poi **ESLint + `tsc --checkJs`** in CI: oggi non esiste alcun
+   controllo statico sul JS.
+4. **Test HTTP** con `WebApplicationFactory` sui casi critici (403/200, retest,
+   financials): le lambda degli endpoint non sono coperte.
 
-- **Retest**: il **cliente** richiede il retest **a fix completati** e **una sola
-  volta** (`POST /engagements/{id}/retest/request`; seconda richiesta → 409). Le
-  date seguono lo stesso giro del planning: proposta di **PMO o cliente**
-  (`/retest/propose`, avvio non nel passato) e **approvazione del Manager**
-  (`/retest/decide`).
-- **Report di retest**: il Pentester conclude il retest e carica il report
-  (`/retest/report`), poi lo **invia al cliente senza approvazione**
-  (`/retest/send`; secondo invio → 409). L'attività passa a **Concluso**.
-- Nuovo template bilingue `retestreport` ("Invio report di retest") in
-  Amministrazione › Template mail e al livello engagement in Mailing list.
-- Fasi nuove: `Retest` (passo 7) e `RetestReporting` (passo 8); stepper, KPI e
-  registro seguono. Il registro riporta l'invio con il testo del template.
-- Seed: **ENG-2026-006** è il percorso completo (richiesta → date → report →
-  invio); **ENG-2026-015** è in attesa della richiesta del cliente (recheck
-  previsto, report pubblicato); i Red Team (004, 013) sono **senza recheck**.
-- Test: 4 casi nuovi (recheck spento, attesa della richiesta, proposta in attesa
-  del Manager, invio senza revisione). 81/81 verdi.
+## Fase 3 — da fare (più impegnativa)
 
-### Ancora aperto su questa voce
+5. Spezzare le funzioni di render lunghe (`renderDetail` ~180 righe,
+   `renderKpi` ~190, `tabReports` ~130).
+6. README non normativo su RACI, elenco endpoint e dataset (invecchiano a ogni
+   modifica).
 
-- **Calendario**: le date del retest non sono ancora mostrate come evento
-  distinto dell'engagement.
-- **Solleciti**: non c'è una regola automatica "retest in ritardo"; resta il
-  sollecito manuale dall'engagement (l'attesa del retest è fra i task
-  sollecitabili).
-- **Esito del retest**: il report è un deliverable di tipo `Retest` con
-  descrizione libera; non ci sono campi strutturati (vulnerabilità risolte o
-  residue) né un esito per singolo finding.
-- **Chiude senza retest**: se il cliente non chiede il retest l'engagement resta
-  in attesa; manca un'azione esplicita "chiudi senza retest".
+## Altri punti aperti (dal backlog funzionale)
 
----
-
-## 2. Recheck previsto nel Setup — ✅ FATTO
-
-- Campo **"Recheck previsto (retest a fine attività)"** nel **Setup**, con
-  default dal tipo di attività e pulsante *Applica i default del tipo*.
-- **Modificabile fino alla richiesta di retest** del cliente: dopo, il salvataggio
-  del Setup che prova a cambiarlo viene rifiutato con un messaggio chiaro.
-- Traccia **chi** e **quando** ha deciso (`RetestDecidedByName/Date`, mostrati nel
-  pannello del retest).
-- Se il flag è spento, i due passi di retest **non esistono**: né stepper, né
-  attese, né azioni.
-
----
-
-## 3. Sezione "Attività": catalogo dei tipi — ✅ FATTO
-
-- Nuova scheda **Amministrazione › Tipi di attività** (Manager e PMO).
-- Cinque tipi (granularità confermata): Penetration Test, Vulnerability
-  Assessment, Red Team, Code Review, Cloud Security. Le chiavi sono fisse; si
-  modificano **etichetta, sigla, descrizione, deliverable previsti e recheck
-  previsto**, con *Ripristina default*.
-- Default di recheck: **Red Team senza retest**, gli altri con retest previsto.
-- Storage negli *app settings* (`activity-types`), quindi il catalogo è
-  modificabile senza toccare il codice; endpoint `GET /api/activity-types` e
-  `PUT /api/activity-types/{key}`.
-
-### Ancora aperto su questa voce
-
-- **Propagazione**: i default valgono per gli engagement nuovi e per chi preme
-  *Applica i default del tipo*; non riscrivono le attività esistenti.
-- **Granularità**: i sottotipi (Web Application, Mobile, Infrastructure, OT) non
-  sono previsti.
-- **Altri default per tipo**: durata tipica, template di scope, team e liste
-  standard non sono ancora nel catalogo.
-
----
-
-## 4. Punti minori aperti
-
-- **File di anteprima con i vecchi clienti**: `mailing-list-proposals.html`,
-  `admin-layout-v2.html`, `admin-layout-proposals.html`, `calendar-proposals.html`,
-  `template-ambito-opzioni.html` e le altre proposte contengono ancora
-  Contoso/Fabrikam/Nova Bank. Sono mockup storici, non dati dell'app: da
-  riallineare ad Anthropic/Nvidia solo se servono ancora.
+- **Calendario**: le date del retest non sono ancora un evento distinto.
+- **Solleciti**: nessuna regola automatica "retest in ritardo" (resta il
+  sollecito manuale).
+- **Esito del retest**: il report è un deliverable con descrizione libera, senza
+  campi strutturati per i finding.
+- **Propagazione dei default per tipo**: valgono per i nuovi engagement e per
+  chi preme *Applica i default*.
+- **File di anteprima con i vecchi clienti** in `wwwroot` (mockup storici).

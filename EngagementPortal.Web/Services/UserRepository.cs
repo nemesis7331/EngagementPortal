@@ -8,7 +8,6 @@ public interface IUserRepository
     UserAccount? Get(string id);
     UserAccount Add(string name, string email, string role);
     void Save(UserAccount user);
-    bool Remove(string id);
 }
 
 /// <summary>
@@ -59,20 +58,6 @@ public sealed class InMemoryUserRepository : IUserRepository
                 users[index] = user;
             else
                 users.Add(user);
-        }
-    }
-
-    public bool Remove(string id)
-    {
-        lock (gate)
-        {
-            var user = users.FirstOrDefault(item => item.Id == id);
-
-            if (user is null)
-                return false;
-
-            users.Remove(user);
-            return true;
         }
     }
 

@@ -87,13 +87,17 @@ app.MapGet("/health", () => Results.Ok(new
     time = DateTimeOffset.UtcNow
 }));
 
+// Sonda di readiness: dice se lo storage risponde, senza esporre dati.
 app.MapGet("/health/ready", (IEngagementRepository repository) =>
-    Results.Ok(new
+{
+    repository.List(string.Empty, true);
+
+    return Results.Ok(new
     {
         status = "ready",
-        storage = useDatabase ? "azure-sql" : "in-memory",
-        engagements = repository.List(string.Empty, true).Count()
-    }));
+        storage = useDatabase ? "azure-sql" : "in-memory"
+    });
+});
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
@@ -250,8 +254,7 @@ api.MapPost("/users", (
     var role = request.Role?.Trim();
 
     if (string.IsNullOrWhiteSpace(name) ||
-        string.IsNullOrWhiteSpace(email) ||
-        !email.Contains('@') ||
+        string.IsNullOrWhiteSpace(email) || !IsEmail(email) ||
         role is not (
             Roles.Manager or
             Roles.PMO or
@@ -290,9 +293,7 @@ api.MapPut("/users/{id}", (
     var email = request.Email?.Trim();
     var role = request.Role?.Trim();
 
-    if (string.IsNullOrWhiteSpace(name) ||
-        string.IsNullOrWhiteSpace(email) ||
-        !email.Contains('@'))
+    if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(email) || !IsEmail(email))
     {
         return Results.BadRequest("Nome ed email valida sono obbligatori.");
     }
@@ -415,7 +416,6 @@ api.MapDelete("/users/{id}/assignments/{type}/{targetId}", (
     string targetId,
     HttpContext context,
     IUserRepository users,
-    IClientRepository clients,
     IEngagementRepository engagements) =>
 {
     var current = GetUser(context);
@@ -500,7 +500,9 @@ api.MapPut("/activity-types/{key}", (
 api.MapGet("/admin/mailing-lists", (
     HttpContext context,
     IClientRepository clients,
-    IEngagementRepository engagements) =>
+    IEngagementRepository engagements,
+    EngagementWorkflow workflow,
+    IDateProvider clock) =>
 {
     var current = GetUser(context);
 
@@ -568,6 +570,11 @@ api.MapGet("/admin/mailing-lists", (
             ClientName = engagement.ClientName,
             EngagementId = engagement.Id,
             EngagementName = engagement.Name,
+            // Servono alla pastiglia dell'engagement nella mailing list.
+            EngagementType = engagement.Type.ToString(),
+            StepIndex = EngagementWorkflow.StepIndex(
+                workflow.Resolve(engagement, clock.Today)),
+            StepCount = engagement.RetestPlanned ? 9 : 7,
             Kind = "notifications",
             KindLabel = "Notifiche",
             Recipients = engagement.DistributionList,
@@ -586,6 +593,11 @@ api.MapGet("/admin/mailing-lists", (
             ClientName = engagement.ClientName,
             EngagementId = engagement.Id,
             EngagementName = engagement.Name,
+            // Servono alla pastiglia dell'engagement nella mailing list.
+            EngagementType = engagement.Type.ToString(),
+            StepIndex = EngagementWorkflow.StepIndex(
+                workflow.Resolve(engagement, clock.Today)),
+            StepCount = engagement.RetestPlanned ? 9 : 7,
             Kind = "deliverables",
             KindLabel = "Deliverables",
             Recipients = engagement.DeliverablesDistributionList,
@@ -913,7 +925,7 @@ api.MapPut("/clients/{clientId}", (
     // che la lista continui a mostrare la vecchia ragione sociale.
     foreach (var engagement in repository.List(clientId, allClients: false))
     {
-        if (engagement.ClientName == account.Name)
+        if (string.Equals(engagement.ClientName, account.Name, StringComparison.Ordinal))
             continue;
 
         engagement.ClientName = account.Name;
@@ -943,9 +955,7 @@ api.MapPost("/clients/{clientId}/users", (
     var email = request.Email?.Trim();
 
     if (string.IsNullOrWhiteSpace(name) ||
-        string.IsNullOrWhiteSpace(email) ||
-        !email.Contains('@') ||
-        !email.Contains('.'))
+        string.IsNullOrWhiteSpace(email) || !IsEmail(email))
     {
         return Results.BadRequest(
             "Nome ed email valida sono obbligatori.");
@@ -1008,9 +1018,7 @@ api.MapPost("/clients/{clientId}/distribution-list", (
     var email = request.Email?.Trim();
 
     if (string.IsNullOrWhiteSpace(name) ||
-        string.IsNullOrWhiteSpace(email) ||
-        !email.Contains('@') ||
-        !email.Contains('.'))
+        string.IsNullOrWhiteSpace(email) || !IsEmail(email))
     {
         return Results.BadRequest("Nome ed email valida sono obbligatori.");
     }
@@ -1093,9 +1101,7 @@ api.MapPost("/clients/{clientId}/team", (
     var organization = request.Organization?.Trim();
 
     if (string.IsNullOrWhiteSpace(name) ||
-        string.IsNullOrWhiteSpace(email) ||
-        !email.Contains('@') ||
-        !email.Contains('.') ||
+        string.IsNullOrWhiteSpace(email) || !IsEmail(email) ||
         organization is not ("Cliente" or "Partner" or "Altro"))
     {
         return Results.BadRequest(
@@ -1306,8 +1312,7 @@ api.MapGet("/dashboard/todo", (
 api.MapPost("/engagements/{id}/manleva", async (
     string id,
     HttpContext context,
-    IEngagementRepository repository,
-    IDateProvider clock) =>
+    IEngagementRepository repository) =>
 {
     var user = GetUser(context);
     var engagement = Find(repository, id, user);
@@ -1713,7 +1718,9 @@ api.MapPut("/engagements/{id}/setup", (
     string id,
     SetupRequest request,
     HttpContext context,
-    IEngagementRepository repository) =>
+    IEngagementRepository repository,
+    EngagementWorkflow workflow,
+    IDateProvider clock) =>
 {
     var user = GetUser(context);
     var engagement = Find(repository, id, user);
@@ -1762,7 +1769,7 @@ api.MapPut("/engagements/{id}/setup", (
     engagement.SetupDone = true;
 
     // Il recheck si decide qui: resta modificabile finché il cliente non ha
-    // richiesto il retest, dopo il flag è bloccato perché i passi sono in corso.
+    // richiesto il retest e finché l'attività non è conclusa.
     if (request.RetestPlanned is { } retestPlanned)
     {
         if (engagement.RetestRequestedDate is not null &&
@@ -1772,9 +1779,16 @@ api.MapPut("/engagements/{id}/setup", (
                 "Il retest è già stato richiesto dal cliente: il recheck non si può più cambiare.");
         }
 
+        if (workflow.Resolve(engagement, clock.Today) == EngagementPhase.Done &&
+            retestPlanned != engagement.RetestPlanned)
+        {
+            return Results.BadRequest(
+                "L'attività è conclusa: il recheck non si può più cambiare.");
+        }
+
         engagement.RetestPlanned = retestPlanned;
         engagement.RetestDecidedByName = user.Name;
-        engagement.RetestDecidedDate = DateTimeOffset.UtcNow;
+        engagement.RetestDecidedDate = clock.UtcNow;
     }
 
     engagement.AddAudit(
@@ -1886,7 +1900,6 @@ api.MapPut("/engagements/{id}/credentials", (
     credentials.Date = clock.UtcNow;
 
     engagement.CredentialsDone = credentials.Done;
-    engagement.CredentialDeliveryMethod = credentials.DeliveryMethod;
 
     engagement.AddAudit(
         user.Name,
@@ -2390,9 +2403,7 @@ api.MapPost("/engagements/{id}/distribution-list", (
         : request.Organization?.Trim();
 
     if (string.IsNullOrWhiteSpace(name) ||
-        string.IsNullOrWhiteSpace(email) ||
-        !email.Contains('@') ||
-        !email.Contains('.') ||
+        string.IsNullOrWhiteSpace(email) || !IsEmail(email) ||
         organization is not (
             "Cliente" or
             "Provider PMO" or
@@ -2528,9 +2539,7 @@ api.MapPost("/engagements/{id}/team", (
     var organization = request.Organization?.Trim();
 
     if (string.IsNullOrWhiteSpace(name) ||
-        string.IsNullOrWhiteSpace(email) ||
-        !email.Contains('@') ||
-        !email.Contains('.') ||
+        string.IsNullOrWhiteSpace(email) || !IsEmail(email) ||
         organization is not ("Cliente" or "Partner" or "Altro"))
     {
         return Results.BadRequest(
@@ -2712,8 +2721,10 @@ api.MapPost("/engagements/{id}/mails/{type}/send", (
     if (engagement is null)
         return Results.NotFound();
 
-    if (user.Role != Roles.PMO &&
-        !(user.Role == Roles.Manager && type == "deliver"))
+    // Le email si inviano dal PMO: è la regola della matrice permessi e della
+    // capability CanManageMail. Il Manager pubblica i report, e la pubblicazione
+    // genera da sé l'email di consegna.
+    if (user.Role != Roles.PMO)
         return Forbidden();
 
     if (type is not ("start" or "end" or "deliver"))
@@ -2856,8 +2867,18 @@ api.MapPost("/engagements/{id}/retest/propose", (
         return Results.BadRequest(
             "L'avvio del retest non può essere nel passato.");
 
-    engagement.RetestProposals.RemoveAll(proposal =>
-        proposal.Status == ProposalStatus.Pending);
+    if (end.DayNumber - start.DayNumber > 60)
+        return Results.BadRequest(
+            "Durata del retest troppo lunga: il massimo è 60 giorni.");
+
+    // Una proposta alla volta: si attende la decisione del Manager invece di
+    // sovrascrivere quella già in attesa.
+    if (engagement.RetestProposals.Any(proposal =>
+        proposal.Status == ProposalStatus.Pending))
+    {
+        return Results.Conflict(
+            "C'è già una proposta di date per il retest in attesa di approvazione.");
+    }
 
     engagement.RetestProposals.Add(new Proposal
     {
@@ -2953,6 +2974,16 @@ api.MapPost("/engagements/{id}/retest/report", (
         return Results.BadRequest(
             "Serve una descrizione del report di retest.");
 
+    // Un solo report: una volta caricato (e soprattutto dopo l'invio al
+    // cliente) non si sovrascrive.
+    if (engagement.RetestReportSentDate is not null)
+        return Results.Conflict(
+            "Il report di retest è già stato inviato al cliente: non si può sostituire.");
+
+    if (engagement.RetestReport is not null)
+        return Results.Conflict(
+            "Il report di retest è già stato caricato.");
+
     engagement.RetestCompletedDate = clock.UtcNow;
     engagement.RetestReport = new ReportFile(
         $"RF-{Guid.NewGuid():N}"[..10],
@@ -3032,6 +3063,52 @@ api.MapPost("/engagements/{id}/retest/send", (
         user.Name,
         user.Role,
         "Report di retest inviato al cliente (senza revisione)",
+        AuditVisibility.All);
+
+    repository.Save(engagement);
+    return Results.Ok(new { status = "ok" });
+});
+
+// Chiusura senza retest: il cliente non lo ha richiesto (o non si procede) e
+// l'attività va comunque conclusa, senza restare in attesa per sempre.
+api.MapPost("/engagements/{id}/retest/close", (
+    string id,
+    HttpContext context,
+    IEngagementRepository repository,
+    EngagementWorkflow workflow,
+    IDateProvider clock) =>
+{
+    var user = GetUser(context);
+
+    if (user.Role is not (Roles.Manager or Roles.PMO))
+        return Forbidden();
+
+    var engagement = Find(repository, id, user);
+
+    if (engagement is null)
+        return Results.NotFound();
+
+    if (workflow.Resolve(engagement, clock.Today) != EngagementPhase.Retest)
+        return Results.BadRequest(
+            "Il retest non è in attesa: non c'è niente da chiudere.");
+
+    if (engagement.RetestReport is not null ||
+        engagement.RetestReportSentDate is not null)
+    {
+        return Results.BadRequest(
+            "Il retest è già stato eseguito: non c'è niente da chiudere.");
+    }
+
+    if (engagement.RetestClosedDate is not null)
+        return Results.Conflict("Il retest è già stato chiuso senza esecuzione.");
+
+    engagement.RetestClosedDate = clock.UtcNow;
+    engagement.RetestClosedByName = user.Name;
+
+    engagement.AddAudit(
+        user.Name,
+        user.Role,
+        "Retest chiuso senza esecuzione: l'attività è conclusa",
         AuditVisibility.All);
 
     repository.Save(engagement);
@@ -3309,6 +3386,17 @@ api.MapPost("/engagements/{id}/solicitations", (
 app.MapFallbackToFile("index.html");
 
 app.Run();
+
+/// <summary>Email minima ma uniforme in tutto il portale: una @ seguita da un punto.</summary>
+static bool IsEmail(string? value)
+{
+    var email = value?.Trim() ?? string.Empty;
+    var at = email.IndexOf('@');
+
+    return at > 0 &&
+        at < email.Length - 1 &&
+        email.IndexOf('.', at) > at + 1;
+}
 
 static UserContext GetUser(HttpContext context)
 {
@@ -3614,8 +3702,17 @@ static object? MapRetest(
                 date = engagement.RetestReport.Date.ToString("yyyy-MM-dd")
             },
         SentDate = engagement.RetestReportSentDate?.ToString("yyyy-MM-dd"),
-        // Il flag si decide nel Setup e resta modificabile fino alla richiesta.
-        CanEditFlag = user.Role is (Roles.Manager or Roles.PMO) && !requested,
+        ClosedDate = engagement.RetestClosedDate?.ToString("yyyy-MM-dd"),
+        ClosedBy = engagement.RetestClosedByName,
+        // Il flag si decide nel Setup e resta modificabile fino alla richiesta,
+        // ma non su un'attività già conclusa.
+        CanEditFlag = user.Role is (Roles.Manager or Roles.PMO) &&
+            !requested &&
+            phase != EngagementPhase.Done,
+        CanClose = user.Role is (Roles.Manager or Roles.PMO) &&
+            phase == EngagementPhase.Retest &&
+            engagement.RetestReport is null &&
+            engagement.RetestClosedDate is null,
         CanRequest = user.Role == Roles.Client &&
             engagement.RetestPlanned &&
             !requested &&

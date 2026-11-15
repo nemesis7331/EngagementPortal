@@ -56,11 +56,4 @@ public static class Access
                 engagement.ClientId == user.ClientId)
             .ToList();
 
-    public static IReadOnlyList<ClientAccount> VisibleClients(
-        IClientRepository repository,
-        UserContext user) =>
-        repository
-            .List()
-            .Where(client => CanAccessClient(user, client.Id))
-            .ToList();
 }
