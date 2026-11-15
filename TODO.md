@@ -65,7 +65,7 @@ mantenibilità). La Fase 1 è stata completata.
 ## Fase 3 — da fare (più impegnativa)
 
 5. Spezzare le funzioni di render lunghe (`renderDetail` ~180 righe,
-   `renderKpi` ~190, `tabReports` ~130).
+   `renderKpi` → oggi `dash*` della Dashboard, `tabReports` ~130).
 6. README non normativo su RACI, elenco endpoint e dataset (invecchiano a ogni
    modifica).
 

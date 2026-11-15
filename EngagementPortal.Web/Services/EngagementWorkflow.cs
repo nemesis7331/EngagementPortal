@@ -424,7 +424,7 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
     }
 
     /// <summary>
-    /// Stato unico mostrato in lista, dettaglio e KPI. Il colore non viene
+    /// Stato unico mostrato in lista, dettaglio e Dashboard. Il colore non viene
     /// deciso qui: la UI traduce <see cref="ActionState.Kind"/> nei token
     /// semantici (action, waiting, progress, done, blocked, neutral).
     /// </summary>

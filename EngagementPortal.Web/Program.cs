@@ -452,16 +452,10 @@ api.MapDelete("/users/{id}/assignments/{type}/{targetId}", (
     return Results.NoContent();
 });
 
-api.MapGet("/activity-types", (
-    HttpContext context,
-    ActivityTypes activities) =>
-{
-    var current = GetUser(context);
-
-    return current.Role == Roles.Client
-        ? Forbidden()
-        : Results.Ok(activities.All());
-});
+// Catalogo in sola lettura per tutti i profili: serve a mostrare etichetta e
+// sigla dei tipi (anche quelli creati da Amministrazione) nelle liste.
+api.MapGet("/activity-types", (ActivityTypes activities) =>
+    Results.Ok(activities.All()));
 
 api.MapPost("/activity-types", (
     ActivityTypeRequest request,

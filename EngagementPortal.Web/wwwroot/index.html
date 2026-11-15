@@ -237,11 +237,37 @@ table{width:100%;border-collapse:collapse}th{text-align:left;font-size:var(--fs-
 .obj-period{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--surface-3);border-radius:var(--radius-sm);padding:3px 10px;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--brand-900);white-space:nowrap;vertical-align:middle}.obj-period svg{width:13px;height:13px;fill:var(--muted-2);flex:none}.obj-period .arrow{color:var(--muted-2);font-weight:var(--fw-regular)}.obj-period.live{border-color:var(--st-progress-border);background:var(--st-progress-bg)}/* Deliverable: icona per tipologia + nome + stato */
 .obj-doc{display:inline-flex;align-items:center;gap:8px;min-width:0;vertical-align:middle}.obj-doc .ic{width:28px;height:28px;border-radius:var(--radius-sm);display:grid;place-items:center;flex:none;border:1px solid var(--brand-100);background:var(--brand-50);color:var(--brand-700)}.obj-doc .ic svg{width:16px;height:16px;fill:currentColor}.obj-doc .nm{font-size:var(--fs-md);font-weight:var(--fw-semibold);color:var(--brand-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.obj-doc .ver{font-size:var(--fs-2xs);font-weight:var(--fw-black);color:var(--muted-2)}.obj-doc .st{font-size:var(--fs-2xs);font-weight:var(--fw-black);border-radius:var(--radius-pill);padding:1px 8px;border:1px solid;white-space:nowrap}.obj-doc .st.ok{background:var(--st-done-bg);color:var(--st-done);border-color:var(--st-done-border)}.obj-doc .st.draft{background:var(--surface-2);color:var(--muted);border-color:var(--line)}.obj-doc .ic.exec{background:#e7f1fc;border-color:#cfe0f5;color:#1a5f9e}.obj-doc .ic.tech{background:#f3eefc;border-color:#ddd0f7;color:#5b34b5}.obj-doc .ic.act{background:#eafaf1;border-color:#bcdfce;color:#0b6b45}.obj-doc .ic.retest{background:#e9f7fa;border-color:#bfe6ee;color:#0b6b7c}.obj-doc .ic.custom{background:#fff5d6;border-color:#ead48a;color:#8a5b00}/* Engagement: pastiglia compatta (tipo,nome,cliente,avanzamento ad anello) */
 .eng-pill{display:inline-flex;align-items:center;gap:8px;height:28px;max-width:100%;border:1px solid var(--line);background:#fff;border-radius:var(--radius-pill);padding:0 10px 0 3px;box-shadow:0 1px 2px rgba(6,29,54,.04);vertical-align:middle}.eng-pill .nm{font-size:var(--fs-md);font-weight:var(--fw-semibold);color:var(--brand-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}.eng-pill .cli{width:18px;height:18px;border-radius:50%;flex:none;overflow:hidden;background:var(--brand-50);border:1px solid var(--brand-100);display:grid;place-items:center;position:relative}.eng-pill .cli img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#fff}.eng-pill .ring{width:17px;height:17px;flex:none;display:block}.eng-pill .ring svg{width:100%;height:100%;transform:rotate(-90deg)}.eng-pill .ring circle{fill:none;stroke-width:4}.eng-pill .ring .track{stroke:var(--surface-2)}.eng-pill .ring .fill{stroke:var(--brand-600);stroke-linecap:round}.eng-pill.late .ring .fill{stroke:var(--st-action)}.eng-pill .obj-type{width:20px;height:20px;border-radius:6px}
-@media(max-width:700px){.obj-client .nm{max-width:120px}}.admin-users-table .obj-person{vertical-align:middle}.admin-users-table .em{display:block;font-size:var(--fs-2xs);color:var(--muted);margin:2px 0 0 34px}.kpi-table .obj-client{pointer-events:none}/* ====== KPI: tessere,barre e tabelle ====== */
-.kpi-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin:16px 0}.kpi-card{background:#fff;border:1px solid var(--line);border-left:4px solid var(--brand-500);border-radius:var(--radius-lg);padding:11px 13px;min-width:0}.kpi-card b{display:block;font-size:var(--fs-stat);line-height:1.1;color:var(--brand-900)}.kpi-card span{display:block;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--muted)}.kpi-card small{display:block;margin-top:3px;font-size:var(--fs-2xs);color:var(--muted-2);overflow-wrap:anywhere}.kpi-card.a{border-left-color:var(--st-action)}.kpi-card.a b{color:var(--st-action)}.kpi-card.w{border-left-color:var(--st-wait)}.kpi-card.w b{color:var(--st-wait)}.kpi-card.r{border-left-color:var(--st-risk)}.kpi-card.r b{color:var(--st-risk)}.kpi-card.n{border-left-color:var(--brand-900)}.kpi-cols{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:14px;align-items:start;margin-bottom:14px}.kpi-col{display:grid;gap:14px;align-content:start;min-width:0}.kpi-panel{background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow);padding:14px;min-width:0;margin-bottom:14px}.kpi-cols .kpi-panel{margin-bottom:0}.kpi-panel > h2{margin:0 0 4px;font-size:var(--fs-lg)}.kpi-panel > .hint{margin:0 0 10px}.kpi-table{width:100%;border-collapse:collapse;font-size:var(--fs-md)}.kpi-table caption{text-align:left}.kpi-table th{text-align:left;font-size:var(--fs-2xs);text-transform:uppercase;letter-spacing:var(--tracking-caps);color:var(--muted-2);font-weight:var(--fw-black);padding:7px 9px;border-bottom:1px solid var(--line);white-space:nowrap}.kpi-table td{padding:9px;border-bottom:1px solid var(--line-soft);vertical-align:middle}.kpi-table tbody tr[data-act]{cursor:pointer}.kpi-table tbody tr[data-act]:hover{background:var(--surface-3)}.kpi-table .name b{display:block;font-size:var(--fs-md);color:var(--brand-900);line-height:1.25}.kpi-table .name span{display:block;font-size:var(--fs-2xs);color:var(--muted)}.kpi-num{display:inline-block;min-width:22px;font-weight:var(--fw-bold);color:var(--brand-900)}.kpi-bar{display:block;height:6px;border-radius:var(--radius-pill);background:var(--surface-2);overflow:hidden;margin-top:4px;min-width:60px}.kpi-bar i{display:block;height:100%;background:var(--brand-500);border-radius:var(--radius-pill)}
-@media(max-width:1400px){.kpi-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:700px){.obj-client .nm{max-width:120px}}.admin-users-table .obj-person{vertical-align:middle}.admin-users-table .em{display:block;font-size:var(--fs-2xs);color:var(--muted);margin:2px 0 0 34px}.kpi-table .obj-client{pointer-events:none}/* ====== PANNELLI, BARRE E TABELLE ====== */
+.kpi-cols{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:14px;align-items:start;margin-bottom:14px}.kpi-col{display:grid;gap:14px;align-content:start;min-width:0}.kpi-panel{background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow);padding:14px;min-width:0;margin-bottom:14px}.kpi-cols .kpi-panel{margin-bottom:0}.kpi-panel > h2{margin:0 0 4px;font-size:var(--fs-lg)}.kpi-panel > .hint{margin:0 0 10px}.kpi-table{width:100%;border-collapse:collapse;font-size:var(--fs-md)}.kpi-table caption{text-align:left}.kpi-table th{text-align:left;font-size:var(--fs-2xs);text-transform:uppercase;letter-spacing:var(--tracking-caps);color:var(--muted-2);font-weight:var(--fw-black);padding:7px 9px;border-bottom:1px solid var(--line);white-space:nowrap}.kpi-table td{padding:9px;border-bottom:1px solid var(--line-soft);vertical-align:middle}.kpi-table tbody tr[data-act]{cursor:pointer}.kpi-table tbody tr[data-act]:hover{background:var(--surface-3)}.kpi-table .name b{display:block;font-size:var(--fs-md);color:var(--brand-900);line-height:1.25}.kpi-table .name span{display:block;font-size:var(--fs-2xs);color:var(--muted)}.kpi-num{display:inline-block;min-width:22px;font-weight:var(--fw-bold);color:var(--brand-900)}.kpi-bar{display:block;height:6px;border-radius:var(--radius-pill);background:var(--surface-2);overflow:hidden;margin-top:4px;min-width:60px}.kpi-bar i{display:block;height:100%;background:var(--brand-500);border-radius:var(--radius-pill)}
 @media(max-width:1100px){.kpi-cols{grid-template-columns:minmax(0,1fr)}.kpi-panel{overflow-x:auto}}
-@media(max-width:780px){.kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* ====== DASHBOARD: pannelli e tabelle ====== */
+.dash-panel-head{display:flex;align-items:baseline;gap:8px;margin:0 0 3px}
+.dash-panel-head h2{margin:0}
+.dash-table .name b{display:block}
+/* Colonne compatte: nome e metadati dell'engagement su una riga sola. */
+.dash-table td{padding:7px 9px;vertical-align:top}
+.dash-eng{min-width:170px;max-width:260px;line-height:1.3}
+.dash-eng > span{display:block;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dash-eng .obj-type{width:22px;height:22px;margin-right:2px}
+.dash-table .phase{min-width:0;max-width:100%}
+.dash-table .phase-name{overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.dash-table .pill{padding:2px 8px}
+.dash-task{white-space:normal;min-width:170px;max-width:300px;color:var(--brand-900)}
+.dash-task span{display:block;margin-top:2px;font-size:var(--fs-2xs);color:var(--muted)}
+.dash-flags{display:flex;flex-wrap:wrap;gap:5px;min-width:180px;white-space:normal}
+.dash-go{text-align:right;color:var(--muted-2);font-weight:var(--fw-bold)}
+.dash-mute{color:var(--muted)}
+.dash-date.late{color:var(--st-negative);font-weight:var(--fw-semibold)}
+.kpi-table tbody tr.is-late td:first-child{box-shadow:inset 3px 0 0 var(--st-risk)}
+.dash-phases{display:grid;gap:7px;margin-top:6px}
+.dash-phase{display:grid;grid-template-columns:minmax(88px,120px) minmax(0,1fr) 26px 88px;align-items:center;gap:9px;font-size:var(--fs-sm)}
+.dash-phase b{font-weight:var(--fw-semibold);color:var(--brand-900);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dash-phase .kpi-bar{margin-top:0}
+.dash-phase-num{text-align:right;font-weight:var(--fw-bold);color:var(--brand-900)}
+.dash-phase-note{font-size:var(--fs-2xs);color:var(--st-action)}
+.dash-panel-foot{margin:10px 0 0;display:flex;justify-content:flex-end}
+@media(max-width:820px){.dash-opt{display:none}}
 /* ====== TIPI DI ATTIVITÀ ====== */
 .admin-table.act-table{table-layout:auto}
 .act-table td{vertical-align:middle}
@@ -339,13 +365,13 @@ table{width:100%;border-collapse:collapse}th{text-align:left;font-size:var(--fs-
     <nav class="app-nav">
       <div class="nav-group" data-group="portal">
         <div class="nav-label">Portale</div>
+        <button class="nav-item" data-act="nav" data-nav="dashboard" data-view="dashboard" title="Dashboard"><svg class="nav-ico" aria-hidden="true"><use href="#i-report"></use></svg><span class="nav-txt">Dashboard</span></button>
         <button class="nav-item" data-act="nav" data-nav="list" data-view="list" title="Engagement"><svg class="nav-ico" aria-hidden="true"><use href="#i-list"></use></svg><span class="nav-txt">Engagement</span></button>
         <button class="nav-item nav-sub" data-act="nav" data-nav="todo" data-view="list" data-filter="action" title="Da gestire ora"><svg class="nav-ico" aria-hidden="true"><use href="#i-check"></use></svg><span class="nav-txt">Da gestire</span><span class="nav-count" hidden>0</span></button>
         <button class="nav-item nav-sub" data-act="nav" data-nav="waiting" data-view="list" data-filter="waiting" title="In attesa di cliente, manager o altri soggetti"><svg class="nav-ico" aria-hidden="true"><use href="#i-clock"></use></svg><span class="nav-txt">In attesa di terzi</span><span class="nav-count" hidden>0</span></button>
         <button class="nav-item" data-act="nav" data-nav="clients" data-view="clients" title="Clienti"><svg class="nav-ico" aria-hidden="true"><use href="#i-team"></use></svg><span class="nav-txt">Clienti</span></button>
         <button class="nav-item" data-act="nav" data-nav="calendar" data-view="calendar" title="Calendario"><svg class="nav-ico" aria-hidden="true"><use href="#i-cal"></use></svg><span class="nav-txt">Calendario</span></button>
         <button class="nav-item" data-act="nav" data-nav="solicitations" data-view="solicitations" title="Solleciti"><svg class="nav-ico" aria-hidden="true"><use href="#i-play"></use></svg><span class="nav-txt">Solleciti</span></button>
-        <button class="nav-item" data-act="nav" data-nav="kpi" data-view="kpi" title="KPI e andamento"><svg class="nav-ico" aria-hidden="true"><use href="#i-report"></use></svg><span class="nav-txt">KPI e andamento</span></button>
       </div>
       <div class="nav-group" data-group="admin" hidden>
         <div class="nav-label">Amministrazione</div>
@@ -501,7 +527,7 @@ const state = {
   role: demoRole || localStorage.getItem('cep.role') || 'Pentester',
   clientId: demoClient !== null ? demoClient : (localStorage.getItem('cep.client') || ''),
   sideCollapsed: localStorage.getItem('cep.sideCollapsed') === '1',
-  view: 'list',
+  view: 'dashboard',
   listTab: 'eng',
   listFilter: 'all',
   listQuery: '',
@@ -666,7 +692,7 @@ function hostOf(website) {
    Cliente, persona, tipo, stato, periodo e deliverable si disegnano con queste
    funzioni: nome, icona e colori restano coerenti in tutte le schermate. */
 // Oltre questa soglia un'azione o un'attesa è "ferma".
-const KPI_LATE_DAYS = 5;
+const STALE_DAYS = 5;
 const TYPE_SHORT = {
   PenetrationTest: 'PT',
   VulnerabilityAssessment: 'VA',
@@ -790,7 +816,7 @@ function engPill(e, opts = {}) {
   const percent = Math.round((index / total) * 100);
   const late = opts.late !== undefined
     ? opts.late
-    : daysSince((actionState(e) || {}).since) >= KPI_LATE_DAYS;
+    : daysSince((actionState(e) || {}).since) >= STALE_DAYS;
   const client = clientFor(e);
   const src = faviconUrl(client && client.website);
 
@@ -1010,7 +1036,6 @@ function updateNav() {
     const view = item.dataset.view;
     let show = true;
     if (view === 'clients' || view === 'solicitations') show = internal;
-    if (view === 'kpi') show = canUseAdminTab('users');
     if (view === 'admin') show = canUseAdminTab(item.dataset.tab);
     item.hidden = !show;
   });
@@ -1078,11 +1103,11 @@ function updateNav() {
     state.view === 'list' && state.listFilter === 'action' ? 'Da gestire'
       : state.view === 'list' && state.listFilter === 'waiting' ? 'In attesa di terzi'
         : {
+          dashboard: 'Dashboard',
           list: 'Engagement',
           clients: 'Clienti',
           calendar: 'Calendario',
           solicitations: 'Solleciti',
-          kpi: 'KPI e andamento',
           users: 'Utenti'
         }[state.view] || 'Engagement';
 }
@@ -1185,7 +1210,7 @@ function setDemoUser(id) {
   state.role = user.role;
   state.clients = [];
   state.clientId = user.role === 'Client' ? (user.clientId || '') : '';
-  state.view = 'list';
+  state.view = 'dashboard';
   state.detail = null;
   state.tab = 'docs';
   state.listTab = 'eng';
@@ -1228,7 +1253,7 @@ async function setRole(role) {
   } else {
     state.clientId = '';
   }
-  state.view = 'list';
+  state.view = 'dashboard';
   state.detail = null;
   state.tab = 'docs';
   state.listTab = 'eng';
@@ -1845,205 +1870,427 @@ function renderList() {
     </section>`;
 }
 
-/* ====== KPI E ANDAMENTO ====== */
-// Pannello di sintesi per Manager e PMO: carico per cliente, fase, ritardi e
-// rischi. Legge l'elenco engagement già filtrato dal cliente in header.
-function kpiAge(e) {
+/* ====== DASHBOARD ====== */
+// Prima schermata del portale: cosa c'è da fare adesso, cosa parte a breve e
+// dove il flusso è fermo. Legge l'elenco già filtrato per profilo (e per
+// cliente, se scelto in header), quindi le stesse tabelle servono a Manager,
+// PMO, Pentester, Auditor e Cliente.
+const DASHBOARD_PILL = {
+  action: 'action',
+  waiting: 'warn',
+  wait: 'warn',
+  progress: 'info',
+  done: 'ok',
+  blocked: 'mute',
+  neutral: 'mute'
+};
+const PHASES = [
+  ['Setup', 'Setup'],
+  ['Docs', 'Documenti e dati'],
+  ['Scope', 'Scope'],
+  ['Planning', 'Pianificazione'],
+  ['Credentials', 'Credenziali'],
+  ['Scheduled', 'Pianificato'],
+  ['Running', 'In esecuzione'],
+  ['Reporting', 'Report'],
+  ['Retest', 'Retest'],
+  ['RetestReporting', 'Report del retest'],
+  ['Done', 'Concluso']
+];
+
+function plural(count, one, many) {
+  return `${count} ${count === 1 ? one : many}`;
+}
+
+function dashPill([text, kind]) {
+  return pill([text, DASHBOARD_PILL[kind] || kind || 'mute']);
+}
+
+function dashAge(e) {
   const s = actionState(e);
   if (!s || (s.kind !== 'action' && s.kind !== 'waiting')) return 0;
   return daysSince(s.since) || 0;
 }
 
-
-function kpiBar(count, max) {
-  const width = max > 0 ? Math.round((count / max) * 100) : 0;
-  return `<span class="kpi-bar"><i style="width:${width}%"></i></span>`;
+// Giorni all'avvio: negativo se la data è già passata.
+function dashDaysToStart(e) {
+  if (!e.periodStart) return null;
+  const start = new Date(String(e.periodStart).substring(0, 10) + 'T00:00:00');
+  if (Number.isNaN(start.getTime())) return null;
+  const now = new Date(today() + 'T00:00:00');
+  return Math.round((start - now) / 86400000);
 }
 
-function kpiRow(e, extra) {
-  return `<tr data-act="open" data-id="${esc(e.id)}">
-    <td class="name"><b>${esc(e.name)}</b><span>${esc(e.id)} · ${esc(e.clientName)}</span></td>
-    ${extra}
-  </tr>`;
+// Engagement: nome, tipo e identificativo, come nelle altre tabelle.
+function dashEngCell(e) {
+  return `<td class="name dash-eng"><b>${esc(e.name)}</b><span>${typeBadge(e.type)} ${esc(e.id)}</span></td>`;
 }
 
-function renderKpi() {
-  const all = state.list || [];
-  const kindOf = e => (actionState(e) || {}).kind;
-  const active = all.filter(e => e.phase !== 'Done');
-  const action = all.filter(e => kindOf(e) === 'action');
-  const waiting = all.filter(e => kindOf(e) === 'waiting');
-  const atRisk = all.filter(e => e.preparationAlert);
-  const late = all.filter(e => kpiAge(e) >= KPI_LATE_DAYS);
-  const lateDays = late.reduce((sum, e) => sum + kpiAge(e), 0);
-  const done = all.filter(e => e.phase === 'Done');
-  const upcoming = active
-    .filter(e => e.periodStart && e.periodStart >= today())
-    .sort((a, b) => a.periodStart.localeCompare(b.periodStart));
-  const next = upcoming[0] || null;
+function dashPanel(title, count, hint, body, tag = '') {
+  return `<section class="kpi-panel${tag}">
+    <div class="dash-panel-head"><h2>${esc(title)}</h2><span class="cnt">${count}</span></div>
+    ${hint ? `<p class="hint">${hint}</p>` : ''}
+    ${body}
+  </section>`;
+}
 
-  // --- per cliente ---
-  const clients = new Map();
-  for (const e of all) {
-    const row = clients.get(e.clientId) || {
+function dashEmptyRow(cols, text) {
+  return `<tr><td colspan="${cols}"><div class="empty">${esc(text)}</div></td></tr>`;
+}
+
+// 1. Richieste da gestire: le azioni aperte per il profilo attivo.
+function dashRequestsHTML() {
+  const list = (state.list || [])
+    .filter(e => (actionState(e) || {}).kind === 'action')
+    .sort((a, b) => dashAge(b) - dashAge(a) || String(a.name).localeCompare(String(b.name)));
+
+  const rows = list.map(e => {
+    const s = actionState(e) || {};
+    const days = dashAge(e);
+    const start = dashDaysToStart(e);
+    const stale = days >= STALE_DAYS;
+    const kind = stale ? 'negative' : days >= 3 ? 'wait' : 'neutral';
+
+    return `<tr class="${stale ? 'is-late' : ''}"
+        data-act="open-action" data-id="${esc(e.id)}" data-tab="${esc(s.targetTab || '')}"
+        title="Apri ${esc(e.name)}${s.targetTab ? ' sul passo da completare' : ''}">
+      ${dashEngCell(e)}
+      <td>${clientChip(e.clientId)}</td>
+      <td class="dash-opt">${phaseCell(e)}</td>
+      <td class="dash-task">${esc(s.label || 'Richiesta aperta')}<span>${esc(s.ownerLabel || '')}</span></td>
+      <td class="dash-opt">${start === null
+        ? '<span class="dash-mute">–</span>'
+        : `<span class="dash-date${start < 0 ? ' late' : ''}">${fmt(e.periodStart)}</span>`}</td>
+      <td>${dashPill([days === 0 ? 'oggi' : `${days} gg`, kind])}</td>
+      <td class="dash-go dash-opt" aria-hidden="true">→</td>
+    </tr>`;
+  }).join('');
+
+  const empty = state.role === 'Auditor'
+    ? 'Profilo di sola lettura: nessuna richiesta da gestire.'
+    : 'Nessuna richiesta aperta per il tuo profilo.';
+  const stale = list.some(e => dashAge(e) >= STALE_DAYS)
+    ? ` In rosso oltre ${STALE_DAYS} giorni.`
+    : '';
+
+  return dashPanel(
+    'Richieste da gestire',
+    list.length,
+    `Cosa aspetta il tuo profilo, dalla richiesta più vecchia: la riga apre il passo da completare.${stale}`,
+    `<div class="tablewrap"><table class="kpi-table dash-table">
+      <caption class="sr-only">Richieste da gestire per il profilo attivo</caption>
+      <thead><tr><th>Engagement</th><th>Cliente</th><th class="dash-opt">Fase</th><th>Richiesta</th><th class="dash-opt">Avvio</th><th>Ferma da</th><th class="dash-opt"></th></tr></thead>
+      <tbody>${rows || dashEmptyRow(7, empty)}</tbody>
+    </table></div>`);
+}
+
+// 2. Prossimi avvii: date accettate da qui in avanti, con i segnali che
+//    possono far slittare la partenza.
+function dashStartsHTML() {
+  const reference = today();
+  const upcoming = (state.list || [])
+    .filter(e => e.periodStart && String(e.periodStart).substring(0, 10) >= reference)
+    .sort((a, b) => String(a.periodStart).localeCompare(String(b.periodStart)));
+  const openDue = id => (state.due || [])
+    .filter(item => item.engagementId === id && !item.sentToday);
+
+  const rows = upcoming.slice(0, 10).map(e => {
+    const s = actionState(e) || {};
+    const days = dashDaysToStart(e) ?? 0;
+    const alert = e.preparationAlert || null;
+    const missing = (alert && alert.missing ? alert.missing : [])
+      .map(item => item === 'scope' ? 'Scope' : 'Credenziali');
+    const flags = [];
+
+    if (missing.length) {
+      flags.push(`<span class="pill p-negative" title="Preparazione incompleta a ridosso dell'avvio">Manca ${esc(missing.join(' e '))}</span>`);
+    }
+    if (s.kind === 'action') {
+      flags.push(`<span class="pill p-action" title="${esc(s.label || '')}">Richiesta aperta</span>`);
+    }
+    if (e.pendingProposal) {
+      flags.push('<span class="pill p-warn">Date da approvare</span>');
+    }
+    const due = openDue(e.id);
+    if (due.length) {
+      flags.push(`<span class="pill p-warn" title="Solleciti da inviare">${due.length} sollecit${due.length === 1 ? 'o' : 'i'}</span>`);
+    }
+
+    const urgent = !!alert || days <= 3;
+    const dayKind = alert ? 'negative' : days <= 7 ? 'wait' : 'neutral';
+
+    return `<tr class="${urgent ? 'is-late' : ''}" data-act="open" data-id="${esc(e.id)}">
+      ${dashEngCell(e)}
+      <td>${esc(e.clientName || '')}</td>
+      <td>${periodBox(e.periodStart, e.periodEnd)}</td>
+      <td>${dashPill([days === 0 ? 'oggi' : days === 1 ? 'domani' : `${days} gg`, dayKind])}</td>
+      <td class="dash-opt">${phaseCell(e)}</td>
+      <td class="dash-flags">${flags.join('') || '<span class="dash-mute">Nessuna criticità</span>'}</td>
+      <td class="dash-opt">${objState(e)}</td>
+    </tr>`;
+  }).join('');
+
+  return dashPanel(
+    'Prossimi avvii',
+    upcoming.length,
+    'Date accettate da qui in avanti: le colonne a destra segnalano cosa può far slittare la partenza.',
+    `<div class="tablewrap"><table class="kpi-table dash-table">
+      <caption class="sr-only">Engagement con avvio pianificato e criticità aperte</caption>
+      <thead><tr><th>Engagement</th><th>Cliente</th><th>Periodo</th><th>Avvio tra</th><th class="dash-opt">Fase</th><th>Criticità</th><th class="dash-opt">Stato</th></tr></thead>
+      <tbody>${rows || dashEmptyRow(7, 'Nessuna data di avvio pianificata.')}</tbody>
+    </table></div>`);
+}
+
+// 3. In attesa di terzi: il flusso non dipende dal profilo attivo.
+function dashWaitingHTML() {
+  const list = (state.list || [])
+    .filter(e => (actionState(e) || {}).kind === 'waiting')
+    .sort((a, b) => dashAge(b) - dashAge(a));
+
+  const rows = list.map(e => {
+    const s = actionState(e) || {};
+    const days = dashAge(e);
+    return `<tr data-act="open" data-id="${esc(e.id)}">
+      ${dashEngCell(e)}
+      <td class="dash-task">${esc(s.label || '—')}</td>
+      <td class="dash-opt">${esc(s.ownerLabel || '—')}</td>
+      <td>${dashPill([days === 0 ? 'oggi' : `${days} gg`, days >= STALE_DAYS ? 'wait' : 'neutral'])}</td>
+    </tr>`;
+  }).join('');
+
+  return dashPanel(
+    'In attesa di terzi',
+    list.length,
+    'Cosa aspetta cliente, PMO, Manager o Pentester: dalla più vecchia.',
+    `<div class="tablewrap"><table class="kpi-table dash-table">
+      <caption class="sr-only">Engagement in attesa di altri soggetti</caption>
+      <thead><tr><th>Engagement</th><th>Si aspetta</th><th class="dash-opt">Chi</th><th>Da</th></tr></thead>
+      <tbody>${rows || dashEmptyRow(4, 'Nessuna attesa aperta.')}</tbody>
+    </table></div>`);
+}
+
+// 4. Dove sono gli engagement: conteggio per fase del workflow.
+function dashPhasesHTML() {
+  const list = state.list || [];
+  const counts = new Map(PHASES.map(([key]) => [key, 0]));
+  const actions = new Map();
+
+  for (const e of list) {
+    if (!counts.has(e.phase)) continue;
+    counts.set(e.phase, counts.get(e.phase) + 1);
+    if ((actionState(e) || {}).kind === 'action') {
+      actions.set(e.phase, (actions.get(e.phase) || 0) + 1);
+    }
+  }
+
+  const max = Math.max(1, ...counts.values());
+  const rows = PHASES
+    .filter(([key]) => (counts.get(key) || 0) > 0)
+    .map(([key, label]) => {
+      const count = counts.get(key) || 0;
+      const open = actions.get(key) || 0;
+      return `<div class="dash-phase">
+        <b title="${esc(label)}">${esc(label)}</b>
+        <span class="kpi-bar"><i style="width:${Math.round((count / max) * 100)}%"></i></span>
+        <span class="dash-phase-num">${count}</span>
+        <span class="dash-phase-note">${open ? `${open} da gestire` : ''}</span>
+      </div>`;
+    }).join('');
+
+  return dashPanel(
+    'Engagement per fase',
+    list.length,
+    'Distribuzione del portafoglio visibile: la nota conta le richieste aperte in quella fase.',
+    rows ? `<div class="dash-phases">${rows}</div>` : '<div class="empty">Nessun engagement.</div>');
+}
+
+// 5. Portafoglio per cliente (Manager, PMO e profili interni).
+function dashClientsHTML() {
+  const map = new Map();
+
+  for (const e of state.list || []) {
+    const row = map.get(e.clientId) || {
       id: e.clientId, name: e.clientName,
-      total: 0, active: 0, action: 0, waiting: 0, risk: 0, done: 0, late: 0, next: null
+      total: 0, action: 0, waiting: 0, late: 0, next: null
     };
+    const kind = (actionState(e) || {}).kind;
     row.total += 1;
-    if (e.phase === 'Done') row.done += 1; else row.active += 1;
-    if (kindOf(e) === 'action') row.action += 1;
-    if (kindOf(e) === 'waiting') row.waiting += 1;
-    if (e.preparationAlert) row.risk += 1;
-    if (kpiAge(e) >= KPI_LATE_DAYS) row.late += 1;
-    if (e.periodStart && e.periodStart >= today() && (!row.next || e.periodStart < row.next)) {
+    if (kind === 'action') row.action += 1;
+    if (kind === 'waiting') row.waiting += 1;
+    if (dashAge(e) >= STALE_DAYS) row.late += 1;
+    if (e.periodStart && String(e.periodStart).substring(0, 10) >= today() &&
+        (!row.next || e.periodStart < row.next)) {
       row.next = e.periodStart;
     }
-    clients.set(e.clientId, row);
+    map.set(e.clientId, row);
   }
-  const clientRows = [...clients.values()].sort((a, b) => b.total - a.total);
-  const maxClient = Math.max(1, ...clientRows.map(c => c.total));
 
-  // --- per responsabile ---
-  const owners = new Map();
-  for (const e of all) {
-    const key = e.owner || '—';
-    const row = owners.get(key) || { name: key, total: 0, active: 0, action: 0, late: 0 };
+  const rows = [...map.values()]
+    .sort((a, b) => b.total - a.total || String(a.name || '').localeCompare(String(b.name || '')))
+    .map(row => `<tr data-act="dashboard-client" data-client="${esc(row.id)}" title="Filtra la dashboard su ${esc(row.name)}">
+      <td class="name">${clientChip(row.id)}</td>
+      <td><span class="kpi-num">${row.total}</span></td>
+      <td>${row.action ? `<span class="pill p-action">${row.action}</span>` : '<span class="dash-mute">–</span>'}</td>
+      <td>${row.waiting ? `<span class="pill p-warn">${row.waiting}</span>` : '<span class="dash-mute">–</span>'}</td>
+      <td>${row.late ? `<span class="pill p-negative">${row.late}</span>` : '<span class="dash-mute">–</span>'}</td>
+      <td>${row.next ? fmt(row.next) : '<span class="dash-mute">–</span>'}</td>
+    </tr>`).join('');
+
+  return dashPanel(
+    'Engagement per cliente',
+    map.size,
+    'Carico e criticità per cliente: la riga imposta il filtro globale.',
+    `<div class="tablewrap"><table class="kpi-table dash-table">
+      <caption class="sr-only">Engagement per cliente</caption>
+      <thead><tr><th>Cliente</th><th>Totale</th><th>Da gestire</th><th>In attesa</th><th>Fermi</th><th>Prossimo avvio</th></tr></thead>
+      <tbody>${rows || dashEmptyRow(6, 'Nessun cliente visibile.')}</tbody>
+    </table></div>`);
+}
+
+// 6. Portafoglio per tipo di attività: utile a chi non segue l'intero team.
+function dashTypesHTML() {
+  const map = new Map();
+
+  for (const e of state.list || []) {
+    const key = e.type || 'unknown';
+    const row = map.get(key) || { key, total: 0, active: 0, action: 0, late: 0 };
+    const kind = (actionState(e) || {}).kind;
     row.total += 1;
     if (e.phase !== 'Done') row.active += 1;
-    if (kindOf(e) === 'action') row.action += 1;
-    if (kpiAge(e) >= KPI_LATE_DAYS) row.late += 1;
-    owners.set(key, row);
+    if (kind === 'action') row.action += 1;
+    if (dashAge(e) >= STALE_DAYS) row.late += 1;
+    map.set(key, row);
   }
-  const ownerRows = [...owners.values()].sort((a, b) => b.active - a.active || a.name.localeCompare(b.name));
 
-  const longest = [...action, ...waiting]
-    .sort((a, b) => kpiAge(b) - kpiAge(a))
-    .slice(0, 6);
+  const rows = [...map.values()]
+    .sort((a, b) => b.total - a.total || a.key.localeCompare(b.key))
+    .map(row => `<tr>
+      <td class="name"><b>${typeBadge(row.key)} ${esc(typeLabel(row.key))}</b></td>
+      <td>${row.total}</td>
+      <td>${row.active}</td>
+      <td>${row.action ? `<span class="pill p-action">${row.action}</span>` : '<span class="dash-mute">–</span>'}</td>
+      <td>${row.late ? `<span class="pill p-negative">${row.late}</span>` : '<span class="dash-mute">–</span>'}</td>
+    </tr>`).join('');
 
-  const lateClient = state.clientId ? ` · cliente ${esc(clientLabel(state.clientId))}` : '';
+  return dashPanel(
+    'Engagement per tipo',
+    map.size,
+    'Come si distribuisce il portafoglio visibile tra i tipi di attività.',
+    `<div class="tablewrap"><table class="kpi-table dash-table">
+      <caption class="sr-only">Engagement per tipo di attività</caption>
+      <thead><tr><th>Tipo</th><th>Totale</th><th>Attivi</th><th>Da gestire</th><th>Fermi</th></tr></thead>
+      <tbody>${rows || dashEmptyRow(5, 'Nessun engagement.')}</tbody>
+    </table></div>`);
+}
+
+// 7. Deliverable già pubblicati: per il cliente è la prima cosa che guarda.
+function dashDeliverablesHTML() {
+  const list = (state.list || [])
+    .filter(e => (Number(e.publishedCount) || 0) > 0)
+    .sort((a, b) => String(b.periodStart || '').localeCompare(String(a.periodStart || '')));
+
+  const rows = list.map(e => `<tr data-act="open-action" data-id="${esc(e.id)}" data-tab="reports"
+      title="Apri i deliverable di ${esc(e.name)}">
+      ${dashEngCell(e)}
+      <td>${pill([`${e.publishedCount} pubblicat${e.publishedCount === 1 ? 'o' : 'i'}`, 'ok'])}</td>
+      <td>${e.periodStart ? fmt(e.periodStart) : '<span class="dash-mute">–</span>'}</td>
+      <td>${objState(e)}</td>
+    </tr>`).join('');
+
+  return dashPanel(
+    'Deliverable pubblicati',
+    list.length,
+    'I documenti già disponibili: la riga apre la scheda Report.',
+    `<div class="tablewrap"><table class="kpi-table dash-table">
+      <caption class="sr-only">Deliverable pubblicati per engagement</caption>
+      <thead><tr><th>Engagement</th><th>Disponibili</th><th>Periodo</th><th>Stato</th></tr></thead>
+      <tbody>${rows || dashEmptyRow(4, 'Nessun deliverable pubblicato finora.')}</tbody>
+    </table></div>`);
+}
+
+// 8. Solleciti: le situazioni che il PMO deve sollecitare oggi.
+function dashSolicitationsHTML() {
+  const due = state.due || [];
+  const rows = due.slice(0, 6).map(item => {
+    const engagement = (state.list || []).find(e => e.id === item.engagementId);
+    return `<tr>
+      <td class="name"><b>${esc(engagement ? engagement.name : item.engagementId)}</b><span>${esc(item.clientName || '')}</span></td>
+      <td class="dash-task">${esc(item.label || '')}<span>${esc(solicitationDetail(item))}</span></td>
+      <td class="dash-opt">${esc(item.recipient || '')}</td>
+      <td>${item.sentToday
+        ? pill(['Inviato oggi', 'ok'])
+        : pill([state.role === 'PMO' ? 'Da inviare' : 'Attesa del PMO', state.role === 'PMO' ? 'action' : 'warn'])}</td>
+    </tr>`;
+  }).join('');
+
+  return dashPanel(
+    'Solleciti',
+    due.length,
+    'Le situazioni che richiedono un sollecito oggi. L\'invio è riservato al PMO.',
+    `<div class="tablewrap"><table class="kpi-table dash-table">
+      <caption class="sr-only">Solleciti dovuti oggi</caption>
+      <thead><tr><th>Engagement</th><th>Situazione</th><th class="dash-opt">Destinatario</th><th>Stato</th></tr></thead>
+      <tbody>${rows || dashEmptyRow(4, 'Nessun sollecito dovuto oggi.')}</tbody>
+    </table></div>
+    <div class="dash-panel-foot"><button class="btn sec sm" data-act="nav" data-view="solicitations">Apri i solleciti</button></div>`);
+}
+
+function renderDashboard() {
+  const all = state.list || [];
+  const active = all.filter(e => e.phase !== 'Done');
+  const requests = all.filter(e => (actionState(e) || {}).kind === 'action');
+  const waiting = all.filter(e => (actionState(e) || {}).kind === 'waiting');
+  const late = all.filter(e => dashAge(e) >= STALE_DAYS);
+  const manager = state.role === 'Manager' || state.role === 'PMO';
+  const internal = !isClient();
+  const scope = isClient() || !state.clientId
+    ? ''
+    : ` · cliente ${esc(clientLabel(state.clientId))}`;
+
+  // Box finali per profilo: chi coordina vede team e clienti, gli altri il
+  // proprio portafoglio (o i deliverable, per il cliente).
+  let extras = '';
+
+  if (manager) {
+    extras = `<div class="kpi-cols">${dashClientsHTML()}${dashSolicitationsHTML()}</div>`;
+  } else if (isClient()) {
+    extras = `<div class="kpi-cols">${dashDeliverablesHTML()}${dashTypesHTML()}</div>`;
+  } else {
+    extras = `<div class="kpi-cols">${dashSolicitationsHTML()}${dashTypesHTML()}</div>`;
+  }
 
   $('#app').innerHTML = `
     <div class="headrow">
       <div>
-        <h1>KPI e andamento</h1>
-        <p class="sub" style="margin-bottom:0">Pannello Manager e PMO${lateClient} · aggiornato al ${fmt(today())} · ${all.length} engagement</p>
+        <h1>Dashboard</h1>
+        <p class="sub" style="margin-bottom:0">
+          ${plural(active.length, 'engagement attivo', 'engagement attivi')} ·
+          ${plural(requests.length, 'richiesta aperta', 'richieste aperte')} ·
+          ${plural(waiting.length, 'attesa di terzi', 'attese di terzi')}${late.length ? ` · ${plural(late.length, `fermo da ${STALE_DAYS}+ giorni`, `fermi da ${STALE_DAYS}+ giorni`)}` : ''}${scope} ·
+          aggiornata al ${fmt(today())}
+        </p>
       </div>
       <div class="head-acts">
-        <button class="btn sec" data-act="nav" data-view="list">Vai alla lista</button>
-        <button class="btn sec" data-act="nav" data-view="solicitations">Solleciti · ${state.due.length}</button>
+        ${manager ? '<button class="btn pri" data-act="new-engagement">+ Nuovo engagement</button>' : ''}
+        <button class="btn sec" data-act="nav" data-view="list">Tutti gli engagement</button>
+        ${internal ? `<button class="btn sec" data-act="nav" data-view="solicitations">Solleciti · ${(state.due || []).length}</button>` : ''}
       </div>
     </div>
 
-    <div class="kpi-grid">
-      <div class="kpi-card"><b>${active.length}</b><span>Engagement attivi</span>
-        <small>${all.length} in totale · ${done.length} conclusi</small></div>
-      <div class="kpi-card a"><b>${action.length}</b><span>Da gestire</span>
-        <small>${action.filter(e => kpiAge(e) >= KPI_LATE_DAYS).length} fermi da ${KPI_LATE_DAYS}+ giorni</small></div>
-      <div class="kpi-card w"><b>${waiting.length}</b><span>In attesa di terzi</span>
-        <small>${waiting.filter(e => kpiAge(e) >= KPI_LATE_DAYS).length} oltre la soglia</small></div>
-      <div class="kpi-card r"><b>${late.length}</b><span>In ritardo</span>
-        <small>${lateDays} giorni cumulati</small></div>
-      <div class="kpi-card r"><b>${atRisk.length}</b><span>A rischio avvio</span>
-        <small>scope o credenziali mancanti</small></div>
-      <div class="kpi-card n"><b>${next ? fmt(next.periodStart).slice(0, 5) : '–'}</b><span>Prossimo avvio</span>
-        <small>${next ? `${esc(next.name)} · ${esc(next.clientName)}` : 'nessuna data pianificata'}</small></div>
-    </div>
-
-    <section class="kpi-panel">
-      <h2>Engagement per cliente</h2>
-      <table class="kpi-table">
-        <caption class="sr-only">Engagement, attivi, attese e ritardi per cliente</caption>
-        <thead><tr><th>Cliente</th><th>Engagement</th><th>Attivi</th><th>Da gestire</th><th>In attesa</th><th>Ritardi</th><th>Prossimo avvio</th></tr></thead>
-        <tbody>
-          ${clientRows.map(row => `<tr data-act="kpi-client" data-client="${esc(row.id)}">
-            <td class="name">${clientChip(row.id)}<span>${row.done} conclusi</span></td>
-            <td><span class="kpi-num">${row.total}</span>${kpiBar(row.total, maxClient)}</td>
-            <td><span class="kpi-num">${row.active}</span></td>
-            <td>${row.action ? `<span class="pill p-action">${row.action}</span>` : '–'}</td>
-            <td>${row.waiting ? `<span class="pill p-wait">${row.waiting}</span>` : '–'}</td>
-            <td>${row.late ? `<span class="pill p-negative">${row.late}</span>` : '–'}</td>
-            <td>${row.next ? fmt(row.next) : '<span style="color:var(--muted)">–</span>'}</td>
-          </tr>`).join('') || '<tr><td colspan="7"><div class="empty">Nessun engagement.</div></td></tr>'}
-        </tbody>
-      </table>
-    </section>
+    ${dashRequestsHTML()}
+    ${dashStartsHTML()}
 
     <div class="kpi-cols">
-      <section class="kpi-panel">
-        <h2>Fermi da più tempo</h2>
-        <p class="hint">Azioni e attese aperte da almeno ${KPI_LATE_DAYS} giorni, dalla più vecchia.</p>
-        <table class="kpi-table">
-          <thead><tr><th>Engagement</th><th>Stato</th><th>Da</th><th>Giorni</th></tr></thead>
-          <tbody>
-            ${longest.map(e => {
-              const s = actionState(e) || {};
-              const owner = statusOwner(e);
-              return kpiRow(e, `<td>${pill(statusPill(e))}${owner ? `<span class="status-owner">${esc(owner)}</span>` : ''}</td>
-                <td>${esc(s.label || '—')}</td>
-                <td><span class="pill ${kpiAge(e) >= KPI_LATE_DAYS ? 'p-negative' : 'p-neutral'}">${kpiAge(e)} gg</span></td>`);
-            }).join('') || '<tr><td colspan="4"><div class="empty">Nessuna attesa aperta.</div></td></tr>'}
-          </tbody>
-        </table>
-      </section>
-
-      <div class="kpi-col">
-        <section class="kpi-panel">
-          <h2>Carico per responsabile</h2>
-          <table class="kpi-table">
-            <thead><tr><th>Responsabile</th><th>Engagement</th><th>Attivi</th><th>Da gestire</th><th>Ritardi</th></tr></thead>
-            <tbody>
-              ${ownerRows.map(row => `<tr>
-                <td class="name"><b>${esc(row.name)}</b></td>
-                <td><span class="kpi-num">${row.total}</span></td>
-                <td>${row.active}</td>
-                <td>${row.action ? `<span class="pill p-action">${row.action}</span>` : '–'}</td>
-                <td>${row.late ? `<span class="pill p-negative">${row.late}</span>` : '–'}</td>
-              </tr>`).join('') || '<tr><td colspan="5"><div class="empty">Nessun dato.</div></td></tr>'}
-            </tbody>
-          </table>
-        </section>
-
-        <section class="kpi-panel">
-          <h2>A rischio avvio</h2>
-          <p class="hint">Preparazione incompleta a ridosso della data di avvio.</p>
-          <table class="kpi-table">
-            <thead><tr><th>Engagement</th><th>Avvio</th><th>Manca</th><th>Giorni</th></tr></thead>
-            <tbody>
-              ${atRisk.sort((a, b) => (a.preparationAlert.daysToStart || 0) - (b.preparationAlert.daysToStart || 0))
-                .map(e => {
-                  const alert = e.preparationAlert;
-                  const days = Number(alert.daysToStart) || 0;
-                  const missing = (alert.missing || []).map(m => m === 'scope' ? 'Scope' : 'Credenziali').join(' e ');
-                  return kpiRow(e, `<td>${fmt(e.periodStart)}</td>
-                    <td>${esc(missing || '—')}</td>
-                    <td><span class="pill ${days <= 3 ? 'p-negative' : 'p-wait'}">${days > 0 ? `${days} gg` : days === 0 ? 'oggi' : 'avvio superato'}</span></td>`);
-                }).join('') || '<tr><td colspan="4"><div class="empty">Nessun avvio a rischio.</div></td></tr>'}
-            </tbody>
-          </table>
-        </section>
-      </div>
+      ${dashWaitingHTML()}
+      ${dashPhasesHTML()}
     </div>
 
-    <section class="kpi-panel">
-      <h2>Prossimi avvii</h2>
-      <p class="hint">Dai prossimi ${upcoming.length} engagement con data pianificata.</p>
-      <table class="kpi-table">
-        <thead><tr><th>Engagement</th><th>Cliente</th><th>Periodo</th><th>Preparazione</th></tr></thead>
-        <tbody>
-          ${upcoming.slice(0, 8).map(e => `<tr data-act="open" data-id="${esc(e.id)}">
-            <td class="name"><b>${esc(e.name)}</b><span>${esc(e.id)}</span></td>
-            <td>${esc(e.clientName)}</td>
-            <td><span class="period">${fmt(e.periodStart)} – ${fmt(e.periodEnd)}</span></td>
-            <td>${e.preparationAlert ? delayBadge(e) : pill(['Pronto', 'ok'])}</td>
-          </tr>`).join('') || '<tr><td colspan="4"><div class="empty">Nessuna data pianificata.</div></td></tr>'}
-        </tbody>
-      </table>
-    </section>`;
+    ${extras}`;
 }
 
-async function loadKpi() {
+async function loadDashboard() {
   await loadList();
-  if (state.view === 'kpi') renderKpi();
+  if (state.view === 'dashboard') renderDashboard();
 }
 
 /* ====== SOLLECITI ====== */
@@ -4828,16 +5075,16 @@ function clientPanelHTML(client, manage) {
 
 
 /* ====== ROUTING (URL normali) ====== */
-// Ogni sezione ha una URL propria — /engagements, /engagements/{id}/{tab},
-// /kpi — così refresh, link diretti e tasti indietro/avanti funzionano. Il
+// Ogni sezione ha una URL propria — /dashboard, /engagements, /engagements/{id}/{tab},
+// /clients — così refresh, link diretti e tasti indietro/avanti funzionano. Il
 // server serve index.html su qualunque percorso (fallback SPA), quindi gli URL
 // sono "puliti", senza cancelletto. I vecchi link #/... restano validi.
 const BASE_ROUTES = {
+  dashboard: '/dashboard',
   list: '/engagements',
   clients: '/clients',
   calendar: '/calendar',
   solicitations: '/solicitations',
-  kpi: '/kpi',
   users: '/users'
 };
 const DETAIL_TABS = ['setup', 'docs', 'scope', 'plan', 'cred', 'run', 'reports', 'mail'];
@@ -4917,7 +5164,9 @@ function parseRoute(value) {
     case 'clients': return { view: 'clients' };
     case 'calendar': return { view: 'calendar' };
     case 'solicitations': return { view: 'solicitations' };
-    case 'kpi': return { view: 'kpi' };
+    // /kpi resta valido per i link salvati prima della Dashboard.
+    case 'dashboard':
+    case 'kpi': return { view: 'dashboard' };
     case 'admin': return { view: 'admin', tab: parts[1] || 'users' };
     case 'users': return { view: 'users' };
     default: return null;
@@ -4925,7 +5174,7 @@ function parseRoute(value) {
 }
 
 async function applyRoute(target) {
-  const route = target || { view: 'list' };
+  const route = target || { view: 'dashboard' };
   const isAdmin = adminTabsForRole().length > 0;
   const filter = LIST_FILTERS.includes(route.filter) ? route.filter : 'all';
 
@@ -4994,12 +5243,11 @@ async function applyRoute(target) {
     return;
   }
 
-  if (route.view === 'kpi') {
-    if (!canUseAdminTab('users')) return applyRoute({ view: 'list' });
-    state.view = 'kpi';
+  if (route.view === 'dashboard') {
+    state.view = 'dashboard';
     state.listFilter = filter;
     updateHeader();
-    await loadKpi();
+    await loadDashboard();
     return;
   }
 
@@ -5056,7 +5304,7 @@ function render() {
   else if (state.view === 'admin') renderAdmin();
   else if (state.view === 'calendar') renderCalendar();
   else if (state.view === 'solicitations') renderSolicitations();
-  else if (state.view === 'kpi') renderKpi();
+  else if (state.view === 'dashboard') renderDashboard();
   else if (state.view === 'detail' && state.detail) renderDetail();
   else renderList();
   renderUserModal();
@@ -5106,9 +5354,9 @@ const actions = {
       return;
     }
 
-    if (view === 'kpi') {
-      state.view = 'kpi';
-      loadKpi();
+    if (view === 'dashboard') {
+      state.view = 'dashboard';
+      loadDashboard();
       return;
     }
 
@@ -5305,14 +5553,14 @@ const actions = {
     state.clientSel = el.dataset.client || '';
     render();
   },
-  'kpi-client': el => {
-    // Drill-down: il pannello KPI segue il cliente scelto in header.
+  'dashboard-client': el => {
+    // Drill-down: la dashboard segue il cliente scelto in header.
     state.clientId = el.dataset.client || '';
     localStorage.setItem('cep.client', state.clientId);
-    state.view = 'kpi';
+    state.view = 'dashboard';
     fillClientSelect();
     updateHeader();
-    loadKpi();
+    loadDashboard();
   },
   'mailing-kind': el => {
     state.adminMailingKind = el.dataset.kind || 'all';
