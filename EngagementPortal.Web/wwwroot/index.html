@@ -3297,7 +3297,22 @@ function tabSetup(d) {
 
   const types = DELIVERABLE_KINDS;
 
-  const definition = (state.activityTypes || []).find(item => item.key === e.type) || null;
+  const definition = (state.activityTypes || []).find(item => item.key === (e.activityTypeKey || e.type)) || null;
+
+  // Dati della creazione (nome, cliente, tipologia) modificabili dal Setup.
+  const currentType = e.activityTypeKey || e.type;
+  const clientList = (state.clients && state.clients.length)
+    ? state.clients
+    : DEMO_CLIENTS.map(([id, name]) => ({ id, name }));
+  const clientOptions = clientList
+    .map(client => `<option value="${esc(client.id)}" ${client.id === e.clientId ? 'selected' : ''}>${esc(client.name)}</option>`)
+    .join('');
+  const typeList = (state.activityTypes && state.activityTypes.length)
+    ? state.activityTypes
+    : TYPES.map(([key, label]) => ({ key, label }));
+  const typeOptions = typeList
+    .map(item => `<option value="${esc(item.key)}" ${item.key === currentType ? 'selected' : ''}>${esc(item.label)}</option>`)
+    .join('');
 
   const team = (d.teamEffective || []).length;
   const notifications = (d.distributionEffective || []).length;
@@ -3306,6 +3321,21 @@ function tabSetup(d) {
   return `<div class="card">
     <h2>Setup attività ${done ? pill(['Completato', 'ok']) : pill(['Da completare', 'wait'])}</h2>
     <p class="sub">Prima di documenti e scope: chi lavora, chi riceve le comunicazioni, in che lingua e quali deliverable produrre.</p>
+    <div class="fgrid" style="margin-bottom:14px">
+      <div>
+        <label for="setup_name">Nome engagement*</label>
+        <input type="text" id="setup_name" value="${esc(e.name)}" ${canEdit ? '' : 'disabled'}>
+      </div>
+      <div>
+        <label for="setup_client">Cliente*</label>
+        <select id="setup_client" class="f" ${canEdit ? '' : 'disabled'}>${clientOptions}</select>
+      </div>
+      <div class="full">
+        <label for="setup_type">Tipologia</label>
+        <select id="setup_type" class="f" ${canEdit ? '' : 'disabled'}>${typeOptions}</select>
+        <p class="hint" style="margin:5px 0 0">Sono gli stessi dati chiesti alla creazione. Il cliente determina liste base e visibilità; la tipologia i default di deliverable e recheck.</p>
+      </div>
+    </div>
     <div class="fgrid">
       <div>
         <label for="setup_lang">Lingua dei deliverable</label>
@@ -6587,17 +6617,35 @@ const actions = {
   },
 
   'save-setup': async () => {
+    const name = ($('#setup_name')?.value || '').trim();
+    const clientId = $('#setup_client')?.value || '';
+    const type = $('#setup_type')?.value || '';
     const language = $('#setup_lang')?.value || 'it';
     const deliverableTypes = [...document.querySelectorAll('input[name="setup_type"]:checked')]
       .map(input => input.value);
+
+    if (!name || !clientId) {
+      toast('Nome engagement e cliente sono obbligatori');
+      return;
+    }
+
     if (!deliverableTypes.length) {
       toast('Seleziona almeno una tipologia di deliverable');
       return;
     }
+
+    const before = state.detail?.engagement || {};
+    const identityChanged = name !== (before.name || '') ||
+      clientId !== (before.clientId || '') ||
+      type !== (before.activityTypeKey || before.type || '');
+
     try {
       await api(`/api/engagements/${engagedId()}/setup?` + qs(), {
         method: 'PUT',
         body: JSON.stringify({
+          name,
+          clientId,
+          type,
           language,
           deliverableTypes,
           retestPlanned: !!$('#setup_retest')?.checked
@@ -6605,6 +6653,9 @@ const actions = {
       });
       toast('Setup salvato');
       await refreshDetail();
+      // Nome, cliente o tipologia compaiono anche in elenco, calendario e
+      // intestazioni: si riallinea la copia in memoria.
+      if (identityChanged) await loadList();
     } catch (error) { toast(error.message); }
   },
 

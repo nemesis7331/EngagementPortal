@@ -249,10 +249,12 @@ public static class DeliverableKinds
 public sealed class Engagement
 {
     public required string Id { get; init; }
-    public required string ClientId { get; init; }
+    // Cliente e tipologia si scelgono alla creazione ma restano correggibili
+    // dal Setup (che è la scheda anagrafica dell'attività).
+    public required string ClientId { get; set; }
     public required string ClientName { get; set; }
     public required string Name { get; set; }
-    public required EngagementType Type { get; init; }
+    public required EngagementType Type { get; set; }
 
     /// <summary>
     /// Chiave del catalogo dei tipi di attività. I tipi standard coincidono con
@@ -455,7 +457,11 @@ public sealed record AddReportRequest(
 public sealed record SetupRequest(
     string Language,
     List<string>? DeliverableTypes,
-    bool? RetestPlanned = null);
+    bool? RetestPlanned = null,
+    // Dati chiesti alla creazione, correggibili dal Setup.
+    string? Name = null,
+    string? ClientId = null,
+    string? Type = null);
 
 public sealed record ReviewDecisionRequest(
     bool Approve,

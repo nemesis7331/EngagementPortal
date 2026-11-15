@@ -1880,6 +1880,8 @@ api.MapPut("/engagements/{id}/setup", (
     SetupRequest request,
     HttpContext context,
     IEngagementRepository repository,
+    IClientRepository clients,
+    ActivityTypes activities,
     EngagementWorkflow workflow,
     IDateProvider clock) =>
 {
@@ -1952,10 +1954,61 @@ api.MapPut("/engagements/{id}/setup", (
         engagement.RetestDecidedDate = clock.UtcNow;
     }
 
+    // Nome, cliente e tipologia: gli stessi dati chiesti alla creazione, qui
+    // correggibili finché il Setup è aperto (cioè per Manager e PMO).
+    if (request.Name is not null)
+    {
+        var name = request.Name.Trim();
+
+        if (string.IsNullOrWhiteSpace(name))
+            return Results.BadRequest("Il nome dell'engagement è obbligatorio.");
+
+        engagement.Name = name;
+    }
+
+    if (!string.IsNullOrWhiteSpace(request.ClientId) &&
+        !string.Equals(
+            request.ClientId.Trim(),
+            engagement.ClientId,
+            StringComparison.Ordinal))
+    {
+        var client = clients.Get(request.ClientId.Trim());
+
+        if (client is null)
+            return Results.BadRequest("Il cliente selezionato non esiste.");
+
+        // Non si sposta un'attività verso un cliente fuori dal proprio perimetro.
+        if (!Access.CanAccessClient(user, client.Id))
+            return Forbidden();
+
+        engagement.ClientId = client.Id;
+        engagement.ClientName = client.Name;
+    }
+
+    if (!string.IsNullOrWhiteSpace(request.Type))
+    {
+        var type = activities.Get(request.Type.Trim());
+
+        if (type is null)
+            return Results.BadRequest("La tipologia selezionata non esiste.");
+
+        var builtIn = Enum.TryParse<EngagementType>(
+                type.Key, true, out var standardType) &&
+            Enum.IsDefined(standardType);
+
+        engagement.Type = builtIn ? standardType : EngagementType.Custom;
+        engagement.ActivityTypeKey = type.Key;
+    }
+
+    var typeLabel = activities
+        .Get(engagement.ActivityTypeKey ?? engagement.Type.ToString())
+        ?.Label ?? engagement.Type.ToString();
+
     engagement.AddAudit(
         user.Name,
         user.Role,
-        $"Setup aggiornato · lingua {language.ToUpperInvariant()} · " +
+        $"Setup aggiornato · {engagement.Name} ({engagement.ClientName}) · " +
+        $"{typeLabel} · lingua {language.ToUpperInvariant()} · " +
         $"{string.Join(", ", engagement.DeliverableTypes)} · " +
         (engagement.RetestPlanned ? "recheck previsto" : "senza recheck"),
         AuditVisibility.ProviderOnly);
