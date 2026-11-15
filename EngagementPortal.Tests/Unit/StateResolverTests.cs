@@ -316,8 +316,8 @@ public sealed class StateResolverTests
         Assert.Contains("scope", client["scope"].Reason);
         Assert.Equal("todo", pmo["scope"].State);
 
-        Assert.Equal("wait", pentester["scope"].State);
-        Assert.Contains("cliente", pentester["scope"].Reason);
+        // Anche il Pentester può compilare se serve (il Manager pure).
+        Assert.Equal("todo", pentester["scope"].State);
     }
 
     [Fact]
@@ -371,8 +371,13 @@ public sealed class StateResolverTests
             engagement, Roles.Client, EngagementPhase.Scheduled));
         Assert.True(EngagementWorkflow.CanEditPreparation(
             engagement, Roles.PMO, EngagementPhase.Running));
-        Assert.False(EngagementWorkflow.CanEditPreparation(
+        // Il Manager può sempre sostituirsi; il Pentester fino all'avvio.
+        Assert.True(EngagementWorkflow.CanEditPreparation(
+            engagement, Roles.Manager, EngagementPhase.Scheduled));
+        Assert.True(EngagementWorkflow.CanEditPreparation(
             engagement, Roles.Pentester, EngagementPhase.Planning));
+        Assert.False(EngagementWorkflow.CanEditPreparation(
+            engagement, Roles.Pentester, EngagementPhase.Running));
     }
 
     [Fact]
@@ -392,7 +397,8 @@ public sealed class StateResolverTests
             engagement,
             Roles.Manager,
             EngagementPhase.Scheduled));
-        Assert.False(EngagementWorkflow.CanEditPreparation(
+        // Il Manager può sostituirsi anche nella compilazione dello scope.
+        Assert.True(EngagementWorkflow.CanEditPreparation(
             engagement,
             Roles.Manager,
             EngagementPhase.Scheduled));

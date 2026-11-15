@@ -3697,7 +3697,7 @@ function retestPanel(d) {
     rows.push(`<div class="kvline"><span>Deciso nel Setup da</span><b>${esc(r.decidedBy)}${r.decidedDate ? ` · ${fmt(r.decidedDate)}` : ''}</b></div>`);
   }
   if (r.requested) {
-    rows.push(`<div class="kvline"><span>Richiesta dal cliente</span><b>${esc(r.requestedBy || '')} · ${fmt(r.requestedDate)}</b></div>`);
+    rows.push(`<div class="kvline"><span>Recheck confermato</span><b>${esc(r.requestedBy || '')} · ${fmt(r.requestedDate)}</b></div>`);
   }
   if (r.accepted) {
     rows.push(`<div class="kvline"><span>Date del retest</span><b>${fmt(r.accepted.startDate)} – ${fmt(r.accepted.endDate)}</b></div>`);
@@ -3714,8 +3714,9 @@ function retestPanel(d) {
   let actions = '';
 
   if (r.canRequest) {
-    actions += `<div class="note waiting" style="margin:10px 0 0"><b>Puoi richiedere il retest.</b> Fallo quando i fix sono completati: si può chiedere una sola volta.</div>
-      <div class="inline-actions" style="margin-top:10px"><button class="btn pri" data-act="retest-request">Richiedi il retest</button></div>`;
+    actions += `<div class="note waiting" style="margin:10px 0 0"><b>${state.role === 'Client' ? 'Puoi confermare il recheck.' : 'Puoi confermare il recheck per conto del cliente.'}</b>
+      Si conferma <b>una sola volta</b> e non è reversibile: da qui il retest entra nel workflow. Il retest si esegue in best effort, di solito la settimana successiva.</div>
+      <div class="inline-actions" style="margin-top:10px"><button class="btn pri" data-act="retest-request">${state.role === 'Client' ? 'Conferma il recheck' : 'Conferma il recheck per conto del cliente'}</button></div>`;
   }
 
   if (r.canDecide && pending) {
@@ -3748,10 +3749,10 @@ function retestPanel(d) {
   }
 
   return `<div class="card" style="margin-bottom:16px"><h2>Retest ${status}</h2>
-    <p class="sub">Verifiche dopo i fix. Il retest si schedula una sola volta ed è il cliente a richiederlo; il report di retest va al cliente senza passare dalla revisione.</p>
+    <p class="sub">Verifiche dopo i fix. Il recheck si conferma una sola volta, dal cliente o da PMO/Manager/Pentester per conto; il retest è best effort e il report di retest va al cliente senza passare dalla revisione.</p>
     <div class="kv">${rows.join('')}</div>
     ${(!r.planned && !r.requested)
-      ? '<p class="hint" style="margin-top:10px">Recheck non previsto per questa attività: i due passi di retest non fanno parte del workflow. Si può cambiare nel Setup finché il cliente non ha richiesto il retest.</p>'
+      ? '<p class="hint" style="margin-top:10px">Recheck non previsto per questa attività: i due passi di retest non fanno parte del workflow. Si può cambiare nel Setup finché il recheck non è confermato.</p>'
       : ''}
     ${actions}
   </div>`;

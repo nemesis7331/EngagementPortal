@@ -2180,11 +2180,9 @@ api.MapPost("/engagements/{id}/reachability", (
     if (engagement is null)
         return Results.NotFound();
 
-    if (user.Role != Roles.Pentester)
+    // Il Pentester verifica; il Manager può sostituirsi.
+    if (user.Role is not (Roles.Pentester or Roles.Manager))
         return Forbidden();
-
-    if (engagement.AcceptedProposal is null)
-        return Results.BadRequest("Servono prima le date concordate.");
 
     var phase = workflow.Resolve(engagement, clock.Today);
 
@@ -2274,7 +2272,7 @@ api.MapPost("/engagements/{id}/reports", (
     if (engagement is null)
         return Results.NotFound();
 
-    if (user.Role != Roles.Pentester)
+    if (user.Role is not (Roles.Pentester or Roles.Manager))
         return Forbidden();
 
     var name = request.Name?.Trim();
@@ -3128,7 +3126,8 @@ api.MapPost("/engagements/{id}/retest/request", (
 {
     var user = GetUser(context);
 
-    if (user.Role != Roles.Client)
+    // Conferma del recheck: il cliente, oppure PMO/Manager/Pentester per conto.
+    if (user.Role is not (Roles.Client or Roles.PMO or Roles.Manager or Roles.Pentester))
         return Forbidden();
 
     var engagement = Find(repository, id, user);
@@ -3142,11 +3141,11 @@ api.MapPost("/engagements/{id}/retest/request", (
 
     if (engagement.RetestRequestedDate is not null)
         return Results.Conflict(
-            "Il retest si può richiedere una sola volta.");
+            "Il recheck si conferma una sola volta e non è reversibile.");
 
     if (!engagement.Reports.Any(report => report.Published))
         return Results.BadRequest(
-            "Il retest si richiede a fix completati, dopo la pubblicazione del report.");
+            "Il recheck si conferma a fix completati, dopo la pubblicazione del report.");
 
     engagement.RetestRequestedDate = clock.UtcNow;
     engagement.RetestRequestedByName = user.Name;
@@ -3154,7 +3153,9 @@ api.MapPost("/engagements/{id}/retest/request", (
     engagement.AddAudit(
         user.Name,
         user.Role,
-        "Retest richiesto dal cliente a fix completati",
+        user.Role == Roles.Client
+            ? "Recheck confermato dal cliente a fix completati"
+            : $"Recheck confermato da {user.Name} per conto del cliente",
         AuditVisibility.All);
 
     repository.Save(engagement);
@@ -3289,7 +3290,8 @@ api.MapPost("/engagements/{id}/retest/report", (
 {
     var user = GetUser(context);
 
-    if (user.Role != Roles.Pentester)
+    // Il Pentester carica il report; il Manager può sostituirsi.
+    if (user.Role is not (Roles.Pentester or Roles.Manager))
         return Forbidden();
 
     var engagement = Find(repository, id, user);
@@ -3297,9 +3299,11 @@ api.MapPost("/engagements/{id}/retest/report", (
     if (engagement is null)
         return Results.NotFound();
 
-    if (engagement.AcceptedRetestProposal is null)
+    // Niente date formali: il retest è best effort. Serve però la conferma
+    // del recheck da parte del cliente (o di chi lo sostituisce).
+    if (engagement.RetestRequestedDate is null)
         return Results.BadRequest(
-            "Prima servono le date approvate del retest.");
+            "Prima va confermato il recheck dal cliente.");
 
     if (string.IsNullOrWhiteSpace(request.Description))
         return Results.BadRequest(
@@ -3346,7 +3350,8 @@ api.MapPost("/engagements/{id}/retest/send", (
 {
     var user = GetUser(context);
 
-    if (user.Role != Roles.Pentester)
+    // Pentester, oppure Manager che si sostituisce.
+    if (user.Role is not (Roles.Pentester or Roles.Manager))
         return Forbidden();
 
     var engagement = Find(repository, id, user);
@@ -4140,17 +4145,17 @@ static object? MapRetest(
             phase == EngagementPhase.Retest &&
             engagement.RetestReport is null &&
             engagement.RetestClosedDate is null,
-        CanRequest = user.Role == Roles.Client &&
+        CanRequest = user.Role is (Roles.Client or Roles.PMO or Roles.Manager or Roles.Pentester) &&
             engagement.RetestPlanned &&
             !requested &&
             phase == EngagementPhase.Retest,
-        CanPropose = user.Role is (Roles.PMO or Roles.Client) &&
-            requested && accepted is null,
-        CanDecide = user.Role == Roles.Manager && pending is not null,
-        CanLoadReport = user.Role == Roles.Pentester &&
-            accepted is not null &&
+        // Il retest è best effort: non si propongono né approvano date formali.
+        CanPropose = false,
+        CanDecide = false,
+        CanLoadReport = user.Role is (Roles.Pentester or Roles.Manager) &&
+            requested &&
             engagement.RetestReport is null,
-        CanSend = user.Role == Roles.Pentester &&
+        CanSend = user.Role is (Roles.Pentester or Roles.Manager) &&
             engagement.RetestReport is not null &&
             !sent
     };
@@ -4355,7 +4360,7 @@ static object Detail(
                     .DayNumber - clock.Today.DayNumber,
             Targets = engagement.Scope.Targets.Count,
             VerifiedTargets = engagement.Scope.Targets.Count(target => target.Verified),
-            CanVerify = user.Role == Roles.Pentester &&
+            CanVerify = user.Role is (Roles.Pentester or Roles.Manager) &&
                 engagement.AcceptedProposal is not null &&
                 (phase is EngagementPhase.Reachability or EngagementPhase.Scheduled) &&
                 engagement.Scope.Targets.Count > 0
@@ -4450,7 +4455,7 @@ static object Detail(
             CanUploadManleva = user.Role is Roles.Client or Roles.PMO,
             CanManageEngagementDocs = user.Role == Roles.PMO,
             CanPropose = user.Role is Roles.Client or Roles.PMO or Roles.Manager,
-            CanUploadReports = user.Role == Roles.Pentester,
+            CanUploadReports = user.Role is (Roles.Pentester or Roles.Manager),
             CanManageClients = user.Role == Roles.Manager,
             CanViewClients = user.IsInternal,
             ReadOnly = user.Role == Roles.Auditor

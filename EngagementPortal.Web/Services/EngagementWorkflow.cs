@@ -192,6 +192,16 @@ public sealed class EngagementWorkflow(IDateProvider clock)
                 EngagementPhase.Reachability or
                 EngagementPhase.Scheduled or
                 EngagementPhase.Running,
+            // Il Manager può sostituirsi a chi compila; il Pentester fino
+            // all'avvio dell'attività.
+            Roles.Manager => phase is not (EngagementPhase.Done or
+                EngagementPhase.Retest or
+                EngagementPhase.RetestReporting),
+            Roles.Pentester => phase is EngagementPhase.Scope or
+                EngagementPhase.Planning or
+                EngagementPhase.Credentials or
+                EngagementPhase.Reachability or
+                EngagementPhase.Scheduled,
             _ => false
         };
     }
