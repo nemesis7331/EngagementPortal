@@ -157,32 +157,8 @@ public sealed class ActivityTypesTests
         var catalog = NewCatalog();
 
         Assert.False(catalog.Delete("PenetrationTest", out var error));
-        Assert.Equal("I tipi standard non si eliminano: puoi ripristinarli.", error);
+        Assert.Equal("I tipi standard non si eliminano.", error);
         Assert.NotNull(catalog.Get("PenetrationTest"));
-    }
-
-    [Fact]
-    public void Reset_BringsAStandardTypeBackToDefaults()
-    {
-        var catalog = NewCatalog();
-
-        Assert.True(catalog.Save(
-            new ActivityTypeDefinition(
-                "CloudSecurity",
-                "Cloud",
-                "CL",
-                "Ridotta",
-                false,
-                [DeliverableKinds.Custom]),
-            out _));
-        Assert.Equal("Cloud", catalog.Get("CloudSecurity")!.Label);
-
-        Assert.True(catalog.Reset("CloudSecurity"));
-
-        var restored = catalog.Get("CloudSecurity")!;
-        Assert.Equal("Cloud Security", restored.Label);
-        Assert.True(restored.RetestPlanned);
-        Assert.DoesNotContain(DeliverableKinds.Custom, restored.DeliverableTypes);
     }
 
     [Fact]

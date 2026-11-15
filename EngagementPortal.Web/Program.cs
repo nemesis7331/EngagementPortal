@@ -500,11 +500,6 @@ api.MapPut("/activity-types/{key}", (
     if (current.Role is not (Roles.Manager or Roles.PMO))
         return Forbidden();
 
-    if (request.Reset)
-        return activities.Reset(key)
-            ? Results.Ok(new { status = "ok", reset = true })
-            : Results.NotFound();
-
     if (!activities.Save(
         new ActivityTypeDefinition(
             key,
@@ -520,7 +515,7 @@ api.MapPut("/activity-types/{key}", (
             : Results.BadRequest(error);
     }
 
-    return Results.Ok(new { status = "ok", reset = false });
+    return Results.Ok(new { status = "ok" });
 });
 
 api.MapDelete("/activity-types/{key}", (

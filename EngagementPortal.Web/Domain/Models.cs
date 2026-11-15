@@ -581,8 +581,7 @@ public sealed record ActivityTypeRequest(
     string? Short,
     string? Description,
     bool RetestPlanned,
-    List<string>? DeliverableTypes,
-    bool Reset = false);
+    List<string>? DeliverableTypes);
 
 /// <summary>Date proposte per il retest (PMO) e accettazione (Manager).</summary>
 public sealed record RetestProposalRequest(

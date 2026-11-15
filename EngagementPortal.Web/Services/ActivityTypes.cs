@@ -212,20 +212,6 @@ public sealed class ActivityTypes(IAppSettingsRepository settings)
         return true;
     }
 
-    /// <summary>Riporta un tipo standard ai valori di fabbrica.</summary>
-    public bool Reset(string? key)
-    {
-        var standard = Defaults.FirstOrDefault(item => Same(item.Key, key));
-
-        if (standard is null)
-            return false;
-
-        var stored = settings.Get<List<ActivityTypeDefinition>>(StorageKey) ?? [];
-        stored.RemoveAll(item => Same(item.Key, standard.Key));
-        settings.Save(StorageKey, stored);
-        return true;
-    }
-
     /// <summary>Elimina un tipo creato da Amministrazione (non gli standard).</summary>
     public bool Delete(string? key, out string? error)
     {
@@ -241,7 +227,7 @@ public sealed class ActivityTypes(IAppSettingsRepository settings)
 
         if (Defaults.Any(item => Same(item.Key, existing.Key)))
         {
-            error = "I tipi standard non si eliminano: puoi ripristinarli.";
+            error = "I tipi standard non si eliminano.";
             return false;
         }
 

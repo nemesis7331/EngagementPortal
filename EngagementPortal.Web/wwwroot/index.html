@@ -300,8 +300,8 @@ table{width:100%;border-collapse:collapse}th{text-align:left;font-size:var(--fs-
 /* ====== TIPI DI ATTIVITÀ ====== */
 .admin-table.act-table{table-layout:auto}
 .act-table td{vertical-align:middle}
-.act-table th.act-k,.act-table td.act-k{width:58px;text-align:center;white-space:nowrap}
-.act-table th:last-child{width:170px}
+.act-table th.act-k,.act-table td.act-k{width:auto;min-width:84px;text-align:center;white-space:nowrap}
+.act-table th:last-child{width:120px}
 .act-main{min-width:250px}
 .act-name{display:flex;align-items:center;gap:8px}
 .act-badge{appearance:none;width:40px;height:30px;padding:0;flex:none;border:1px solid var(--brand-100);border-radius:8px;background:var(--brand-50);color:var(--brand-700);font:inherit;font-size:var(--fs-xs);font-weight:var(--fw-black);text-align:center;text-transform:uppercase}
@@ -311,6 +311,9 @@ table{width:100%;border-collapse:collapse}th{text-align:left;font-size:var(--fs-
 .act-badge:focus,.act-label:focus,.act-desc:focus{outline:2px solid var(--brand-500);outline-offset:0;background:#fff}
 .act-actions{text-align:right;white-space:nowrap}
 .act-actions .btn+.btn{margin-left:6px}
+/* Conferma discreta del salvataggio automatico, senza spostare la riga. */
+.act-state{display:inline-block;min-width:54px;font-size:var(--fs-2xs);font-weight:var(--fw-semibold);color:var(--st-done);opacity:0;transition:opacity .15s}
+.act-state.on{opacity:1}
 @media(max-width:900px){
   .act-table thead{display:none}
   .act-table,.act-table tbody,.act-table tr,.act-table td{display:block;width:100%}
@@ -3361,7 +3364,7 @@ function tabSetup(d) {
           <span>Recheck previsto (retest a fine attività)</span>
         </label>
         <p class="hint" style="margin:5px 0 0">${definition
-          ? `Default di <b>${esc(definition.label)}</b>: ${definition.retestPlanned ? 'retest previsto' : 'senza retest'}.`
+          ? `Il tipo <b>${esc(definition.label)}</b> ${definition.retestPlanned ? 'propone il recheck' : 'non prevede il recheck'}.`
           : ''} Resta modificabile fino alla richiesta di retest del cliente${d.retest?.requested ? ': ora è bloccato perché il retest è già stato richiesto' : ''}.</p>
       </div>
     </div>
@@ -3370,7 +3373,7 @@ function tabSetup(d) {
         ? '<button class="btn pri" data-act="save-setup">Salva setup</button>'
         : '<span class="hint">Sola lettura per il tuo profilo.</span>'}
       ${canEdit && definition
-        ? `<button class="btn sec" data-act="apply-type-defaults">Applica i default di ${esc(definition.label)}</button>`
+        ? `<button class="btn sec" data-act="apply-type-defaults">Applica le impostazioni di ${esc(definition.label)}</button>`
         : ''}
       ${!done
         ? '<span class="hint">Completa il setup per sbloccare i passi successivi.</span>'
@@ -4219,30 +4222,23 @@ async function loadMailingTemplates(force) {
 }
 
 /* ====== TIPI DI ATTIVITÀ ====== */
-// Catalogo compatto: una riga per tipo, con i due valori che contano nel Setup
-// (deliverable previsti e recheck di default) come caselle. La chiave del tipo
-// non si tocca: cambiano etichetta, sigla, descrizione e default.
-const ACTIVITY_KIND_SHORT = {
-  Executive: 'Exec',
-  Technical: 'Tech',
-  Activity: 'Attività',
-  Custom: 'Custom'
-};
-
+// Catalogo compatto: una riga per tipo, con gli aspetti che il Setup propone
+// (deliverable previsti e recheck). Sono oggetti configurabili: ogni modifica
+// si salva da sola, la chiave del tipo non si tocca.
 function adminActivitiesHTML() {
   const list = state.activityTypes || [];
 
   if (!list.length) return '<div class="empty">Caricamento dei tipi di attività…</div>';
 
   const headKinds = DELIVERABLE_KINDS
-    .map(([value, label, description]) =>
-      `<th class="act-k" title="${esc(label)} · ${esc(description)}">${esc(ACTIVITY_KIND_SHORT[value] || label)}</th>`)
+    .map(([, label, description]) =>
+      `<th class="act-k" title="${esc(label)} · ${esc(description)}">${esc(label)}</th>`)
     .join('');
 
   const kindCell = item => ([value, label, description]) => (`
-    <td class="act-k" data-label="${esc(ACTIVITY_KIND_SHORT[value] || label)}">
+    <td class="act-k" data-label="${esc(label)}">
       <label class="ckbox" title="${esc(label)} · ${esc(description)}">
-        <input type="checkbox" data-f="kind" value="${value}"
+        <input type="checkbox" data-f="kind" data-change="activity" value="${value}"
           ${(item.deliverableTypes || []).includes(value) ? 'checked' : ''}
           aria-label="${esc(label)} per ${esc(item.label)}">
         <i></i>
@@ -4254,25 +4250,25 @@ function adminActivitiesHTML() {
     return `<tr class="act-row" data-key="${esc(item.key)}">
       <td class="act-main">
         <div class="act-name">
-          <input class="act-badge" data-f="short" value="${esc(item.short)}" maxlength="4"
-            aria-label="Sigla di ${esc(item.label)}" title="Sigla (max 4 caratteri)">
-          <input class="act-label" data-f="label" value="${esc(item.label)}" aria-label="Etichetta">
+          <input class="act-badge" data-f="short" data-change="activity" value="${esc(item.short)}" maxlength="4"
+            aria-label="Sigla di ${esc(item.label)}" title="Sigla mostrata nelle liste (max 4 caratteri)">
+          <input class="act-label" data-f="label" data-change="activity" value="${esc(item.label)}" aria-label="Etichetta">
         </div>
-        <input class="act-desc" data-f="desc" value="${esc(item.description)}"
+        <input class="act-desc" data-f="desc" data-change="activity" value="${esc(item.description)}"
           placeholder="Descrizione breve" aria-label="Descrizione">
       </td>
       ${DELIVERABLE_KINDS.map(kindCell(item)).join('')}
       <td class="act-k" data-label="Recheck">
-        <label class="ckbox" title="Recheck previsto di default per questo tipo">
-          <input type="checkbox" data-f="retest" ${item.retestPlanned ? 'checked' : ''}
-            aria-label="Recheck previsto di default">
+        <label class="ckbox" title="Recheck proposto da questo tipo nel Setup">
+          <input type="checkbox" data-f="retest" data-change="activity" ${item.retestPlanned ? 'checked' : ''}
+            aria-label="Recheck previsto">
           <i></i>
         </label>
       </td>
       <td class="act-actions">
-        <button class="btn pri sm" data-act="admin-save-activity" data-key="${esc(item.key)}">Salva</button>
+        <span class="act-state" aria-live="polite"></span>
         ${isStandard
-          ? `<button class="btn ghost sm" data-act="admin-reset-activity" data-key="${esc(item.key)}" title="Torna ai valori di fabbrica">Ripristina</button>`
+          ? ''
           : `<button class="btn dng sm" data-act="admin-delete-activity" data-key="${esc(item.key)}" title="Elimina il tipo">Elimina</button>`}
       </td>
     </tr>`;
@@ -4281,17 +4277,60 @@ function adminActivitiesHTML() {
   return `<section class="card admin-tablecard">
     <div class="sec-head">
       <h3>Catalogo <span class="cnt">${list.length}</span></h3>
-      <span class="tiny">Deliverable e recheck proposti nel Setup dell'engagement</span>
+      <span class="tiny">Deliverable e recheck che il tipo propone nel Setup dell'engagement</span>
     </div>
     <div class="tablewrap">
       <table class="admin-table act-table">
-        <caption class="sr-only">Tipi di attività: deliverable previsti e recheck di default</caption>
+        <caption class="sr-only">Tipi di attività: deliverable previsti e recheck proposti</caption>
         <thead><tr><th>Tipo di attività</th>${headKinds}<th class="act-k">Recheck</th><th></th></tr></thead>
         <tbody>${rows}</tbody>
       </table>
     </div>
   </section>
-  <p class="hint" style="margin-top:10px">I tipi standard non si eliminano, si possono ripristinare. Un tipo nuovo si può cancellare solo se nessun engagement lo sta usando.</p>`;
+  <p class="hint" style="margin-top:10px">Le modifiche si salvano da sole. I tipi standard non si eliminano; un tipo nuovo si può cancellare solo se nessun engagement lo sta usando.</p>`;
+}
+
+// Salvataggio automatico della riga del catalogo: niente pulsante "Salva".
+// Si aggiorna la copia in memoria senza ridisegnare, così il focus resta.
+async function saveActivityRow(row) {
+  if (!row) return;
+
+  const key = row.dataset.key;
+  const body = {
+    label: (row.querySelector('[data-f="label"]')?.value || '').trim(),
+    short: (row.querySelector('[data-f="short"]')?.value || '').trim(),
+    description: (row.querySelector('[data-f="desc"]')?.value || '').trim(),
+    retestPlanned: !!row.querySelector('[data-f="retest"]')?.checked,
+    deliverableTypes: [...row.querySelectorAll('[data-f="kind"]:checked')].map(box => box.value)
+  };
+
+  const badge = row.querySelector('.act-state');
+  const segnala = text => {
+    if (!badge) return;
+    badge.textContent = text;
+    badge.classList.toggle('on', !!text);
+    clearTimeout(badge._t);
+    if (text) {
+      badge._t = setTimeout(() => {
+        badge.textContent = '';
+        badge.classList.remove('on');
+      }, 1600);
+    }
+  };
+
+  try {
+    await api(`/api/activity-types/${encodeURIComponent(key)}?` + qs(), {
+      method: 'PUT',
+      body: JSON.stringify(body)
+    });
+    const item = (state.activityTypes || []).find(type => type.key === key);
+    if (item) Object.assign(item, body);
+    segnala('Salvato');
+  } catch (error) {
+    toast(error.message);
+    state.activityTypes = await api('/api/activity-types?' + qs());
+    renderAdmin();
+  }
 }
 
 function renderAdmin() {
@@ -4329,7 +4368,7 @@ function renderAdmin() {
   }[state.adminTab] || 'Utenti e accessi';
 
   const subtitle = {
-    activities: 'Catalogo dei tipi · default di deliverable e recheck',
+    activities: 'Catalogo dei tipi · deliverable e recheck proposti nel Setup',
     users: 'Persone interne e cliente · visibilità per assegnazione',
     clients: 'Anagrafiche, utenze, team e mailing list base',
     mailing: 'Liste notifiche e deliverables · base cliente e engagement',
@@ -5679,39 +5718,6 @@ const actions = {
     await loadMailingTemplates(true);
     renderAdmin();
   },
-  'admin-save-activity': async el => {
-    const row = el.closest('.act-row');
-    if (!row) return;
-
-    const body = {
-      label: row.querySelector('[data-f="label"]')?.value || '',
-      short: row.querySelector('[data-f="short"]')?.value || '',
-      description: row.querySelector('[data-f="desc"]')?.value || '',
-      retestPlanned: !!row.querySelector('[data-f="retest"]')?.checked,
-      deliverableTypes: [...row.querySelectorAll('[data-f="kind"]:checked')].map(box => box.value)
-    };
-
-    try {
-      await api(`/api/activity-types/${encodeURIComponent(el.dataset.key)}?` + qs(), {
-        method: 'PUT', body: JSON.stringify(body)
-      });
-      toast('Tipo di attività salvato');
-      state.activityTypes = await api('/api/activity-types?' + qs());
-      renderAdmin();
-    } catch (error) { toast(error.message); }
-  },
-
-  'admin-reset-activity': async el => {
-    try {
-      await api(`/api/activity-types/${encodeURIComponent(el.dataset.key)}?` + qs(), {
-        method: 'PUT', body: JSON.stringify({ reset: true })
-      });
-      toast('Default del tipo ripristinati');
-      state.activityTypes = await api('/api/activity-types?' + qs());
-      renderAdmin();
-    } catch (error) { toast(error.message); }
-  },
-
   'admin-delete-activity': async el => {
     const item = (state.activityTypes || []).find(type => type.key === el.dataset.key);
     const ok = await ask({
@@ -5733,13 +5739,13 @@ const actions = {
   'new-activity': async () => {
     const v = await ask({
       title: 'Nuovo tipo di attività',
-      text: 'Entra subito nel catalogo: si può scegliere in creazione engagement e usare i suoi default nel Setup.',
+      text: 'Entra subito nel catalogo: si sceglie in creazione engagement e il Setup propone i suoi deliverable e recheck.',
       ok: 'Crea',
       fields: [
         { id: 'label', label: 'Etichetta*', ph: 'Es. Mobile App Test' },
-        { id: 'short', label: 'Sigla (max 4 caratteri)', ph: 'Es. MAT' },
+        { id: 'short', label: 'Sigla nelle liste (max 4 caratteri)', ph: 'Es. MAT' },
         { id: 'desc', label: 'Descrizione', ph: 'Una riga su cosa comprende' },
-        { id: 'retest', label: 'Recheck previsto', type: 'select', options: [['1', 'Sì, di default'], ['0', 'No']] }
+        { id: 'retest', label: 'Recheck previsto', type: 'select', options: [['1', 'Sì'], ['0', 'No']] }
       ]
     });
     if (!v) return;
@@ -6946,6 +6952,11 @@ document.addEventListener('change', event => {
   const el = event.target.closest('[data-change]');
   if (!el) return;
   const kind = el.dataset.change;
+  if (kind === 'activity') {
+    // Catalogo tipi: si salva da solo a ogni modifica della riga.
+    const row = el.closest('.act-row');
+    if (row) Promise.resolve(saveActivityRow(row)).catch(error => toast(error.message));
+  }
   if (kind === 'client-dl') {
     Promise.resolve(actions['client-dl-toggle'](el)).catch(error => toast(error.message));
   }
