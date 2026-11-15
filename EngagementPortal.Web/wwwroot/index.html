@@ -83,7 +83,7 @@ body{margin:0;font-family:var(--font-sans);background:var(--bg);color:var(--ink)
 button{font:inherit;cursor:pointer}
 /* Header */
 .shell-main > header{background:linear-gradient(100deg,var(--brand-950),var(--brand-900) 60%,var(--brand-700));color:#fff;position:sticky;top:0;z-index:20}
-.hwrap{max-width:var(--page-max);margin:auto;padding:12px 16px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.hwrap{max-width:var(--page-max);margin:0;padding:12px 16px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
 .logo{display:flex;align-items:center;gap:10px;font-weight:var(--fw-bold);font-size:var(--fs-xl);letter-spacing:0}
 .logo i{width:30px;height:30px;border-radius:var(--radius-md);background:var(--accent);display:grid;place-items:center;color:var(--brand-950);font-style:normal;font-weight:var(--fw-black)}
 .logo small{display:block;font-weight:var(--fw-regular);font-size:var(--fs-xs);opacity:.7;letter-spacing:var(--tracking-caps);text-transform:uppercase}
@@ -93,6 +93,7 @@ button{font:inherit;cursor:pointer}
 /* ====== SHELL: SIDEBAR GLOBALE ====== */
 .shell{display:grid;grid-template-columns:228px minmax(0,1fr);min-height:100vh}
 .shell-main{min-width:0;display:flex;flex-direction:column}
+.shell-main > main{width:100%}
 .app-side{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:10px;padding:14px 10px;background:linear-gradient(180deg,var(--brand-950),var(--brand-900) 65%,#08243f);color:#c9d9e7;z-index:40;overflow-y:auto;overflow-x:hidden;transition:width .18s ease,padding .18s ease}
 .app-side-head{display:flex;align-items:center;gap:8px;padding:2px 6px 8px;min-width:0}
 .app-logo{display:flex;align-items:center;gap:9px;color:#fff;font-weight:var(--fw-bold);font-size:12.5px;min-width:0}
@@ -111,6 +112,12 @@ button{font:inherit;cursor:pointer}
 .nav-item[hidden]{display:none}
 .nav-ico{width:16px;height:16px;fill:currentColor;opacity:.92;flex:none}
 .nav-txt{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.nav-item.nav-sub{padding-top:6px;padding-bottom:6px;padding-left:31px;font-size:var(--fs-sm);font-weight:var(--fw-regular);color:#9db8ce}
+.nav-item.nav-sub:hover{color:#fff}
+.nav-item.nav-sub.on{box-shadow:inset 3px 0 0 var(--st-wait);background:rgba(245,158,11,.12);color:#fcd34d}
+.nav-count{margin-left:auto;display:inline-grid;place-items:center;min-width:19px;height:19px;padding:0 6px;border-radius:999px;background:var(--st-action-bg);color:var(--st-action);font-size:10px;font-weight:800}
+.nav-count[hidden]{display:none}
+body.side-collapsed .nav-count{display:none}
 .app-side-foot{margin-top:auto;padding-top:10px}
 .side-collapse{display:flex;align-items:center;gap:9px;width:100%;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);color:#c9d9e7;border-radius:var(--radius-md);padding:8px 9px;font-size:var(--fs-sm);font-weight:var(--fw-semibold)}
 .side-collapse:hover{background:rgba(255,255,255,.09);color:#fff}
@@ -158,7 +165,7 @@ button{font:inherit;cursor:pointer}
   .hwrap{padding:10px 12px;gap:10px}
 }
 /* Layout */
-main{max-width:var(--page-max);margin:24px auto 60px;padding:0 16px}
+main{max-width:var(--page-max);margin:24px auto 60px 0;padding:0 16px}
 h1{font-size:var(--fs-3xl);line-height:var(--lh-tight);margin:0 0 4px;color:var(--brand-900)}
 h2{font-size:var(--fs-lg);line-height:var(--lh-tight);margin:0 0 12px;color:var(--brand-900)}
 .sub{color:var(--muted);margin:0 0 22px}
@@ -282,6 +289,14 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--brand-500);outli
 .tpl-mail{margin-top:8px;border:1px solid var(--line);border-radius:var(--radius-md);padding:12px;background:var(--brand-50)}
 .tpl-mail b{display:block;color:var(--brand-900);margin-bottom:6px}
 .tpl-mail pre{margin:0;white-space:pre-wrap;font-family:var(--font-sans);font-size:var(--fs-sm);color:var(--ink);line-height:var(--lh-base)}
+.tpl-langs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
+.tpl-lang{min-width:0;border:1px solid var(--line-soft);border-radius:9px;padding:9px 10px;background:var(--surface-3)}
+.tpl-lang h5{margin:0 0 4px;font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted-2);font-weight:800}
+.tpl-lang label{margin-top:4px;font-size:var(--fs-xs)}
+.tpl-lang textarea{min-height:84px}
+.tpl-previews{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tpl-previews > div > b{display:block;margin-top:6px;font-size:var(--fs-xs);color:var(--muted)}
+@media(max-width:1000px){.tpl-langs,.tpl-previews{grid-template-columns:1fr}}
 @media(max-width:560px){.tpl-scope select{min-width:0;width:100%}.tpl-actions .btn{flex:1}}
 /* stato schede */
 .tab::before{content:"";display:inline-block;min-width:16px;height:16px;line-height:16px;border-radius:50%;margin-right:7px;font-size:var(--fs-xs);font-weight:var(--fw-black);text-align:center;vertical-align:1px}
@@ -615,7 +630,7 @@ tr.row.is-done td:first-child{box-shadow:inset 3px 0 var(--st-done)}
 .user-perms dt{color:var(--muted)}
 .user-perms dd{margin:0;text-align:right;color:var(--brand-900);font-weight:650}
 /* ====== AMMINISTRAZIONE ====== */
-.admin-head{display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap;margin:14px 0 16px}
+.admin-head{display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap;margin:10px 0 12px}
 .admin-head > div:first-child{flex:1;min-width:220px}
 .admin-head .side-kicker{margin:0 0 2px}
 .admin-head h1{margin:0 0 3px}
@@ -633,8 +648,45 @@ tr.row.is-done td:first-child{box-shadow:inset 3px 0 var(--st-done)}
 .admin-main .search{position:relative;margin:0}
 .admin-main .search input{width:100%;margin:0;padding:9px 12px 9px 36px;border-radius:var(--radius-pill);font-size:var(--fs-md)}
 .admin-main .search-ico{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:15px;height:15px;fill:var(--muted);pointer-events:none}
+/* Template mail: matrice IT/EN in una schermata */
+.admin-tpl-card{padding:14px}
+.tplx-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.tplx-scope{display:flex;align-items:center;gap:7px}
+.tplx-scope label{margin:0;font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.tplx-scope select{width:auto;min-width:240px;margin:0;padding:7px 10px;font-size:var(--fs-sm)}
+.tplx-top-right{margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tplx-top-right .hint{font-size:10.5px;max-width:270px;margin:0}
+.tplx-placeholders{display:flex;gap:4px;flex-wrap:wrap;align-items:center;margin:0 0 8px}
+.tplx-placeholders span{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:10px;border:1px solid var(--line);border-radius:5px;padding:1px 5px;background:var(--surface-3);color:var(--muted)}
+.tplx-placeholders .tplx-note{border:0;background:none;padding:0;margin-left:auto;font-family:var(--font-sans);font-size:10.5px;color:var(--muted-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:430px}
+.tplx{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
+.tplx-head,.tplx-row{display:grid;grid-template-columns:150px minmax(0,1fr) minmax(0,1fr)}
+.tplx-head{background:var(--surface-3);border-bottom:1px solid var(--line);font-size:9.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted-2);font-weight:800}
+.tplx-head>div,.tplx-row>div{padding:6px 10px;border-right:1px solid var(--line-soft);min-width:0}
+.tplx-head>div:last-child,.tplx-row>div:last-child{border-right:0}
+.tplx-row{border-bottom:1px solid var(--line-soft)}
+.tplx-row:last-child{border-bottom:0}
+.tplx-meta b{display:block;color:var(--brand-900);font-size:var(--fs-md)}
+.tplx-meta > span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:var(--muted);font-size:var(--fs-sm);line-height:1.3;margin-top:2px}
+.tplx-meta-tags{display:flex;align-items:center;gap:6px;margin-top:5px}
+.tplx-reset{width:20px;height:20px;border:1px solid var(--line);background:#fff;border-radius:5px;color:var(--muted);display:grid;place-items:center;font-size:12px;line-height:1;padding:0}
+.tplx-reset:hover{color:var(--brand-600);border-color:var(--brand-500)}
+.tplx-cell{display:grid;gap:3px;align-content:start}
+.tplx-cell label{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted-2);margin:2px 0 0}
+.tplx-cell input{padding:5px 8px;font-size:var(--fs-sm)}
+.tplx-cell textarea{min-height:40px;padding:5px 8px;font-size:var(--fs-sm);line-height:1.4;resize:vertical}
+.tplx-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 0 0;margin-top:10px;border-top:1px solid var(--line-soft)}
+.tplx-bar .hint{flex:1;min-width:220px;margin:0}
+@media(max-width:1000px){
+  .tplx-head{display:none}
+  .tplx-head,.tplx-row{grid-template-columns:1fr}
+  .tplx-row>div{border-right:0;border-bottom:1px solid var(--line-soft)}
+  .tplx-row>div:last-child{border-bottom:0}
+  .tplx-meta{background:var(--surface-3)}
+}
 .tablewrap{overflow:auto}
 .admin-split{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:14px;align-items:start}
+.admin-users-split{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
 .admin-split .card{min-width:0}
 .admin-panel{position:sticky;top:14px}
 .admin-table{table-layout:fixed}
@@ -809,7 +861,7 @@ tr.row.is-done td:first-child{box-shadow:inset 3px 0 var(--st-done)}
 }
 @media(max-width:1560px){
   .home-cols{grid-template-columns:1fr}
-  .home-side{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+  .home-side{display:grid;grid-template-columns:1fr;gap:16px;align-items:start}
   .home-side .focus-card:nth-of-type(n+3){display:none}
   .home-side .wrow:nth-of-type(n+3){display:none}
 }
@@ -890,6 +942,7 @@ tr.row.is-done td:first-child{box-shadow:inset 3px 0 var(--st-done)}
       <div class="nav-group" data-group="portal">
         <div class="nav-label">Portale</div>
         <button class="nav-item" data-act="nav" data-nav="list" data-view="list" title="Engagement"><svg class="nav-ico" aria-hidden="true"><use href="#i-list"></use></svg><span class="nav-txt">Engagement</span></button>
+        <button class="nav-item nav-sub" data-act="nav" data-nav="todo" data-view="list" data-filter="action" title="Da gestire ora"><svg class="nav-ico" aria-hidden="true"><use href="#i-check"></use></svg><span class="nav-txt">Da gestire</span><span class="nav-count" hidden>0</span></button>
         <button class="nav-item" data-act="nav" data-nav="clients" data-view="clients" title="Clienti"><svg class="nav-ico" aria-hidden="true"><use href="#i-team"></use></svg><span class="nav-txt">Clienti</span></button>
         <button class="nav-item" data-act="nav" data-nav="calendar" data-view="calendar" title="Calendario"><svg class="nav-ico" aria-hidden="true"><use href="#i-cal"></use></svg><span class="nav-txt">Calendario</span></button>
         <button class="nav-item" data-act="nav" data-nav="solicitations" data-view="solicitations" title="Solleciti"><svg class="nav-ico" aria-hidden="true"><use href="#i-play"></use></svg><span class="nav-txt">Solleciti</span></button>
@@ -1375,7 +1428,9 @@ function updateNav() {
       ? 'list'
       : state.view === 'users'
         ? 'admin-users'
-        : state.view;
+        : state.view === 'list' && state.listFilter === 'action'
+          ? 'todo'
+          : state.view;
 
   document.querySelectorAll('[data-nav]').forEach(item => {
     const on = item.dataset.nav === key;
@@ -1383,6 +1438,14 @@ function updateNav() {
     if (on) item.setAttribute('aria-current', 'page');
     else item.removeAttribute('aria-current');
   });
+
+  const todoCount = (state.list || [])
+    .filter(item => (item.actionState || {}).kind === 'action').length;
+  const todoBadge = document.querySelector('[data-nav="todo"] .nav-count');
+  if (todoBadge) {
+    todoBadge.textContent = String(todoCount);
+    todoBadge.hidden = todoCount === 0;
+  }
 
   const kicker = $('#headerKicker');
   const section = $('#headerSection');
@@ -2237,11 +2300,6 @@ function renderList() {
     </div>
     <div class="home-cols">
       <section class="home-side">
-        <div class="card sideblock">
-          <div class="colhead"><h2>Da gestire ora</h2><span class="cnt c-action">${todo.length}</span></div>
-          ${focus || '<div class="empty" style="padding:14px 0">Nessuna azione in carico a te.</div>'}
-          ${todo.length > 4 ? `<button class="linkb" data-act="list-filter" data-filter="action" style="margin-top:8px">Vedi tutte (${todo.length})</button>` : ''}
-        </div>
         <div class="card sideblock">
           <div class="colhead"><h2 style="font-size:var(--fs-base)">In attesa di altri</h2><span class="cnt c-wait">${waiting.length}</span></div>
           ${waitingRows || '<div class="empty" style="padding:12px 0">Nessuna attesa in corso.</div>'}
@@ -3463,9 +3521,21 @@ function mailTemplatesSection(d) {
         <label for="tpl_scope_${t.type}">Ambito</label>
         <select class="f" id="tpl_scope_${t.type}" data-change="mail-template-scope" data-key="${t.type}" ${allowed.length === 1 ? 'disabled' : ''}>${options}</select>
       </div>
-      <div class="tpl-grid">
-        <div><label for="tpl_subject_${t.type}">Oggetto</label><input type="text" id="tpl_subject_${t.type}" value="${esc(raw.subject)}"></div>
-        <div><label for="tpl_body_${t.type}">Corpo</label><textarea id="tpl_body_${t.type}" rows="6">${esc(raw.body)}</textarea></div>
+      <div class="tpl-langs">
+        <div class="tpl-lang">
+          <h5>Italiano</h5>
+          <label for="tpl_subject_${t.type}">Oggetto</label>
+          <input type="text" id="tpl_subject_${t.type}" value="${esc(raw.subject || '')}">
+          <label for="tpl_body_${t.type}">Corpo</label>
+          <textarea id="tpl_body_${t.type}" rows="3">${esc(raw.body || '')}</textarea>
+        </div>
+        <div class="tpl-lang">
+          <h5>English</h5>
+          <label for="tpl_subject_en_${t.type}">Subject</label>
+          <input type="text" id="tpl_subject_en_${t.type}" value="${esc(raw.subjectEn || '')}">
+          <label for="tpl_body_en_${t.type}">Body</label>
+          <textarea id="tpl_body_en_${t.type}" rows="3">${esc(raw.bodyEn || '')}</textarea>
+        </div>
       </div>
       <div class="tpl-actions">
         <button class="btn pri sm" data-act="save-mail-template" data-key="${t.type}">Salva</button>
@@ -3473,8 +3543,11 @@ function mailTemplatesSection(d) {
         <span class="hint">Salva su: <b>${esc(templateScopeLabel(scope))}</b></span>
       </div>
       <details class="tpl-preview">
-        <summary>Anteprima con i dati di questo engagement</summary>
-        <div class="tpl-mail"><b>${esc(t.effective.subject)}</b><pre>${esc(t.effective.body)}</pre></div>
+        <summary>Anteprima IT / EN con i dati di questo engagement</summary>
+        <div class="tpl-previews">
+          <div><b>IT</b><div class="tpl-mail"><b>${esc(t.effective.subject || '')}</b><pre>${esc(t.effective.body || '')}</pre></div></div>
+          <div><b>EN</b><div class="tpl-mail"><b>${esc(t.effective.subjectEn || '')}</b><pre>${esc(t.effective.bodyEn || '')}</pre></div></div>
+        </div>
       </details>
     </div>`;
   }).join('');
@@ -3814,7 +3887,7 @@ function adminUsersHTML() {
 
   const detail = selected ? renderUserDetail(selected) : '<div class="empty">Seleziona un utente.</div>';
 
-  return `<div class="admin-split">
+  return `<div class="admin-split admin-users-split">
     <section class="card admin-tablecard">
       <div class="sec-head"><h3>Utenti <span class="cnt">${filtered.length}</span></h3><span class="tiny">Engagement e azioni nel dettaglio</span></div>
       <div class="search" style="margin-bottom:10px"><svg class="search-ico" aria-hidden="true"><use href="#i-search"></use></svg>
@@ -3899,49 +3972,91 @@ function adminTemplatesHTML() {
   const data = state.adminTemplates;
   if (!data) return '<div class="card"><div class="empty">Caricamento…</div></div>';
 
-  const target = state.adminTemplateTarget;
-  const targets = [
-    { key: 'standard', label: 'Standard (globale)', scope: 'standard' },
-    ...(data.clients || []).map(client => ({
-      key: `client:${client.id}`,
-      label: client.name,
-      scope: 'client',
-      clientId: client.id
-    }))
-  ];
-  const selected = targets.find(item =>
-    item.key === (target.scope === 'standard'
-      ? 'standard'
-      : `client:${target.clientId}`)) || targets[0];
-
-  const templates = selected.scope === 'standard'
-    ? data.standard
-    : (data.clients || []).find(client => client.id === selected.clientId)?.templates || [];
-  const template = templates.find(item => item.type === target.type) || { type: target.type, subject: '', body: '' };
+  const target = state.adminTemplateTarget || {};
+  const clients = data.clients || [];
+  const standard = data.standard || [];
+  const isClientScope = target.scope === 'client' && !!target.clientId;
+  const selectedClient = clients.find(client => client.id === target.clientId) || null;
+  const templates = isClientScope
+    ? (selectedClient?.templates || [])
+    : standard;
   const canManage = !!data.canManage;
+  const stdFor = type => standard.find(item => item.type === type) || {};
+  const forType = type => templates.find(item => item.type === type) || {};
+  const scopeValue = isClientScope ? `client|${target.clientId}` : 'standard';
+  const types = ['start', 'end', 'deliver'];
+  const shortDesc = {
+    start: 'Notifica l’avvio',
+    end: 'Notifica la conclusione',
+    deliver: 'Invia i report pubblicati'
+  };
 
-  const list = targets.map(item => `<button class="user-row ${selected.key === item.key ? 'on' : ''}" data-act="admin-template-target" data-scope="${item.scope}" data-client="${esc(item.clientId || '')}">
-    <span class="avatar">${item.scope === 'standard' ? 'ST' : 'CL'}</span>
-    <span class="who"><span class="nm">${esc(item.label)}</span><span class="em">${item.scope === 'standard' ? 'template globale' : 'override cliente'}</span></span>
-  </button>`).join('');
+  const rows = types.map(type => {
+    const t = forType(type);
+    const std = stdFor(type);
+    const meta = MAIL_META[type];
+    const empty = !(t.subject || t.body || t.subjectEn || t.bodyEn);
+    const custom = isClientScope
+      ? !empty
+      : !!t.standardCustom;
 
-  const typeTabs = ['start', 'end', 'deliver'].map(type =>
-    `<button class="btn sec sm ${target.type === type ? 'on' : ''}" data-act="admin-template-type" data-type="${type}">${MAIL_META[type].t}</button>`).join('');
-
-  return `<div class="users-split">
-    <section class="card users-list"><div class="users-list-head"><h2>Template <span class="cnt">${targets.length}</span></h2></div><div class="users-rows">${list}</div></section>
-    <section class="card users-detail">
-      <div class="udetail-head"><span class="avatar lg">${selected.scope === 'standard' ? 'ST' : 'CL'}</span><div class="t"><h2>${esc(selected.label)}</h2><p class="sub">Oggetto e corpo · ${selected.scope === 'standard' ? 'standard globale' : 'override del cliente'}</p></div>${canManage ? pill(['Modificabile', 'ok']) : pill(['Sola lettura', 'blocked'])}</div>
-      <div class="tabs2" style="display:flex;gap:5px;margin-bottom:10px">${typeTabs}</div>
-      <div class="user-block"><h3>${esc(MAIL_META[target.type].t)}</h3>
-        <div class="fgrid">
-          <div class="full"><label for="admin_tpl_subject">Oggetto</label><input type="text" id="admin_tpl_subject" value="${esc(template.subject)}" ${canManage ? '' : 'readonly'}></div>
-          <div class="full"><label for="admin_tpl_body">Corpo</label><textarea id="admin_tpl_body" rows="8" ${canManage ? '' : 'readonly'}>${esc(template.body)}</textarea></div>
+    return `<div class="tplx-row">
+      <div class="tplx-meta">
+        <b>${esc(meta.t)}</b>
+        <span>${esc(shortDesc[type] || meta.desc)}</span>
+        <div class="tplx-meta-tags">
+          ${custom ? pill(['Personalizzato', 'info']) : (isClientScope ? pill(['Eredita', 'neutral']) : pill(['Standard', 'neutral']))}
+          ${canManage
+            ? `<button class="tplx-reset" data-act="admin-reset-template" data-type="${type}" title="Ripristina" aria-label="Ripristina">↺</button>`
+            : ''}
         </div>
-        <p class="hint">Variabili: ${esc((state.adminTemplates.placeholders || []).join(', '))}. Se il cliente lascia vuoto, eredita il template standard.</p>
-        ${canManage ? `<div class="inline-actions"><button class="btn pri sm" data-act="admin-save-template">Salva</button><button class="btn sec sm" data-act="admin-reset-template">Ripristina</button></div>` : ''}
       </div>
-    </section>
+      <div class="tplx-cell">
+        <label for="tplx_${type}_it_s">Oggetto IT</label>
+        <input id="tplx_${type}_it_s" type="text" value="${esc(t.subject || '')}" placeholder="${esc(std.subject || '')}" ${canManage ? '' : 'readonly'}>
+        <label for="tplx_${type}_it_b">Corpo IT</label>
+        <textarea id="tplx_${type}_it_b" rows="2" placeholder="${esc(std.body || '')}" ${canManage ? '' : 'readonly'}>${esc(t.body || '')}</textarea>
+      </div>
+      <div class="tplx-cell">
+        <label for="tplx_${type}_en_s">Subject EN</label>
+        <input id="tplx_${type}_en_s" type="text" value="${esc(t.subjectEn || '')}" placeholder="${esc(std.subjectEn || '')}" ${canManage ? '' : 'readonly'}>
+        <label for="tplx_${type}_en_b">Body EN</label>
+        <textarea id="tplx_${type}_en_b" rows="2" placeholder="${esc(std.bodyEn || '')}" ${canManage ? '' : 'readonly'}>${esc(t.bodyEn || '')}</textarea>
+      </div>
+    </div>`;
+  }).join('');
+
+  const options = [
+    '<option value="standard">Standard (globale)</option>',
+    ...clients.map(client => `<option value="client|${esc(client.id)}" ${isClientScope && client.id === target.clientId ? 'selected' : ''}>${esc(client.name)} · override</option>`)
+  ];
+  if (!isClientScope) options[0] = '<option value="standard" selected>Standard (globale)</option>';
+
+  return `<div class="card admin-tpl-card">
+    <div class="tplx-top">
+      <div class="tplx-scope">
+        <label for="admin_tpl_target">Ambito</label>
+        <select id="admin_tpl_target" data-change="admin-template-target" aria-label="Ambito template">${options.join('')}</select>
+      </div>
+      <div class="tplx-top-right">
+        ${canManage ? pill(['Modificabile', 'ok']) : pill(['Sola lettura', 'blocked'])}
+        ${canManage ? '<button class="btn pri" data-act="admin-save-templates">Salva tutti</button>' : ''}
+      </div>
+    </div>
+    <div class="tplx-placeholders">
+      ${(data.placeholders || []).map(p => `<span>${esc(p)}</span>`).join('')}
+      <span class="tplx-note">${isClientScope
+        ? 'Vuoto = eredita lo standard.'
+        : 'Vuoto = default di sistema.'} La lingua del Setup decide quale versione inviare.</span>
+    </div>
+    <div class="tplx">
+      <div class="tplx-head">
+        <div>Template</div>
+        <div>Italiano</div>
+        <div>English</div>
+      </div>
+      ${rows}
+    </div>
   </div>`;
 }
 
@@ -3962,22 +4077,60 @@ function adminSettingsHTML() {
   </div>`;
 }
 
-async function saveAdminTemplate(reset) {
-  const target = state.adminTemplateTarget;
-  const subject = reset ? null : ($('#admin_tpl_subject')?.value || '');
-  const body = reset ? null : ($('#admin_tpl_body')?.value || '');
-  const path = target.scope === 'standard'
-    ? `/api/admin/mail-templates/standard/${encodeURIComponent(target.type)}`
-    : `/api/admin/mail-templates/client/${encodeURIComponent(target.clientId)}/${encodeURIComponent(target.type)}`;
+function adminTemplatePath(type) {
+  const target = state.adminTemplateTarget || {};
+  return target.scope === 'standard'
+    ? `/api/admin/mail-templates/standard/${encodeURIComponent(type)}`
+    : `/api/admin/mail-templates/client/${encodeURIComponent(target.clientId)}/${encodeURIComponent(type)}`;
+}
+
+async function saveAdminTemplates() {
+  const types = ['start', 'end', 'deliver'];
 
   try {
-    await api(path + '?' + qs(), {
+    for (const type of types) {
+      const subject = $(`#tplx_${type}_it_s`)?.value || '';
+      const body = $(`#tplx_${type}_it_b`)?.value || '';
+      const subjectEn = $(`#tplx_${type}_en_s`)?.value || '';
+      const bodyEn = $(`#tplx_${type}_en_b`)?.value || '';
+      const reset = [subject, body, subjectEn, bodyEn]
+        .every(value => !value.trim());
+
+      await api(adminTemplatePath(type) + '?' + qs(), {
+        method: 'PUT',
+        body: JSON.stringify({
+          subject,
+          body,
+          subjectEn,
+          bodyEn,
+          reset
+        })
+      });
+    }
+
+    state.adminTemplates = await api('/api/admin/mail-templates?' + qs());
+    renderAdmin();
+    toast('Template IT ed EN salvati');
+  } catch (error) {
+    toast(error.message);
+  }
+}
+
+async function resetAdminTemplate(type) {
+  try {
+    await api(adminTemplatePath(type) + '?' + qs(), {
       method: 'PUT',
-      body: JSON.stringify({ subject, body, reset: !!reset })
+      body: JSON.stringify({
+        subject: null,
+        body: null,
+        subjectEn: null,
+        bodyEn: null,
+        reset: true
+      })
     });
     state.adminTemplates = await api('/api/admin/mail-templates?' + qs());
     renderAdmin();
-    toast(reset ? 'Template ripristinato' : 'Template salvato');
+    toast('Template ripristinato');
   } catch (error) {
     toast(error.message);
   }
@@ -4270,6 +4423,7 @@ const actions = {
       return;
     }
 
+    state.listFilter = el.dataset.filter || 'all';
     backToList();
   },
   'side-toggle': () => {
@@ -4388,27 +4542,12 @@ const actions = {
       renderAdmin();
     } catch (error) { toast(error.message); }
   },
-  'admin-template-target': el => {
-    const scope = el.dataset.scope || 'standard';
-    state.adminTemplateTarget = {
-      scope,
-      clientId: scope === 'client' ? (el.dataset.client || '') : '',
-      type: state.adminTemplateTarget.type
-    };
-    renderAdmin();
-  },
-  'admin-template-type': el => {
-    state.adminTemplateTarget = {
-      ...state.adminTemplateTarget,
-      type: el.dataset.type || 'start'
-    };
-    renderAdmin();
-  },
-  'admin-save-template': () => saveAdminTemplate(false),
-  'admin-reset-template': () => saveAdminTemplate(true),
+  'admin-save-templates': () => saveAdminTemplates(),
+  'admin-reset-template': el => resetAdminTemplate(el.dataset.type),
   'select-user': el => {
     state.selectedUserId = el.dataset.id;
-    renderUsers();
+    if (state.view === 'admin' && state.adminTab === 'users') renderAdmin();
+    else renderUsers();
   },
   'user-add-client': async el => {
     const select = $('#user-client-select');
@@ -4674,7 +4813,7 @@ const actions = {
   },
   'list-filter': el => {
     state.listFilter = el.dataset.filter || 'all';
-    renderList();
+    render();
   },
   'sort-column': el => {
     const column = el.dataset.column || 'engagement';
@@ -5219,11 +5358,13 @@ const actions = {
     const scope = state.mailTemplateScope[key] || 'engagement';
     const subject = $('#tpl_subject_' + key)?.value || '';
     const body = $('#tpl_body_' + key)?.value || '';
+    const subjectEn = $('#tpl_subject_en_' + key)?.value || '';
+    const bodyEn = $('#tpl_body_en_' + key)?.value || '';
 
     try {
       await api(`/api/engagements/${engagedId()}/mail-templates/${key}?` + qs(), {
         method: 'PUT',
-        body: JSON.stringify({ scope, subject, body })
+        body: JSON.stringify({ scope, subject, body, subjectEn, bodyEn })
       });
       toast(`Template ${templateScopeLabel(scope)} aggiornato`);
       await loadMailTemplates();
@@ -5265,7 +5406,7 @@ const busyActions = new Set([
   'decide', 'save-scope', 'save-credentials', 'save-setup', 'upload-report',
   'download-report', 'create-download-link', 'submit-review', 'review-decide', 'publish', 'add-dl',
   'remove-dl', 'invite-team', 'remove-team', 'toggle-mail', 'send-mail', 'export-log', 'retry-list',
-  'save-mail-template', 'reset-mail-template'
+  'save-mail-template', 'reset-mail-template', 'admin-save-templates'
 ]);
 
 document.addEventListener('click', event => {
@@ -5339,7 +5480,7 @@ document.addEventListener('change', event => {
   }
   if (kind === 'list-filter') {
     state.listFilter = el.value || 'all';
-    renderList();
+    render();
   }
   if (kind === 'list-sort') {
     state.listSort = el.value || 'priority';
@@ -5352,6 +5493,15 @@ document.addEventListener('change', event => {
   if (kind === 'mail-template-scope') {
     state.mailTemplateScope[el.dataset.key] = el.value;
     render();
+  }
+  if (kind === 'admin-template-target') {
+    const [scope, clientId] = String(el.value || 'standard').split('|');
+    state.adminTemplateTarget = {
+      scope: scope === 'client' ? 'client' : 'standard',
+      clientId: scope === 'client' ? (clientId || '') : '',
+      type: 'start'
+    };
+    renderAdmin();
   }
 });
 

@@ -478,17 +478,23 @@ api.MapGet("/admin/mail-templates", (
     if (current.Role is not (Roles.Manager or Roles.PMO))
         return Forbidden();
 
-    var standard = MailTemplates.Standard(
-        settings.Get<MailTemplateSet>(MailTemplates.StandardKey));
+    var standardOverrides =
+        settings.Get<MailTemplateSet>(MailTemplates.StandardKey) ??
+        new MailTemplateSet();
+    var standard = MailTemplates.Standard(standardOverrides);
     var types = new[] { "start", "end", "deliver" };
 
     return Results.Ok(new
     {
+        Placeholders = MailTemplates.Placeholders,
         standard = types.Select(type => new
         {
             Type = type,
             Subject = standard.For(type)?.Subject ?? string.Empty,
-            Body = standard.For(type)?.Body ?? string.Empty
+            Body = standard.For(type)?.Body ?? string.Empty,
+            SubjectEn = standard.For(type)?.SubjectEn ?? string.Empty,
+            BodyEn = standard.For(type)?.BodyEn ?? string.Empty,
+            StandardCustom = standardOverrides.For(type) is { IsBlank: false }
         }),
         clients = clients.List()
             .Where(client =>
@@ -504,6 +510,10 @@ api.MapGet("/admin/mail-templates", (
                     Subject = client.MailTemplates.For(type)?.Subject
                         ?? string.Empty,
                     Body = client.MailTemplates.For(type)?.Body
+                        ?? string.Empty,
+                    SubjectEn = client.MailTemplates.For(type)?.SubjectEn
+                        ?? string.Empty,
+                    BodyEn = client.MailTemplates.For(type)?.BodyEn
                         ?? string.Empty
                 })
             }),
@@ -528,12 +538,22 @@ api.MapPut("/admin/mail-templates/standard/{type}", (
     var overrides = settings.Get<MailTemplateSet>(
         MailTemplates.StandardKey) ?? new MailTemplateSet();
 
-    overrides.Set(type, request.Reset
+    var subject = request.Subject?.Trim() ?? string.Empty;
+    var body = request.Body?.Trim() ?? string.Empty;
+    var subjectEn = request.SubjectEn?.Trim() ?? string.Empty;
+    var bodyEn = request.BodyEn?.Trim() ?? string.Empty;
+    var clear = request.Reset ||
+        (subject.Length == 0 && body.Length == 0 &&
+            subjectEn.Length == 0 && bodyEn.Length == 0);
+
+    overrides.Set(type, clear
         ? null
         : new MailTemplate
         {
-            Subject = request.Subject?.Trim() ?? string.Empty,
-            Body = request.Body?.Trim() ?? string.Empty
+            Subject = subject,
+            Body = body,
+            SubjectEn = subjectEn,
+            BodyEn = bodyEn
         });
 
     settings.Save(MailTemplates.StandardKey, overrides);
@@ -560,12 +580,22 @@ api.MapPut("/admin/mail-templates/client/{clientId}/{type}", (
     if (client is null)
         return Results.NotFound();
 
-    client.MailTemplates.Set(type, request.Reset
+    var subject = request.Subject?.Trim() ?? string.Empty;
+    var body = request.Body?.Trim() ?? string.Empty;
+    var subjectEn = request.SubjectEn?.Trim() ?? string.Empty;
+    var bodyEn = request.BodyEn?.Trim() ?? string.Empty;
+    var clear = request.Reset ||
+        (subject.Length == 0 && body.Length == 0 &&
+            subjectEn.Length == 0 && bodyEn.Length == 0);
+
+    client.MailTemplates.Set(type, clear
         ? null
         : new MailTemplate
         {
-            Subject = request.Subject?.Trim() ?? string.Empty,
-            Body = request.Body?.Trim() ?? string.Empty
+            Subject = subject,
+            Body = body,
+            SubjectEn = subjectEn,
+            BodyEn = bodyEn
         });
 
     clients.Save(client);
@@ -2496,12 +2526,20 @@ api.MapGet("/engagements/{id}/mail-templates", (
 
     var templates = new[] { "start", "end", "deliver" }.Select(type =>
     {
-        var resolved = MailTemplates.Resolve(
+        var resolvedIt = MailTemplates.Resolve(
             type,
             engagement,
             standard,
             client?.MailTemplates,
-            clock.Today);
+            clock.Today,
+            "it");
+        var resolvedEn = MailTemplates.Resolve(
+            type,
+            engagement,
+            standard,
+            client?.MailTemplates,
+            clock.Today,
+            "en");
 
         return new
         {
@@ -2512,9 +2550,12 @@ api.MapGet("/engagements/{id}/mail-templates", (
             Engagement = engagement.MailTemplates.For(type),
             Effective = new
             {
-                resolved.Subject,
-                resolved.Body,
-                resolved.Source
+                resolvedIt.Subject,
+                resolvedIt.Body,
+                SubjectEn = resolvedEn.Subject,
+                BodyEn = resolvedEn.Body,
+                resolvedIt.Source,
+                SourceEn = resolvedEn.Source
             }
         };
     });
@@ -2565,11 +2606,21 @@ api.MapPut("/engagements/{id}/mail-templates/{type}", (
 
     var subject = request.Subject?.Trim() ?? string.Empty;
     var body = request.Body?.Trim() ?? string.Empty;
-    var clear = request.Reset || (subject.Length == 0 && body.Length == 0);
+    var subjectEn = request.SubjectEn?.Trim() ?? string.Empty;
+    var bodyEn = request.BodyEn?.Trim() ?? string.Empty;
+    var clear = request.Reset ||
+        (subject.Length == 0 && body.Length == 0 &&
+            subjectEn.Length == 0 && bodyEn.Length == 0);
 
     var template = clear
         ? null
-        : new MailTemplate { Subject = subject, Body = body };
+        : new MailTemplate
+        {
+            Subject = subject,
+            Body = body,
+            SubjectEn = subjectEn,
+            BodyEn = bodyEn
+        };
 
     switch (scope)
     {

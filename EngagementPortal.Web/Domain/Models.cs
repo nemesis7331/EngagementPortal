@@ -115,12 +115,35 @@ public sealed class MailSettings
 
 public sealed class MailTemplate
 {
+    /// <summary>Oggetto in italiano (lingua di retrocompatibilità).</summary>
     public string Subject { get; set; } = string.Empty;
     public string Body { get; set; } = string.Empty;
+    public string SubjectEn { get; set; } = string.Empty;
+    public string BodyEn { get; set; } = string.Empty;
 
     public bool IsBlank =>
         string.IsNullOrWhiteSpace(Subject) &&
-        string.IsNullOrWhiteSpace(Body);
+        string.IsNullOrWhiteSpace(Body) &&
+        string.IsNullOrWhiteSpace(SubjectEn) &&
+        string.IsNullOrWhiteSpace(BodyEn);
+
+    /// <summary>Vero se il template ha contenuto per la lingua indicata.</summary>
+    public bool HasLanguage(string language) =>
+        string.Equals(language, "en", StringComparison.OrdinalIgnoreCase)
+            ? !string.IsNullOrWhiteSpace(SubjectEn) ||
+                !string.IsNullOrWhiteSpace(BodyEn)
+            : !string.IsNullOrWhiteSpace(Subject) ||
+                !string.IsNullOrWhiteSpace(Body);
+
+    public string SubjectFor(string language) =>
+        string.Equals(language, "en", StringComparison.OrdinalIgnoreCase)
+            ? SubjectEn
+            : Subject;
+
+    public string BodyFor(string language) =>
+        string.Equals(language, "en", StringComparison.OrdinalIgnoreCase)
+            ? BodyEn
+            : Body;
 }
 
 public sealed class MailTemplateSet
@@ -376,12 +399,16 @@ public sealed record MailTemplateUpdateRequest(
     string Scope,
     string? Subject,
     string? Body,
-    bool Reset = false);
+    bool Reset = false,
+    string? SubjectEn = null,
+    string? BodyEn = null);
 
 public sealed record AdminTemplateRequest(
     string? Subject,
     string? Body,
-    bool Reset = false);
+    bool Reset = false,
+    string? SubjectEn = null,
+    string? BodyEn = null);
 
 public sealed class ClientAccount
 {

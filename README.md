@@ -35,6 +35,10 @@ App Service a ogni push su `main`.
 - **Report versionati**: il Pentester carica una versione per **ogni tipologia**
   definita nel setup. Una nuova versione diventa l'ultima e le precedenti
   restano nello storico; revisione e pubblicazione richiedono tutte le tipologie.
+- **Template mail bilingui**: ogni template ha versione **IT ed EN** (oggetto e
+  corpo) per standard, cliente ed engagement. L'editor Amministrazione mostra
+  tutte le tipologie e le due lingue in un'unica schermata; la lingua del Setup
+  decide quale versione viene inviata.
 - **Amministrazione**: sezioni **Utenti**, **Clienti**, **Mailing list**
   (notifiche e deliverables per cliente ed engagement, con editor destinatari),
   **Template mail** (standard e override per cliente) e **Impostazioni**

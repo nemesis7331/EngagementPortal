@@ -32,7 +32,14 @@ public static class MailTemplates
                 "l'attività {{engagement}} ({{code}}) per {{client}} è iniziata.\n" +
                 "Periodo previsto: {{start}} – {{end}}.\n" +
                 "Responsabile: {{owner}}.\n\n" +
-                "Questa è una comunicazione automatica del portale."
+                "Questa è una comunicazione automatica del portale.",
+            SubjectEn = "Activity start – {{engagement}}",
+            BodyEn =
+                "Dear distribution list,\n\n" +
+                "the activity {{engagement}} ({{code}}) for {{client}} has started.\n" +
+                "Planned period: {{start}} – {{end}}.\n" +
+                "Owner: {{owner}}.\n\n" +
+                "This is an automated notification from the portal."
         },
         End = new MailTemplate
         {
@@ -41,7 +48,13 @@ public static class MailTemplates
                 "Gentile distribution list,\n\n" +
                 "l'attività {{engagement}} ({{code}}) per {{client}} si è conclusa il {{end}}.\n" +
                 "Responsabile: {{owner}}.\n\n" +
-                "Questa è una comunicazione automatica del portale."
+                "Questa è una comunicazione automatica del portale.",
+            SubjectEn = "Activity completion – {{engagement}}",
+            BodyEn =
+                "Dear distribution list,\n\n" +
+                "the activity {{engagement}} ({{code}}) for {{client}} ended on {{end}}.\n" +
+                "Owner: {{owner}}.\n\n" +
+                "This is an automated notification from the portal."
         },
         Deliver = new MailTemplate
         {
@@ -50,12 +63,19 @@ public static class MailTemplates
                 "Gentile distribution list,\n\n" +
                 "i deliverables dell'attività {{engagement}} ({{code}}) per {{client}} sono disponibili.\n" +
                 "Report pubblicati: {{reports}}.\n\n" +
-                "Questa è una comunicazione automatica del portale."
+                "Questa è una comunicazione automatica del portale.",
+            SubjectEn = "Deliverables available – {{engagement}}",
+            BodyEn =
+                "Dear distribution list,\n\n" +
+                "the deliverables for the activity {{engagement}} ({{code}}) for {{client}} are now available.\n" +
+                "Published reports: {{reports}}.\n\n" +
+                "This is an automated notification from the portal."
         }
     };
 
     /// <summary>
-    /// Unisce i default con gli eventuali override standard salvati.
+    /// Unisce i default con gli eventuali override standard salvati, campo per
+    /// campo e per lingua: un override solo italiano non perde l'inglese.
     /// </summary>
     public static MailTemplateSet Standard(MailTemplateSet? overrides)
     {
@@ -63,38 +83,54 @@ public static class MailTemplates
 
         return new MailTemplateSet
         {
-            Start = Pick(overrides?.Start, defaults.Start!),
-            End = Pick(overrides?.End, defaults.End!),
-            Deliver = Pick(overrides?.Deliver, defaults.Deliver!)
+            Start = Merge(overrides?.Start, defaults.Start!),
+            End = Merge(overrides?.End, defaults.End!),
+            Deliver = Merge(overrides?.Deliver, defaults.Deliver!)
         };
     }
 
-    private static MailTemplate Pick(
+    private static MailTemplate Merge(
         MailTemplate? candidate,
-        MailTemplate fallback) =>
-        candidate is { IsBlank: false } ? candidate : fallback;
+        MailTemplate fallback) => new()
+        {
+            Subject = FirstNonEmpty(candidate?.Subject, fallback.Subject),
+            Body = FirstNonEmpty(candidate?.Body, fallback.Body),
+            SubjectEn = FirstNonEmpty(candidate?.SubjectEn, fallback.SubjectEn),
+            BodyEn = FirstNonEmpty(candidate?.BodyEn, fallback.BodyEn)
+        };
+
+    private static string FirstNonEmpty(string? candidate, string fallback) =>
+        string.IsNullOrWhiteSpace(candidate) ? fallback : candidate;
 
     public static ResolvedMailTemplate Resolve(
         string type,
         Engagement engagement,
         MailTemplateSet standard,
         MailTemplateSet? client,
-        DateOnly? today = null)
+        DateOnly? today = null,
+        string? language = null)
     {
+        var requested = language?.Trim().ToLowerInvariant();
+        var effectiveLanguage = requested is "it" or "en"
+            ? requested
+            : engagement.Language == "en" ? "en" : "it";
+
         var engagementTemplate = engagement.MailTemplates.For(type);
         var clientTemplate = client?.For(type);
 
         MailTemplate template;
         string source;
 
-        if (engagementTemplate is { IsBlank: false })
+        if (engagementTemplate is { } fromEngagement &&
+            fromEngagement.HasLanguage(effectiveLanguage))
         {
-            template = engagementTemplate;
+            template = fromEngagement;
             source = "engagement";
         }
-        else if (clientTemplate is { IsBlank: false })
+        else if (clientTemplate is { } fromClient &&
+            fromClient.HasLanguage(effectiveLanguage))
         {
-            template = clientTemplate;
+            template = fromClient;
             source = "client";
         }
         else
@@ -108,8 +144,8 @@ public static class MailTemplates
             today ?? DateOnly.FromDateTime(DateTime.UtcNow));
 
         return new ResolvedMailTemplate(
-            Render(template.Subject, replacements),
-            Render(template.Body, replacements),
+            Render(template.SubjectFor(effectiveLanguage), replacements),
+            Render(template.BodyFor(effectiveLanguage), replacements),
             source,
             template);
     }
