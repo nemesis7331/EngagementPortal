@@ -629,6 +629,36 @@ tr.row.is-done td:first-child{box-shadow:inset 3px 0 var(--st-done)}
 .kvline{display:flex;justify-content:space-between;gap:12px;font-size:var(--fs-sm);color:var(--muted);border-bottom:1px solid var(--line-soft);padding-bottom:5px}
 .kvline:last-child{border-bottom:0;padding-bottom:0}
 .kvline b{color:var(--brand-900);text-align:right;font-weight:var(--fw-semibold)}
+/* Campo di ricerca con icona: stile di base, valido in qualunque contesto. */
+.search{position:relative}
+.search input{width:100%;margin:0;padding:9px 12px 9px 36px;border-radius:var(--radius-pill);font-size:var(--fs-md)}
+.search-ico{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:15px;height:15px;fill:var(--muted);pointer-events:none}
+/* ====== CLIENTI · esploratore ====== */
+.clients-explorer{display:grid;grid-template-columns:300px minmax(0,1fr);gap:14px;align-items:start}
+.clients-rail{background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow);padding:12px}
+.clients-rail .list{max-height:520px}
+.clients-panel{background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow);padding:16px;min-width:0}
+.cl-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line-soft);padding-bottom:12px;margin-bottom:12px}
+.cl-head .t{flex:1;min-width:180px}
+.cl-head p{margin:0;font-size:var(--fs-sm);color:var(--muted)}
+.cl-head p a{color:var(--brand-600)}
+.cl-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.cl-tab{border:1px solid var(--line);background:#fff;border-radius:var(--radius-pill);padding:5px 13px;font:inherit;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--muted);cursor:pointer}
+.cl-tab:hover{border-color:var(--brand-500);color:var(--brand-900)}
+.cl-tab.on{background:var(--brand-900);border-color:var(--brand-900);color:#fff}
+.cl-tab .cnt{margin-left:5px;font-size:var(--fs-2xs);font-weight:var(--fw-black);opacity:.75}
+.cl-block .hint{margin:0 0 10px}
+.cl-rows{display:grid;gap:0}
+.cl-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:9px 0;border-bottom:1px solid var(--line-soft)}
+.cl-row:last-child{border-bottom:0}
+.cl-row .cl-mail{flex:1;min-width:180px;font-size:var(--fs-xs);color:var(--muted);overflow-wrap:anywhere}
+.clients-rail .row{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line-soft);background:#fff;padding:9px 11px;cursor:pointer;color:inherit;font:inherit}
+.clients-rail .row:last-child{border-bottom:0}
+.clients-rail .row:hover{background:var(--surface-3)}
+.clients-rail .row.on{background:var(--brand-50);box-shadow:inset 3px 0 0 var(--brand-600)}
+.clients-rail .row .who{flex:1;min-width:0}
+.clients-rail .row .who small{font-size:var(--fs-2xs);color:var(--muted)}
+@media(max-width:1000px){.clients-explorer{grid-template-columns:minmax(0,1fr)}}
 /* ====== OGGETTI STANDARD ======
    Un solo modo per disegnare cliente, persona, tipo, stato, periodo e
    deliverable: nome, icona e colori restano coerenti in tutto il portale. */
@@ -1357,6 +1387,10 @@ const state = {
   adminTemplateTarget: { scope: 'standard', clientId: '', type: 'start' },
   // Blocchi del Setup aperti/chiusi: aperti di default, la scelta resta.
   setupFold: { team: true, dl: true },
+  // Sezione Clienti: cliente scelto e scheda attiva.
+  clientSel: '',
+  clientQuery: '',
+  clientTab: 'users',
   adminError: null,
   loading: false,
   error: null,
@@ -4785,24 +4819,7 @@ function adminUsersHTML() {
 }
 
 function adminClientsHTML() {
-  const manage = state.role === 'Manager';
-  const rows = state.clients.map(client => `<tr class="hover">
-    <td><button class="user client-link" data-act="client-card" data-client="${esc(client.id)}" title="Apri la scheda di ${esc(client.name)}"><span class="avatar">${esc(initialsOf(client.name))}</span><span><span class="nm">${esc(client.name)}</span><span class="em">${esc(client.website || client.id)}</span></span></button></td>
-    <td>${(client.users || []).length}</td>
-    <td>${(client.team || []).length}</td>
-    <td>${(client.distributionList || []).length} / ${(client.deliverablesDistributionList || []).length}</td>
-    <td><span class="cntpill">${client.engagementCount || 0}</span></td>
-    <td style="text-align:right;white-space:nowrap">
-      <button class="btn ghost sm" data-act="open-client" data-client="${esc(client.id)}">Engagement</button>
-      ${manage ? `<button class="btn ghost sm" data-act="rename-client" data-client="${esc(client.id)}">Modifica</button>` : ''}
-      <button class="btn ghost sm" data-act="client-card" data-client="${esc(client.id)}">Scheda</button>
-    </td>
-  </tr>`).join('');
-
-  return `<div class="card admin-tablecard"><div class="sec-head"><h3>Clienti <span class="cnt">${state.clients.length}</span></h3><span class="tiny">Notifiche / Deliverables</span></div>
-    <div class="tablewrap"><table><thead><tr><th>Cliente</th><th>Utenze</th><th>Team</th><th>Liste</th><th>Engagement</th><th></th></tr></thead><tbody>
-      ${rows || '<tr><td colspan="6" class="empty">Nessun cliente.</td></tr>'}
-    </tbody></table></div></div>`;
+  return clientsExplorerHTML();
 }
 
 /* ====== MAILING LIST ====== */
@@ -5464,92 +5481,155 @@ function renderCalendar() {
 
 function renderClients() {
   const manage = canManageClients();
-  const items = state.clients || [];
-
-  const cards = items.map(client => {
-    const users = client.users || [];
-    const baseDl = client.distributionList || [];
-    const baseDeliverables = client.deliverablesDistributionList || [];
-    const userRows = users.length
-      ? `<ul style="list-style:none;margin:0;padding:0">${users.map(u => `<li style="display:flex;justify-content:space-between;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line-soft)">
-          <span><b>${esc(u.name)}</b><br><span style="color:var(--muted);font-size:var(--fs-md);overflow-wrap:anywhere">${esc(u.email)}</span></span>
-          ${manage ? `<button class="btn dng sm" data-act="remove-client-user" data-client="${esc(client.id)}" data-user="${esc(u.id)}">Rimuovi</button>` : ''}
-        </li>`).join('')}</ul>`
-      : '<div class="empty" style="padding:8px 0">Nessuna utenza associata.</div>';
-
-    const dlRowsFor = (entries, kind) => entries.length
-      ? `<ul style="list-style:none;margin:0;padding:0">${entries.map(entry => `<li style="display:flex;justify-content:space-between;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line-soft)">
-          <span><b>${esc(entry.name)}</b><br><span style="color:var(--muted);font-size:var(--fs-md);overflow-wrap:anywhere">${esc(entry.email)}</span></span>
-          ${manage ? `<button class="btn dng sm" data-act="remove-client-dl" data-client="${esc(client.id)}" data-list="${kind}" data-entry="${esc(entry.id)}">Rimuovi</button>` : ''}
-        </li>`).join('')}</ul>`
-      : '<div class="empty" style="padding:8px 0">Nessun destinatario base.</div>';
-
-    const dlRows = dlRowsFor(baseDl, 'notifications');
-    const deliverablesRows = dlRowsFor(baseDeliverables, 'deliverables');
-
-    const team = client.team || [];
-    const canTeamInvite = state.role !== 'Auditor';
-    const canTeamRemove = state.role === 'Manager' || state.role === 'Client';
-    const teamRows = team.length
-      ? `<ul style="list-style:none;margin:0;padding:0">${team.map(member => {
-          const removable = canTeamRemove &&
-            (state.role !== 'Client' || member.organization === 'Cliente');
-          return `<li style="display:flex;justify-content:space-between;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line-soft)">
-            <span><b>${esc(member.name)}</b>${member.role ? ` · ${esc(member.role)}` : ''}<br>
-              <span style="color:var(--muted);font-size:var(--fs-md);overflow-wrap:anywhere">${esc(member.email)}</span>
-              ${orgPill(member.organization)}</span>
-            ${removable ? `<button class="btn dng sm" data-act="remove-client-team" data-client="${esc(client.id)}" data-member="${esc(member.id)}">Rimuovi</button>` : ''}
-          </li>`;
-        }).join('')}</ul>`
-      : '<div class="empty" style="padding:8px 0">Nessun partecipante esterno.</div>';
-
-    return `<div class="card client-card" id="client-${esc(client.id)}" tabindex="-1">
-      <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start">
-        <div style="display:flex;gap:12px;align-items:flex-start;min-width:0">
-          ${clientAvatar(client, 'lg')}
-          <div><h2 style="margin:0">${esc(client.name)}</h2>
-            <p class="sub" style="margin:4px 0 0">${esc(client.id)} · ${client.engagementCount || 0} engagement ${(client.engagementCount || 0) === 1 ? 'associato' : 'associati'}${client.website
-              ? ` · <a href="${esc(client.website)}" target="_blank" rel="noopener noreferrer">${esc(hostOf(client.website))}</a>`
-              : ''}</p></div>
-        </div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="btn sec sm" data-act="open-client" data-client="${esc(client.id)}">Vedi engagement</button>
-          ${manage ? `<button class="btn sec sm" data-act="rename-client" data-client="${esc(client.id)}">Modifica</button>` : ''}
-        </div>
-      </div>
-      <h3 style="font-size:var(--fs-base);margin:18px 0 6px">Utenze associate</h3>
-      ${userRows}
-      ${manage ? `<div style="margin-top:12px"><button class="btn pri sm" data-act="add-client-user" data-client="${esc(client.id)}">+ Aggiungi utenza</button></div>` : ''}
-      <h3 style="font-size:var(--fs-base);margin:18px 0 6px">Distribution list notifiche (base)</h3>
-      <p class="sub" style="margin:0 0 6px">Comune a tutti gli engagement del cliente; riceve inizio/fine attività e i solleciti.</p>
-      ${dlRows}
-      ${manage ? `<div style="margin-top:12px"><button class="btn sec sm" data-act="add-client-dl" data-client="${esc(client.id)}" data-list="notifications">+ Aggiungi destinatario notifiche</button></div>` : ''}
-      <h3 style="font-size:var(--fs-base);margin:18px 0 6px">Distribution list deliverables (base)</h3>
-      <p class="sub" style="margin:0 0 6px">Comune a tutti gli engagement del cliente; riceve l'invio dei report.</p>
-      ${deliverablesRows}
-      ${manage ? `<div style="margin-top:12px"><button class="btn sec sm" data-act="add-client-dl" data-client="${esc(client.id)}" data-list="deliverables">+ Aggiungi destinatario deliverables</button></div>` : ''}
-      <h3 style="font-size:var(--fs-base);margin:18px 0 6px">Team cliente</h3>
-      <p class="sub" style="margin:0 0 6px">Partecipanti esterni comuni a tutti gli engagement del cliente.</p>
-      ${teamRows}
-      ${canTeamInvite ? `<div style="margin-top:12px"><button class="btn sec sm" data-act="invite-client-team" data-client="${esc(client.id)}">+ Invita partecipante</button></div>` : ''}
-    </div>`;
-  }).join('');
 
   $('#app').innerHTML = `
-    <button class="crumb" data-act="list">← Tutti gli engagement</button>
-    <div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:flex-start">
-      <div><h1>Clienti e utenze</h1>
-        <p class="sub" style="margin-bottom:14px">${manage
+    <div class="headrow">
+      <div>
+        <h1>Clienti e utenze</h1>
+        <p class="sub" style="margin-bottom:0">${manage
           ? 'Gestisci clienti, utenze, team ed engagement collegati.'
           : state.role === 'Auditor'
             ? 'Elenco in sola lettura: clienti, utenze, team ed engagement associati.'
-            : 'Elenco clienti e utenze; puoi invitare partecipanti al team. Il resto è in sola lettura.'}</p></div>
-      ${manage ? '<button class="btn pri" data-act="new-client">+ Nuovo cliente</button>' : ''}
+            : 'Elenco clienti e utenze; puoi invitare partecipanti al team. Il resto è in sola lettura.'}</p>
+      </div>
+      <div class="head-acts">${manage ? '<button class="btn pri" data-act="new-client">+ Nuovo cliente</button>' : ''}</div>
     </div>
-    ${cards
-      ? `<div class="client-grid">${cards}</div>`
-      : '<div class="empty">Nessun cliente disponibile.</div>'}`;
+    ${clientsExplorerHTML()}`;
 }
+
+/* ====== CLIENTI · esploratore (elenco a sinistra, schede a destra) ====== */
+// Una sola forma per Portale › Clienti e Amministrazione › Clienti: elenco
+// compatto dei clienti e, per quello scelto, una scheda per volta.
+const CLIENT_GROUPS = [
+  ['users', 'Utenze', 'Chi entra nel portale per questo cliente.'],
+  ['notifications', 'Notifiche', 'Base del cliente: inizio e fine attività, solleciti.'],
+  ['deliverables', 'Deliverables', "Base del cliente: riceve l'invio dei report."],
+  ['team', 'Team', 'Partecipanti esterni comuni a tutte le attività.']
+];
+
+function clientsExplorerHTML() {
+  const manage = canManageClients();
+  const items = state.clients || [];
+  const query = normText(state.clientQuery);
+
+  const searchable = client => normText([
+    client.name, client.id, client.website,
+    ...(client.users || []).flatMap(u => [u.name, u.email]),
+    ...(client.team || []).flatMap(m => [m.name, m.email, m.organization]),
+    ...(client.distributionList || []).flatMap(d => [d.name, d.email]),
+    ...(client.deliverablesDistributionList || []).flatMap(d => [d.name, d.email])
+  ].join(' '));
+
+  const visible = query ? items.filter(client => searchable(client).includes(query)) : items;
+  const selected = items.find(client => client.id === state.clientSel) || visible[0] || null;
+
+  if (selected) state.clientSel = selected.id;
+
+  const rows = visible.length
+    ? visible.map(client => {
+        const engagements = client.engagementCount || 0;
+        return `<button class="row${selected && client.id === selected.id ? ' on' : ''}" data-act="client-select" data-client="${esc(client.id)}">
+          ${clientChip(client, { plain: true })}
+          <span class="who"><small>${engagements} engagement</small></span>
+          <span class="cntpill n" title="${engagements} engagement">${engagements}</span>
+        </button>`;
+      }).join('')
+    : '<div class="empty">Nessun cliente corrisponde alla ricerca.</div>';
+
+  return `<div class="clients-explorer">
+    <section class="clients-rail">
+      <div class="search" style="margin:0 0 10px">
+        <svg class="search-ico" aria-hidden="true"><use href="#i-search"></use></svg>
+        <input type="search" id="client-search" value="${esc(state.clientQuery)}"
+          placeholder="Cerca cliente, utenza, destinatario o sito…" aria-label="Cerca cliente">
+      </div>
+      <div class="list" role="list">${rows}</div>
+    </section>
+    <section class="clients-panel">${selected ? clientPanelHTML(selected, manage) : '<div class="empty">Nessun cliente da mostrare.</div>'}</section>
+  </div>`;
+}
+
+function clientPanelHTML(client, manage) {
+  const group = CLIENT_GROUPS.find(([key]) => key === state.clientTab) || CLIENT_GROUPS[0];
+  const counts = clientGroupCounts(client);
+  const engagements = client.engagementCount || 0;
+  const canTeamInvite = state.role !== 'Auditor';
+  const canTeamRemove = state.role === 'Manager' || state.role === 'Client';
+
+  const list = {
+    users: () => {
+      const users = client.users || [];
+      if (!users.length) return '<div class="empty" style="padding:14px 0">Nessuna utenza associata.</div>';
+      return users.map(u => `<div class="cl-row">
+        ${personChip(u.name, 'Referente cliente')}
+        <span class="cl-mail">${esc(u.email)}</span>
+        ${manage ? `<button class="btn dng sm" data-act="remove-client-user" data-client="${esc(client.id)}" data-user="${esc(u.id)}">Rimuovi</button>` : ''}
+      </div>`).join('');
+    },
+    notifications: () => distributionRows(client, client.distributionList || [], 'notifications', manage),
+    deliverables: () => distributionRows(client, client.deliverablesDistributionList || [], 'deliverables', manage),
+    team: () => {
+      const team = client.team || [];
+      if (!team.length) return '<div class="empty" style="padding:14px 0">Nessun partecipante esterno.</div>';
+      return team.map(member => {
+        const removable = canTeamRemove && (state.role !== 'Client' || member.organization === 'Cliente');
+        return `<div class="cl-row">
+          ${personChip(member.name, member.role || member.organization || 'Partecipante')}
+          <span class="cl-mail">${esc(member.email)}</span>
+          ${removable ? `<button class="btn dng sm" data-act="remove-client-team" data-client="${esc(client.id)}" data-member="${esc(member.id)}">Rimuovi</button>` : ''}
+        </div>`;
+      }).join('');
+    }
+  }[group[0]]();
+
+  const addButton = {
+    users: manage ? `<button class="btn pri sm" data-act="add-client-user" data-client="${esc(client.id)}">+ Aggiungi utenza</button>` : '',
+    notifications: manage ? `<button class="btn sec sm" data-act="add-client-dl" data-client="${esc(client.id)}" data-list="notifications">+ Aggiungi destinatario</button>` : '',
+    deliverables: manage ? `<button class="btn sec sm" data-act="add-client-dl" data-client="${esc(client.id)}" data-list="deliverables">+ Aggiungi destinatario</button>` : '',
+    team: canTeamInvite ? `<button class="btn sec sm" data-act="invite-client-team" data-client="${esc(client.id)}">+ Invita partecipante</button>` : ''
+  }[group[0]];
+
+  return `<div class="cl-head">
+    <span class="obj-client plain lg">${clientMark(client)}<span class="nm" style="font-size:17px">${esc(client.name)}</span></span>
+    <div class="t">
+      <p>${engagements} engagement ${engagements === 1 ? 'associato' : 'associati'}${client.website
+        ? ` · <a href="${esc(client.website)}" target="_blank" rel="noopener noreferrer">${esc(hostOf(client.website))}</a>`
+        : ''}</p>
+    </div>
+    <div class="head-acts">
+      <button class="btn sec sm" data-act="open-client" data-client="${esc(client.id)}">Vedi engagement</button>
+      ${manage ? `<button class="btn sec sm" data-act="rename-client" data-client="${esc(client.id)}">Modifica</button>` : ''}
+    </div>
+  </div>
+  <div class="cl-tabs" role="tablist">
+    ${CLIENT_GROUPS.map(([key, label]) => `<button class="cl-tab${key === group[0] ? ' on' : ''}" role="tab" aria-selected="${key === group[0]}"
+      data-act="client-tab" data-tab="${key}">${esc(label)} <span class="cnt">${counts[key]}</span></button>`).join('')}
+  </div>
+  <div class="cl-block">
+    <p class="hint">${esc(group[2])}</p>
+    <div class="cl-rows">${list}</div>
+    ${addButton ? `<div class="inline-actions" style="margin-top:12px">${addButton}</div>` : ''}
+  </div>`;
+}
+
+function clientGroupCounts(client) {
+  return {
+    users: (client.users || []).length,
+    notifications: (client.distributionList || []).length,
+    deliverables: (client.deliverablesDistributionList || []).length,
+    team: (client.team || []).length
+  };
+}
+
+function distributionRows(client, entries, kind, manage) {
+  if (!entries.length) return '<div class="empty" style="padding:14px 0">Nessun destinatario base.</div>';
+  return entries.map(entry => `<div class="cl-row">
+    ${personChip(entry.name, entry.organization || 'Cliente')}
+    <span class="cl-mail">${esc(entry.email)}</span>
+    ${manage ? `<button class="btn dng sm" data-act="remove-client-dl" data-client="${esc(client.id)}" data-list="${kind}" data-entry="${esc(entry.id)}">Rimuovi</button>` : ''}
+  </div>`).join('');
+}
+
 
 /* ====== ROUTING (URL normali) ====== */
 // Ogni sezione ha una URL propria — /engagements, /engagements/{id}/{tab},
@@ -5962,6 +6042,14 @@ const actions = {
     toast(`Default di ${definition.label} applicati`);
   },
 
+  'client-select': el => {
+    state.clientSel = el.dataset.client || '';
+    render();
+  },
+  'client-tab': el => {
+    state.clientTab = el.dataset.tab || 'users';
+    render();
+  },
   'kpi-client': el => {
     // Drill-down: il pannello KPI segue il cliente scelto in header.
     state.clientId = el.dataset.client || '';
@@ -7013,6 +7101,17 @@ document.addEventListener('input', event => {
       input.focus();
       const end = input.value.length;
       try { input.setSelectionRange(end, end); } catch { /* noop */ }
+    }
+    return;
+  }
+  if (event.target.id === 'client-search') {
+    state.clientQuery = event.target.value;
+    renderClients();
+    const box = $('#client-search');
+    if (box) {
+      box.focus();
+      const end = box.value.length;
+      try { box.setSelectionRange(end, end); } catch { /* noop */ }
     }
     return;
   }
