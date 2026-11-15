@@ -407,3 +407,5 @@ Aprire `http://localhost:5xxx` (la porta è indicata nel log di avvio).
   la sezione Utenti e la visibilità per assegnazione (Manager vede tutto)
 - `EngagementPortal.Web/wwwroot/engagement-users-detail-variants.html` — 4 varianti
   interattive del dettaglio utente (lista a sinistra, pannello dinamico a destra)
+- `EngagementPortal.Web/wwwroot/admin-layout-proposals.html` — 6 proposte di layout
+  per l'area Amministrazione (utenti, clienti, mailing list, template mail)

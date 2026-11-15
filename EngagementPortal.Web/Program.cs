@@ -115,18 +115,26 @@ api.MapGet("/clients", (
             Access.CanAccessClient(user, client.Id) ||
             accessibleEngagements.Any(engagement =>
                 engagement.ClientId == client.Id))
-        .Select(client => new
+        .Select(client =>
         {
-            client.Id,
-            client.Name,
-            client.Website,
-            client.CreatedDate,
-            client.Users,
-            client.DistributionList,
-            client.DeliverablesDistributionList,
-            client.Team,
-            EngagementCount = accessibleEngagements
-                .Count(engagement => engagement.ClientId == client.Id)
+            var full = Access.CanAccessClient(user, client.Id);
+
+            return new
+            {
+                client.Id,
+                client.Name,
+                Website = full ? client.Website : null,
+                client.CreatedDate,
+                Users = full ? client.Users : [],
+                DistributionList = full ? client.DistributionList : [],
+                DeliverablesDistributionList = full
+                    ? client.DeliverablesDistributionList
+                    : [],
+                Team = full ? client.Team : [],
+                CanAssign = full,
+                EngagementCount = accessibleEngagements
+                    .Count(engagement => engagement.ClientId == client.Id)
+            };
         });
 
     return Results.Ok(result);
@@ -135,24 +143,31 @@ api.MapGet("/clients", (
 // Directory utenti usata dal selettore demo. In produzione l'identità
 // arriva da Entra ID e questo endpoint non viene esposto.
 api.MapGet("/demo/users", (
+    HttpContext context,
     IUserRepository users,
     IClientRepository clients) =>
 {
+    var current = GetUser(context);
+    var internalUser = current.Role != Roles.Client;
     var result = new List<object>();
 
-    foreach (var account in users.List().Where(user => user.Active))
+    if (internalUser)
     {
-        result.Add(new
+        foreach (var account in users.List().Where(user => user.Active))
         {
-            account.Id,
-            account.Name,
-            account.Email,
-            account.Role,
-            ClientId = (string?)null
-        });
+            result.Add(new
+            {
+                account.Id,
+                account.Name,
+                account.Email,
+                account.Role,
+                ClientId = (string?)null
+            });
+        }
     }
 
-    foreach (var client in clients.List())
+    foreach (var client in clients.List().Where(client =>
+        internalUser || client.Id == current.ClientId))
     {
         foreach (var clientUser in client.Users)
         {
@@ -686,6 +701,7 @@ api.MapPost("/engagements", (
     HttpContext context,
     IEngagementRepository repository,
     IClientRepository clients,
+    IUserRepository users,
     EngagementWorkflow workflow,
     TodoResolver todos,
     IDateProvider clock) =>
@@ -750,7 +766,8 @@ api.MapPost("/engagements", (
             clock,
             client.DistributionList,
             client.DeliverablesDistributionList,
-            client.Team));
+            client.Team,
+            users.List().Select(account => account.Email).ToList()));
 });
 
 api.MapGet("/engagements/{id}", (
@@ -758,6 +775,7 @@ api.MapGet("/engagements/{id}", (
     HttpContext context,
     IEngagementRepository repository,
     IClientRepository clients,
+    IUserRepository users,
     EngagementWorkflow workflow,
     TodoResolver todos,
     IDateProvider clock) =>
@@ -778,7 +796,8 @@ api.MapGet("/engagements/{id}", (
         clock,
         client?.DistributionList ?? [],
         client?.DeliverablesDistributionList ?? [],
-        client?.Team ?? []));
+        client?.Team ?? [],
+        users.List().Select(account => account.Email).ToList()));
 });
 
 api.MapGet("/dashboard/todo", (
@@ -1045,6 +1064,13 @@ api.MapPost("/engagements/{id}/proposals", (
     {
         return Results.BadRequest(
             "La pianificazione si sblocca dopo manleva e ordine.");
+    }
+
+    if (!engagement.FinancialsDone || !engagement.FinancialsApproved)
+    {
+        return Results.BadRequest(
+            "La pianificazione si sblocca dopo l'approvazione " +
+            "di costi e margine.");
     }
 
     var today = clock.Today;
@@ -1400,6 +1426,10 @@ api.MapPost("/engagements/{id}/reports/{reportId}/download", (
 
     if (user.Role == Roles.Client && !report.Published)
         return Results.NotFound();
+
+    if (user.Role == Roles.Client && !HasDemoOtp(context))
+        return Results.BadRequest(
+            "Verifica 2FA richiesta: inserisci un codice di 6 cifre.");
 
     engagement.AddAudit(
         user.Name,
@@ -2671,7 +2701,8 @@ static object Detail(
     IDateProvider clock,
     IReadOnlyList<DistributionEntry> baseDistribution,
     IReadOnlyList<DistributionEntry> baseDeliverables,
-    IReadOnlyList<TeamMember> baseTeam)
+    IReadOnlyList<TeamMember> baseTeam,
+    IReadOnlyList<string> providerEmails)
 {
     var phase = workflow.Resolve(engagement, clock.Today);
 
@@ -2680,12 +2711,67 @@ static object Detail(
         : engagement.Reports.ToList();
 
     var canViewFinancials = EngagementWorkflow.CanViewFinancials(user.Role);
+    var isClient = user.Role == Roles.Client;
 
-    var mailLog = user.Role == Roles.Client
-        ? engagement.MailLog
-            .Where(entry => entry.Visibility == "All")
+    IReadOnlyList<DistributionEntry> VisibleDistribution(
+        IEnumerable<DistributionEntry> entries) =>
+        isClient
+            ? entries.Where(entry =>
+                entry.Organization is "Cliente" or "Partner" or "Altro")
+                .ToList()
+            : entries.ToList();
+
+    IReadOnlyList<TeamMember> VisibleTeam(
+        IEnumerable<TeamMember> members) =>
+        isClient
+            ? members.Where(member =>
+                member.Organization is "Cliente" or "Partner" or "Altro")
+                .ToList()
+            : members.ToList();
+
+    var notificationBase = VisibleDistribution(baseDistribution);
+    var notificationEngagement =
+        VisibleDistribution(engagement.DistributionList);
+    var deliverablesBase = VisibleDistribution(baseDeliverables);
+    var deliverablesEngagement =
+        VisibleDistribution(engagement.DeliverablesDistributionList);
+    var notificationEffective = isClient
+        ? Distribution.Combine(notificationBase, notificationEngagement)
+        : Distribution.Effective(engagement, baseDistribution);
+    var deliverablesEffective = isClient
+        ? Distribution.Combine(deliverablesBase, deliverablesEngagement)
+            is { Count: > 0 } explicitDeliverables
+                ? explicitDeliverables
+                : notificationEffective
+        : Distribution.EffectiveDeliverables(
+            engagement,
+            baseDeliverables,
+            baseDistribution);
+
+    var teamBase = VisibleTeam(baseTeam);
+    var team = VisibleTeam(engagement.Team);
+    var teamEffective = isClient
+        ? teamBase
+            .Concat(team)
+            .GroupBy(member => member.Email, StringComparer.OrdinalIgnoreCase)
+            .Select(group => group.First())
             .ToList()
-        : engagement.MailLog.ToList();
+        : Team.Effective(engagement, baseTeam);
+
+    var providerSet = new HashSet<string>(
+        providerEmails,
+        StringComparer.OrdinalIgnoreCase);
+    var mailLog = (isClient
+            ? engagement.MailLog.Where(entry => entry.Visibility == "All")
+            : engagement.MailLog)
+        .Select(entry => isClient
+            ? entry with
+            {
+                Recipients = FilterRecipients(entry.Recipients, providerSet),
+                Body = null
+            }
+            : entry)
+        .ToList();
 
     return new
     {
@@ -2753,24 +2839,22 @@ static object Detail(
         Credentials = CanSeeCredentials(user)
             ? engagement.Credentials
             : null,
-        DistributionList = engagement.DistributionList,
-        DistributionBase = baseDistribution,
-        DistributionEffective = Distribution.Effective(
-            engagement,
-            baseDistribution),
-        DeliverablesDistributionList =
-            engagement.DeliverablesDistributionList,
-        DeliverablesBase = baseDeliverables,
-        DeliverablesEffective = Distribution.EffectiveDeliverables(
-            engagement,
-            baseDeliverables,
-            baseDistribution),
-        DeliverablesFallback = Distribution.UsesNotificationFallback(
-            engagement,
-            baseDeliverables),
-        Team = engagement.Team,
-        TeamBase = baseTeam,
-        TeamEffective = Team.Effective(engagement, baseTeam),
+        DistributionList = notificationEngagement,
+        DistributionBase = notificationBase,
+        DistributionEffective = notificationEffective,
+        DeliverablesDistributionList = deliverablesEngagement,
+        DeliverablesBase = deliverablesBase,
+        DeliverablesEffective = deliverablesEffective,
+        DeliverablesFallback = isClient
+            ? Distribution.Combine(
+                deliverablesBase,
+                deliverablesEngagement).Count == 0
+            : Distribution.UsesNotificationFallback(
+                engagement,
+                baseDeliverables),
+        Team = team,
+        TeamBase = teamBase,
+        TeamEffective = teamEffective,
         Mail = new
         {
             start = new
@@ -2834,8 +2918,12 @@ static IEnumerable<AuditView> VisibleAudit(
             entry.Visibility == AuditVisibility.All)
         .Select(entry => new AuditView(
             entry.Date,
-            entry.Author,
-            entry.AuthorRole,
+            user.IsInternal
+                ? entry.Author
+                : entry.AuthorRole == Roles.Client
+                    ? "Cliente"
+                    : "Provider",
+            user.IsInternal ? entry.AuthorRole : string.Empty,
             user.IsInternal
                 ? entry.Text
                 : entry.ClientText ?? entry.Text));
@@ -2960,6 +3048,25 @@ static object MapClientUser(
         IsClient = true
     };
 }
+
+static bool HasDemoOtp(HttpContext context)
+{
+    var otp = context.Request.Query["otp"].FirstOrDefault();
+
+    return otp is { Length: 6 } && otp.All(char.IsDigit);
+}
+
+static string FilterRecipients(
+    string recipients,
+    IReadOnlySet<string> providerEmails) =>
+    string.Join(
+        "; ",
+        (recipients ?? string.Empty)
+            .Split(';', StringSplitOptions.RemoveEmptyEntries)
+            .Select(value => value.Trim())
+            .Where(value =>
+                value.Length > 0 &&
+                !providerEmails.Contains(value)));
 
 static IResult ReportDownloadFile(
     Engagement engagement,

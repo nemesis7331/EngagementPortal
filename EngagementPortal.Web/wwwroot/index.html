@@ -1087,17 +1087,23 @@ function fillUserSelect() {
     select.value = state.userId || '';
 }
 
-async function loadDemoUsers() {
+async function loadDemoUsers(preferredRole) {
+  const role = preferredRole || state.role;
+  const params = new URLSearchParams({
+    role,
+    client: state.clientId || ''
+  });
+
   try {
-    state.demoUsers = await api('/api/demo/users');
+    state.demoUsers = await api('/api/demo/users?' + params.toString());
   } catch {
     state.demoUsers = [];
   }
 
-  const saved = localStorage.getItem('cep.user');
-  const user = demoUserById(saved) ||
-    state.demoUsers.find(item => item.role === state.role) ||
-    state.demoUsers.find(item => item.role === 'Manager') ||
+  const savedId = localStorage.getItem('cep.user');
+  const saved = demoUserById(savedId);
+  const user = (saved && saved.role === role ? saved : null) ||
+    state.demoUsers.find(item => item.role === role) ||
     state.demoUsers[0];
 
   if (user) {
@@ -1161,8 +1167,13 @@ function setDemoUser(id) {
   loadClients().then(loadList);
 }
 
-function setRole(role) {
+async function setRole(role) {
   if (!ROLES[role]) return;
+
+  if (role === 'Client' ||
+      !state.demoUsers.some(user => user.role === role)) {
+    await loadDemoUsers(role);
+  }
 
   const candidate = state.demoUsers.find(user =>
     user.role === role &&
@@ -2339,7 +2350,7 @@ function tabPlan(d) {
   const c = d.capabilities || {};
   const canPropose = c.canPropose;
 
-  if (!e.hasManleva || !e.orderConfirmed || !e.financialsDone) {
+  if (!e.hasManleva || !e.orderConfirmed || !e.financialsDone || !e.financialsApproved) {
     return `<div class="note lockbox"><b>Pianificazione bloccata.</b> Servono la scheda tecnica firmata dal cliente, l'ordine registrato dal PMO e costi/margine approvati dal Manager.</div>`;
   }
 
@@ -2422,7 +2433,7 @@ function authorOf(x) {
 
 function tabScope(d) {
   const e = d.engagement;
-  if (!e.hasManleva || !e.orderConfirmed || !e.financialsDone) {
+  if (!e.hasManleva || !e.orderConfirmed || !e.financialsDone || !e.financialsApproved) {
     return `<div class="note lockbox"><b>Sezione bloccata.</b> Lo scope si sblocca dopo la firma della manleva, la registrazione dell'ordine e l'approvazione di costi e margine.</div>`;
   }
 
@@ -2471,7 +2482,7 @@ function tabScope(d) {
 
 function tabCred(d) {
   const e = d.engagement;
-  if (!e.hasManleva || !e.orderConfirmed || !e.financialsDone) {
+  if (!e.hasManleva || !e.orderConfirmed || !e.financialsDone || !e.financialsApproved) {
     return `<div class="note lockbox"><b>Sezione bloccata.</b> Le credenziali si sbloccano dopo la firma della manleva, la registrazione dell'ordine e l'approvazione di costi e margine.</div>`;
   }
 
@@ -3098,6 +3109,7 @@ function renderUserDetail(user) {
   }).join('');
 
   const availableClients = state.clients
+    .filter(client => client.canAssign !== false)
     .filter(client => !(user.clientIds || []).includes(client.id));
   const assignedClients = new Set(user.clientIds || []);
   const availableEngagements = state.userEngagements
@@ -3345,6 +3357,7 @@ const actions = {
         body: JSON.stringify({ name: v.name, email: v.email, role: v.role || 'Pentester' })
       });
       toast('Utente creato');
+      await loadDemoUsers();
       await loadUsers();
     } catch (error) { toast(error.message); }
   },
@@ -3886,6 +3899,7 @@ const actions = {
   },
 
   'download-report': async el => {
+    let otp = '';
     if (isClient()) {
       const verify = await ask({
         title: 'Verifica in due passaggi',
@@ -3894,13 +3908,14 @@ const actions = {
         fields: [{ id: 'code', label: 'Codice 2FA (6 cifre)', ph: '123456' }]
       });
       if (!verify) return;
-      if (!/^\d{6}$/.test((verify.code || '').trim())) {
+      otp = (verify.code || '').trim();
+      if (!/^\d{6}$/.test(otp)) {
         toast('Inserisci un codice di 6 cifre');
         return;
       }
     }
     try {
-      const response = await fetch(`/api/engagements/${engagedId()}/reports/${encodeURIComponent(el.dataset.rid)}/download?` + qs(), {
+      const response = await fetch(`/api/engagements/${engagedId()}/reports/${encodeURIComponent(el.dataset.rid)}/download?` + qs() + (otp ? `&otp=${encodeURIComponent(otp)}` : ''), {
         method: 'POST', headers: { 'Content-Type': 'application/json' }
       });
       if (!response.ok) throw new Error(`Errore ${response.status}`);

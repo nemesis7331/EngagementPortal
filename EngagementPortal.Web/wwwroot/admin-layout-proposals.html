@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Amministrazione · proposte di layout</title>
+<style>
+:root{
+  --brand-950:#061d36;--brand-900:#0a2a4d;--brand-700:#0f4275;--brand-600:#0b5fa5;
+  --brand-500:#2a86d8;--brand-100:#e1eefa;--brand-50:#f1f7fc;--accent:#0e9fb5;--accent-soft:#d6f4f8;
+  --ink:#0a1b2e;--muted:#566a80;--line:#dfe7ef;--line-soft:#edf2f7;--bg:#f4f7fa;--card:#fff;--surface-2:#f8fafc;
+  --st-action:#b42318;--st-action-bg:#fee4e2;--st-action-border:#fda29b;
+  --st-wait:#7a5b00;--st-wait-bg:#fff8c5;--st-wait-border:#eac54f;
+  --st-progress:#175cd3;--st-progress-bg:#d1e9ff;--st-progress-border:#b2ddff;
+  --st-done:#067647;--st-done-bg:#dcfae6;--st-done-border:#a9efc5;
+  --st-blocked:#475467;--st-blocked-bg:#f2f4f7;--st-blocked-border:#e4e7ec;
+  --radius:14px;--radius-md:10px;--shadow:0 1px 2px rgba(6,29,54,.06),0 6px 20px rgba(6,29,54,.06);
+  --shadow-lg:0 10px 30px rgba(6,29,54,.12);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button{font:inherit;cursor:pointer}a{color:var(--brand-600)}
+h1{font-size:30px;line-height:1.15;letter-spacing:-.02em;margin:0 0 8px;color:var(--brand-900)}
+h2{font-size:20px;margin:0;color:var(--brand-900)}h3{font-size:15px;margin:0;color:var(--brand-900)}p{margin:0}
+.sub{color:var(--muted)}.small{font-size:12.5px;color:var(--muted)}.tiny{font-size:11.5px;color:var(--muted)}
+.wrap{max-width:1240px;margin:0 auto;padding:28px 18px 80px}
+.top{display:flex;align-items:center;gap:14px;padding:14px 22px;background:var(--brand-900);color:#fff}
+.top .logo{width:34px;height:34px;border-radius:10px;background:var(--accent);display:grid;place-items:center;color:var(--brand-950);font-weight:800}
+.top b{font-size:15px}.top .meta{margin-left:auto;font-size:12.5px;color:#bed3e6}
+.intro{padding:34px 0 8px;max-width:1040px}
+.lede{font-size:17px;color:var(--muted);margin:0 0 20px}
+.rulebar{display:flex;align-items:flex-start;gap:12px;background:#fff;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:10px;padding:13px 15px;margin:0 0 20px}
+.rulebar .i{width:30px;height:30px;border-radius:50%;background:var(--accent-soft);color:var(--brand-700);display:grid;place-items:center;font-weight:800;flex:none}
+.rulebar b{display:block;font-size:13.5px;color:var(--brand-900)}
+.rulebar span{font-size:12.5px;color:var(--muted)}
+.principles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:20px 0 4px}
+.principle{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px;box-shadow:var(--shadow)}
+.principle b{display:block;font-size:13px;color:var(--brand-900);margin-bottom:3px}
+.principle span{font-size:12px;color:var(--muted)}
+.switcher{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 8px;padding:10px 0}
+.switcher button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 15px;font-weight:650;color:var(--muted);display:flex;align-items:center;gap:8px}
+.switcher button.on{border-color:var(--brand-600);color:var(--brand-700);box-shadow:0 0 0 3px var(--brand-100)}
+.switcher .n{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--brand-100);color:var(--brand-700);font-size:11px;font-weight:800}
+.switcher button.on .n{background:var(--brand-600);color:#fff}
+.proposal{display:none;padding-top:16px}.proposal.active{display:block}
+.prop-head{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap;margin-bottom:4px}
+.tag{font-size:11px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent-soft);background:#fff;padding:4px 10px;border-radius:999px;margin-top:3px}
+.prop-head h2{font-size:24px}
+.prop-desc{max-width:920px;color:var(--muted);margin:5px 0 16px}
+.metrics{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}
+.metric{background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:12.5px;color:var(--muted)}
+.metric b{color:var(--brand-900)}
+.mock{border:1px solid #c9d8e7;border-radius:18px;background:#fbfdff;padding:16px;box-shadow:var(--shadow);position:relative}
+.mockbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 2px 12px;border-bottom:1px solid var(--line-soft);margin-bottom:14px}
+.mockbar .dots{display:flex;gap:5px}.mockbar .dots i{display:block;width:9px;height:9px;border-radius:50%;background:#d6e1ec}
+.mockbar .name{font-size:12px;color:var(--muted);font-weight:600}
+.pagehead{display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-bottom:12px}
+.pagehead .t{flex:1;min-width:240px}.pagehead h3{font-size:21px;line-height:1.2;margin-bottom:3px}.pagehead .sub{font-size:12.5px}
+.actions{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.btn{border:1px solid transparent;border-radius:8px;padding:8px 13px;font-weight:650;font-size:13px;display:inline-flex;align-items:center;gap:6px;text-decoration:none}
+.btn.pri{background:var(--brand-600);color:#fff}.btn.pri:hover{background:var(--brand-700)}
+.btn.sec{background:#fff;border-color:var(--line);color:var(--brand-900)}
+.btn.ghost{background:transparent;color:var(--brand-600);padding:5px 4px}
+.btn.sm{padding:4px 9px;font-size:12px}
+.badge{font-size:10px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;padding:2px 7px;border-radius:999px;border:1px solid var(--line);color:var(--muted);background:var(--surface-2)}
+.badge.int{border-color:var(--st-progress-border);background:var(--st-progress-bg);color:var(--st-progress)}
+.badge.ext{border-color:var(--st-wait-border);background:var(--st-wait-bg);color:var(--st-wait)}
+.badge.ok{border-color:var(--st-done-border);background:var(--st-done-bg);color:var(--st-done)}
+.badge.mgr{border-color:var(--accent-soft);background:var(--accent-soft);color:var(--brand-700)}
+.avatar{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--brand-100);color:var(--brand-700);font-size:10.5px;font-weight:800;flex:none}
+.card2{background:#fff;border:1px solid var(--line);border-radius:12px;padding:13px;min-width:0}
+.sec-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.sec-head h3{margin:0}
+.toolbar{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-bottom:9px}
+.searchbox{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:#fff;border-radius:7px;padding:7px 9px;flex:1;min-width:170px}
+.searchbox input{border:0;outline:0;width:100%;font:inherit;font-size:12.5px;background:transparent}
+.toolbar select{border:1px solid var(--line);border-radius:7px;padding:7px 9px;font:inherit;font-size:12px;background:#fff;color:var(--brand-900)}
+.toolbar .btn{margin-left:auto}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th,td{text-align:left;padding:8px 8px;border-bottom:1px solid var(--line-soft);vertical-align:middle}
+th{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)}
+td b{color:var(--brand-900)}
+tr.sel td{background:var(--brand-50);box-shadow:inset 0 -2px 0 var(--brand-600)}
+tr.hover:hover td{background:var(--surface-2)}
+.user{display:flex;align-items:center;gap:8px;min-width:0}
+.user .nm{display:block;font-size:12.5px;font-weight:650;color:var(--brand-900);line-height:1.2}
+.user .em{display:block;font-size:10.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cntpill{display:inline-grid;place-items:center;min-width:19px;height:19px;padding:0 5px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);font-size:10.5px;color:var(--muted);font-weight:700}
+/* A rail */
+.admin-grid{display:grid;grid-template-columns:188px minmax(0,1fr) 300px;gap:12px;align-items:start}
+.rail{border:1px solid var(--line);border-radius:11px;background:#fff;overflow:hidden}
+.rail .rh{padding:10px 12px 6px;font-size:9.5px;letter-spacing:.7px;text-transform:uppercase;color:var(--muted);font-weight:800;border-bottom:1px solid var(--line-soft)}
+.rail button{display:flex;align-items:center;gap:8px;width:100%;border:0;border-bottom:1px solid var(--line-soft);background:#fff;padding:10px 12px;text-align:left;color:var(--muted);font-size:12.5px}
+.rail button:last-child{border-bottom:0}.rail button:hover{background:var(--surface-2)}
+.rail button.on{background:var(--brand-50);box-shadow:inset 3px 0 0 var(--brand-600);color:var(--brand-700);font-weight:650}
+.rail .ico{width:22px;height:22px;border-radius:6px;background:var(--brand-100);color:var(--brand-700);display:grid;place-items:center;font-size:9px;font-weight:800;flex:none}
+.rail .cnt{margin-left:auto}
+.inspector{border:1px solid var(--brand-100);border-radius:11px;background:linear-gradient(180deg,var(--brand-50),#fff);padding:13px}
+.insp-head{display:flex;align-items:center;gap:9px;margin-bottom:9px}
+.insp-head .avatar{width:35px;height:35px}
+.insp-head b{display:block;font-size:14px;color:var(--brand-900)}
+.insp-head span{display:block;font-size:11px;color:var(--muted)}
+.block{border:1px solid var(--line);border-radius:8px;background:#fff;padding:9px 10px;margin-bottom:7px}
+.block h4{margin:0 0 5px;font-size:9.5px;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);font-weight:800;display:flex;justify-content:space-between;gap:6px}
+.chips{display:flex;gap:4px;flex-wrap:wrap}
+.chip{font-size:10px;border:1px solid var(--line);border-radius:5px;padding:2px 6px;background:var(--surface-2);color:var(--muted)}
+.chip.on{border-color:var(--st-done-border);background:var(--st-done-bg);color:var(--st-done)}
+.insp-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.insp-actions .btn{flex:1;justify-content:center}
+/* B tabs */
+.tabsbar{display:flex;gap:5px;flex-wrap:wrap;border-bottom:1px solid var(--line);margin-bottom:11px}
+.tabsbar button{border:0;background:none;padding:8px 11px;font-size:12.5px;font-weight:650;color:var(--muted);display:flex;align-items:center;gap:6px;border-bottom:2px solid transparent}
+.tabsbar button.on{color:var(--brand-700);border-bottom-color:var(--brand-600)}
+.drawer{position:absolute;top:0;right:0;bottom:0;width:360px;background:#fff;border-left:1px solid var(--line);box-shadow:-12px 0 28px rgba(6,29,54,.12);padding:15px;overflow:auto;border-radius:0 17px 17px 0;z-index:3;display:none}
+.drawer .close{position:absolute;top:8px;right:8px;width:26px;height:26px;border:1px solid var(--line);background:#fff;border-radius:6px;display:grid;place-items:center;color:var(--muted)}
+.backdrop{position:absolute;inset:0;background:rgba(6,29,54,.16);border-radius:17px;z-index:2;display:none}
+/* C split */
+.split{display:grid;grid-template-columns:310px minmax(0,1fr);gap:12px;align-items:start}
+.clist{display:grid;gap:5px;max-height:500px;overflow:auto}
+.crow{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:8px;background:#fff;padding:8px 9px;text-align:left;width:100%;color:inherit}
+.crow:hover{background:var(--surface-2)}
+.crow.on{border-color:var(--brand-500);background:var(--brand-50);box-shadow:inset 3px 0 0 var(--brand-600)}
+.crow .nm{display:block;font-size:12.5px;font-weight:650;color:var(--brand-900);line-height:1.2}
+.crow .em{display:block;font-size:10.5px;color:var(--muted)}
+.crow .end{margin-left:auto;text-align:right}
+.subtabs{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:9px}
+.subtabs button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px 9px;font-size:11px;font-weight:650;color:var(--muted)}
+.subtabs button.on{border-color:var(--brand-600);background:var(--brand-100);color:var(--brand-700)}
+/* D grid */
+.gridwrap{overflow:auto;border:1px solid var(--line);border-radius:9px;background:#fff}
+.gridwrap table{min-width:760px;font-size:11.5px}
+.gridwrap th:first-child,.gridwrap td:first-child{position:sticky;left:0;background:#fff;z-index:1}
+.gridwrap td.cell{text-align:center;padding:5px}
+.gridwrap td.cell span{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:4px;border:1px solid var(--line);background:var(--surface-2);color:var(--muted);font-size:9px}
+.gridwrap td.cell span.on{background:var(--st-done-bg);border-color:var(--st-done-border);color:var(--st-done)}
+.bulkbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:var(--brand-900);color:#fff;border-radius:8px;padding:8px 10px;margin-top:8px;font-size:11.5px}
+.bulkbar .btn{background:#fff;color:var(--brand-900)}
+/* E hub */
+.hub{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.hubcard{border:1px solid var(--line);border-radius:10px;background:#fff;padding:12px;text-align:left;color:inherit}
+.hubcard:hover{border-color:var(--brand-500);box-shadow:0 0 0 2px var(--brand-100)}
+.hubcard .ic{width:31px;height:31px;border-radius:8px;background:var(--brand-100);color:var(--brand-700);display:grid;place-items:center;font-size:10px;font-weight:800;margin-bottom:8px}
+.hubcard b{display:block;font-size:13.5px;color:var(--brand-900)}
+.hubcard span{display:block;font-size:11px;color:var(--muted);margin-top:2px}
+.hubcard .cnt{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);font-size:10.5px;color:var(--muted);font-weight:700;margin-top:8px}
+.recent{margin-top:10px}
+.recent h4{font-size:10px;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin:0 0 6px;font-weight:800}
+.recentrow{display:flex;gap:8px;align-items:center;border-bottom:1px solid var(--line-soft);padding:6px 0;font-size:11.5px}
+.recentrow:last-child{border-bottom:0}
+.recentrow .t{flex:1}.recentrow b{display:block;color:var(--brand-900);font-size:11.5px}.recentrow span{display:block;color:var(--muted);font-size:10.5px}
+/* F client */
+.clientbar{display:flex;align-items:center;gap:9px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:9px;padding:8px 10px;margin-bottom:10px}
+.clientbar .avatar{width:34px;height:34px;font-size:12px}
+.clientbar b{display:block;font-size:14px;color:var(--brand-900)}
+.clientbar span{display:block;font-size:11px;color:var(--muted)}
+.clientbar select{margin-left:auto;border:1px solid var(--line);border-radius:7px;padding:6px 9px;font:inherit;font-size:12px;background:#fff}
+.panelbox{border:1px solid var(--line);border-radius:9px;background:#fff;padding:12px}
+.panelbox h4{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin:0 0 8px;font-weight:800}
+.panelrow{display:flex;gap:8px;align-items:center;border-bottom:1px solid var(--line-soft);padding:6px 0;font-size:12px}
+.panelrow:last-child{border-bottom:0}
+.panelrow .t{flex:1}.panelrow b{display:block;color:var(--brand-900);font-size:12px}.panelrow span{display:block;color:var(--muted);font-size:10.5px}
+.callouts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:18px 0 0}
+.callout{background:#fff;border:1px solid var(--line);border-radius:10px;padding:11px 12px;font-size:12.5px;color:var(--muted)}
+.callout b{display:block;color:var(--brand-900);font-size:12px;margin-bottom:2px}
+.proscons{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0 0}
+.pc{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:13px}
+.pc h5{margin:0 0 6px;font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:800}
+.pc ul{margin:0;padding-left:18px;color:var(--muted)}.pc li{margin-bottom:3px}
+.pc.good ul{color:#196345}.pc.bad ul{color:#8a4b00}
+.compare{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;margin-top:34px;box-shadow:var(--shadow)}
+.compare h2{margin-bottom:4px}.compare p{color:var(--muted);font-size:13px;margin-bottom:14px}
+.compare table{font-size:12.5px}
+.reco{margin-top:16px;background:var(--brand-50);border:1px solid var(--brand-100);border-radius:10px;padding:14px;font-size:13.5px;color:var(--brand-800)}
+.reco b{color:var(--brand-900)}
+.next{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;margin-top:18px;box-shadow:var(--shadow)}
+.next h2{font-size:18px;margin-bottom:6px}
+.next ul{margin:8px 0 0;padding-left:18px;color:var(--muted);font-size:13px}
+.toast{position:fixed;right:24px;bottom:24px;background:var(--brand-900);color:#fff;padding:11px 16px;border-radius:10px;font-size:13px;box-shadow:var(--shadow-lg);opacity:0;transform:translateY(8px);transition:.2s;pointer-events:none;z-index:100}
+.toast.show{opacity:1;transform:translateY(0)}
+@media(max-width:1100px){.admin-grid{grid-template-columns:170px minmax(0,1fr)}.admin-grid .inspector{grid-column:1/-1}.hub{grid-template-columns:1fr 1fr}}
+@media(max-width:920px){.split{grid-template-columns:1fr}.drawer{width:340px}.principles{grid-template-columns:1fr 1fr}}
+@media(max-width:760px){.wrap{padding:20px 12px 70px}.admin-grid{grid-template-columns:1fr}.rail{display:flex;overflow:auto}.rail .rh{display:none}.rail button{min-width:130px;border-bottom:0;border-right:1px solid var(--line-soft)}.drawer{width:100%;border-radius:17px}.hub{grid-template-columns:1fr}.callouts{grid-template-columns:1fr}.proscons{grid-template-columns:1fr}.principles{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="logo">EP</div>
+  <div><b>Cyber Engagement Portal</b><div class="tiny" style="color:#9fb9cf">Amministrazione · proposte di layout</div></div>
+  <div class="meta">Sezioni: utenti · clienti · mailing list · template</div>
+</header>
+
+<main class="wrap">
+  <section class="intro">
+    <h1>Amministrazione, senza sprecare schermo</h1>
+    <p class="lede">
+      Sei layout per le nuove sezioni di gestione: <b>utenti, clienti, mailing list, template mail</b> e impostazioni.
+      L’obiettivo è un’area unica, densa ma leggibile, con <b>pochi click</b>: categoria → riga → modifica sul posto.
+      Categorie e visibilità le definiamo dopo aver scelto l’ossatura.
+    </p>
+    <div class="rulebar">
+      <span class="i">▦</span>
+      <div><b>Principio</b><span>Una sola area “Amministrazione” raggiungibile dall’header. Ogni categoria ha ricerca, filtri, tabella e dettaglio senza cambiare pagina. Le azioni frequenti stanno nella riga; quelle rare nel dettaglio.</span></div>
+    </div>
+    <div class="principles">
+      <div class="principle"><b>Pochi click</b><span>Categoria e riga; la modifica avviene nel contesto.</span></div>
+      <div class="principle"><b>Spazio utile</b><span>Tabelle larghe, niente pannelli vuoti o margini inutili.</span></div>
+      <div class="principle"><b>Contesto</b><span>La categoria resta visibile; il dettaglio non perde la lista.</span></div>
+      <div class="principle"><b>Scalabile</b><span>Filtri e bulk quando i dati crescono.</span></div>
+    </div>
+    <div class="switcher" role="tablist" aria-label="Proposte">
+      <button class="on" data-variant="a" role="tab" aria-selected="true"><span class="n">A</span> Rail + ispettore <span class="tiny">· consigliata</span></button>
+      <button data-variant="b" role="tab" aria-selected="false"><span class="n">B</span> Tab + drawer</button>
+      <button data-variant="c" role="tab" aria-selected="false"><span class="n">C</span> Split list/detail</button>
+      <button data-variant="d" role="tab" aria-selected="false"><span class="n">D</span> Griglia bulk</button>
+      <button data-variant="e" role="tab" aria-selected="false"><span class="n">E</span> Hub iniziale</button>
+      <button data-variant="f" role="tab" aria-selected="false"><span class="n">F</span> Per cliente</button>
+    </div>
+  </section>
+
+  <!-- A -->
+  <section class="proposal active" id="p-a">
+    <div class="prop-head"><span class="tag">Proposta A</span><h2>Rail categorie + tabella + ispettore</h2></div>
+    <p class="prop-desc">La categoria resta a sinistra, la tabella occupa il centro e il dettaglio della riga selezionata sta a destra. È il layout più prevedibile: non si perde mai il contesto e le modifiche frequenti sono a portata di mano.</p>
+    <div class="metrics"><span class="metric"><b>1 click</b> categoria</span><span class="metric"><b>1 click</b> riga</span><span class="metric">Dettaglio sempre visibile</span><span class="metric">Tabelle dense</span></div>
+    <div class="mock">
+      <div class="mockbar"><span class="dots"><i></i><i></i><i></i></span><span class="name">amministrazione · utenti · profilo Manager</span></div>
+      <div class="pagehead"><div class="t"><h3>Utenti e accessi</h3><p class="sub">13 utenti · 6 clienti · 15 engagement</p></div><div class="actions"><button class="btn sec sm" data-toast="Esporta CSV (demo)">Esporta</button><button class="btn pri sm" data-toast="Nuovo utente (demo)">+ Utente</button></div></div>
+      <div class="admin-grid">
+        <nav class="rail" aria-label="Categorie amministrazione">
+          <div class="rh">Amministrazione</div>
+          <button class="on" data-cat><span class="ico">UT</span>Utenti<span class="cnt">13</span></button>
+          <button data-cat><span class="ico">CL</span>Clienti<span class="cnt">6</span></button>
+          <button data-cat><span class="ico">ML</span>Mailing list<span class="cnt">18</span></button>
+          <button data-cat><span class="ico">TP</span>Template mail<span class="cnt">9</span></button>
+          <button data-cat><span class="ico">ST</span>Impostazioni<span class="cnt"></span></button>
+        </nav>
+        <div class="card2">
+          <div class="toolbar"><div class="searchbox"><input placeholder="Cerca utente, email, cliente…" aria-label="Cerca utenti"><span class="tiny">13</span></div><select aria-label="Ruolo"><option>Tutti i ruoli</option><option>Manager</option><option>PMO</option><option>Pentester</option><option>Auditor</option></select><button class="btn sec sm" data-toast="Filtri (demo)">Filtri</button></div>
+          <table>
+            <thead><tr><th>Utente</th><th>Ruolo</th><th>Clienti</th><th>Engagement</th><th>Stato</th><th></th></tr></thead>
+            <tbody>
+              <tr class="hover" data-user="gm"><td><div class="user"><span class="avatar">GM</span><span><span class="nm">Giorgio Marino</span><span class="em">giorgio.marino@provider.example</span></span></div></td><td><span class="badge mgr">Manager</span></td><td>Tutti <span class="cntpill">6</span></td><td><span class="cntpill">15</span></td><td><span class="badge ok">Attivo</span></td><td><button class="btn ghost sm">Apri</button></td></tr>
+              <tr class="hover" data-user="lf"><td><div class="user"><span class="avatar">LF</span><span><span class="nm">Luca Ferri</span><span class="em">luca.ferri@provider.example</span></span></div></td><td><span class="badge int">PMO</span></td><td>Contoso, Fabrikam <span class="cntpill">2</span></td><td><span class="cntpill">8</span></td><td><span class="badge ok">Attivo</span></td><td><button class="btn ghost sm">Apri</button></td></tr>
+              <tr class="hover sel" data-user="sc"><td><div class="user"><span class="avatar">SC</span><span><span class="nm">Sara Conti</span><span class="em">sara.conti@provider.example</span></span></div></td><td><span class="badge int">Pentester</span></td><td>Contoso, Nova Bank <span class="cntpill">2</span></td><td><span class="cntpill">7</span></td><td><span class="badge ok">Attivo</span></td><td><button class="btn ghost sm">Apri</button></td></tr>
+              <tr class="hover" data-user="mv"><td><div class="user"><span class="avatar">MV</span><span><span class="nm">Marco Verdi</span><span class="em">marco.verdi@provider.example</span></span></div></td><td><span class="badge int">Pentester</span></td><td>— <span class="cntpill">0</span></td><td><span class="cntpill">2</span></td><td><span class="badge ok">Attivo</span></td><td><button class="btn ghost sm">Apri</button></td></tr>
+              <tr class="hover" data-user="ef"><td><div class="user"><span class="avatar">EF</span><span><span class="nm">Elena Fabbri</span><span class="em">elena.fabbri@provider.example</span></span></div></td><td><span class="badge int">Pentester</span></td><td>Fabrikam <span class="cntpill">1</span></td><td><span class="cntpill">4</span></td><td><span class="badge ok">Attivo</span></td><td><button class="btn ghost sm">Apri</button></td></tr>
+              <tr class="hover" data-user="pg"><td><div class="user"><span class="avatar">PG</span><span><span class="nm">Paolo Galli</span><span class="em">paolo.galli@provider.example</span></span></div></td><td><span class="badge">Auditor</span></td><td>Nova Bank <span class="cntpill">1</span></td><td><span class="cntpill">3</span></td><td><span class="badge ok">Attivo</span></td><td><button class="btn ghost sm">Apri</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <aside class="inspector" id="insp-a">
+          <div class="insp-head"><span class="avatar">SC</span><span><b>Sara Conti</b><span>sara.conti@provider.example · Pentester</span></span></div>
+          <div class="block"><h4>Clienti <span>2</span></h4><div class="chips"><span class="chip on">Contoso</span><span class="chip on">Nova Bank</span></div></div>
+          <div class="block"><h4>Engagement visibili <span>7</span></h4><div class="chips"><span class="chip">ENG-001</span><span class="chip">ENG-003</span><span class="chip">ENG-004</span><span class="chip">ENG-006</span><span class="chip">ENG-008</span><span class="chip">ENG-011</span><span class="chip">ENG-015</span></div></div>
+          <div class="block"><h4>Accesso</h4><p class="tiny">Vede scope, credenziali e report degli engagement assegnati. Nessun costo.</p></div>
+          <div class="insp-actions"><button class="btn sec sm" data-toast="Modifica assegnazioni (demo)">Assegnazioni</button><button class="btn pri sm" data-toast="Salva (demo)">Salva</button></div>
+        </aside>
+      </div>
+    </div>
+    <div class="callouts"><div class="callout"><b>1 · Contesto</b>La categoria resta a sinistra: si passa da Utenti a Mailing list con un click.</div><div class="callout"><b>2 · Riga → dettaglio</b>L’ispettore cambia senza aprire pagine o drawer.</div><div class="callout"><b>3 · Densità</b>La tabella usa tutta la larghezza disponibile; il dettaglio è stretto ma sufficiente.</div></div>
+    <div class="proscons"><div class="pc good"><h5>Perché funziona</h5><ul><li>Nessuna perdita di contesto.</li><li>Azioni frequenti sempre visibili.</li><li>Scala bene su desktop e tablet larghi.</li></ul></div><div class="pc bad"><h5>Da valutare</h5><ul><li>Su laptop piccoli il dettaglio può essere stretto.</li><li>Richiede una rail categorie ben organizzata.</li></ul></div></div>
+  </section>
+
+  <!-- B -->
+  <section class="proposal" id="p-b">
+    <div class="prop-head"><span class="tag">Proposta B</span><h2>Tab orizzontali + drawer laterale</h2></div>
+    <p class="prop-desc">Niente rail: le categorie sono tab compatte sopra la tabella. Il dettaglio si apre in un drawer solo quando serve, lasciando tutta la larghezza alla tabella. Massima densità per molte colonne e molte righe.</p>
+    <div class="metrics"><span class="metric"><b>1 click</b> tab</span><span class="metric"><b>Tabella full width</b></span><span class="metric">Drawer temporaneo</span><span class="metric">Meno contesto persistente</span></div>
+    <div class="mock">
+      <div class="mockbar"><span class="dots"><i></i><i></i><i></i></span><span class="name">amministrazione · tab + drawer · profilo Manager</span></div>
+      <div class="pagehead"><div class="t"><h3>Amministrazione</h3><p class="sub">Utenti, clienti, mailing list, template</p></div><div class="actions"><button class="btn pri sm" data-toast="Nuovo (demo)">+ Nuovo</button></div></div>
+      <div class="tabsbar"><button class="on">Utenti <span class="cntpill">13</span></button><button>Clienti <span class="cntpill">6</span></button><button>Mailing list <span class="cntpill">18</span></button><button>Template <span class="cntpill">9</span></button><button>Impostazioni</button></div>
+      <div class="toolbar"><div class="searchbox"><input placeholder="Cerca in utenti, email, cliente, ruolo…" aria-label="Cerca"><span class="tiny">13</span></div><select aria-label="Ruolo"><option>Tutti i ruoli</option><option>Manager</option><option>PMO</option><option>Pentester</option></select><select aria-label="Stato"><option>Tutti</option><option>Attivi</option><option>Disattivati</option></select></div>
+      <table>
+        <thead><tr><th>Utente</th><th>Email</th><th>Ruolo</th><th>Clienti</th><th>Engagement</th><th>Stato</th><th>Ultimo accesso</th><th></th></tr></thead>
+        <tbody>
+          <tr class="hover" data-drawer="b"><td><div class="user"><span class="avatar">GM</span><span class="nm">Giorgio Marino</span></div></td><td>giorgio.marino@provider.example</td><td><span class="badge mgr">Manager</span></td><td>Tutti</td><td><span class="cntpill">15</span></td><td><span class="badge ok">Attivo</span></td><td>oggi 09:42</td><td><button class="btn ghost sm">Dettagli</button></td></tr>
+          <tr class="hover" data-drawer="b"><td><div class="user"><span class="avatar">LF</span><span class="nm">Luca Ferri</span></div></td><td>luca.ferri@provider.example</td><td><span class="badge int">PMO</span></td><td>Contoso, Fabrikam</td><td><span class="cntpill">8</span></td><td><span class="badge ok">Attivo</span></td><td>oggi 08:15</td><td><button class="btn ghost sm">Dettagli</button></td></tr>
+          <tr class="hover" data-drawer="b"><td><div class="user"><span class="avatar">SC</span><span class="nm">Sara Conti</span></div></td><td>sara.conti@provider.example</td><td><span class="badge int">Pentester</span></td><td>Contoso, Nova Bank</td><td><span class="cntpill">7</span></td><td><span class="badge ok">Attivo</span></td><td>ieri 18:20</td><td><button class="btn ghost sm">Dettagli</button></td></tr>
+          <tr class="hover" data-drawer="b"><td><div class="user"><span class="avatar">MV</span><span class="nm">Marco Verdi</span></div></td><td>marco.verdi@provider.example</td><td><span class="badge int">Pentester</span></td><td>—</td><td><span class="cntpill">2</span></td><td><span class="badge ok">Attivo</span></td><td>ieri 16:03</td><td><button class="btn ghost sm">Dettagli</button></td></tr>
+          <tr class="hover" data-drawer="b"><td><div class="user"><span class="avatar">MR</span><span class="nm">Marta Rinaldi</span></div></td><td>marta.rinaldi@contoso.example</td><td><span class="badge ext">Cliente</span></td><td>Contoso</td><td><span class="cntpill">4</span></td><td><span class="badge ok">Attivo</span></td><td>—</td><td><button class="btn ghost sm">Dettagli</button></td></tr>
+        </tbody>
+      </table>
+      <div class="drawer" id="drawer-b"><button class="close" data-close-b aria-label="Chiudi">×</button><div class="insp-head"><span class="avatar">SC</span><span><b>Sara Conti</b><span>Pentester · Provider</span></span></div><div class="block"><h4>Assegnazioni</h4><div class="chips"><span class="chip on">Contoso</span><span class="chip on">Nova Bank</span><span class="chip">ENG-001</span><span class="chip">ENG-003</span><span class="chip">ENG-006</span></div></div><div class="block"><h4>Visibilità</h4><p class="tiny">2 clienti · 7 engagement · costi non visibili.</p></div><div class="insp-actions"><button class="btn sec sm" data-toast="Modifica (demo)">Modifica</button><button class="btn pri sm" data-toast="Salva (demo)">Salva</button></div></div>
+      <div class="backdrop" id="backdrop-b"></div>
+    </div>
+    <div class="callouts"><div class="callout"><b>1 · Larghezza</b>La tabella usa tutta la pagina; il drawer appare solo quando serve.</div><div class="callout"><b>2 · Pochi click</b>Tab categoria e click sulla riga; chiusura con × o backdrop.</div><div class="callout"><b>3 · Dettaglio contestuale</b>Il drawer non perde la lista dietro.</div></div>
+    <div class="proscons"><div class="pc good"><h5>Perché funziona</h5><ul><li>Massima densità orizzontale.</li><li>Nessun pannello fisso sprecato.</li><li>Adatto a molte colonne.</li></ul></div><div class="pc bad"><h5>Da valutare</h5><ul><li>Il drawer copre parte della tabella.</li><li>Meno confronto immediato tra righe.</li></ul></div></div>
+  </section>
+
+  <!-- C -->
+  <section class="proposal" id="p-c">
+    <div class="prop-head"><span class="tag">Proposta C</span><h2>Split list/detail per categoria</h2></div>
+    <p class="prop-desc">Categoria in alto, elenco a sinistra e dettaglio a destra. Zero pannelli laterali fissi: tutto lo spazio va a elenco e dettaglio. È la versione “master-detail” estesa a clienti, mailing list e template.</p>
+    <div class="metrics"><span class="metric"><b>0 click</b> dopo la categoria</span><span class="metric"><b>1 click</b> riga</span><span class="metric">Dettaglio ampio</span><span class="metric">Elenco stretto</span></div>
+    <div class="mock">
+      <div class="mockbar"><span class="dots"><i></i><i></i><i></i></span><span class="name">amministrazione · split · profilo Manager</span></div>
+      <div class="pagehead"><div class="t"><h3>Clienti</h3><p class="sub">6 clienti · 15 engagement · 13 utenti</p></div><div class="actions"><button class="btn pri sm" data-toast="Nuovo cliente (demo)">+ Cliente</button></div></div>
+      <div class="subtabs"><button class="on">Clienti</button><button>Utenti</button><button>Mailing list</button><button>Template</button></div>
+      <div class="split">
+        <div class="card2">
+          <div class="searchbox" style="margin-bottom:8px"><input placeholder="Cerca cliente o dominio…" aria-label="Cerca clienti"><span class="tiny">6</span></div>
+          <div class="clist">
+            <button class="crow on" data-client="contoso"><span class="avatar">CO</span><span><span class="nm">Contoso</span><span class="em">contoso.com · 4 engagement</span></span><span class="end"><span class="cntpill">4</span></span></button>
+            <button class="crow" data-client="fabrikam"><span class="avatar">FA</span><span><span class="nm">Fabrikam</span><span class="em">fabrikam.com · 4 engagement</span></span><span class="end"><span class="cntpill">4</span></span></button>
+            <button class="crow" data-client="novabank"><span class="avatar">NB</span><span><span class="nm">Nova Bank</span><span class="em">novabank.example · 3 engagement</span></span><span class="end"><span class="cntpill">3</span></span></button>
+            <button class="crow" data-client="orion"><span class="avatar">OR</span><span><span class="nm">Orion Energia</span><span class="em">orion.example · 2 engagement</span></span><span class="end"><span class="cntpill">2</span></span></button>
+            <button class="crow" data-client="tailspin"><span class="avatar">TS</span><span><span class="nm">Tailspin Toys</span><span class="em">tailspin.example · 1 engagement</span></span><span class="end"><span class="cntpill">1</span></span></button>
+          </div>
+        </div>
+        <div class="card2" id="c-detail">
+          <div class="sec-head"><div><h3 style="font-size:18px;margin:0">Contoso</h3><p class="tiny" style="margin:2px 0 0">contoso.com · 4 engagement · 2 utenti cliente</p></div><div class="actions"><button class="btn sec sm" data-toast="Modifica cliente (demo)">Modifica</button><button class="btn pri sm" data-toast="Nuovo engagement (demo)">+ Engagement</button></div></div>
+          <div class="subtabs"><button class="on">Panoramica</button><button>Utenti</button><button>Mailing list</button><button>Template</button><button>Engagement</button></div>
+          <div class="panelbox"><h4>Utenti e accessi</h4>
+            <div class="panelrow"><span class="avatar" style="width:24px;height:24px">MR</span><span class="t"><b>Marta Rinaldi</b><span>Cliente · utenza portale</span></span><span class="badge ext">Cliente</span></div>
+            <div class="panelrow"><span class="avatar" style="width:24px;height:24px">AR</span><span class="t"><b>Anna Rossi</b><span>Cliente · utenza portale</span></span><span class="badge ext">Cliente</span></div>
+            <div class="panelrow"><span class="avatar" style="width:24px;height:24px">SC</span><span class="t"><b>Sara Conti</b><span>Pentester · assegnata a Contoso</span></span><span class="badge int">Provider</span></div>
+          </div>
+          <div class="panelbox" style="margin-top:9px"><h4>Mailing list base</h4><div class="chips"><span class="chip on">Notifiche · 2</span><span class="chip on">Deliverables · 1</span><span class="chip">Template override · 2</span></div><p class="tiny" style="margin-top:6px">Le liste dell’engagement si aggiungono a queste. Clicca per gestirle.</p></div>
+          <div class="panelbox" style="margin-top:9px"><h4>Engagement</h4><div class="panelrow"><span class="t"><b>External Penetration Test</b><span>ENG-2026-001 · Scope</span></span><span class="cntpill">4</span></div><div class="panelrow"><span class="t"><b>Web Application Retest</b><span>ENG-2026-003 · Report</span></span><span class="cntpill">4</span></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="callouts"><div class="callout"><b>1 · Spazio</b>Elenco 310 px, dettaglio ampio: nessun ispettore stretto.</div><div class="callout"><b>2 · Categorie</b>Le categorie sono tab compatte; l’elenco cambia sotto.</div><div class="callout"><b>3 · Dettaglio ricco</b>Utenti, mailing list, template ed engagement nello stesso pannello.</div></div>
+    <div class="proscons"><div class="pc good"><h5>Perché funziona</h5><ul><li>Molto leggibile su desktop.</li><li>Dettaglio ampio per categorie complesse come i clienti.</li><li>Riusa il pattern già scelto per Utenti.</li></ul></div><div class="pc bad"><h5>Da valutare</h5><ul><li>Meno righe visibili nell’elenco.</li><li>La tabella densa è meglio in A/B per gli utenti.</li></ul></div></div>
+  </section>
+
+  <!-- D -->
+  <section class="proposal" id="p-d">
+    <div class="prop-head"><span class="tag">Proposta D</span><h2>Griglia bulk per assegnazioni</h2></div>
+    <p class="prop-desc">Una modalità “griglia” per il lavoro di massa: utenti in riga, clienti/engagement in colonna, celle da spuntare. Il dettaglio avanzato resta in un drawer. È uno strumento operativo, non la vista quotidiana.</p>
+    <div class="metrics"><span class="metric"><b>Molte assegnazioni</b> in un colpo</span><span class="metric">Filtri</span><span class="metric">Barra bulk</span><span class="metric">Rischio errori</span></div>
+    <div class="mock">
+      <div class="mockbar"><span class="dots"><i></i><i></i><i></i></span><span class="name">amministrazione · griglia bulk · profilo Manager</span></div>
+      <div class="pagehead"><div class="t"><h3>Utenti · assegnazioni</h3><p class="sub">Vista bulk · 18 assegnazioni selezionate</p></div><div class="actions"><button class="btn sec sm" data-toast="Vista tabella (demo)">Tabella</button><button class="btn pri sm" data-toast="Salva (demo)">Salva assegnazioni</button></div></div>
+      <div class="toolbar"><div class="searchbox"><input placeholder="Filtra utenti o clienti…" aria-label="Filtra griglia"></div><select aria-label="Ruolo"><option>Tutti i ruoli</option><option>PMO</option><option>Pentester</option><option>Auditor</option></select><select aria-label="Cliente"><option>Tutti i clienti</option><option>Contoso</option><option>Fabrikam</option><option>Nova Bank</option></select></div>
+      <div class="gridwrap"><table><thead><tr><th>Utente</th><th>Contoso</th><th>Fabrikam</th><th>Nova Bank</th><th>Orion</th><th>Tailspin</th><th>Northwind</th></tr></thead><tbody>
+        <tr><td><div class="user"><span class="avatar" style="width:23px;height:23px">LF</span><span><span class="nm">Luca Ferri</span><span class="em">PMO</span></span></div></td><td class="cell"><span class="on">✓</span></td><td class="cell"><span class="on">✓</span></td><td class="cell"><span>–</span></td><td class="cell"><span>–</span></td><td class="cell"><span>–</span></td><td class="cell"><span>–</span></td></tr>
+        <tr><td><div class="user"><span class="avatar" style="width:23px;height:23px">SC</span><span><span class="nm">Sara Conti</span><span class="em">Pentester</span></span></div></td><td class="cell"><span class="on">✓</span></td><td class="cell"><span>–</span></td><td class="cell"><span class="on">✓</span></td><td class="cell"><span>–</span></td><td class="cell"><span>–</span></td><td class="cell"><span>–</span></td></tr>
+        <tr><td><div class="user"><span class="avatar" style="width:23px;height:23px">MV</span><span><span class="nm">Marco Verdi</span><span class="em">Pentester</span></span></div></td><td class="cell"><span class="on">✓</span></td><td class="cell"><span>–</span></td><td class="cell"><span>–</span></td><td class="cell"><span>–</span></td><td class="cell"><span>–</span></td><td class="cell"><span>–</span></td></tr>
+        <tr><td><div class="user"><span class="avatar" style="width:23px;height:23px">EF</span><span><span class="nm">Elena Fabbri</span><span class="em">Pentester</span></span></div></td><td class="cell"><span>–</span></td><td class="cell"><span class="on">✓</span></td><td class="cell"><span>–</span></td><td class="cell"><span>–</span></td><td class="cell"><span>–</span></td><td class="cell"><span>–</span></td></tr>
+        <tr><td><div class="user"><span class="avatar" style="width:23px;height:23px">PG</span><span><span class="nm">Paolo Galli</span><span class="em">Auditor</span></span></div></td><td class="cell"><span>–</span></td><td class="cell"><span>–</span></td><td class="cell"><span class="on">✓</span></td><td class="cell"><span>–</span></td><td class="cell"><span>–</span></td><td class="cell"><span>–</span></td></tr>
+      </tbody></table></div>
+      <div class="bulkbar"><span><b>18</b> assegnazioni selezionate</span><span style="opacity:.7">Le modifiche saranno salvate in blocco.</span><span style="margin-left:auto"><button class="btn sm" data-toast="Annulla (demo)">Annulla</button> <button class="btn sm" data-toast="Applica (demo)">Applica</button></span></div>
+    </div>
+    <div class="callouts"><div class="callout"><b>1 · Massa</b>Una sola schermata per decine di assegnazioni.</div><div class="callout"><b>2 · Filtri</b>Riduci righe e colonne prima di agire.</div><div class="callout"><b>3 · Rischio</b>Serve conferma e anteprima dell’impatto prima del salvataggio.</div></div>
+    <div class="proscons"><div class="pc good"><h5>Perché funziona</h5><ul><li>Altissima efficienza per l’amministratore.</li><li>Evidenzia subito i buchi di assegnazione.</li><li>Si integra come modalità di A/B.</li></ul></div><div class="pc bad"><h5>Da valutare</h5><ul><li>Errori in massa: serve undo/conferma.</li><li>Poco adatta a mobile.</li></ul></div></div>
+  </section>
+
+  <!-- E -->
+  <section class="proposal" id="p-e">
+    <div class="prop-head"><span class="tag">Proposta E</span><h2>Hub iniziale Amministrazione</h2></div>
+    <p class="prop-desc">Una pagina di atterraggio con le categorie e i numeri chiave, poi si entra nella sezione. Più chiara per chi non conosce l’area, ma aggiunge un click rispetto a un rail sempre visibile.</p>
+    <div class="metrics"><span class="metric">Scopribilità</span><span class="metric"><b>+1 click</b></span><span class="metric">Card con stato</span><span class="metric">Meno densa</span></div>
+    <div class="mock">
+      <div class="mockbar"><span class="dots"><i></i><i></i><i></i></span><span class="name">amministrazione · hub · profilo Manager</span></div>
+      <div class="pagehead"><div class="t"><h3>Amministrazione</h3><p class="sub">Tutto ciò che configura il portale</p></div><div class="actions"><button class="btn sec sm" data-toast="Attività (demo)">Attività recenti</button></div></div>
+      <div class="hub">
+        <button class="hubcard" data-toast="Apri Utenti (demo)"><span class="ic">UT</span><b>Utenti</b><span>Ruoli, assegnazioni, accessi</span><span class="cnt">13</span></button>
+        <button class="hubcard" data-toast="Apri Clienti (demo)"><span class="ic">CL</span><b>Clienti</b><span>Anagrafiche, utenze, team</span><span class="cnt">6</span></button>
+        <button class="hubcard" data-toast="Apri Mailing list (demo)"><span class="ic">ML</span><b>Mailing list</b><span>Notifiche e deliverables</span><span class="cnt">18</span></button>
+        <button class="hubcard" data-toast="Apri Template (demo)"><span class="ic">TP</span><b>Template mail</b><span>Standard, cliente, engagement</span><span class="cnt">9</span></button>
+        <button class="hubcard" data-toast="Apri Impostazioni (demo)"><span class="ic">ST</span><b>Impostazioni</b><span>Retention, solleciti, 2FA</span><span class="cnt">5</span></button>
+        <button class="hubcard" data-toast="Apri Audit (demo)"><span class="ic">AU</span><b>Audit</b><span>Eventi e accessi</span><span class="cnt">128</span></button>
+      </div>
+      <div class="recent"><h4>Da controllare</h4><div class="recentrow"><span class="badge" style="border-color:var(--st-wait-border);background:var(--st-wait-bg);color:var(--st-wait)">2</span><span class="t"><b>2 utenti senza assegnazioni</b><span>Verifica il perimetro prima del prossimo avvio</span></span><button class="btn ghost sm" data-toast="Apri (demo)">Apri</button></div><div class="recentrow"><span class="badge ok">6</span><span class="t"><b>6 template personalizzati</b><span>Standard e per cliente</span></span><button class="btn ghost sm" data-toast="Apri (demo)">Apri</button></div></div>
+    </div>
+    <div class="callouts"><div class="callout"><b>1 · Orientamento</b>Chi apre l’area capisce subito cosa c’è.</div><div class="callout"><b>2 · Stato</b>I numeri e gli avvisi guidano l’azione.</div><div class="callout"><b>3 · Costo</b>Un click in più ogni volta per chi lavora qui tutti i giorni.</div></div>
+    <div class="proscons"><div class="pc good"><h5>Perché funziona</h5><ul><li>Migliore onboarding.</li><li>Evidenzia anomalie e cose da fare.</li><li>Può convivere con il rail: hub come home, rail nelle sezioni.</li></ul></div><div class="pc bad"><h5>Da valutare</h5><ul><li>Non è la scelta migliore per l’uso quotidiano.</li><li>Consuma una schermata per la navigazione.</li></ul></div></div>
+  </section>
+
+  <!-- F -->
+  <section class="proposal" id="p-f">
+    <div class="prop-head"><span class="tag">Proposta F</span><h2>Amministrazione per cliente</h2></div>
+    <p class="prop-desc">Il contesto è il cliente: si seleziona il cliente e si gestiscono utenti, mailing list, template ed engagement dentro le sue tab. Ottimo per PMO che ragionano per portafoglio; gli utenti globali e i template standard restano in una sezione separata.</p>
+    <div class="metrics"><span class="metric"><b>Contesto cliente</b></span><span class="metric">Meno cambi di pagina</span><span class="metric">PMO-friendly</span><span class="metric">Utenti globali separati</span></div>
+    <div class="mock">
+      <div class="mockbar"><span class="dots"><i></i><i></i><i></i></span><span class="name">amministrazione · per cliente · profilo PMO</span></div>
+      <div class="clientbar"><span class="avatar">CO</span><span><b>Contoso</b><span>contoso.com · 4 engagement · 2 utenti cliente</span></span><select aria-label="Cambia cliente"><option>Contoso</option><option>Fabrikam</option><option>Nova Bank</option></select></div>
+      <div class="subtabs"><button class="on">Panoramica</button><button>Utenti</button><button>Mailing list</button><button>Template</button><button>Engagement</button></div>
+      <div class="panelbox"><h4>Panoramica</h4><div class="panelrow"><span class="t"><b>Persone sul cliente</b><span>2 utenti cliente · 3 interni assegnati</span></span><button class="btn ghost sm" data-toast="Gestisci (demo)">Gestisci</button></div><div class="panelrow"><span class="t"><b>Mailing list base</b><span>Notifiche 2 · Deliverables 1</span></span><button class="btn ghost sm" data-toast="Apri (demo)">Apri</button></div><div class="panelrow"><span class="t"><b>Template personalizzati</b><span>2 override del cliente</span></span><button class="btn ghost sm" data-toast="Apri (demo)">Apri</button></div></div>
+      <div class="panelbox" style="margin-top:9px"><h4>Engagement</h4><div class="panelrow"><span class="t"><b>External Penetration Test</b><span>ENG-2026-001 · Scope · 4 interni</span></span><span class="cntpill">4</span></div><div class="panelrow"><span class="t"><b>Web Application Retest</b><span>ENG-2026-003 · Report · 4 interni</span></span><span class="cntpill">4</span></div><div class="panelrow"><span class="t"><b>Payment API Security Review</b><span>ENG-2026-008 · Credenziali · 3 interni</span></span><span class="cntpill">3</span></div></div>
+    </div>
+    <div class="callouts"><div class="callout"><b>1 · Tutto del cliente</b>Persone, liste, template ed engagement in un unico contesto.</div><div class="callout"><b>2 · PMO</b>Riduce i cambi di schermata quando si lavora su un portafoglio.</div><div class="callout"><b>3 · Globale</b>Utenti provider, template standard e impostazioni restano fuori.</div></div>
+    <div class="proscons"><div class="pc good"><h5>Perché funziona</h5><ul><li>Allineata al modello cliente/engagement.</li><li>Meno errori di assegnazione al cliente sbagliato.</li><li>Ottima per PMO e Manager di portafoglio.</li></ul></div><div class="pc bad"><h5>Da valutare</h5><ul><li>Non è il posto naturale per gestire tutti gli utenti globali.</li><li>Serve una sezione separata per la directory.</li></ul></div></div>
+  </section>
+
+  <section class="compare">
+    <h2>Confronto rapido</h2>
+    <p>Le proposte non sono tutte alternative: A è un’ossatura, B/C ne sono varianti di densità, D è una modalità, E è una home, F è una vista per cliente.</p>
+    <table>
+      <thead><tr><th></th><th>A · Rail + ispettore</th><th>B · Tab + drawer</th><th>C · Split</th><th>D · Griglia</th><th>E · Hub</th><th>F · Per cliente</th></tr></thead>
+      <tbody>
+        <tr><td><b>Click per gestire</b></td><td>1 categoria + 1 riga</td><td>1 tab + 1 riga</td><td>1 categoria + 1 riga</td><td>1 modalità + celle</td><td>1 card + 1 riga</td><td>1 cliente + 1 tab</td></tr>
+        <tr><td><b>Spazio tabella</b></td><td>Buono</td><td>Massimo</td><td>Medio</td><td>Massimo</td><td>Basso</td><td>Buono</td></tr>
+        <tr><td><b>Contesto</b></td><td>Sempre visibile</td><td>Solo drawer</td><td>Elenco + dettaglio</td><td>Bulk</td><td>Hub</td><td>Cliente</td></tr>
+        <tr><td><b>Migliore per</b></td><td>Uso quotidiano</td><td>Tabelle larghe</td><td>Clienti/dettagli ricchi</td><td>Assegnazioni bulk</td><td>Onboarding</td><td>PMO/portafoglio</td></tr>
+      </tbody>
+    </table>
+    <div class="reco"><b>Consiglio:</b> costruire l’area su <b>A</b> (rail + tabella + ispettore), usare <b>B</b> come variante di densità per Utenti/Mailing list, <b>D</b> come modalità bulk per il Manager, e <b>E</b> come home dell’area. <b>F</b> può diventare la vista “Cliente” dentro Clienti. <b>C</b> è ideale per la scheda cliente, non per tutte le categorie.</div>
+  </section>
+
+  <section class="next">
+    <h2>Prossimo passo: categorie e visibilità</h2>
+    <p class="sub" style="font-size:13px">Dopo aver scelto l’ossatura definiamo con precisione:</p>
+    <ul>
+      <li><b>Utenti</b>: ruoli, assegnazioni cliente/engagement, stato, creazione.</li>
+      <li><b>Clienti</b>: anagrafica, utenze portale, team, mailing list base, override template.</li>
+      <li><b>Mailing list</b>: notifiche e deliverables, base cliente + engagement, editor destinatari.</li>
+      <li><b>Template mail</b>: standard / cliente / engagement, anteprima, placeholder, reset.</li>
+      <li><b>Impostazioni</b>: retention, solleciti, 2FA, invio automatico.</li>
+      <li><b>Visibilità</b>: chi vede quali sezioni (Manager tutto, PMO perimetro, altri sola lettura).</li>
+    </ul>
+  </section>
+</main>
+
+<div class="toast" id="toast"></div>
+<script>
+const toast=document.getElementById('toast');let t;
+function showToast(msg){toast.textContent=msg;toast.classList.add('show');clearTimeout(t);t=setTimeout(()=>toast.classList.remove('show'),2200);}
+document.querySelectorAll('.switcher button').forEach(btn=>btn.addEventListener('click',()=>{
+  const key=btn.dataset.variant;
+  document.querySelectorAll('.switcher button').forEach(b=>{const on=b===btn;b.classList.toggle('on',on);b.setAttribute('aria-selected',String(on));});
+  document.querySelectorAll('.proposal').forEach(p=>p.classList.toggle('active',p.id==='p-'+key));
+  window.scrollTo({top:0});
+}));
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-toast]');
+  if(t){e.preventDefault();showToast(t.dataset.toast);return;}
+  const row=e.target.closest('[data-user]');
+  if(row){row.parentElement.querySelectorAll('tr').forEach(r=>r.classList.remove('sel'));row.classList.add('sel');const map={gm:['Giorgio Marino','Manager','Tutti i clienti · 15 engagement'],lf:['Luca Ferri','PMO','Contoso, Fabrikam · 8 engagement'],sc:['Sara Conti','Pentester','Contoso, Nova Bank · 7 engagement'],mv:['Marco Verdi','Pentester','Nessun cliente · 2 engagement'],ef:['Elena Fabbri','Pentester','Fabrikam · 4 engagement'],pg:['Paolo Galli','Auditor','Nova Bank · 3 engagement']};const d=map[row.dataset.user];const box=document.getElementById('insp-a');if(d&&box){box.querySelector('.insp-head b').textContent=d[0];box.querySelector('.insp-head span span').textContent=d[2];box.querySelector('.insp-head .avatar').textContent=d[0].split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase();}return;}
+  if(e.target.closest('[data-drawer]')){const d=document.getElementById('drawer-b');const b=document.getElementById('backdrop-b');if(d)d.style.display='block';if(b)b.style.display='block';return;}
+  if(e.target.closest('[data-close-b]')){const d=document.getElementById('drawer-b');const b=document.getElementById('backdrop-b');if(d)d.style.display='none';if(b)b.style.display='none';return;}
+  const crow=e.target.closest('[data-client]');if(crow){crow.parentElement.querySelectorAll('.crow').forEach(c=>c.classList.remove('on'));crow.classList.add('on');const name=crow.querySelector('.nm').textContent;const detail=document.getElementById('c-detail');if(detail){detail.querySelector('h3').textContent=name;detail.querySelector('.tiny').textContent=name.toLowerCase()+' · dettaglio demo';}return;}
+});
+</script>
+</body>
+</html>

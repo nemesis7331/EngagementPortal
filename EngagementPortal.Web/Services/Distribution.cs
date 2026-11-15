@@ -44,6 +44,12 @@ public static class Distribution
         !baseDeliverables.Any() &&
         engagement.DeliverablesDistributionList.Count == 0;
 
+    /// <summary>Unisce due liste deduplicando per email.</summary>
+    public static IReadOnlyList<DistributionEntry> Combine(
+        IEnumerable<DistributionEntry> baseList,
+        IEnumerable<DistributionEntry> engagementList) =>
+        Merge(baseList, engagementList);
+
     private static List<DistributionEntry> Merge(
         IEnumerable<DistributionEntry> baseList,
         IEnumerable<DistributionEntry> engagementList)
