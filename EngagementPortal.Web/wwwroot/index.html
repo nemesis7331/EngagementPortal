@@ -438,6 +438,24 @@ table{width:100%;border-collapse:collapse}th{text-align:left;font-size:var(--fs-
 .tl-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:12px;display:flex;flex-direction:column;gap:10px;min-width:0}.tl-toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0}.tl-range{font-size:var(--fs-sm);color:var(--muted);font-weight:var(--fw-semibold);white-space:nowrap}.tl-range b{color:var(--brand-900)}.tl-filters{display:inline-flex;align-items:center;gap:5px;flex-wrap:wrap;margin-left:auto}.tl-filter{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);background:#fff;border-radius:var(--radius-pill);padding:4px 9px;font:inherit;font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--muted);cursor:pointer;line-height:1.2}.tl-filter:hover{border-color:var(--brand-500);color:var(--brand-900)}.tl-filter[aria-pressed="true"]{border-color:var(--brand-500);background:var(--brand-50);color:var(--brand-700)}.tl-filter b{font-size:var(--fs-2xs);background:var(--surface-2);border-radius:var(--radius-pill);padding:0 5px;color:var(--brand-900);font-weight:var(--fw-bold)}.tl-filter:focus-visible{outline:2px solid var(--brand-500);outline-offset:2px}.tl-scroll{overflow:auto;border:1px solid var(--line);border-radius:var(--radius-md);max-height:460px;min-width:0}.tl-axis{display:grid;grid-template-columns:220px minmax(760px,1fr);position:sticky;top:0;z-index:3;background:#fff;border-bottom:1px solid var(--line)}.tl-axis-label{position:sticky;left:0;z-index:4;background:#fff;border-right:1px solid var(--line);padding:8px 10px;font-size:var(--fs-2xs);text-transform:uppercase;letter-spacing:var(--tracking-caps);color:var(--muted);font-weight:var(--fw-bold);display:flex;align-items:flex-end}.tl-axis-track{display:flex;flex-direction:column;min-width:0}.tl-months{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));font-size:var(--fs-2xs);font-weight:var(--fw-bold);color:var(--brand-900);text-transform:uppercase;letter-spacing:var(--tracking-caps)}.tl-month{padding:5px 6px;border-left:1px solid var(--line-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:var(--surface-3)}.tl-month:first-child{border-left:0}.tl-days{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));border-top:1px solid var(--line-soft)}.tl-day{height:22px;display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--muted);border-left:1px solid var(--line-soft);line-height:1;font-variant-numeric:tabular-nums}.tl-day:first-child{border-left:0}.tl-day.mon{color:var(--brand-900);font-weight:var(--fw-bold)}.tl-day.we{background:var(--surface-2);color:var(--muted-2)}.tl-day.today{background:var(--brand-100);color:var(--brand-800);font-weight:var(--fw-bold)}.tl-row{display:grid;grid-template-columns:220px minmax(760px,1fr);border-top:1px solid var(--line-soft);min-width:0}.tl-row:first-child{border-top:0}.tl-label{position:sticky;left:0;z-index:2;background:#fff;border:0;border-right:1px solid var(--line);padding:6px 10px;display:flex;flex-direction:column;gap:2px;justify-content:center;min-width:0;text-align:left;font:inherit;cursor:pointer;color:inherit}.tl-label:hover{background:var(--surface-3)}.tl-label:focus-visible{outline:2px solid var(--brand-500);outline-offset:-2px}.tl-label b{font-size:var(--fs-sm);font-weight:var(--fw-semibold);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--brand-900);line-height:1.25}.tl-label small{font-size:var(--fs-2xs);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.25}.tl-kind{display:inline-flex;align-items:center;gap:4px;font-weight:var(--fw-semibold)}.tl-kind i{width:6px;height:6px;border-radius:2px;flex:none;background:var(--brand-500)}.tl-kind.proposed i{background:#d9a514}.tl-track{position:relative;display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));align-items:center;min-height:34px;background-image:linear-gradient(to right,var(--line-soft) 1px,transparent 1px);background-repeat:repeat-x;background-size:calc(100% / var(--n)) 100%;min-width:0}/* Le fasce coprono anche il bordo della riga: la colonna del fine settimana
    resta continua invece di spezzarsi a ogni riga. */
 .tl-weekend{position:absolute;top:-1px;bottom:-1px;z-index:0;background:var(--surface-2);border-left:1px solid var(--line-soft);pointer-events:none}.tl-weekend.first{border-left:0}.tl-bar{grid-row:1;height:22px;border-radius:5px;border:1px solid;padding:0 6px;display:flex;align-items:center;gap:4px;font:inherit;font-size:10px;font-weight:var(--fw-semibold);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;position:relative;z-index:1;min-width:0;text-align:left;line-height:1.2}.tl-bar.planned{background:#e7f1fc;border-color:#cfe0f5;color:#1a5f9e}.tl-bar.proposed{background:#fff5d6;border-color:#ead48a;color:#8a5b00}.tl-bar:hover{filter:brightness(.985)}.tl-bar.sel{outline:2px solid var(--brand-500);outline-offset:1px;box-shadow:0 0 0 3px var(--brand-100)}.tl-bar:focus-visible{outline:2px solid var(--brand-500);outline-offset:1px}.tl-bar.inprogress{border-left-style:dashed}.tl-empty{padding:24px 16px;text-align:center;color:var(--muted);font-size:var(--fs-sm)}.tl-detail{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-top:1px solid var(--line-soft);padding-top:10px;min-height:42px}.tl-detail .tl-info{flex:1;min-width:220px;font-size:var(--fs-sm);color:var(--muted);line-height:1.45}.tl-detail .tl-info b{color:var(--brand-900)}.tl-detail .tl-info .tl-meta{color:var(--muted);font-size:var(--fs-xs)}.tl-detail .tl-actions{display:flex;gap:8px;flex-wrap:wrap}.tl-detail .tl-hint{color:var(--muted);font-size:var(--fs-sm)}
+/* ====== CALENDARIO: scheda ancorata alla barra (proposta C) ====== */
+.tl-card{position:relative}
+.cal-pop{position:absolute;left:0;top:0;z-index:9;width:340px;max-width:calc(100% - 16px);background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow-lg);padding:10px 12px}
+.cal-pop .cp-head{display:flex;align-items:center;gap:8px;justify-content:space-between}
+.cal-pop .cp-head b{font-size:var(--fs-md);color:var(--brand-900);line-height:1.2;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cal-pop .cp-head .pill{flex:none}
+.cal-pop .cp-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:var(--fs-xs);color:var(--muted);margin:3px 0 7px}
+.cal-pop .cp-meta .code-pill{font-size:10px;padding:1px 6px}
+.cal-pop .cp-meta .mark{position:relative;display:inline-grid;place-items:center;width:16px;height:16px;border-radius:50%;border:1px solid var(--brand-100);background:#fff;font-size:7px;font-weight:800;color:var(--brand-700);overflow:hidden;flex:none}
+.cal-pop .cp-meta .mark img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#fff}
+.cal-pop .cp-type{color:var(--brand-900);font-weight:600}
+.cal-pop .cp-kind{color:var(--st-wait);font-weight:600}
+.cal-pop .cp-rows{border-top:1px solid var(--line-soft);padding-top:5px}
+.cal-pop .cp-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:var(--fs-xs);color:var(--muted);padding:3px 0}
+.cal-pop .cp-row b{color:var(--brand-900);font-weight:600;text-align:right;min-width:0}
+.cal-pop .cp-foot{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;padding-top:8px;border-top:1px solid var(--line-soft)}
+.cal-pop .cp-foot .btn{padding:4px 10px;font-size:var(--fs-xs)}
+@media(max-width:620px){.cal-pop{width:calc(100% - 16px)}}
 /* Periodo cliccabile: porta alla timeline con l'engagement evidenziato. */
 a.obj-period{text-decoration:none;cursor:pointer}
 a.obj-period:hover{border-color:var(--brand-500);background:var(--brand-50)}
@@ -744,6 +762,8 @@ const state = {
   calendarProposals: [],
   calendarFilter: 'all',
   calendarSel: '',
+  // Dettaglio caricato quando si apre la scheda di un evento del calendario.
+  calendarDetail: null,
   // Engagement evidenziato arrivando da un link "Periodo" (?eng=...).
   calendarFocus: '',
   calendarFocusPending: false,
@@ -5001,6 +5021,124 @@ function calEngagement(ev) {
   return (state.list || []).find(item => item.id === ev.id) || ev.ref || null;
 }
 
+// Giorni lavorativi (lun-ven) fra due date, estremi inclusi.
+function calWorkingDays(startKey, endKey) {
+  const start = calDate(startKey);
+  const end = calDate(endKey);
+  let count = 0;
+  for (let day = new Date(start); day <= end; day.setDate(day.getDate() + 1)) {
+    if (day.getDay() !== 0 && day.getDay() !== 6) count += 1;
+  }
+  return count;
+}
+
+function calRelative(startKey, endKey, todayKey) {
+  const day = 86400000;
+  if (todayKey < startKey) {
+    return `avvio tra ${plural(Math.round((calDate(startKey) - calDate(todayKey)) / day), 'giorno', 'giorni')}`;
+  }
+  if (todayKey > endKey) return 'concluso';
+  return `in corso da ${plural(Math.round((calDate(todayKey) - calDate(startKey)) / day) + 1, 'giorno', 'giorni')}`;
+}
+
+// Popover ancorato alla barra selezionata (proposta C): pochi fatti utili e
+// le azioni, senza occupare spazio fisso sotto la timeline.
+function calPopHtml(ev, todayKey) {
+  const eng = calEngagement(ev);
+  const client = eng ? clientFor(eng) : { id: '', name: ev.client || '' };
+  const [stateLabel, stateKind] = eng
+    ? statusPill(eng)
+    : [ev.kind === 'planned' ? 'Pianificato' : 'Proposto', 'neutral'];
+  const s = eng ? actionState(eng) : null;
+  const owner = s && s.kind === 'waiting' ? s.ownerLabel : '';
+  const age = s && s.since ? daysSince(s.since) : null;
+  const phase = eng
+    ? ((PHASES.find(([key]) => key === eng.phase) || [])[1] || eng.phase || '')
+    : '';
+  const total = eng ? Number(eng.stepCount) || 0 : 0;
+  const step = total ? `${Math.min(Number(eng.stepIndex) || 0, total)}/${total}` : '';
+  const reports = eng ? Number(eng.reportCount) || 0 : 0;
+  const published = eng ? Number(eng.publishedCount) || 0 : 0;
+  const now = eng
+    ? (owner ? `In attesa di ${owner}` : (s?.label || stateLabel))
+    : stateLabel;
+  const workDays = calWorkingDays(ev.start, ev.end);
+
+  return `<div class="cal-pop" role="dialog" aria-label="Dettaglio engagement">
+    <div class="cp-head">
+      <b>${esc(ev.name)}</b>
+      <span class="pill p-${stateKind}">${esc(stateLabel)}</span>
+    </div>
+    <div class="cp-meta">
+      <span class="code-pill">${esc(ev.id)}</span>
+      ${clientMark(client)}
+      <span>${esc(ev.client || client.name || '')}</span>
+      <span class="cp-type">${esc(typeLabel(eng?.type || ev.type || ''))}</span>
+      ${ev.kind === 'proposed' ? `<span class="cp-kind">${esc(ev.from === 'Client' ? 'Proposta del cliente' : (ev.from === 'Provider' || ev.from === 'PMO') ? 'Proposta del PMO' : ev.from ? `Proposto da ${ev.from}` : 'Proposta')}</span>` : ''}
+    </div>
+    <div class="cp-rows">
+      <div class="cp-row"><span>Periodo</span><b>${fmt(ev.start)} → ${fmt(ev.end)}${workDays ? ` · ${workDays} gg lav.` : ''}</b></div>
+      <div class="cp-row"><span>Ora</span><b>${esc(calRelative(ev.start, ev.end, todayKey))}</b></div>
+      ${eng ? `<div class="cp-row"><span>Fase</span><b>${esc(phase)}${step ? ` · ${step}` : ''}</b></div>` : ''}
+      <div class="cp-row"><span>Adesso</span><b>${esc(now)}${age ? ` · fermo da ${plural(age, 'giorno', 'giorni')}` : ''}</b></div>
+      ${eng ? `<div class="cp-row"><span>Deliverable</span><b>${reports ? `${published} di ${reports} pubblicati` : 'Nessun deliverable'}</b></div>` : ''}
+    </div>
+    <div class="cp-foot">
+      <button class="btn pri sm" data-act="open-action" data-id="${esc(ev.id)}" data-tab="${ev.kind === 'proposed' ? 'plan' : ''}">Apri engagement</button>
+      <button class="btn sec sm" data-act="cal-select" data-key="">Chiudi</button>
+    </div>
+  </div>`;
+}
+
+// La scheda si aggancia alla barra: sotto, o sopra se non c'è spazio.
+function positionCalendarPop() {
+  const pop = document.querySelector('.cal-pop');
+  if (!pop) return;
+  const card = pop.closest('.tl-card');
+  const bar = card && card.querySelector('.tl-bar.sel');
+  if (!card || !bar) return;
+  const cr = card.getBoundingClientRect();
+  const br = bar.getBoundingClientRect();
+  const pw = pop.offsetWidth;
+  const ph = pop.offsetHeight;
+  let left = br.left - cr.left;
+  if (left + pw > cr.width - 8) left = br.right - cr.left - pw;
+  left = Math.max(8, Math.min(left, Math.max(8, cr.width - pw - 8)));
+  let top = br.bottom - cr.top + 6;
+  if (br.bottom + ph + 12 > window.innerHeight) top = br.top - cr.top - ph - 6;
+  pop.style.left = `${Math.round(left)}px`;
+  pop.style.top = `${Math.round(Math.max(6, top))}px`;
+}
+
+async function loadCalendarSolicitation(id) {
+  if (!id) return;
+  try {
+    const detail = await api(`/api/engagements/${encodeURIComponent(id)}?` + qs());
+    if (!state.calendarSel || state.calendarSel.split('|')[0] !== id) return;
+    state.calendarDetail = detail;
+    renderCalendarPopFoot();
+  } catch {
+    // niente dati sul sollecito: la scheda resta con le azioni base
+  }
+}
+
+// Dopo il dettaglio: se chi aspetta può sollecitare, aggiunge il pulsante.
+function renderCalendarPopFoot() {
+  const foot = document.querySelector('.cal-pop .cp-foot');
+  const detail = state.calendarDetail;
+  if (!foot || !detail) return;
+  const s = detail.solicitation;
+  const owners = (s?.owners || []).filter(owner => owner && owner.name);
+  const who = owners.length ? owners[0].name : (s?.recipient || '');
+  const solicit = s?.canSend
+    ? `<button class="btn sec sm" data-act="cal-solicit" data-id="${esc(detail.engagement.id)}">Sollecita${who ? ` ${esc(who)}` : ''}</button>`
+    : '';
+  foot.innerHTML = `
+    <button class="btn pri sm" data-act="open-action" data-id="${esc(detail.engagement.id)}">Apri engagement</button>
+    ${solicit}
+    <button class="btn sec sm" data-act="cal-select" data-key="">Chiudi</button>`;
+}
+
 function renderCalendarTimeline(events, todayKey, counts, range, focus = '') {
   const n = range.days;
   const filter = state.calendarFilter || 'all';
@@ -5088,22 +5226,7 @@ function renderCalendarTimeline(events, todayKey, counts, range, focus = '') {
     </div>`;
   }).join('');
 
-  const detail = selected
-    ? (() => {
-        const eng = calEngagement(selected);
-        const client = eng ? clientFor(eng) : { id: '', name: selected.client || '' };
-        return `<div class="tl-detail">
-        <div class="tl-info">
-          <b>${esc(selected.name)}</b> · ${clientMark(client)} ${esc(selected.client || client.name || '')}<br>
-          <span class="tl-meta">${selected.kind === 'planned' ? 'Pianificato' : 'Proposto'}${selected.from ? ` da ${esc(selected.from)}` : ''} · ${fmt(selected.start)} – ${fmt(selected.end)}</span>
-        </div>
-        <div class="tl-actions">
-          <button class="btn pri sm" data-act="open-action" data-id="${esc(selected.id)}" data-tab="${selected.kind === 'proposed' ? 'plan' : ''}">Apri engagement</button>
-          <button class="btn sec sm" data-act="cal-select" data-key="">Chiudi</button>
-        </div>
-      </div>`;
-      })()
-    : '<div class="tl-detail"><span class="tl-hint">Clicca una barra o un nome per vedere i dettagli dell\'engagement.</span></div>';
+  const pop = selected ? calPopHtml(selected, todayKey) : '';
 
   return `<div class="tl-card">
     <div class="tl-toolbar">
@@ -5124,7 +5247,7 @@ function renderCalendarTimeline(events, todayKey, counts, range, focus = '') {
       </div>
       ${rows.length ? rowHtml : '<div class="tl-empty">Nessun evento con questo filtro nel periodo.</div>'}
     </div>
-    ${detail}
+    ${pop}
   </div>`;
 }
 
@@ -5168,6 +5291,12 @@ function renderCalendar() {
     const row = document.querySelector('.tl-row.focus');
     if (row) requestAnimationFrame(() => row.scrollIntoView({ block: 'center', inline: 'center' }));
   }
+
+  // La scheda del dettaglio segue la barra anche quando si scorre la timeline.
+  positionCalendarPop();
+  requestAnimationFrame(positionCalendarPop);
+  const scroller = document.querySelector('.tl-scroll');
+  if (scroller) scroller.addEventListener('scroll', positionCalendarPop, { passive: true });
 }
 
 function renderClients() {
@@ -6278,6 +6407,9 @@ const actions = {
   },
   open: el => openEngagement(el.dataset.id),
   'open-action': async el => {
+    // Si lascia il calendario: la scheda dell'evento non serve più.
+    state.calendarSel = '';
+    state.calendarDetail = null;
     await openEngagement(el.dataset.id);
     if (state.detail && el.dataset.tab) await setTab(el.dataset.tab);
   },
@@ -6315,7 +6447,19 @@ const actions = {
   'cal-select': el => {
     const key = el.dataset.key || '';
     state.calendarSel = key && state.calendarSel !== key ? key : '';
+    state.calendarDetail = null;
     renderCalendar();
+    if (state.calendarSel) loadCalendarSolicitation(state.calendarSel.split('|')[0]);
+  },
+
+  'cal-solicit': async el => {
+    const id = el.dataset.id;
+    try {
+      await api(`/api/engagements/${encodeURIComponent(id)}/solicitations?` + qs(), { method: 'POST' });
+      toast('Sollecito inviato');
+      state.calendarDetail = await api(`/api/engagements/${encodeURIComponent(id)}?` + qs());
+      renderCalendarPopFoot();
+    } catch (error) { toast(error.message); }
   },
 
   'start-edit': el => {
@@ -7073,9 +7217,28 @@ document.addEventListener('change', event => {
 });
 
 /* ====== SHELL: SCORCIATOIE ====== */
+// La scheda dell'evento nel calendario si chiude cliccando fuori.
+document.addEventListener('click', event => {
+  if (!state.calendarSel || state.view !== 'calendar') return;
+  if (event.target.closest('.cal-pop, .tl-bar, .tl-label, .tl-filter')) return;
+  state.calendarSel = '';
+  state.calendarDetail = null;
+  renderCalendar();
+});
+
+window.addEventListener('resize', () => positionCalendarPop());
+
 document.addEventListener('keydown', event => {
   if (event.key === 'Escape' && state.userModal) {
     closeUserModal();
+    return;
+  }
+
+  // Esc chiude la scheda dell'evento nel calendario.
+  if (event.key === 'Escape' && state.calendarSel && state.view === 'calendar') {
+    state.calendarSel = '';
+    state.calendarDetail = null;
+    renderCalendar();
     return;
   }
 
