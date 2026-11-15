@@ -40,7 +40,9 @@ App Service a ogni push su `main`.
   revisione del Manager, pubblicazione al cliente, download tracciato con
   **placeholder 2FA** per il Cliente. Cliente, PMO e Manager possono generare
   **link monouso** validi **5 giorni** e consumati al primo download. Il
-  Cliente vede solo i deliverable pubblicati.
+  Manager vede in Reportistica **a chi è stata inviata** la consegna e può
+  correggere i destinatari della reportistica e **reinviare** la consegna.
+  Il Cliente vede solo i deliverable pubblicati.
 - **Ritardo preparazione**: la lista segnala gli engagement con scope o
   credenziali mancanti a due settimane dall'avvio dell'esecuzione.
 - **Comunicazioni**: **due distribution list** per engagement, ciascuna con una
@@ -104,7 +106,7 @@ riporta esattamente i controlli applicati dalle API.
 | Approvare o richiedere modifiche ai report | I | I | C | A/R | I |
 | Pubblicare i report al cliente | I | I | A/R (dopo approvazione) | C | I |
 | Scaricare report (il Cliente solo i pubblicati) | R | R | R | R | R |
-| Gestire le distribution list (notifiche e deliverables) | R (solo destinatari Cliente) | A/R (tutti) | I | I | I |
+| Gestire le distribution list (notifiche e deliverables) | R (solo destinatari Cliente) | A/R (tutti) | I | A/R | I |
 | Configurare e inviare le email automatiche | I | A/R | I | I | I |
 | Configurare e inviare i solleciti | — | A/R | I | I | I |
 | Consultare il registro audit | R (eventi visibili) | R | R | R | R |

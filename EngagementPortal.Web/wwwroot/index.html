@@ -2592,6 +2592,17 @@ function tabReports(d) {
   const reports = e.reports || [];
   const published = reports.filter(r => r.published).length;
   const canLink = ['Client', 'PMO', 'Manager'].includes(state.role);
+  const deliverLog = (d.mailLog || []).find(entry => entry.type === 'deliver');
+  const deliverRecipients = d.deliverablesEffective || [];
+  const sentRecipients = deliverLog
+    ? String(deliverLog.recipients || '').split(';').map(value => value.trim()).filter(Boolean)
+    : [];
+  const sentEmails = sentRecipients.map(value => value.toLowerCase());
+  const currentEmails = deliverRecipients.map(entry => String(entry.email || '').trim().toLowerCase()).filter(Boolean);
+  const recipientChanged = deliverLog && (
+    sentEmails.length !== currentEmails.length ||
+    sentEmails.some(email => !currentEmails.includes(email)) ||
+    currentEmails.some(email => !sentEmails.includes(email)));
 
   if (!reports.length && !c.canUploadReports) {
     return '<div class="note lockbox"><b>Nessun deliverable disponibile.</b> La reportistica viene caricata dal Pentester e pubblicata al cliente dopo la revisione del manager.</div>';
@@ -2619,6 +2630,37 @@ function tabReports(d) {
       : '<div class="empty">Nessun deliverable disponibile.</div>'
   }${canLink ? '<p class="hint" style="margin-top:10px">Il link monouso scade dopo 5 giorni e può essere usato una sola volta.</p>' : ''}
     <p class="hint" style="margin-top:${canLink ? 4 : 10}px"><b>Policy di retention:</b> i deliverables vengono cancellati automaticamente dopo <b>90 giorni</b> dalla pubblicazione.</p></div>`;
+
+  if (!c.isClient) {
+    const recipientChips = deliverRecipients.length
+      ? deliverRecipients.map(entry => `
+        <span class="user-chip">
+          <span class="user-chip-main" title="${esc(entry.email)}">${esc(entry.name)} · ${esc(entry.email)} <span style="opacity:.65">(${esc(entry.organization)})</span></span>
+          ${c.canWrite ? `<button class="user-chip-x" data-act="remove-dl" data-list="deliverables" data-entry="${esc(entry.id)}" title="Rimuovi ${esc(entry.email)}">×</button>` : ''}
+        </span>`).join('')
+      : '<span class="tiny">Nessun destinatario: la mail di consegna non partirà.</span>';
+
+    const sentInfo = deliverLog
+      ? `<div class="note done" style="margin:0 0 8px"><b>Ultimo invio:</b> ${fmtTime(deliverLog.date)} · ${esc(deliverLog.subject || 'Consegna deliverables')}</div>
+         <div class="hint">Inviata a: ${sentRecipients.length ? esc(sentRecipients.join('; ')) : 'nessun destinatario'}</div>`
+      : `<div class="note ${published ? 'waiting' : 'blocked'}" style="margin:0 0 8px"><b>${published ? 'Non ancora inviata.' : 'Non ancora disponibile.'}</b> ${published ? 'Verrà inviata alla pubblicazione dei deliverables.' : 'Si attiva dopo la pubblicazione dei deliverables.'}</div>`;
+
+    html += `<div class="card" style="margin-top:16px"><h2>Destinatari reportistica</h2>
+      <p class="sub">Chi riceve l'email di consegna dei deliverables. La lista effettiva unisce base cliente e destinatari dell'engagement.</p>
+      <div class="user-chips">${recipientChips}</div>
+      ${recipientChanged ? '<div class="note waiting" style="margin:10px 0 0"><b>Lista modificata dopo l’ultimo invio.</b> Verifica i destinatari prima di un nuovo invio.</div>' : ''}
+      ${c.canWrite ? `<div class="fgrid" style="margin-top:12px">
+        <div><label for="dl2_n">Nome e cognome</label><input type="text" id="dl2_n" placeholder="Nuovo destinatario"></div>
+        <div><label for="dl2_e">Email</label><input type="text" id="dl2_e" placeholder="nome@dominio.it"></div>
+        <div><label for="dl2_o">Organizzazione</label><select class="f" id="dl2_o"><option>Cliente</option><option>Provider PMO</option><option>Provider Pentester</option></select></div>
+      </div>
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn sec sm" data-act="add-dl" data-list="deliverables">+ Aggiungi destinatario</button>
+        ${published ? `<button class="btn pri sm" data-act="send-mail" data-key="deliver">${deliverLog ? 'Reinvia consegna' : 'Invia consegna'}</button>` : ''}
+      </div>` : ''}
+      <div style="margin-top:14px;border-top:1px solid var(--line-soft);padding-top:12px">${sentInfo}</div>
+    </div>`;
+  }
 
   if (c.canUploadReports) {
     html += `<div class="card" style="margin-top:16px"><h2>Carica deliverables</h2>

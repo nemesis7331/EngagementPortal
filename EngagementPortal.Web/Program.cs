@@ -2056,7 +2056,8 @@ api.MapPost("/engagements/{id}/mails/{type}/send", (
     if (engagement is null)
         return Results.NotFound();
 
-    if (user.Role != Roles.PMO)
+    if (user.Role != Roles.PMO &&
+        !(user.Role == Roles.Manager && type == "deliver"))
         return Forbidden();
 
     if (type is not ("start" or "end" or "deliver"))
@@ -2576,10 +2577,10 @@ static IResult Forbidden() =>
     Results.StatusCode(StatusCodes.Status403Forbidden);
 
 // Scrittura sulla distribution list: il cliente gestisce i propri
-// destinatari, PMO coordina l'intera lista. Gli altri profili
-// (Pentester, Manager, Auditor) sono in sola lettura.
+// destinatari, PMO coordina l'intera lista e il Manager può correggere
+// i destinatari della reportistica. Pentester e Auditor sono in sola lettura.
 static bool CanWrite(UserContext user) =>
-    user.Role is Roles.Client or Roles.PMO;
+    user.Role is Roles.Client or Roles.PMO or Roles.Manager;
 
 static bool CanSeeCredentials(UserContext user) =>
     EngagementWorkflow.CanSeeCredentials(user.Role);
