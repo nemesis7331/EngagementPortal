@@ -217,6 +217,29 @@ body.noicon .obj-client .mark{background:transparent;border:0}
 .prio.u{background:var(--surface-2);color:var(--muted);border-color:var(--line)}
 .prio.n{background:#fff;color:var(--muted-2);border-color:var(--line);border-style:dashed}
 
+/* ---- 2d. ENGAGEMENT: pastiglia compatta ---- */
+.epill-sm{display:inline-flex;align-items:center;gap:8px;height:28px;max-width:100%;border:1px solid var(--line);background:#fff;border-radius:var(--radius-pill);padding:0 10px 0 4px;box-shadow:0 1px 2px rgba(6,29,54,.04)}
+.epill-sm .sq{width:20px;height:20px;border-radius:6px;font-size:9.5px}
+.epill-sm .nm{font-size:12.5px;font-weight:600;color:var(--brand-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.epill-sm .cli{width:18px;height:18px;border-radius:50%;flex:none;overflow:hidden;background:var(--brand-50);border:1px solid var(--brand-100);display:grid;place-items:center}
+.epill-sm .cli img{width:100%;height:100%;object-fit:contain;background:#fff}
+/* avanzamento: segmenti */
+.epill-sm .prog.segs{display:flex;gap:2px;flex:none}
+.epill-sm .prog.segs i{display:block;width:6px;height:4px;border-radius:2px;background:var(--surface-2)}
+.epill-sm .prog.segs i.done{background:var(--st-done)}
+.epill-sm .prog.segs i.now{background:var(--brand-600)}
+/* avanzamento: barretta */
+.epill-sm .prog.bar{display:block;width:38px;height:5px;border-radius:3px;background:var(--surface-2);overflow:hidden;flex:none}
+.epill-sm .prog.bar i{display:block;height:100%;background:var(--brand-600);border-radius:3px}
+/* avanzamento: anello */
+.epill-sm .prog.ring{width:17px;height:17px;flex:none;display:block}
+.epill-sm .prog.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.epill-sm .prog.ring circle{fill:none;stroke-width:4}
+.epill-sm .prog.ring .track{stroke:var(--surface-2)}
+.epill-sm .prog.ring .fill{stroke:var(--brand-600);stroke-linecap:round}
+/* avanzamento: contatore */
+.epill-sm .prog.num{font-size:10.5px;font-weight:800;color:var(--muted-2);letter-spacing:.02em;flex:none;font-variant-numeric:tabular-nums}
+
 /* ---- 7b. DELIVERABLE con icone ---- */
 .obj-doc{display:inline-flex;align-items:center;gap:8px;min-width:0}
 .obj-doc .ic{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;flex:none;border:1px solid var(--brand-100);background:var(--brand-50);color:var(--brand-700)}
@@ -329,164 +352,149 @@ body.noicon .obj-client .mark{background:transparent;border:0}
 
   <!-- ===================== 2 · ENGAGEMENT ===================== -->
   <section class="card" id="engagement">
-    <h2>2 · Engagement — una pastiglia con tante informazioni</h2>
-    <p class="sub">Prima di disegnarla: <b>cosa deve esserci dentro</b>. Un engagement si riconosce dal <b>codice</b>, si capisce dal <b>nome</b>, si colloca con <b>cliente</b> e <b>periodo</b>, e si gestisce sapendo <b>a che passo è</b>, <b>di chi è il turno</b> e <b>da quanto è fermo</b>. Tutto il resto è di contesto e sta meglio nella scheda. Qui sotto la valutazione, poi cinque pastiglie che impacchettano quelle informazioni.</p>
+    <h2>2 · Engagement — pastiglia compatta</h2>
+    <p class="sub">Quattro cose e nient'altro: <b>icona del tipo</b> (VA/PT/RT/CS), <b>nome dell'attività</b>, <b>icona del cliente</b>, <b>avanzamento</b>. Altezza 28 px, sta in una riga di tabella come in un titolo. Sotto: l'anatomia, le quattro rese dell'avanzamento e l'ordine dei pezzi.</p>
 
     <div class="opt">
-      <div class="opt-head"><span class="opt-tag">?</span><b>Cosa serve davvero</b><span class="d">e dove è già visibile, per non ripetere lo stesso dato due volte</span></div>
-      <table class="cmp" style="margin-top:4px">
-        <tr><th>Informazione</th><th>A cosa serve</th><th>Priorità</th><th>Dove sta già</th></tr>
-        <tr><td><b>Codice</b> ENG-2026-015</td><td>Riferirlo senza ambiguità (email, ticket, link)</td><td><span class="prio e">essenziale</span></td><td>Intestazione dettaglio, riferimenti</td></tr>
-        <tr><td><b>Nome</b> Internal Vulnerability Assessment</td><td>Capire di cosa si tratta</td><td><span class="prio e">essenziale</span></td><td>Intestazione dettaglio, titolo</td></tr>
-        <tr><td><b>Cliente</b> (logo + sigla)</td><td>Contesto e filtro; l'icona basta a dirlo</td><td><span class="prio e">essenziale</span></td><td>Tabella elenco, filtro in header</td></tr>
-        <tr><td><b>Tipo</b> VA / PT / RT</td><td>Che mestiere è; cambia cosa ci si aspetta</td><td><span class="prio e">essenziale</span></td><td>Colonna tipo, setup</td></tr>
-        <tr><td><b>Passo</b> 7 · Retest</td><td>A che punto è del workflow</td><td><span class="prio e">essenziale</span></td><td>Barra e menu del dettaglio</td></tr>
-        <tr><td><b>Turno</b> in attesa / da gestire</td><td>Cosa devo fare io, adesso</td><td><span class="prio e">essenziale</span></td><td>Colonna stato, box azione</td></tr>
-        <tr><td><b>Giorni fermi</b> 9 gg</td><td>L'urgenza: senza, "in attesa" non dice niente</td><td><span class="prio e">essenziale</span> <span class="prio u">solo dove c'è attesa</span></td><td>Colonna ritardo, KPI</td></tr>
-        <tr><td><b>Periodo</b> 05/01 → 16/01</td><td>Quando si svolge (o si è svolto)</td><td><span class="prio u">utile</span> <span class="prio e">essenziale nel calendario</span></td><td>Colonna periodo, card Date</td></tr>
-        <tr><td><b>Responsabile</b> SC</td><td>Chi lo segue, a chi chiedere</td><td><span class="prio u">utile</span> <span class="prio n">ridondante in elenco</span></td><td>Card Persone, KPI carico</td></tr>
-        <tr><td><b>Deliverable</b> 2/2</td><td>Quanto manca alla consegna</td><td><span class="prio u">utile</span></td><td>Colonna report, scheda Report</td></tr>
-        <tr><td><b>Costi e margine</b></td><td>—</td><td><span class="prio n">mai in una pastiglia</span></td><td>Business case (PMO/Manager)</td></tr>
-      </table>
-      <ul class="notes">
-        <li>Regola: dentro la pastiglia entrano <b>identità + posizione</b> (codice, nome, cliente, tipo, passo); <b>turno e giorni</b> solo quando c'è un'attesa da smaltire. Periodo e responsabile si aggiungono solo dove servono davvero.</li>
-      </ul>
-    </div>
-
-    <h2 style="margin-top:20px">Cinque pastiglie, dalla più densa alla più ricca</h2>
-
-    <div class="opt">
-      <div class="opt-head"><span class="opt-tag">P1</span><b>Mono-riga, densa</b><span class="d">elenchi lunghi: una riga per engagement, tutto il necessario, niente nomi lunghi</span><span class="rec scelta">consigliata</span></div>
-      <div class="sample" style="align-items:flex-start"><span class="ctx">In elenco</span>
-        <span class="epill">
-          <span class="epill-logo"><img src="https://www.google.com/s2/favicons?sz=64&domain=anthropic.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span>
-          <span class="code">ENG-2026-015</span>
+      <div class="opt-head"><span class="opt-tag">A</span><b>La pastiglia</b><span class="d">icona tipo · nome · icona cliente · avanzamento</span><span class="rec scelta">consigliata</span></div>
+      <div class="sample" style="align-items:flex-start"><span class="ctx">Anatomia</span>
+        <span class="epill-sm">
           <span class="obj-type" title="Vulnerability Assessment"><span class="sq va">VA</span></span>
           <span class="nm">Internal Vulnerability Assessment</span>
-          <span class="sep"></span>
-          <span class="ph">7 Retest</span>
-          <span class="obj-state wait"><i></i>In attesa <em>9 gg</em></span>
-        </span>
-      </div>
-      <div class="sample" style="align-items:flex-start"><span class="ctx">Concluso</span>
-        <span class="epill">
-          <span class="epill-logo"><img src="https://www.google.com/s2/favicons?sz=64&domain=nvidia.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span>
-          <span class="code">ENG-2026-006</span>
-          <span class="obj-type" title="Penetration Test"><span class="sq pt">PT</span></span>
-          <span class="nm">External Penetration Test</span>
-          <span class="sep"></span>
-          <span class="ph">8 Report retest</span>
-          <span class="obj-state ok"><i></i>Concluso</span>
+          <span class="cli" title="Anthropic"><img src="https://www.google.com/s2/favicons?sz=64&domain=anthropic.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span>
+          <span class="prog segs" title="Passo 7 di 9"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i><i></i><i></i></span>
         </span>
       </div>
       <ul class="notes">
-        <li>Manca solo il periodo: in elenco è già la colonna accanto, quindi non si ripete.</li>
-        <li>Il nome può essere tagliato con i puntini: codice e cliente restano sempre visibili.</li>
+        <li>Il nome è l'unico elemento che si accorcia (puntini) quando lo spazio finisce: icona, cliente e avanzamento restano sempre.</li>
+        <li>Passando il mouse su icona cliente e avanzamento compaiono nome del cliente e "Passo 7 di 9".</li>
+        <li>Fuori restano codice, periodo, responsabile e stato: in elenco sono già colonne, nel dettaglio stanno nella scheda.</li>
       </ul>
     </div>
 
     <div class="opt">
-      <div class="opt-head"><span class="opt-tag">P2</span><b>A due righe, dentro una pastiglia</b><span class="d">dove il nome conta: card, KPI, dettaglio, mailing list</span><span class="rec scelta">consigliata</span></div>
-      <div class="sample" style="align-items:flex-start"><span class="ctx">In card</span>
-        <span class="epill two">
-          <span class="epill-logo"><img src="https://www.google.com/s2/favicons?sz=64&domain=anthropic.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span>
-          <span class="two-body">
-            <span class="two-top">
-              <span class="nm">Internal Vulnerability Assessment</span>
-              <span class="code">ENG-2026-015</span>
-            </span>
-            <span class="two-meta">
-              <span class="obj-type" title="Vulnerability Assessment"><span class="sq va">VA</span></span>
-              <span class="obj-period box">05/01/2026 <span class="arrow">→</span> 16/01/2026</span>
-              <span class="ph">7 Retest</span>
-              <span class="obj-state wait"><i></i>In attesa <em>9 gg</em></span>
-            </span>
-          </span>
-        </span>
-      </div>
-      <ul class="notes"><li>È la stessa pastiglia di P1 con un secondo rigo: ci entrano anche periodo e passo per esteso.</li></ul>
-    </div>
-
-    <div class="opt">
-      <div class="opt-head"><span class="opt-tag">P3</span><b>Con mini barra dell'avanzamento</b><span class="d">quando "quanto manca" è la domanda: KPI, elenco clienti, pannelli</span></div>
-      <div class="sample" style="align-items:flex-start"><span class="ctx">In elenco</span>
-        <span class="epill two">
-          <span class="epill-logo"><img src="https://www.google.com/s2/favicons?sz=64&domain=anthropic.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span>
-          <span class="two-body">
-            <span class="two-top">
-              <span class="nm">Internal Vulnerability Assessment</span>
-              <span class="code">ENG-2026-015</span>
-              <span class="count">7/9</span>
-            </span>
-            <span class="two-meta">
-              <span class="obj-type" title="Vulnerability Assessment"><span class="sq va">VA</span></span>
-              <span class="obj-state wait"><i></i>In attesa <em>9 gg</em></span>
-              <span class="segs"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i><i></i><i></i></span>
-            </span>
-          </span>
-        </span>
-      </div>
-      <ul class="notes"><li>La barra prende il posto del testo del passo: si legge il numero e si vede subito la proporzione.</li></ul>
-    </div>
-
-    <div class="opt">
-      <div class="opt-head"><span class="opt-tag">P4</span><b>A chip interni, che va a capo</b><span class="d">liste con poco spazio o nomi lunghi: la pastiglia si adatta invece di tagliare</span></div>
-      <div class="sample" style="align-items:flex-start"><span class="ctx">In elenco</span>
-        <span class="epill chips">
-          <span class="epill-logo"><img src="https://www.google.com/s2/favicons?sz=64&domain=anthropic.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span>
+      <div class="opt-head"><span class="opt-tag">B</span><b>Le quattro rese dell'avanzamento</b><span class="d">stessa pastiglia, cambia solo come si legge "a che punto è"</span></div>
+      <div class="sample" style="align-items:flex-start"><span class="ctx">1 · segmenti</span>
+        <span class="epill-sm">
+          <span class="obj-type" title="Vulnerability Assessment"><span class="sq va">VA</span></span>
           <span class="nm">Internal Vulnerability Assessment</span>
-          <span class="chipin">ENG-2026-015</span>
-          <span class="chipin">VA</span>
-          <span class="chipin">7 Retest</span>
-          <span class="chipin st-wait">In attesa · 9 gg</span>
+          <span class="cli"><img src="https://www.google.com/s2/favicons?sz=64&domain=anthropic.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span>
+          <span class="prog segs" title="Passo 7 di 9"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i><i></i><i></i></span>
         </span>
       </div>
-      <div class="sample" style="align-items:flex-start"><span class="ctx">Nome corto</span>
-        <span class="epill chips">
-          <span class="epill-logo"><img src="https://www.google.com/s2/favicons?sz=64&domain=nvidia.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span>
-          <span class="nm">Internal Red Team</span>
-          <span class="chipin">ENG-2026-004</span>
-          <span class="chipin">RT</span>
-          <span class="chipin">5 Esecuzione</span>
-          <span class="chipin st-progress">In corso</span>
+      <div class="sample" style="align-items:flex-start"><span class="ctx">2 · barretta</span>
+        <span class="epill-sm">
+          <span class="obj-type" title="Vulnerability Assessment"><span class="sq va">VA</span></span>
+          <span class="nm">Internal Vulnerability Assessment</span>
+          <span class="cli"><img src="https://www.google.com/s2/favicons?sz=64&domain=anthropic.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span>
+          <span class="prog bar" title="Passo 7 di 9"><i style="width:78%"></i></span>
         </span>
       </div>
-      <ul class="notes"><li>Ogni informazione è un chip separato: si possono nascondere i chip meno importanti secondo il contesto senza ridisegnare la pastiglia.</li></ul>
-    </div>
-
-    <div class="opt">
-      <div class="opt-head"><span class="opt-tag">P5</span><b>Completa, con responsabile</b><span class="d">dove serve sapere anche chi la segue: pannelli di gestione, passaggi di consegna</span></div>
-      <div class="sample" style="align-items:flex-start"><span class="ctx">In pannello</span>
-        <span class="epill two">
-          <span class="epill-logo"><img src="https://www.google.com/s2/favicons?sz=64&domain=anthropic.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span>
-          <span class="two-body">
-            <span class="two-top">
-              <span class="nm">Internal Vulnerability Assessment</span>
-              <span class="code">ENG-2026-015</span>
-            </span>
-            <span class="two-meta">
-              <span class="obj-type" title="Vulnerability Assessment"><span class="sq va">VA</span></span>
-              <span class="obj-period box">05/01/2026 <span class="arrow">→</span> 16/01/2026</span>
-              <span class="ph">7 Retest</span>
-              <span class="obj-state wait"><i></i>In attesa <em>9 gg</em></span>
-              <span class="who"><span class="av">SC</span>Sara Conti</span>
-            </span>
+      <div class="sample" style="align-items:flex-start"><span class="ctx">3 · anello</span>
+        <span class="epill-sm">
+          <span class="obj-type" title="Vulnerability Assessment"><span class="sq va">VA</span></span>
+          <span class="nm">Internal Vulnerability Assessment</span>
+          <span class="cli"><img src="https://www.google.com/s2/favicons?sz=64&domain=anthropic.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span>
+          <span class="prog ring" title="Passo 7 di 9">
+            <svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="15.9" class="track"></circle><circle cx="18" cy="18" r="15.9" class="fill" style="stroke-dasharray:78 100"></circle></svg>
           </span>
         </span>
       </div>
+      <div class="sample" style="align-items:flex-start"><span class="ctx">4 · contatore</span>
+        <span class="epill-sm">
+          <span class="obj-type" title="Vulnerability Assessment"><span class="sq va">VA</span></span>
+          <span class="nm">Internal Vulnerability Assessment</span>
+          <span class="cli"><img src="https://www.google.com/s2/favicons?sz=64&domain=anthropic.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span>
+          <span class="prog num">7/9</span>
+        </span>
+      </div>
+      <ul class="notes">
+        <li><b>Segmenti</b>: dice anche quanto è lungo il percorso e a che passo sei (nove passi, il settimo). È la più informativa a parità di spazio.</li>
+        <li><b>Barretta</b>: la più leggibile da lontano, ma non dice su quanti passi.</li>
+        <li><b>Anello</b>: la più compatta in altezza, sta bene dove la pastiglia è isolata (card, calendario).</li>
+        <li><b>Contatore</b>: il più sobrio e il più preciso; richiede di sapere che i passi sono nove.</li>
+      </ul>
     </div>
 
     <div class="opt">
-      <div class="opt-head"><span class="opt-tag">→</span><b>Cosa metterei in ogni contesto</b><span class="d">la stessa pastiglia, con i pezzi giusti</span></div>
+      <div class="opt-head"><span class="opt-tag">C</span><b>Ordine dei pezzi</b><span class="d">l'icona del cliente a sinistra dice "di chi è" prima ancora di leggere</span></div>
+      <div class="sample" style="align-items:flex-start"><span class="ctx">Tipo in testa</span>
+        <span class="epill-sm">
+          <span class="obj-type" title="Penetration Test"><span class="sq pt">PT</span></span>
+          <span class="nm">Web Application Penetration Test</span>
+          <span class="cli"><img src="https://www.google.com/s2/favicons?sz=64&domain=anthropic.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span>
+          <span class="prog segs"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i><i></i><i></i><i></i></span>
+        </span>
+      </div>
+      <div class="sample" style="align-items:flex-start"><span class="ctx">Cliente in testa</span>
+        <span class="epill-sm">
+          <span class="cli"><img src="https://www.google.com/s2/favicons?sz=64&domain=anthropic.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span>
+          <span class="obj-type" title="Penetration Test"><span class="sq pt">PT</span></span>
+          <span class="nm">Web Application Penetration Test</span>
+          <span class="prog segs"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i><i></i><i></i><i></i></span>
+        </span>
+      </div>
+      <div class="sample" style="align-items:flex-start"><span class="ctx">Avanzamento in testa</span>
+        <span class="epill-sm">
+          <span class="prog segs"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i><i></i><i></i><i></i></span>
+          <span class="obj-type" title="Penetration Test"><span class="sq pt">PT</span></span>
+          <span class="nm">Web Application Penetration Test</span>
+          <span class="cli"><img src="https://www.google.com/s2/favicons?sz=64&domain=nvidia.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span>
+        </span>
+      </div>
+      <ul class="notes"><li>Consiglio <b>tipo → nome → cliente → avanzamento</b>: si legge da sinistra come una frase, e l'avanzamento chiude la riga dove l'occhio arriva alla fine.</li></ul>
+    </div>
+
+    <div class="opt">
+      <div class="opt-head"><span class="opt-tag">D</span><b>Come si legge in elenco</b><span class="d">cinque engagement veri, uno sotto l'altro</span></div>
+      <div class="sample" style="display:grid;gap:8px;justify-items:start">
+        <span class="epill-sm">
+          <span class="obj-type" title="Vulnerability Assessment"><span class="sq va">VA</span></span>
+          <span class="nm">Internal Vulnerability Assessment</span>
+          <span class="cli" title="Anthropic"><img src="https://www.google.com/s2/favicons?sz=64&domain=anthropic.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span>
+          <span class="prog segs" title="Passo 7 di 9"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i><i></i><i></i></span>
+        </span>
+        <span class="epill-sm">
+          <span class="obj-type" title="Penetration Test"><span class="sq pt">PT</span></span>
+          <span class="nm">Web Application Penetration Test</span>
+          <span class="cli" title="Anthropic"><img src="https://www.google.com/s2/favicons?sz=64&domain=anthropic.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span>
+          <span class="prog segs" title="Passo 5 di 9"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i><i></i><i></i><i></i><i></i></span>
+        </span>
+        <span class="epill-sm">
+          <span class="obj-type" title="Red Team"><span class="sq rt">RT</span></span>
+          <span class="nm">Internal Red Team</span>
+          <span class="cli" title="Nvidia"><img src="https://www.google.com/s2/favicons?sz=64&domain=nvidia.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span>
+          <span class="prog segs" title="Passo 5 di 9"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i><i></i><i></i></span>
+        </span>
+        <span class="epill-sm">
+          <span class="obj-type" title="Cloud Security"><span class="sq cs">CS</span></span>
+          <span class="nm">Cloud Security Review</span>
+          <span class="cli" title="Nvidia"><img src="https://www.google.com/s2/favicons?sz=64&domain=nvidia.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span>
+          <span class="prog segs" title="Passo 3 di 9"><i class="done"></i><i class="done"></i><i class="now"></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+        </span>
+        <span class="epill-sm">
+          <span class="obj-type" title="Penetration Test"><span class="sq pt">PT</span></span>
+          <span class="nm">External Penetration Test</span>
+          <span class="cli" title="Nvidia"><img src="https://www.google.com/s2/favicons?sz=64&domain=nvidia.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span>
+          <span class="prog segs" title="Concluso"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i></span>
+        </span>
+      </div>
+      <ul class="notes">
+        <li>Il Red Team ha <b>sette</b> segmenti, non nove: il recheck non è previsto, quindi la barra è più corta e si vede.</li>
+        <li>Cinque pastiglie occupano la stessa altezza di due righe di tabella: in un elenco se ne vedono il doppio.</li>
+      </ul>
+    </div>
+
+    <div class="opt">
+      <div class="opt-head"><span class="opt-tag">E</span><b>Dove la userei</b><span class="d">e cosa resta fuori, per contesto</span></div>
       <table class="cmp" style="margin-top:4px">
-        <tr><th>Contesto</th><th>Pastiglia</th><th>Pezzi dentro</th></tr>
-        <tr><td>Elenco engagement</td><td>P1 mono-riga</td><td>logo cliente, codice, tipo, nome, passo, turno + giorni</td></tr>
-        <tr><td>Viste Da gestire / In attesa</td><td>P1 con giorni in evidenza</td><td>come sopra, con il conteggio sempre presente</td></tr>
-        <tr><td>Scheda engagement</td><td>P2 due righe</td><td>tutto, più periodo; il responsabile è già nella card Persone</td></tr>
-        <tr><td>KPI e andamento</td><td>P3 con barra</td><td>cliente, nome, tipo, barra 7/9, turno</td></tr>
-        <tr><td>Mailing list</td><td>P2 due righe</td><td>cliente, nome, codice, tipo; periodo solo se l'engagement è pianificato</td></tr>
-        <tr><td>Calendario</td><td>P4 a chip</td><td>nome, cliente, tipo, periodo; passo e turno solo nel dettaglio del giorno</td></tr>
-        <tr><td>Riferimenti nel testo (email, registro)</td><td>P1 ridotta</td><td>solo codice + nome</td></tr>
+        <tr><th>Contesto</th><th>Pezzi dentro</th><th>Fuori</th></tr>
+        <tr><td>Elenco engagement</td><td>tipo, nome, cliente, avanzamento</td><td>codice, periodo, stato, responsabile (sono colonne)</td></tr>
+        <tr><td>Viste Da gestire / In attesa</td><td>come sopra</td><td>i giorni di attesa restano nella colonna Stato</td></tr>
+        <tr><td>Intestazione scheda</td><td>tipo, nome, cliente, avanzamento</td><td>codice e periodo nel sottotitolo della scheda</td></tr>
+        <tr><td>KPI e andamento</td><td>tipo, nome, cliente, avanzamento</td><td>niente: è la pastiglia del pannello</td></tr>
+        <tr><td>Calendario</td><td>tipo, nome, cliente</td><td>l'avanzamento lascia il posto alla barra dei giorni</td></tr>
+        <tr><td>Mailing list</td><td>tipo, nome, cliente, avanzamento</td><td>codice, che lì è già nel titolo della lista</td></tr>
       </table>
     </div>
   </section>
@@ -731,13 +739,11 @@ body.noicon .obj-client .mark{background:transparent;border:0}
     <div class="opt">
       <div class="opt-head"><b>Riga di elenco engagement</b><span class="d">engagement P1 (in prova) + cliente B + tipo C + periodo B + stato A</span></div>
       <div style="display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr) 90px 150px 130px;gap:12px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:var(--radius-md);padding:12px">
-        <span class="epill">
-          <span class="epill-logo"><img src="https://www.google.com/s2/favicons?sz=64&domain=anthropic.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span>
-          <span class="code">ENG-2026-015</span>
+        <span class="epill-sm">
           <span class="obj-type" title="Vulnerability Assessment"><span class="sq va">VA</span></span>
           <span class="nm">Internal Vulnerability Assessment</span>
-          <span class="sep"></span>
-          <span class="ph">7 Retest</span>
+          <span class="cli" title="Anthropic"><img src="https://www.google.com/s2/favicons?sz=64&domain=anthropic.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span>
+          <span class="prog segs" title="Passo 7 di 9"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i><i></i><i></i></span>
         </span>
         <span class="obj-client chip"><span class="mark"><img src="https://www.google.com/s2/favicons?sz=64&domain=anthropic.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span><span class="name">Anthropic</span></span>
         <span class="obj-type" title="Vulnerability Assessment"><span class="sq va">VA</span></span>
@@ -749,23 +755,20 @@ body.noicon .obj-client .mark{background:transparent;border:0}
     <div class="opt">
       <div class="opt-head"><b>Intestazione di dettaglio</b><span class="d">engagement P2 + cliente B + tipo C + periodo B + stato A + persona A + deliverable C</span></div>
       <div style="background:#fff;border:1px solid var(--line);border-radius:var(--radius-md);padding:14px;display:grid;gap:12px">
-        <span class="epill two" style="max-width:640px">
-          <span class="epill-logo"><img src="https://www.google.com/s2/favicons?sz=64&domain=anthropic.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span>
-          <span class="two-body">
-            <span class="two-top">
-              <span class="nm" style="font-size:16px">Internal Vulnerability Assessment</span>
-              <span class="code">ENG-2026-015</span>
-            </span>
-            <span class="two-meta">
-              <span class="obj-client chip"><span class="mark"><img src="https://www.google.com/s2/favicons?sz=64&domain=anthropic.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span><span class="name">Anthropic</span></span>
-              <span class="obj-type" title="Vulnerability Assessment"><span class="sq va">VA</span></span>
-              <span class="obj-period box">05/01/2026 <span class="arrow">→</span> 16/01/2026</span>
-              <span class="ph">7 Retest</span>
-              <span class="obj-state wait"><i></i>In attesa <em>9 gg</em></span>
-              <span class="obj-person"><span class="av pentester">SC</span><span class="col"><span class="nm">Sara Conti</span><span class="role">Pentester</span></span></span>
-            </span>
-          </span>
+        <span class="epill-sm" style="height:32px;max-width:640px">
+          <span class="obj-type" title="Vulnerability Assessment"><span class="sq va" style="width:24px;height:24px;font-size:10.5px">VA</span></span>
+          <span class="nm" style="font-size:15px">Internal Vulnerability Assessment</span>
+          <span class="cli" title="Anthropic"><img src="https://www.google.com/s2/favicons?sz=64&domain=anthropic.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span>
+          <span class="prog segs" title="Passo 7 di 9"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i><i></i><i></i></span>
         </span>
+        <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap">
+          <span class="obj-client chip"><span class="mark"><img src="https://www.google.com/s2/favicons?sz=64&domain=anthropic.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span><span class="name">Anthropic</span></span>
+          <span class="code" style="font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:11px;font-weight:700;color:var(--brand-700);background:var(--brand-50);border:1px solid var(--brand-100);border-radius:6px;padding:2px 6px">ENG-2026-015</span>
+          <span class="obj-period box">05/01/2026 <span class="arrow">→</span> 16/01/2026</span>
+          <span class="ph">7 Retest</span>
+          <span class="obj-state wait"><i></i>In attesa <em>9 gg</em></span>
+          <span class="obj-person"><span class="av pentester">SC</span><span class="col"><span class="nm">Sara Conti</span><span class="role">Pentester</span></span></span>
+        </div>
         <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap">
           <span class="obj-doc"><span class="ic exec"><svg viewBox="0 0 16 16"><path d="M4 11H2v3h2zm5-4H7v7h2zm5-5v12h-2V2zm-2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM6 7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1zm-5 4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1z"/></svg></span><span class="nm">Executive</span><span class="ver">v2</span><span class="st ok">Pubblicato</span></span>
           <span class="obj-doc"><span class="ic retest"><svg viewBox="0 0 16 16"><path d="M5.072.56C6.157.265 7.31 0 8 0s1.843.265 2.928.56c1.11.3 2.229.655 2.887.87a1.54 1.54 0 0 1 1.044 1.262c.596 4.477-.787 7.795-2.465 9.99a11.8 11.8 0 0 1-2.517 2.453 7 7 0 0 1-1.048.625c-.28.132-.581.24-.829.24s-.548-.108-.829-.24a7 7 0 0 1-1.048-.625 11.8 11.8 0 0 1-2.517-2.453C1.928 10.487.545 7.169 1.141 2.692A1.54 1.54 0 0 1 2.185 1.43 63 63 0 0 1 5.072.56"/><path d="M10.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0"/></svg></span><span class="nm">Retest</span><span class="ver">v1</span><span class="st draft">Bozza</span></span>
