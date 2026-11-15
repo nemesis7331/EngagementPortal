@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<title>Oggetti standard · proposte</title>
+<style>
+:root{
+  --brand-950:#061d36;--brand-900:#0a2a4d;--brand-700:#0f4275;--brand-600:#0b5fa5;--brand-500:#2a86d8;
+  --brand-100:#e1eefa;--brand-50:#f1f7fc;--accent:#0e9fb5;--ink:#0a1b2e;--muted:#566a80;--muted-2:#7b8a9b;
+  --line:#dfe7ef;--line-soft:#eef2f7;--bg:#f4f7fa;--surface-2:#eceff6;--surface-3:#f8fafc;
+  --st-action:#b42318;--st-action-bg:#fee4e2;--st-action-border:#fda29b;
+  --st-wait:#7a5b00;--st-wait-bg:#fff8c5;--st-wait-border:#eac54f;
+  --st-done:#067647;--st-done-bg:#dcfae6;--st-done-border:#a9efc5;
+  --st-progress:#175cd3;--st-progress-bg:#d1e9ff;--st-progress-border:#b2ddff;
+  --st-risk:#b54708;--st-risk-bg:#ffead5;--st-risk-border:#f9dbaf;
+  --font-sans:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;
+  --radius-sm:8px;--radius-md:10px;--radius-lg:12px;--radius-xl:14px;--radius-pill:999px;
+  --shadow:0 1px 2px rgba(6,29,54,.06),0 6px 20px rgba(6,29,54,.06);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--font-sans);background:var(--bg);color:var(--ink);font-size:14.5px;line-height:1.5;-webkit-font-smoothing:antialiased}
+header.top{background:linear-gradient(100deg,var(--brand-950),var(--brand-900) 60%,var(--brand-700));color:#fff;padding:14px 22px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:20}
+header.top .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px}
+header.top .logo i{width:30px;height:30px;border-radius:10px;background:var(--accent);color:var(--brand-950);display:grid;place-items:center;font-style:normal;font-weight:800}
+header.top small{display:block;font-weight:400;font-size:11.5px;opacity:.7;letter-spacing:.06em;text-transform:uppercase}
+header.top .switches{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+header.top .sw{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:var(--radius-pill);padding:5px 12px;font-size:12.5px;font-weight:600;cursor:pointer}
+header.top .sw input{margin:0}
+main{max-width:1320px;margin:0 auto;padding:22px 22px 70px}
+.lead{color:var(--muted);max-width:104ch}
+.lead b{color:var(--brand-900)}
+nav.toc{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 26px}
+nav.toc a{text-decoration:none;border:1px solid var(--line);background:#fff;border-radius:var(--radius-pill);padding:6px 13px;font-size:12.5px;font-weight:600;color:var(--brand-900)}
+nav.toc a:hover{border-color:var(--brand-500)}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius-xl);box-shadow:var(--shadow);padding:16px;margin-bottom:22px}
+.card > h2{margin:0 0 4px;font-size:19px}
+.card > p.sub{margin:0 0 16px;color:var(--muted);font-size:13px;max-width:100ch}
+.opt{border:1px solid var(--line);border-radius:var(--radius-lg);padding:13px;margin-bottom:12px;background:var(--surface-3)}
+.opt-head{display:flex;align-items:center;gap:9px;margin-bottom:11px;flex-wrap:wrap}
+.opt-tag{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:7px;background:var(--brand-900);color:#fff;font-size:12px;font-weight:800}
+.opt-head b{font-size:14.5px;color:var(--brand-900)}
+.opt-head span.d{font-size:12.5px;color:var(--muted)}
+.rec{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--st-done-border);background:var(--st-done-bg);color:var(--st-done);border-radius:var(--radius-pill);padding:2px 9px;font-size:11px;font-weight:800}
+.sample{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:#fff;border:1px dashed var(--line);border-radius:var(--radius-md);padding:12px}
+.sample + .sample{margin-top:8px}
+.sample .ctx{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted-2);font-weight:800;min-width:104px}
+.notes{margin:10px 0 0;padding:0;list-style:none;display:grid;gap:5px;font-size:12.5px;color:var(--muted)}
+.notes li{display:flex;gap:7px}
+.notes li::before{content:"·";color:var(--brand-500);font-weight:800}
+.code{display:block;margin-top:9px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:11px;background:#fff;border:1px solid var(--line);border-radius:7px;padding:8px 10px;color:var(--muted);overflow-x:auto;white-space:pre}
+table.cmp{width:100%;border-collapse:collapse;font-size:12.5px;background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);overflow:hidden}
+table.cmp th,table.cmp td{padding:9px 11px;border-bottom:1px solid var(--line-soft);text-align:left;vertical-align:top}
+table.cmp th{background:var(--surface-2);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted-2)}
+table.cmp tr:last-child td{border-bottom:0}
+
+/* ================================================================
+   OGGETTI — proposte. Ogni blocco è autonomo e si può copiare in app.
+   ================================================================ */
+
+/* ---- 1. CLIENTE ---- */
+/* A · logo + nome (con sigla) */
+.obj-client{display:inline-flex;align-items:center;gap:8px;min-width:0}
+.obj-client .mark{width:26px;height:26px;border-radius:8px;flex:none;background:var(--brand-100);color:var(--brand-700);display:grid;place-items:center;font-size:10px;font-weight:800;position:relative;overflow:hidden;border:1px solid var(--brand-100)}
+.obj-client .mark img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#fff}
+.obj-client .name{font-weight:700;color:var(--brand-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.obj-client .sigla{font-size:10.5px;font-weight:800;color:var(--muted-2);letter-spacing:.04em}
+/* B · pastiglia su fondo neutro */
+.obj-client.chip{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--radius-pill);padding:3px 11px 3px 4px;gap:7px}
+.obj-client.chip .mark{width:22px;height:22px;border-radius:var(--radius-pill);font-size:9px}
+/* C · targhetta con dominio */
+.obj-client.tag{border:1px solid var(--brand-100);background:var(--brand-50);border-radius:var(--radius-md);padding:5px 10px}
+.obj-client.tag .mark{width:24px;height:24px;background:#fff}
+.obj-client.tag .col{display:grid;line-height:1.15}
+.obj-client.tag .host{font-size:10.5px;color:var(--muted)}
+/* D · solo icona + nome, senza contenitore */
+.obj-client.plain .name{font-weight:600}
+.obj-client.plain .sigla{display:none}
+
+/* ---- 2. ENGAGEMENT ---- */
+.obj-eng{display:inline-flex;align-items:center;gap:9px;min-width:0}
+.obj-eng .code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:11px;font-weight:700;color:var(--brand-700);background:var(--brand-50);border:1px solid var(--brand-100);border-radius:6px;padding:2px 6px;white-space:nowrap}
+.obj-eng .name{font-weight:600;color:var(--brand-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* B · nome sopra, codice sotto */
+.obj-eng.stacked{align-items:flex-start;flex-direction:column;gap:2px}
+.obj-eng.stacked .name{font-weight:700}
+/* C · pallino di stato a sinistra */
+.obj-eng .dot{width:9px;height:9px;border-radius:50%;flex:none;background:var(--brand-500)}
+.dot.a{background:var(--st-action)}.dot.w{background:var(--st-wait)}.dot.p{background:var(--st-progress)}
+.dot.d{background:var(--st-done)}.dot.r{background:var(--st-risk)}
+/* D · con mini barra del workflow */
+.obj-eng.mini{width:100%}
+.obj-eng .steps{display:flex;gap:2px;margin-top:4px}
+.obj-eng .steps i{display:block;width:12px;height:3px;border-radius:2px;background:var(--surface-2)}
+.obj-eng .steps i.on{background:var(--brand-600)}
+
+/* ---- 3. PERSONA ---- */
+.obj-person{display:inline-flex;align-items:center;gap:8px;min-width:0}
+.obj-person .av{width:26px;height:26px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:10px;font-weight:800;background:var(--brand-100);color:var(--brand-700);border:1px solid var(--brand-100)}
+.obj-person .av.pentester{background:var(--st-progress-bg);color:var(--st-progress);border-color:var(--st-progress-border)}
+.obj-person .av.manager{background:var(--st-done-bg);color:var(--st-done);border-color:var(--st-done-border)}
+.obj-person .av.pmo{background:var(--st-wait-bg);color:var(--st-wait);border-color:var(--st-wait-border)}
+.obj-person .av.cliente{background:var(--surface-2);color:var(--muted);border-color:var(--line)}
+.obj-person .col{display:grid;line-height:1.2;min-width:0}
+.obj-person .nm{font-weight:600;color:var(--brand-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.obj-person .role{font-size:10.5px;color:var(--muted)}
+.obj-person.group{gap:0}
+.obj-person.group .av{margin-left:-8px;box-shadow:0 0 0 2px #fff}
+.obj-person.group .av:first-child{margin-left:0}
+
+/* ---- 4. TIPO DI ATTIVITÀ ---- */
+.obj-type{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:800}
+.obj-type .sq{width:24px;height:24px;border-radius:7px;display:grid;place-items:center;font-size:10.5px;letter-spacing:.02em}
+.obj-type .label{color:var(--brand-900);font-weight:600;font-size:12.5px}
+.sq.pt{background:#e7f1fc;color:#1a5f9e;border:1px solid #cfe0f5}
+.sq.va{background:#eafaf1;color:#0b6b45;border:1px solid #bcdfce}
+.sq.rt{background:#fdecec;color:#a12a1f;border:1px solid #f5c9c5}
+.sq.cr{background:#f3eefc;color:#5b34b5;border:1px solid #ddd0f7}
+.sq.cs{background:#e9f7fa;color:#0b6b7c;border:1px solid #bfe6ee}
+.obj-type.pill{border:1px solid var(--line);background:var(--surface-3);border-radius:var(--radius-pill);padding:3px 11px;font-weight:600;font-size:12.5px;color:var(--brand-900)}
+
+/* ---- 5. FASE / STATO ---- */
+.obj-state{display:inline-flex;align-items:center;gap:7px;border-radius:var(--radius-pill);padding:3px 11px;font-size:11.5px;font-weight:700;border:1px solid}
+.obj-state i{width:7px;height:7px;border-radius:50%;background:currentColor;flex:none;opacity:.85}
+.obj-state.action{background:var(--st-action-bg);color:var(--st-action);border-color:var(--st-action-border)}
+.obj-state.wait{background:var(--st-wait-bg);color:var(--st-wait);border-color:var(--st-wait-border)}
+.obj-state.progress{background:var(--st-progress-bg);color:var(--st-progress);border-color:var(--st-progress-border)}
+.obj-state.ok{background:var(--st-done-bg);color:var(--st-done);border-color:var(--st-done-border)}
+.obj-state.risk{background:var(--st-risk-bg);color:var(--st-risk);border-color:var(--st-risk-border)}
+/* B · senza pallino, con bordo spesso a sinistra */
+.obj-state.bar{border-radius:var(--radius-sm);border-left-width:4px;padding-left:9px}
+.obj-state.bar i{display:none}
+/* C · testo + contatore di giorni */
+.obj-state.days{gap:8px}
+.obj-state.days em{font-style:normal;font-weight:800;background:rgba(0,0,0,.06);border-radius:var(--radius-pill);padding:0 6px;font-size:10.5px}
+
+/* ---- 6. PERIODO ---- */
+.obj-period{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--brand-900);font-weight:600;white-space:nowrap}
+.obj-period svg{width:13px;height:13px;fill:var(--muted-2);flex:none}
+.obj-period.box{border:1px solid var(--line);background:var(--surface-3);border-radius:var(--radius-sm);padding:3px 9px}
+.obj-period .arrow{color:var(--muted-2);font-weight:400}
+.obj-period.days{color:var(--muted)}
+.obj-period.days b{color:var(--brand-900);font-weight:800}
+
+/* ---- 7. DELIVERABLE / REPORT ---- */
+.obj-report{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:var(--brand-900)}
+.obj-report .rd{width:20px;height:24px;border-radius:4px;border:1px solid var(--line);background:#fff;position:relative;flex:none}
+.obj-report .rd::after{content:"";position:absolute;right:-1px;top:-1px;border-width:0 7px 7px 0;border-style:solid;border-color:#fff var(--surface-2)}
+.obj-report .ver{font-size:10.5px;font-weight:800;color:var(--muted-2)}
+.obj-report.pill{border:1px solid var(--line);background:var(--surface-3);border-radius:var(--radius-pill);padding:3px 10px;font-weight:600}
+.obj-report.ok .rd{border-color:var(--st-done-border);background:var(--st-done-bg)}
+.obj-report.draft .rd{border-style:dashed}
+
+/* densità compatta: gli esempi si stringono */
+body.dense .sample{padding:8px}
+body.dense .obj-client .mark,body.dense .obj-person .av,body.dense .obj-eng .code{transform:scale(.92)}
+body.noicon .mark img,body.noicon .mark .init,body.noicon .obj-person .av{display:none}
+body.noicon .obj-client .mark{background:transparent;border:0}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="logo"><i>CE</i><div>Cyber Engagement Portal<small>Anteprima · oggetti standard</small></div></div>
+  <div class="switches">
+    <label class="sw"><input type="checkbox" id="dense"> Densità compatta</label>
+    <label class="sw"><input type="checkbox" id="noicon"> Senza icone</label>
+  </div>
+</header>
+
+<main>
+  <h1 style="font-size:24px;margin:0 0 6px">Oggetti standard: più proposte per ognuno</h1>
+  <p class="lead">Oggi lo stesso concetto (cliente, engagement, persona…) è disegnato in modi diversi da una schermata all'altra. Qui trovi <b>un oggetto riutilizzabile per ogni concetto</b>, con <b>3-4 varianti</b> da scegliere. Ogni variante è mostrata dove serve davvero: in una <b>riga di tabella</b>, in un <b>titolo</b>, in una <b>card</b>. In basso il <b>set consigliato</b> messo insieme. I nomi usano i dati reali del portale (Anthropic, Nvidia, ENG-2026-015…), e i loghi sono le favicon dei siti.</p>
+  <nav class="toc">
+    <a href="#cliente">1 · Cliente</a>
+    <a href="#engagement">2 · Engagement</a>
+    <a href="#persona">3 · Persona</a>
+    <a href="#tipo">4 · Tipo di attività</a>
+    <a href="#stato">5 · Fase / stato</a>
+    <a href="#periodo">6 · Periodo</a>
+    <a href="#report">7 · Deliverable</a>
+    <a href="#set">Set consigliato</a>
+  </nav>
+
+  <!-- ===================== 1 · CLIENTE ===================== -->
+  <section class="card" id="cliente">
+    <h2>1 · Cliente</h2>
+    <p class="sub">Ovunque compaia il nome di un cliente. La regola richiesta: <b>icona sempre a sinistra del nome</b>. La favicon arriva dal sito del cliente, con le iniziali come fallback.</p>
+
+    <div class="opt">
+      <div class="opt-head"><span class="opt-tag">A</span><b>Logo + nome + sigla</b><span class="d">il più neutro: funziona in tabella, nei titoli e nelle card</span><span class="rec">consigliata</span></div>
+      <div class="sample"><span class="ctx">In tabella</span>
+        <span class="obj-client"><span class="mark"><span class="init">AN</span><img src="https://www.google.com/s2/favicons?sz=64&domain=anthropic.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span><span class="name">Anthropic</span><span class="sigla">ANT</span></span>
+        <span class="obj-client"><span class="mark"><span class="init">NV</span><img src="https://www.google.com/s2/favicons?sz=64&domain=nvidia.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span><span class="name">Nvidia</span><span class="sigla">NVI</span></span>
+      </div>
+      <div class="sample"><span class="ctx">Nel titolo</span><span style="font-size:19px;font-weight:800"><span class="obj-client" style="gap:10px"><span class="mark" style="width:30px;height:30px;border-radius:9px;font-size:11px"><span class="init">AN</span><img src="https://www.google.com/s2/favicons?sz=64&domain=anthropic.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span><span class="name">Anthropic</span></span></span></div>
+      <ul class="notes">
+        <li>La sigla a tre lettere aiuta quando il nome è tagliato in colonne strette.</li>
+        <li>Fallback automatico: se la favicon non carica restano le iniziali su fondo azzurro.</li>
+      </ul>
+      <code class="code">&lt;span class="obj-client"&gt;&lt;span class="mark"&gt;AN&lt;img src="…favicon"&gt;&lt;/span&gt;&lt;span class="name"&gt;Anthropic&lt;/span&gt;&lt;span class="sigla"&gt;ANT&lt;/span&gt;&lt;/span&gt;</code>
+    </div>
+
+    <div class="opt">
+      <div class="opt-head"><span class="opt-tag">B</span><b>Pastiglia su fondo neutro</b><span class="d">quando il cliente è un riferimento fra tanti, dentro tabelle dense o filtri</span></div>
+      <div class="sample"><span class="ctx">In una riga</span>
+        <span class="obj-client chip"><span class="mark"><img src="https://www.google.com/s2/favicons?sz=64&domain=anthropic.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span><span class="name">Anthropic</span></span>
+        <span class="obj-client chip"><span class="mark"><img src="https://www.google.com/s2/favicons?sz=64&domain=nvidia.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span><span class="name">Nvidia</span></span>
+      </div>
+      <div class="sample"><span class="ctx">Come filtro</span>
+        <span class="obj-client chip" style="border-color:var(--brand-500);background:var(--brand-50)"><span class="mark"><img src="https://www.google.com/s2/favicons?sz=64&domain=anthropic.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span><span class="name">Solo Anthropic</span></span>
+      </div>
+      <ul class="notes"><li>Si legge come un chip cliccabile: utile per i filtri e per le liste con molti clienti.</li></ul>
+    </div>
+
+    <div class="opt">
+      <div class="opt-head"><span class="opt-tag">C</span><b>Targhetta con dominio</b><span class="d">nei contesti "anagrafica": schede cliente, intestazioni, mailing list</span></div>
+      <div class="sample"><span class="ctx">Nel dettaglio</span>
+        <span class="obj-client tag"><span class="mark"><img src="https://www.google.com/s2/favicons?sz=64&domain=anthropic.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span><span class="col"><span class="name">Anthropic</span><span class="host">www.anthropic.com</span></span></span>
+        <span class="obj-client tag"><span class="mark"><img src="https://www.google.com/s2/favicons?sz=64&domain=nvidia.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span><span class="col"><span class="name">Nvidia</span><span class="host">www.nvidia.com</span></span></span>
+      </div>
+      <ul class="notes"><li>Il dominio sotto il nome toglie ogni ambiguità fra clienti con nomi simili.</li></ul>
+    </div>
+
+    <div class="opt">
+      <div class="opt-head"><span class="opt-tag">D</span><b>Solo icona + nome</b><span class="d">minimale: quando il contesto è già chiaro (es. dentro la scheda del cliente)</span></div>
+      <div class="sample"><span class="ctx">Testo corrente</span>
+        <span>Engagement di <span class="obj-client plain"><span class="mark"><img src="https://www.google.com/s2/favicons?sz=64&domain=anthropic.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span><span class="name">Anthropic</span></span></span>
+      </div>
+      <ul class="notes"><li>Niente bordo né sfondo: l'icona basta a dire "questo è un cliente".</li></ul>
+    </div>
+  </section>
+
+  <!-- ===================== 2 · ENGAGEMENT ===================== -->
+  <section class="card" id="engagement">
+    <h2>2 · Engagement</h2>
+    <p class="sub">Il codice (ENG-2026-015) e il nome dell'attività viaggiano sempre insieme: proponiamo quattro modi per legarli.</p>
+
+    <div class="opt">
+      <div class="opt-head"><span class="opt-tag">A</span><b>Codice + nome in linea</b><span class="d">righe di tabella, riferimenti rapidi</span><span class="rec">consigliata</span></div>
+      <div class="sample"><span class="ctx">In tabella</span>
+        <span class="obj-eng"><span class="code">ENG-2026-015</span><span class="name">Internal Vulnerability Assessment</span></span>
+      </div>
+      <div class="sample"><span class="ctx">In una card</span>
+        <span class="obj-eng"><span class="code">ENG-2026-006</span><span class="name">External Penetration Test</span></span>
+      </div>
+    </div>
+
+    <div class="opt">
+      <div class="opt-head"><span class="opt-tag">B</span><b>Nome sopra, codice sotto</b><span class="d">quando il nome è lungo: liste, pannelli, dettaglio</span></div>
+      <div class="sample"><span class="ctx">In lista</span>
+        <span class="obj-eng stacked"><span class="name">Internal Vulnerability Assessment</span><span class="code">ENG-2026-015</span></span>
+      </div>
+      <ul class="notes"><li>Sfrutta due righe ma regge nomi lunghi senza tagli.</li></ul>
+    </div>
+
+    <div class="opt">
+      <div class="opt-head"><span class="opt-tag">C</span><b>Pallino di stato + nome + codice</b><span class="d">liste dove conta capire subito lo stato</span></div>
+      <div class="sample"><span class="ctx">In lista</span>
+        <span class="obj-eng"><span class="dot a"></span><span class="name">Internal Vulnerability Assessment</span><span class="code">ENG-2026-015</span></span>
+      </div>
+      <div class="sample"><span class="ctx">Concluso</span>
+        <span class="obj-eng"><span class="dot d"></span><span class="name">External Penetration Test</span><span class="code">ENG-2026-006</span></span>
+      </div>
+      <div class="sample"><span class="ctx">In attesa</span>
+        <span class="obj-eng"><span class="dot w"></span><span class="name">Web Application Penetration Test</span><span class="code">ENG-2026-007</span></span>
+      </div>
+    </div>
+
+    <div class="opt">
+      <div class="opt-head"><span class="opt-tag">D</span><b>Con mini barra del workflow</b><span class="d">liste e calendario: mostra a colpo d'occhio a che punto è</span></div>
+      <div class="sample" style="align-items:flex-start"><span class="ctx">In lista</span>
+        <span class="obj-eng mini stacked">
+          <span class="name">Internal Vulnerability Assessment</span>
+          <span class="code">ENG-2026-015 · Anthropic</span>
+          <span class="steps"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span>
+        </span>
+      </div>
+      <ul class="notes"><li>La barra ha un segmento per passo: si legge "quanto manca" senza aprire l'attività.</li></ul>
+    </div>
+  </section>
+
+  <!-- ===================== 3 · PERSONA ===================== -->
+  <section class="card" id="persona">
+    <h2>3 · Persona</h2>
+    <p class="sub">Utenti interni, clienti, partecipanti esterni. L'iniziale nel cerchio è colorata per ruolo: così si distingue a colpo d'occhio chi è il Pentester, chi il Manager, chi il cliente.</p>
+
+    <div class="opt">
+      <div class="opt-head"><span class="opt-tag">A</span><b>Avatar per ruolo + nome + ruolo</b><span class="d">elenchi utenti, team, destinatari</span><span class="rec">consigliata</span></div>
+      <div class="sample"><span class="ctx">In elenco</span>
+        <span class="obj-person"><span class="av pentester">SC</span><span class="col"><span class="nm">Sara Conti</span><span class="role">Pentester</span></span></span>
+        <span class="obj-person"><span class="av manager">GM</span><span class="col"><span class="nm">Giorgio Marino</span><span class="role">Manager</span></span></span>
+        <span class="obj-person"><span class="av pmo">LF</span><span class="col"><span class="nm">Luca Ferri</span><span class="role">PMO</span></span></span>
+        <span class="obj-person"><span class="av cliente">MR</span><span class="col"><span class="nm">Marta Rinaldi</span><span class="role">Cliente · Anthropic</span></span></span>
+      </div>
+      <ul class="notes"><li>Il ruolo sotto il nome evita di doverlo ripetere come colonna.</li></ul>
+    </div>
+
+    <div class="opt">
+      <div class="opt-head"><span class="opt-tag">B</span><b>Solo nome, con avatar</b><span class="d">tabelle dense e chip: quando il ruolo è già noto</span></div>
+      <div class="sample"><span class="ctx">In tabella</span>
+        <span class="obj-person"><span class="av pentester">SC</span><span class="nm">Sara Conti</span></span>
+        <span class="obj-person"><span class="av cliente">MR</span><span class="nm">Marta Rinaldi</span></span>
+      </div>
+    </div>
+
+    <div class="opt">
+      <div class="opt-head"><span class="opt-tag">C</span><b>Gruppo sovrapposto</b><span class="d">quando le persone sono tante: team, distribution list, "chi riceve"</span></div>
+      <div class="sample"><span class="ctx">Nel team</span>
+        <span class="obj-person group">
+          <span class="av pentester" title="Sara Conti">SC</span>
+          <span class="av manager" title="Giorgio Marino">GM</span>
+          <span class="av pmo" title="Luca Ferri">LF</span>
+          <span class="av cliente" title="Marta Rinaldi">MR</span>
+        </span>
+        <span style="font-size:12.5px;color:var(--muted)">4 partecipanti</span>
+      </div>
+      <ul class="notes"><li>Con il passaggio del mouse compare il nome; il conteggio resta accanto.</li></ul>
+    </div>
+  </section>
+
+  <!-- ===================== 4 · TIPO DI ATTIVITÀ ===================== -->
+  <section class="card" id="tipo">
+    <h2>4 · Tipo di attività</h2>
+    <p class="sub">La sigla del tipo (PT, VA, RT, CR, CS) con un colore proprio permette di riconoscere la tipologia senza leggere l'etichetta.</p>
+
+    <div class="opt">
+      <div class="opt-head"><span class="opt-tag">A</span><b>Sigla colorata + etichetta</b><span class="d">liste e dettaglio</span><span class="rec">consigliata</span></div>
+      <div class="sample"><span class="ctx">In lista</span>
+        <span class="obj-type"><span class="sq pt">PT</span><span class="label">Penetration Test</span></span>
+        <span class="obj-type"><span class="sq va">VA</span><span class="label">Vulnerability Assessment</span></span>
+        <span class="obj-type"><span class="sq rt">RT</span><span class="label">Red Team</span></span>
+        <span class="obj-type"><span class="sq cr">CR</span><span class="label">Code Review</span></span>
+        <span class="obj-type"><span class="sq cs">CS</span><span class="label">Cloud Security</span></span>
+      </div>
+    </div>
+
+    <div class="opt">
+      <div class="opt-head"><span class="opt-tag">B</span><b>Pastiglia con l'etichetta intera</b><span class="d">quando la sigla non basta o c'è spazio</span></div>
+      <div class="sample"><span class="ctx">Nel dettaglio</span>
+        <span class="obj-type pill">Vulnerability Assessment</span>
+        <span class="obj-type pill">Red Team</span>
+      </div>
+    </div>
+
+    <div class="opt">
+      <div class="opt-head"><span class="opt-tag">C</span><b>Solo sigla</b><span class="d">tabelle molto dense, tooltip con il nome completo</span></div>
+      <div class="sample"><span class="ctx">In tabella</span>
+        <span class="obj-type" title="Penetration Test"><span class="sq pt">PT</span></span>
+        <span class="obj-type" title="Vulnerability Assessment"><span class="sq va">VA</span></span>
+        <span class="obj-type" title="Red Team"><span class="sq rt">RT</span></span>
+        <span style="font-size:12px;color:var(--muted)">← passa il mouse</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 5 · FASE / STATO ===================== -->
+  <section class="card" id="stato">
+    <h2>5 · Fase / stato</h2>
+    <p class="sub">Lo stato dell'attività (da gestire, in attesa, in corso…) e il passo del workflow. Oggi convivono pill di colori diversi fra liste, KPI e dettaglio.</p>
+
+    <div class="opt">
+      <div class="opt-head"><span class="opt-tag">A</span><b>Pastiglia con pallino</b><span class="d">default: liste, KPI, dettaglio</span><span class="rec">consigliata</span></div>
+      <div class="sample"><span class="ctx">In lista</span>
+        <span class="obj-state action"><i></i>Da gestire</span>
+        <span class="obj-state wait"><i></i>In attesa di terzi</span>
+        <span class="obj-state progress"><i></i>In corso</span>
+        <span class="obj-state ok"><i></i>Concluso</span>
+        <span class="obj-state risk"><i></i>A rischio avvio</span>
+      </div>
+    </div>
+
+    <div class="opt">
+      <div class="opt-head"><span class="opt-tag">B</span><b>Bordo spesso a sinistra, senza pallino</b><span class="d">più sobria quando in pagina ci sono già molti colori</span></div>
+      <div class="sample"><span class="ctx">In lista</span>
+        <span class="obj-state bar action">Da gestire</span>
+        <span class="obj-state bar wait">In attesa di terzi</span>
+        <span class="obj-state bar progress">In corso</span>
+        <span class="obj-state bar ok">Concluso</span>
+      </div>
+    </div>
+
+    <div class="opt">
+      <div class="opt-head"><span class="opt-tag">C</span><b>Con il conteggio dei giorni</b><span class="d">dove il ritardo è il dato che conta: liste "da gestire", KPI, solleciti</span></div>
+      <div class="sample"><span class="ctx">In lista</span>
+        <span class="obj-state wait days">In attesa di terzi <em>9 gg</em></span>
+        <span class="obj-state action days">Da gestire <em>12 gg</em></span>
+      </div>
+      <ul class="notes"><li>Il numero dentro la pastiglia sostituisce la colonna "Ritardo" in molte righe.</li></ul>
+    </div>
+  </section>
+
+  <!-- ===================== 6 · PERIODO ===================== -->
+  <section class="card" id="periodo">
+    <h2>6 · Periodo</h2>
+    <p class="sub">Le date dell'attività (e del retest), oggi scritte in tre modi diversi fra lista, calendario e dettaglio.</p>
+
+    <div class="opt">
+      <div class="opt-head"><span class="opt-tag">A</span><b>Inizio → fine con icona calendario</b><span class="d">liste e card</span><span class="rec">consigliata</span></div>
+      <div class="sample"><span class="ctx">In lista</span>
+        <span class="obj-period"><svg viewBox="0 0 16 16"><path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857z"/><path d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/></svg>05/01/2026 <span class="arrow">→</span> 16/01/2026</span>
+      </div>
+    </div>
+
+    <div class="opt">
+      <div class="opt-head"><span class="opt-tag">B</span><b>Periodo in riquadro</b><span class="d">dettaglio e pannelli, dove contorna il dato</span></div>
+      <div class="sample"><span class="ctx">Nel dettaglio</span>
+        <span class="obj-period box">05/01/2026 <span class="arrow">→</span> 16/01/2026</span>
+        <span class="obj-period box" style="border-color:var(--st-progress-border);background:var(--st-progress-bg)">Retest 20/01/2026 → 22/01/2026</span>
+      </div>
+    </div>
+
+    <div class="opt">
+      <div class="opt-head"><span class="opt-tag">C</span><b>Con i giorni che mancano</b><span class="d">fasi di preparazione e prossimi avvii</span></div>
+      <div class="sample"><span class="ctx">In lista</span>
+        <span class="obj-period days">avvio tra <b>9 giorni</b> · 24/11/2026</span>
+        <span class="obj-period days">avvio <b>oggi</b></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 7 · DELIVERABLE ===================== -->
+  <section class="card" id="report">
+    <h2>7 · Deliverable / report</h2>
+    <p class="sub">Le tipologie di report (Executive, Technical, Activity, Retest) e la loro versione, con lo stato di pubblicazione.</p>
+
+    <div class="opt">
+      <div class="opt-head"><span class="opt-tag">A</span><b>Documento + nome + versione</b><span class="d">scheda Report, KPI, registro</span><span class="rec">consigliata</span></div>
+      <div class="sample"><span class="ctx">Nel dettaglio</span>
+        <span class="obj-report ok"><span class="rd"></span>Executive <span class="ver">v2</span></span>
+        <span class="obj-report"><span class="rd"></span>Technical <span class="ver">v3</span></span>
+        <span class="obj-report draft"><span class="rd"></span>Activity <span class="ver">bozza</span></span>
+        <span class="obj-report ok"><span class="rd"></span>Retest <span class="ver">v1</span></span>
+      </div>
+    </div>
+
+    <div class="opt">
+      <div class="opt-head"><span class="opt-tag">B</span><b>Pastiglia</b><span class="d">elenchi di tipologie previste, setup, filtri</span></div>
+      <div class="sample"><span class="ctx">Nel setup</span>
+        <span class="obj-report pill">Executive</span>
+        <span class="obj-report pill">Technical</span>
+        <span class="obj-report pill">Activity</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SET CONSIGLIATO ===================== -->
+  <section class="card" id="set">
+    <h2>Set consigliato, messo insieme</h2>
+    <p class="sub">Le varianti segnate "consigliata" combinate dove servono: ecco come apparirebbe una riga di elenco e l'intestazione di un dettaglio.</p>
+
+    <div class="opt">
+      <div class="opt-head"><b>Riga di elenco engagement</b><span class="d">oggetti: engagement (B) + cliente (A) + tipo (A) + periodo (A) + stato (A)</span></div>
+      <div style="display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr) 132px 150px;gap:12px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:var(--radius-md);padding:12px">
+        <span class="obj-eng stacked"><span class="name">Internal Vulnerability Assessment</span><span class="code">ENG-2026-015</span></span>
+        <span class="obj-client"><span class="mark"><img src="https://www.google.com/s2/favicons?sz=64&domain=anthropic.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span><span class="name">Anthropic</span></span>
+        <span class="obj-type"><span class="sq va">VA</span></span>
+        <span class="obj-period"><svg viewBox="0 0 16 16"><path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857z"/><path d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/></svg>05/01 <span class="arrow">→</span> 16/01</span>
+        <span class="obj-state wait days" style="grid-column:1/-1;justify-self:start">In attesa di terzi <em>9 gg</em></span>
+      </div>
+    </div>
+
+    <div class="opt">
+      <div class="opt-head"><b>Intestazione di dettaglio</b><span class="d">oggetti: engagement (A) + cliente (C) + tipo (B) + periodo (B) + stato (C) + persona (A)</span></div>
+      <div style="background:#fff;border:1px solid var(--line);border-radius:var(--radius-md);padding:14px;display:grid;gap:11px">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <span class="obj-eng"><span class="code">ENG-2026-015</span><span class="name" style="font-size:17px;font-weight:800">Internal Vulnerability Assessment</span></span>
+          <span class="obj-client tag"><span class="mark"><img src="https://www.google.com/s2/favicons?sz=64&domain=anthropic.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span><span class="col"><span class="name">Anthropic</span><span class="host">www.anthropic.com</span></span></span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <span class="obj-type pill">Vulnerability Assessment</span>
+          <span class="obj-period box">05/01/2026 <span class="arrow">→</span> 16/01/2026</span>
+          <span class="obj-state wait days">In attesa di terzi <em>9 gg</em></span>
+          <span class="obj-person"><span class="av pentester">SC</span><span class="col"><span class="nm">Sara Conti</span><span class="role">Pentester</span></span></span>
+        </div>
+      </div>
+    </div>
+
+    <h2 style="margin-top:18px">Dove li useremmo</h2>
+    <table class="cmp">
+      <tr><th>Schermata</th><th>Oggetti coinvolti</th><th>Varianti attuali da unificare</th></tr>
+      <tr><td>Elenco engagement</td><td>Engagement, cliente, tipo, periodo, stato</td><td>Il cliente è icona+nome, il tipo in tabella è solo testo, il periodo ha tre formati</td></tr>
+      <tr><td>Dettaglio engagement</td><td>Engagement, cliente, tipo, periodo, stato, persona, deliverable</td><td>Cliente come targhetta, stato come pill diversa, date in riquadri separati</td></tr>
+      <tr><td>KPI e andamento</td><td>Cliente, stato, periodo</td><td>Cliente in tabella senza icona, stati senza pallino</td></tr>
+      <tr><td>Calendario</td><td>Engagement, cliente, periodo</td><td>Cliente come sigla di due lettere, nessun tipo attività</td></tr>
+      <tr><td>Mailing list</td><td>Cliente, engagement, persona, tipo email</td><td>Avatar a due lettere, cliente ripetuto fra elenco e dettaglio</td></tr>
+      <tr><td>Utenti e team</td><td>Persona, cliente</td><td>Avatar neutro senza colore di ruolo</td></tr>
+      <tr><td>Amministrazione › Template</td><td>Cliente, engagement</td><td>Cliente ed engagement solo nel menù Ambito</td></tr>
+    </table>
+  </section>
+
+  <p class="note" style="border:1px solid var(--brand-100);background:var(--brand-50);color:var(--brand-700);border-radius:var(--radius-md);padding:12px 14px;font-size:12.5px">
+    <b>Come procederemmo.</b> Scelte le varianti, ogni oggetto diventa una funzione unica nel codice — <code>clientChip(c)</code>, <code>engRef(e)</code>, <code>personChip(u)</code>, <code>typeBadge(t)</code>, <code>statePill(s)</code>, <code>period(d)</code>, <code>reportTag(r)</code> — e i punti che oggi scrivono quei dati a mano vengono sostituiti da quella funzione. Così nome, icona e colori restano coerenti ovunque, e cambiarli domani significa toccare un posto solo.
+  </p>
+</main>
+
+<script>
+  document.getElementById('dense').addEventListener('change', e => document.body.classList.toggle('dense', e.target.checked));
+  document.getElementById('noicon').addEventListener('change', e => document.body.classList.toggle('noicon', e.target.checked));
+</script>
+</body>
+</html>
