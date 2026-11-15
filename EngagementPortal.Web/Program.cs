@@ -5,6 +5,7 @@ using EngagementPortal.Web.Data;
 using EngagementPortal.Web.Domain;
 using EngagementPortal.Web.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,6 +44,7 @@ if (useDatabase)
         SqlClientRepository>();
     builder.Services.AddScoped<IAppSettingsRepository,
         SqlAppSettingsRepository>();
+    builder.Services.AddScoped<IUserRepository, SqlUserRepository>();
 }
 else
 {
@@ -53,6 +55,8 @@ else
         InMemoryClientRepository>();
     builder.Services.AddSingleton<IAppSettingsRepository,
         InMemoryAppSettingsRepository>();
+    builder.Services.AddSingleton<IUserRepository,
+        InMemoryUserRepository>();
 }
 
 builder.Services.AddSingleton<EngagementWorkflow>();
@@ -104,9 +108,13 @@ api.MapGet("/clients", (
     IEngagementRepository repository) =>
 {
     var user = GetUser(context);
+    var accessibleEngagements = Access.AccessibleEngagements(repository, user);
 
     var result = clients.List()
-        .Where(client => user.IsInternal || client.Id == user.ClientId)
+        .Where(client =>
+            Access.CanAccessClient(user, client.Id) ||
+            accessibleEngagements.Any(engagement =>
+                engagement.ClientId == client.Id))
         .Select(client => new
         {
             client.Id,
@@ -117,19 +125,207 @@ api.MapGet("/clients", (
             client.DistributionList,
             client.DeliverablesDistributionList,
             client.Team,
-            EngagementCount = repository
-                .List(client.Id, allClients: false)
-                .Count()
+            EngagementCount = accessibleEngagements
+                .Count(engagement => engagement.ClientId == client.Id)
         });
 
     return Results.Ok(result);
 });
 
+// Directory utenti usata dal selettore demo. In produzione l'identità
+// arriva da Entra ID e questo endpoint non viene esposto.
+api.MapGet("/demo/users", (
+    IUserRepository users,
+    IClientRepository clients) =>
+{
+    var result = new List<object>();
+
+    foreach (var account in users.List().Where(user => user.Active))
+    {
+        result.Add(new
+        {
+            account.Id,
+            account.Name,
+            account.Email,
+            account.Role,
+            ClientId = (string?)null
+        });
+    }
+
+    foreach (var client in clients.List())
+    {
+        foreach (var clientUser in client.Users)
+        {
+            result.Add(new
+            {
+                clientUser.Id,
+                clientUser.Name,
+                clientUser.Email,
+                Role = Roles.Client,
+                ClientId = (string?)client.Id
+            });
+        }
+    }
+
+    return Results.Ok(result);
+});
+
+api.MapGet("/users", (
+    HttpContext context,
+    IUserRepository users,
+    IClientRepository clients,
+    IEngagementRepository engagements) =>
+{
+    var current = GetUser(context);
+
+    if (current.Role != Roles.Manager)
+        return Forbidden();
+
+    var allEngagements = engagements.List(string.Empty, true);
+
+    var providerUsers = users.List().Select(account =>
+        MapUser(account, clients, allEngagements));
+    var clientUsers = clients.List().SelectMany(client =>
+        client.Users.Select(user =>
+            MapClientUser(user, client, allEngagements)));
+
+    return Results.Ok(providerUsers.Concat(clientUsers));
+});
+
+api.MapPost("/users", (
+    CreateUserRequest request,
+    HttpContext context,
+    IUserRepository users) =>
+{
+    var current = GetUser(context);
+
+    if (current.Role != Roles.Manager)
+        return Forbidden();
+
+    var name = request.Name?.Trim();
+    var email = request.Email?.Trim();
+    var role = request.Role?.Trim();
+
+    if (string.IsNullOrWhiteSpace(name) ||
+        string.IsNullOrWhiteSpace(email) ||
+        !email.Contains('@') ||
+        role is not (
+            Roles.Manager or
+            Roles.PMO or
+            Roles.Pentester or
+            Roles.Auditor))
+    {
+        return Results.BadRequest(
+            "Nome, email valida e ruolo interno sono obbligatori.");
+    }
+
+    if (users.List().Any(user =>
+        string.Equals(user.Email, email, StringComparison.OrdinalIgnoreCase)))
+        return Results.Conflict();
+
+    var created = users.Add(name, email, role);
+    return Results.Ok(created);
+});
+
+api.MapPost("/users/{id}/assignments", (
+    string id,
+    UserAssignmentRequest request,
+    HttpContext context,
+    IUserRepository users,
+    IClientRepository clients,
+    IEngagementRepository engagements) =>
+{
+    var current = GetUser(context);
+
+    if (current.Role != Roles.Manager)
+        return Forbidden();
+
+    var account = users.Get(id);
+
+    if (account is null)
+        return Results.NotFound();
+
+    if (account.Role == Roles.Manager)
+        return Results.BadRequest(
+            "Il Manager vede già tutti i clienti e gli engagement.");
+
+    var type = request.Type?.Trim().ToLowerInvariant();
+    var targetId = request.TargetId?.Trim();
+
+    if (string.IsNullOrWhiteSpace(targetId))
+        return Results.BadRequest("Destinazione mancante.");
+
+    if (type == "client")
+    {
+        if (clients.Get(targetId) is null)
+            return Results.NotFound();
+
+        if (!account.ClientIds.Contains(targetId))
+            account.ClientIds.Add(targetId);
+
+        // Un engagement esplicito sotto un cliente già assegnato è ridondante.
+        account.EngagementIds.RemoveAll(engagementId =>
+            engagements.List(string.Empty, true)
+                .Any(item => item.Id == engagementId &&
+                    item.ClientId == targetId));
+    }
+    else if (type == "engagement")
+    {
+        var engagement = engagements.Get(targetId, string.Empty, true);
+
+        if (engagement is null)
+            return Results.NotFound();
+
+        if (account.ClientIds.Contains(engagement.ClientId))
+            return Results.Conflict();
+
+        if (!account.EngagementIds.Contains(targetId))
+            account.EngagementIds.Add(targetId);
+    }
+    else
+    {
+        return Results.BadRequest("Tipo assegnazione non valido.");
+    }
+
+    users.Save(account);
+    return Results.Ok(MapUser(
+        account,
+        clients,
+        engagements.List(string.Empty, true)));
+});
+
+api.MapDelete("/users/{id}/assignments/{type}/{targetId}", (
+    string id,
+    string type,
+    string targetId,
+    HttpContext context,
+    IUserRepository users,
+    IClientRepository clients,
+    IEngagementRepository engagements) =>
+{
+    var current = GetUser(context);
+
+    if (current.Role != Roles.Manager)
+        return Forbidden();
+
+    var account = users.Get(id);
+
+    if (account is null)
+        return Results.NotFound();
+
+    if (string.Equals(type, "client", StringComparison.OrdinalIgnoreCase))
+        account.ClientIds.Remove(targetId);
+    else if (string.Equals(type, "engagement", StringComparison.OrdinalIgnoreCase))
+        account.EngagementIds.Remove(targetId);
+
+    users.Save(account);
+    return Results.NoContent();
+});
+
 api.MapPost("/clients", (
     CreateClientRequest request,
     HttpContext context,
-    IClientRepository clients) =>
-{
+    IClientRepository clients) =>{
     var user = GetUser(context);
 
     if (user.Role != Roles.Manager)
@@ -432,8 +628,7 @@ api.MapGet("/engagements", (
 {
     var user = GetUser(context);
 
-    var result = repository
-        .List(ClientScope(user), SeesAllClients(user))
+    var result = Access.VisibleEngagements(repository, user)
         .Select(e => Summary(e, user, workflow, todos, clock));
 
     return Results.Ok(result);
@@ -466,6 +661,9 @@ api.MapPost("/engagements", (
         return Results.BadRequest(
             "clientId non corrisponde a un cliente esistente.");
     }
+
+    if (!Access.CanAccessClient(user, client.Id))
+        return Forbidden();
 
     var id = string.IsNullOrWhiteSpace(request.Id)
         ? $"ENG-{clock.Today.Year}-{repository.List(string.Empty, true).Count + 1:000}"
@@ -543,8 +741,7 @@ api.MapGet("/dashboard/todo", (
 {
     var user = GetUser(context);
 
-    var result = repository
-        .List(ClientScope(user), SeesAllClients(user))
+    var result = Access.VisibleEngagements(repository, user)
         .Select(e => new
         {
             e.Id,
@@ -794,7 +991,7 @@ api.MapPost("/engagements/{id}/proposals", (
         return Results.NotFound();
 
     if (user.Role is not (
-        Roles.Client or Roles.PMO))
+        Roles.Client or Roles.PMO or Roles.Manager))
         return Forbidden();
 
     if (!engagement.HasManleva || !engagement.OrderConfirmed)
@@ -822,6 +1019,20 @@ api.MapPost("/engagements/{id}/proposals", (
         pending.Status = ProposalStatus.Superseded;
     }
 
+    // Il Manager non ha bisogno di approvazione: la sua proposta sostituisce
+    // direttamente l'eventuale pianificazione già accettata.
+    var manager = user.Role == Roles.Manager;
+    var hasAccepted = engagement.AcceptedProposal is not null;
+
+    if (manager)
+    {
+        foreach (var accepted in engagement.Proposals
+            .Where(p => p.Status == ProposalStatus.Accepted))
+        {
+            accepted.Status = ProposalStatus.Replaced;
+        }
+    }
+
     var proposal = new Proposal
     {
         Id = $"P-{Guid.NewGuid():N}"[..10],
@@ -829,13 +1040,16 @@ api.MapPost("/engagements/{id}/proposals", (
             ? ProposalParty.Client
             : ProposalParty.Provider,
         By = user.Name,
-        Kind = engagement.AcceptedProposal is null
-            ? "initial"
-            : "resched",
+        Kind = hasAccepted
+            ? "resched"
+            : "initial",
         StartDate = request.StartDate,
         EndDate = request.EndDate,
         Date = today,
-        Note = request.Note
+        Note = request.Note,
+        Status = manager
+            ? ProposalStatus.Accepted
+            : ProposalStatus.Pending
     };
 
     engagement.Proposals.Add(proposal);
@@ -843,10 +1057,17 @@ api.MapPost("/engagements/{id}/proposals", (
     engagement.AddAudit(
         user.Name,
         user.Role,
-        proposal.Kind == "resched"
-            ? "Richiesta di riprogrammazione creata"
-            : "Proposta di pianificazione creata",
-        AuditVisibility.All);
+        manager
+            ? proposal.Kind == "resched"
+                ? "Pianificazione riprogrammata dal Manager"
+                : "Pianificazione confermata dal Manager"
+            : proposal.Kind == "resched"
+                ? "Richiesta di riprogrammazione creata"
+                : "Proposta di pianificazione creata",
+        AuditVisibility.All,
+        manager
+            ? "Pianificazione aggiornata dal Manager"
+            : "Proposta di pianificazione ricevuta");
 
     repository.Save(engagement);
     return Results.Ok(MapProposal(proposal));
@@ -2086,7 +2307,7 @@ api.MapGet("/solicitations/due", (
         return Forbidden();
 
     var due = solicitations.Due(
-        repository.List(ClientScope(user), SeesAllClients(user)),
+        Access.VisibleEngagements(repository, user),
         clock.Today);
 
     return Results.Ok(due.Select(item => new
@@ -2157,6 +2378,51 @@ app.Run();
 
 static UserContext GetUser(HttpContext context)
 {
+    var userId = context.Request.Query["user"].FirstOrDefault()?.Trim();
+
+    if (!string.IsNullOrWhiteSpace(userId))
+    {
+        var users = context.RequestServices
+            .GetService<IUserRepository>();
+        var account = users?.Get(userId);
+        var requestedClient = context.Request.Query["client"]
+            .FirstOrDefault()?
+            .Trim();
+
+        if (account is { Active: true })
+        {
+            return new UserContext(
+                account.Name,
+                string.IsNullOrWhiteSpace(requestedClient)
+                    ? null
+                    : requestedClient,
+                account.Role,
+                account.Id,
+                account.ClientIds,
+                account.EngagementIds,
+                Scoped: account.Role != Roles.Manager);
+        }
+
+        // Utente cliente: l'id arriva dalla tabella utenti del cliente.
+        var clients = context.RequestServices
+            .GetService<IClientRepository>();
+        var clientAccount = clients?
+            .List()
+            .FirstOrDefault(client => client.Users.Any(user =>
+                user.Id == userId));
+        var clientUser = clientAccount?.Users
+            .FirstOrDefault(user => user.Id == userId);
+
+        if (clientUser is not null)
+        {
+            return new UserContext(
+                clientUser.Name,
+                clientAccount!.Id,
+                Roles.Client,
+                clientUser.Id);
+        }
+    }
+
     var role = context.Request.Query["role"].FirstOrDefault();
 
     if (role is not (
@@ -2185,6 +2451,27 @@ static UserContext GetUser(HttpContext context)
         clientId = null;
     }
 
+    // Compatibilità con i link che usano solo role/client: si aggancia il
+    // primo utente demo con quel ruolo, così valgono le assegnazioni.
+    var directory = context.RequestServices
+        .GetService<IUserRepository>();
+    var demoUser = directory?
+        .List()
+        .FirstOrDefault(user =>
+            user.Active && user.Role == role);
+
+    if (demoUser is not null)
+    {
+        return new UserContext(
+            demoUser.Name,
+            clientId,
+            role,
+            demoUser.Id,
+            demoUser.ClientIds,
+            demoUser.EngagementIds,
+            Scoped: role != Roles.Manager);
+    }
+
     var name =
         context.Request.Headers["X-MS-CLIENT-PRINCIPAL-NAME"]
             .FirstOrDefault()
@@ -2196,16 +2483,14 @@ static UserContext GetUser(HttpContext context)
 static Engagement? Find(
     IEngagementRepository repository,
     string id,
-    UserContext user) =>
-    repository.Get(id, ClientScope(user), SeesAllClients(user));
+    UserContext user)
+{
+    var engagement = repository.Get(id, string.Empty, true);
 
-// Un utente interno senza cliente selezionato vede tutti i clienti;
-// il cliente vede solo il proprio.
-static string ClientScope(UserContext user) =>
-    user.ClientId ?? string.Empty;
-
-static bool SeesAllClients(UserContext user) =>
-    user.IsInternal && string.IsNullOrEmpty(user.ClientId);
+    return engagement is not null && Access.CanAccess(user, engagement)
+        ? engagement
+        : null;
+}
 
 static bool SelectsDeliverables(HttpContext context) =>
     string.Equals(
@@ -2479,7 +2764,7 @@ static object Detail(
             CanPublish = user.Role == Roles.Pentester,
             CanUploadManleva = user.Role is Roles.Client or Roles.PMO,
             CanManageEngagementDocs = user.Role == Roles.PMO,
-            CanPropose = user.Role is Roles.Client or Roles.PMO,
+            CanPropose = user.Role is Roles.Client or Roles.PMO or Roles.Manager,
             CanUploadReports = user.Role == Roles.Pentester,
             CanManageClients = user.Role == Roles.Manager,
             CanViewClients = user.IsInternal,
@@ -2526,6 +2811,90 @@ static object MapReport(ReportFile report) => new
     report.Date,
     report.Published
 };
+
+static object MapUser(
+    UserAccount account,
+    IClientRepository clients,
+    IReadOnlyList<Engagement> engagements)
+{
+    var manager = account.Role == Roles.Manager;
+    var effectiveEngagements = manager
+        ? engagements
+        : engagements
+            .Where(engagement =>
+                account.ClientIds.Contains(engagement.ClientId) ||
+                account.EngagementIds.Contains(engagement.Id))
+            .ToList();
+    var effectiveClientIds = manager
+        ? clients.List().Select(client => client.Id).ToList()
+        : effectiveEngagements
+            .Select(engagement => engagement.ClientId)
+            .Distinct()
+            .ToList();
+
+    return new
+    {
+        account.Id,
+        account.Name,
+        account.Email,
+        account.Role,
+        account.Active,
+        account.CreatedDate,
+        account.ClientIds,
+        account.EngagementIds,
+        EffectiveClientIds = effectiveClientIds,
+        EffectiveEngagementIds = effectiveEngagements
+            .Select(engagement => engagement.Id)
+            .ToList(),
+        Clients = effectiveClientIds.Select(id => new
+        {
+            Id = id,
+            Name = clients.Get(id)?.Name ?? id
+        }),
+        Engagements = effectiveEngagements.Select(engagement => new
+        {
+            engagement.Id,
+            engagement.Name,
+            engagement.ClientId
+        }),
+        IsManager = manager
+    };
+}
+
+static object MapClientUser(
+    ClientUser user,
+    ClientAccount client,
+    IReadOnlyList<Engagement> engagements)
+{
+    var clientEngagements = engagements
+        .Where(engagement => engagement.ClientId == client.Id)
+        .ToList();
+
+    return new
+    {
+        user.Id,
+        user.Name,
+        user.Email,
+        Role = Roles.Client,
+        Active = true,
+        CreatedDate = client.CreatedDate,
+        ClientIds = new[] { client.Id },
+        EngagementIds = Array.Empty<string>(),
+        EffectiveClientIds = new[] { client.Id },
+        EffectiveEngagementIds = clientEngagements
+            .Select(engagement => engagement.Id)
+            .ToList(),
+        Clients = new[] { new { Id = client.Id, Name = client.Name } },
+        Engagements = clientEngagements.Select(engagement => new
+        {
+            engagement.Id,
+            engagement.Name,
+            engagement.ClientId
+        }),
+        IsManager = false,
+        IsClient = true
+    };
+}
 
 static IResult ReportDownloadFile(
     Engagement engagement,

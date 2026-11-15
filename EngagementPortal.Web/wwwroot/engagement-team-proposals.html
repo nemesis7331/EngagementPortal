@@ -189,7 +189,7 @@ td b{color:var(--brand-900)}
       <button class="on" data-variant="a" role="tab" aria-selected="true"><span class="n">A</span> Squadra per ruoli <span class="tiny">· consigliata</span></button>
       <button data-variant="b" role="tab" aria-selected="false"><span class="n">B</span> Lista unica</button>
       <button data-variant="c" role="tab" aria-selected="false"><span class="n">C</span> Modelli squadra</button>
-      <button data-variant="d" role="tab" aria-selected="false"><span class="n">D</span> Staffing aperto</button>
+      <button data-variant="d" role="tab" aria-selected="false"><span class="n">D</span> Assegnazione aperta</button>
     </div>
   </section>
 
@@ -326,7 +326,7 @@ td b{color:var(--brand-900)}
     <p class="prop-desc">
       Si definiscono <b>modelli</b> (“Pentest standard”, “Cloud review”, “Red team”) con ruoli e
       competenze richieste. Alla creazione o in un secondo momento si applica il modello e si
-      sostituiscono le persone. È il modo più veloce per staffare attività ripetitive; richiede
+      sostituiscono le persone. È il modo più veloce per assegnare attività ripetitive; richiede
       un minimo di amministrazione dei modelli.
     </p>
     <div class="metrics"><span class="metric"><b>1 click</b> per applicare</span><span class="metric">Riutilizzabile</span><span class="metric">Ruoli predefiniti</span><span class="metric">Admin modelli</span></div>
@@ -366,16 +366,16 @@ td b{color:var(--brand-900)}
 
   <!-- ================= D ================= -->
   <section class="proposal" id="v-d">
-    <div class="prop-head"><span class="tag">Alternativa D</span><h2>Staffing aperto con candidature</h2></div>
+    <div class="prop-head"><span class="tag">Alternativa D</span><h2>Assegnazione aperta con candidature</h2></div>
     <p class="prop-desc">
-      L'engagement viene pubblicato come “staffing aperto”. I pentester idonei vedono l'attività e
+      L'engagement viene pubblicato come “Assegnazione aperta”. I pentester idonei vedono l'attività e
       <b>richiedono di partecipare</b>; PMO o Manager approvano. Utile se l'assegnazione è
       bottom-up o distribuita tra più team. Aggiunge un passaggio di approvazione e un nuovo stato.
     </p>
-    <div class="metrics"><span class="metric"><b>1 click</b> per candidarsi</span><span class="metric">Approvazione PMO</span><span class="metric">Nuovo stato staffing</span><span class="metric">Più adatto a team grandi</span></div>
+    <div class="metrics"><span class="metric"><b>1 click</b> per candidarsi</span><span class="metric">Approvazione PMO</span><span class="metric">Nuovo stato assegnazione</span><span class="metric">Più adatto a team grandi</span></div>
 
     <div class="mock">
-      <div class="mockbar"><span class="dots"><i></i><i></i><i></i></span><span class="name">engagement · staffing aperto · profilo Pentester</span></div>
+      <div class="mockbar"><span class="dots"><i></i><i></i><i></i></span><span class="name">engagement · Assegnazione aperta · profilo Pentester</span></div>
       <div class="enghead"><div class="t"><h3>External Penetration Test</h3><p class="sub">ENG-2026-001 · Contoso · 20–25 nov · servono 2 pentester</p></div><span class="pill p-wait">Candidature aperte</span></div>
 
       <div class="grid split">
@@ -397,7 +397,7 @@ td b{color:var(--brand-900)}
 
     <div class="callouts">
       <div class="callout"><b>1 · Bottom-up</b>I pentester propongono la propria partecipazione, il PMO mantiene il controllo.</div>
-      <div class="callout"><b>2 · Nuovo stato</b>Lo staffing aperto è uno stato dell'engagement, separato dal workflow di consegna.</div>
+      <div class="callout"><b>2 · Nuovo stato</b>Lo Assegnazione aperta è uno stato dell'engagement, separato dal workflow di consegna.</div>
       <div class="callout"><b>3 · Trasparenza</b>Competenze e carico sono visibili prima della candidatura.</div>
     </div>
     <div class="proscons">
@@ -410,7 +410,7 @@ td b{color:var(--brand-900)}
     <h2>Confronto rapido</h2>
     <p>Le quattro alternative non sono esclusive: A è la base, C può accelerarla, B è una semplificazione, D è un modello organizzativo diverso.</p>
     <table>
-      <thead><tr><th></th><th>A · Squadra per ruoli</th><th>B · Lista unica</th><th>C · Modelli squadra</th><th>D · Staffing aperto</th></tr></thead>
+      <thead><tr><th></th><th>A · Squadra per ruoli</th><th>B · Lista unica</th><th>C · Modelli squadra</th><th>D · Assegnazione aperta</th></tr></thead>
       <tbody>
         <tr><td><b>Punto di forza</b></td><td>Ruoli e disponibilità chiari</td><td>Semplicità e un solo elenco</td><td>Velocità sulle attività ricorrenti</td><td>Coinvolgimento dei pentester</td></tr>
         <tr><td><b>Click per aggiungere</b></td><td>2–3 (ricerca + selezione)</td><td>2–3 (menu + scelta)</td><td>1 (applica modello)</td><td>1 per candidarsi + approvazione</td></tr>
@@ -420,7 +420,7 @@ td b{color:var(--brand-900)}
         <tr><td><b>Migliore per</b></td><td>Team strutturato, più ruoli</td><td>Poche persone, uso semplice</td><td>Attività ripetitive</td><td>Team grandi e distribuiti</td></tr>
       </tbody>
     </table>
-    <div class="reco"><b>Consiglio:</b> implementare <b>A</b> come base (directory + assegnazioni per ruolo), aggiungendo subito dopo i <b>modelli C</b> per le tipologie ricorrenti. La lista unica B è una variante di UI di A, non un modello diverso. Lo staffing aperto D lo terrei per una fase successiva, quando esiste una vera policy di allocazione e accesso.</div>
+    <div class="reco"><b>Consiglio:</b> implementare <b>A</b> come base (directory + assegnazioni per ruolo), aggiungendo subito dopo i <b>modelli C</b> per le tipologie ricorrenti. La lista unica B è una variante di UI di A, non un modello diverso. Lo Assegnazione aperta D lo terrei per una fase successiva, quando esiste una vera policy di allocazione e accesso.</div>
   </section>
 
   <section class="tech">

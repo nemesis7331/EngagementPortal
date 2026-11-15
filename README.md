@@ -17,6 +17,9 @@ App Service a ogni push su `main`.
   sito web), associa o rimuove utenze e vede gli engagement collegati. La
   favicon del sito diventa l'icona del cliente; senza sito si usano le iniziali.
   Gli altri profili interni possono consultare l'anagrafica.
+- **Utenti e accessi**: directory degli utenti interni con **assegnazioni a
+  clienti/engagement**. Il Manager vede tutto e amministra; PMO, Pentester,
+  Auditor e utenti Cliente vedono solo ciò che è assegnato (filtro lato API).
 - **Team**: partecipanti esterni per cliente (base comune) e per engagement.
   Gli inviti sono aperti a tutti i profili tranne l'Auditor; rimuovono il
   Manager (tutti) e il Cliente (solo organizzazione `Cliente`).
@@ -145,8 +148,10 @@ riporta esattamente i controlli applicati dalle API.
   (`POST /financials/approve`, solo Manager); se li inserisce il Manager sono
   approvati contestualmente. Il primo passo si completa con manleva, ordine,
   costi e margine **approvati**.
-- Proposte: `POST /api/engagements/{id}/proposals` consente Cliente e PMO; la
-  decisione spetta solo al Manager (`decide` restituisce 403 agli altri ruoli).
+- Proposte: `POST /api/engagements/{id}/proposals` consente Cliente, PMO e
+  Manager. Le proposte di Cliente e PMO attendono la decisione del Manager
+  (`decide` restituisce 403 agli altri ruoli); quelle del **Manager sono
+  accettate subito** e sostituiscono l'eventuale pianificazione precedente.
   Se sono passati meno di 14 giorni da `CreatedDate`, il dettaglio espone
   `planningNotice` a Cliente e PMO: è un avviso, non un blocco.
 - Scope: `CanEditPreparation` consente Cliente e PMO; è modificabile appena
@@ -318,7 +323,11 @@ e colonna di contesto a destra con prossimo passo, persone, date ed economia.
 La lista **Persone** è interattiva: click su una persona per aprire il team,
 `+` per invitare e `×` per rimuovere (secondo i permessi). Costi e margine sono
 visibili solo a PMO e Manager e restano **compressi di default** nel dettaglio.
-Il selettore profilo/cliente in alto permette di provare i diversi profili (demo).
+Il selettore **Utente demo** in alto permette di provare i diversi profili: Manager,
+PMO, Pentester, Auditor e utenti Cliente. La visibilità è per **assegnazione**:
+il Manager vede tutti i clienti/engagement, gli altri solo quelli assegnati.
+La sezione **Utenti e accessi** (solo Manager) gestisce utenti interni e
+assegnazioni; clienti ed engagement visibili sono cliccabili.
 
 > Nota: l'identità è simulata tramite parametri `role`/`client` per rendere la
 > demo navigabile senza configurare Entra ID. In produzione va sostituita con
@@ -332,6 +341,9 @@ Le API sono esposte sotto `/api` e documentate in `documentazione.txt`
 | Metodo | Endpoint |
 | --- | --- |
 | GET | `/api/me` |
+| GET/POST | `/api/users` · `/api/users/{id}` |
+| GET | `/api/demo/users` (solo demo) |
+| POST/DELETE | `/api/users/{id}/assignments` · `/{type}/{targetId}` |
 | GET/POST | `/api/engagements` |
 | GET | `/api/engagements/{id}` |
 | GET | `/api/dashboard/todo` |
@@ -382,7 +394,7 @@ Aprire `http://localhost:5xxx` (la porta è indicata nel log di avvio).
   navigabili per il layout del dettaglio engagement (inline editing e workflow)
 - `EngagementPortal.Web/wwwroot/engagement-ux-split-variants.html` — split editor
   in 4 varianti, con profilo demo e visibilità costi solo per PMO/Manager
-- `EngagementPortal.Web/wwwroot/engagement-staffing-proposals.html` — 4 alternative
+- `EngagementPortal.Web/wwwroot/engagement-team-proposals.html` — 4 alternative
   per aggiungere persone interne (pentester) all'engagement, con modello dati e API
 - `EngagementPortal.Web/wwwroot/engagement-users-proposals.html` — 4 proposte per
   la sezione Utenti e la visibilità per assegnazione (Manager vede tutto)

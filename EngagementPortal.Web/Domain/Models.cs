@@ -281,7 +281,11 @@ public sealed record TodoItem(string Action, string TargetTab);
 public sealed record UserContext(
     string Name,
     string? ClientId,
-    string Role)
+    string Role,
+    string? UserId = null,
+    IReadOnlyCollection<string>? AssignedClientIds = null,
+    IReadOnlyCollection<string>? AssignedEngagementIds = null,
+    bool Scoped = false)
 {
     /// <summary>Utente interno: PMO, Pentester, Manager, Auditor.</summary>
     public bool IsInternal => Roles.IsInternal(Role);
@@ -351,6 +355,27 @@ public sealed class ClientAccount
     public List<TeamMember> Team { get; init; } = [];
     public MailTemplateSet MailTemplates { get; set; } = new();
 }
+
+public sealed class UserAccount
+{
+    public required string Id { get; init; }
+    public required string Name { get; set; }
+    public required string Email { get; set; }
+    public required string Role { get; set; }
+    public bool Active { get; set; } = true;
+    public DateTimeOffset CreatedDate { get; init; } = DateTimeOffset.UtcNow;
+    public List<string> ClientIds { get; init; } = [];
+    public List<string> EngagementIds { get; init; } = [];
+}
+
+public sealed record CreateUserRequest(
+    string Name,
+    string Email,
+    string Role);
+
+public sealed record UserAssignmentRequest(
+    string Type,
+    string TargetId);
 
 public sealed record ClientUser(string Id, string Name, string Email);
 

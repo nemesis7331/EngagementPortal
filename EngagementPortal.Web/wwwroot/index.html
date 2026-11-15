@@ -72,7 +72,7 @@
   --row-action:#fffafa;
   --row-wait:#fffdf5;
   --row-done:#fbfffc;
-  --page-max:1200px;
+  --page-max:1280px;
   --shadow:0 1px 2px rgba(6,29,54,.06),0 6px 20px rgba(6,29,54,.06);
   --shadow-xs:0 1px 2px rgba(0,0,0,.25);
   --shadow-lg:0 20px 60px rgba(6,29,54,.35);
@@ -83,7 +83,7 @@ body{margin:0;font-family:var(--font-sans);background:var(--bg);color:var(--ink)
 button{font:inherit;cursor:pointer}
 /* Header */
 body > header{background:linear-gradient(100deg,var(--brand-950),var(--brand-900) 60%,var(--brand-700));color:#fff;position:sticky;top:0;z-index:20}
-.hwrap{max-width:var(--page-max);margin:auto;padding:12px 24px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.hwrap{max-width:var(--page-max);margin:auto;padding:12px 16px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
 .logo{display:flex;align-items:center;gap:10px;font-weight:var(--fw-bold);font-size:var(--fs-xl);letter-spacing:0}
 .logo i{width:30px;height:30px;border-radius:var(--radius-md);background:var(--accent);display:grid;place-items:center;color:var(--brand-950);font-style:normal;font-weight:var(--fw-black)}
 .logo small{display:block;font-weight:var(--fw-regular);font-size:var(--fs-xs);opacity:.7;letter-spacing:var(--tracking-caps);text-transform:uppercase}
@@ -91,7 +91,7 @@ body > header{background:linear-gradient(100deg,var(--brand-950),var(--brand-900
 .user{display:flex;align-items:center;gap:10px;font-size:var(--fs-md)}
 .avatar{width:34px;height:34px;border-radius:50%;background:var(--brand-500);display:grid;place-items:center;font-weight:var(--fw-bold)}
 /* Layout */
-main{max-width:var(--page-max);margin:24px auto 60px;padding:0 24px}
+main{max-width:var(--page-max);margin:24px auto 60px;padding:0 16px}
 h1{font-size:var(--fs-3xl);line-height:var(--lh-tight);margin:0 0 4px;color:var(--brand-900)}
 h2{font-size:var(--fs-lg);line-height:var(--lh-tight);margin:0 0 12px;color:var(--brand-900)}
 .sub{color:var(--muted);margin:0 0 22px}
@@ -417,12 +417,12 @@ tr.row.is-done td:first-child{box-shadow:inset 3px 0 var(--st-done)}
 }
 /* ====== RESPONSIVE: monitor larghi ====== */
 @media(min-width:1440px){
-  :root{--page-max:1360px}
+  :root{--page-max:1440px}
   .home-cols{grid-template-columns:340px minmax(0,1fr)}
   .workspace{grid-template-columns:360px minmax(0,1fr)}
 }
 @media(min-width:1800px){
-  :root{--page-max:1520px}
+  :root{--page-max:1680px}
   .home-cols{grid-template-columns:360px minmax(0,1fr)}
   .workspace{grid-template-columns:380px minmax(0,1fr)}
   .list-compact td{padding:11px 12px}
@@ -430,10 +430,11 @@ tr.row.is-done td:first-child{box-shadow:inset 3px 0 var(--st-done)}
   .tile b{font-size:var(--fs-3xl)}
 }
 @media(min-width:2200px){
-  :root{--page-max:1680px}
+  :root{--page-max:1840px}
 }
 /* ====== RESPONSIVE: schermi piccoli ====== */
 @media(max-width:760px){
+  main{padding:0 12px}
   .hwrap{padding:8px 14px;gap:8px}
   .logo{order:1;font-size:var(--fs-base);gap:8px}
   .logo small{display:none}
@@ -464,6 +465,60 @@ tr.row.is-done td:first-child{box-shadow:inset 3px 0 var(--st-done)}
   .list-table tr{padding:9px 10px}
   .list-table td{gap:8px}
   .list-table td::before{font-size:var(--fs-xs)}
+}
+/* ====== UTENTI E ACCESSI ====== */
+.users-split{display:grid;grid-template-columns:minmax(300px,360px) minmax(0,1fr);gap:16px;align-items:start;margin-top:14px}
+.users-list{padding:14px;min-width:0}
+.users-list-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.users-list-head h2{font-size:var(--fs-lg);margin:0}
+.users-list .search{position:relative;margin:0}
+.users-list .search input{width:100%;margin:0;padding:9px 12px 9px 36px;border-radius:var(--radius-pill);font-size:var(--fs-md)}
+.users-list .search-ico{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:15px;height:15px;fill:var(--muted);pointer-events:none}
+.users-rows{display:grid;gap:6px;max-height:620px;overflow:auto;padding-right:2px}
+.user-row{display:flex;align-items:center;gap:9px;width:100%;text-align:left;border:1px solid var(--line);border-radius:9px;background:#fff;padding:9px 10px;color:inherit;min-width:0}
+.user-row:hover{background:var(--surface-2)}
+.user-row.on{border-color:var(--brand-500);background:var(--brand-50);box-shadow:inset 3px 0 0 var(--brand-600)}
+.user-row .who{flex:1;min-width:0}
+.user-row .nm{display:block;font-size:var(--fs-sm);font-weight:650;color:var(--brand-900);line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.user-row .em{display:block;font-size:var(--fs-2xs);color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.user-row .end{display:flex;align-items:center;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+.users-detail{padding:16px;min-width:0}
+.udetail-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding-bottom:12px;border-bottom:1px solid var(--line-soft);margin-bottom:12px}
+.udetail-head .avatar.lg{width:42px;height:42px;font-size:var(--fs-base)}
+.udetail-head .t{flex:1;min-width:180px}
+.udetail-head h2{font-size:var(--fs-xl);margin:0;line-height:1.2}
+.udetail-head .sub{font-size:var(--fs-sm);margin:2px 0 0}
+.user-block{border:1px solid var(--line);border-radius:10px;padding:11px 12px;margin-bottom:10px;background:#fff}
+.user-block h3{font-size:var(--fs-sm);margin:0 0 4px;display:flex;align-items:center;gap:7px}
+.user-block .hint{margin:0 0 8px}
+.user-chips{display:flex;gap:6px;flex-wrap:wrap;min-height:20px}
+.user-chip{display:inline-flex;align-items:stretch;border:1px solid var(--st-done-border);border-radius:6px;background:var(--st-done-bg);overflow:hidden}
+.user-chip-main{border:0;background:none;padding:3px 7px;color:var(--st-done);font-size:var(--fs-2xs);font-weight:650;text-align:left;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.user-chip-main:hover{text-decoration:underline}
+.user-chip-x{border:0;border-left:1px solid var(--st-done-border);background:rgba(255,255,255,.35);color:var(--st-done);font-size:var(--fs-sm);line-height:1;padding:3px 6px}
+.user-chip-x:hover{background:var(--st-action-bg);color:var(--st-action)}
+.user-addline{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
+.user-addline select{flex:1;min-width:170px;border:1px solid var(--line);border-radius:7px;padding:7px 9px;font:inherit;font-size:var(--fs-sm);background:#fff}
+.user-visibility{background:var(--brand-50);border:1px solid var(--brand-100);border-radius:9px;padding:10px 11px;font-size:var(--fs-sm);color:var(--brand-800);margin-bottom:10px}
+.user-visibility b{color:var(--brand-900)}
+.user-global{background:linear-gradient(180deg,var(--brand-50),#fff);border:1px solid var(--brand-100);border-radius:10px;padding:12px 13px;margin-bottom:10px}
+.user-global b{display:block;font-size:var(--fs-base);color:var(--brand-900);margin-bottom:2px}
+.user-global span{font-size:var(--fs-sm);color:var(--muted)}
+.user-kpis{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.user-kpis div{background:var(--surface-2);border:1px solid var(--line);border-radius:9px;padding:9px 10px}
+.user-kpis b{display:block;font-size:var(--fs-xl);color:var(--brand-900)}
+.user-kpis span{font-size:var(--fs-2xs);color:var(--muted)}
+.user-perms{display:grid;grid-template-columns:auto minmax(0,1fr);gap:5px 12px;margin:0;font-size:var(--fs-sm)}
+.user-perms dt{color:var(--muted)}
+.user-perms dd{margin:0;text-align:right;color:var(--brand-900);font-weight:650}
+@media(max-width:980px){
+  .users-split{grid-template-columns:1fr}
+  .users-rows{max-height:none}
+}
+@media(max-width:560px){
+  .user-row{flex-wrap:wrap}
+  .user-row .end{width:100%;margin-left:39px;justify-content:flex-start}
+  .user-addline .btn{width:100%}
 }
 /* ====== DETTAGLIO C3 · SPLIT CON CONTESTO ====== */
 .eng-hero{display:flex;align-items:flex-start;gap:18px;flex-wrap:wrap;margin:2px 0 4px}
@@ -611,6 +666,9 @@ tr.row.is-done td:first-child{box-shadow:inset 3px 0 var(--st-done)}
     <div class="spacer"></div>
     <div class="demo-switch" role="group" aria-label="Modalità demo">
       <span class="demo-tag">Demo</span>
+      <label for="demoUser">Utente
+        <select id="demoUser" aria-label="Utente demo"></select>
+      </label>
       <label for="role">Profilo
         <select id="role" aria-label="Profilo demo"></select>
       </label>
@@ -707,6 +765,13 @@ const state = {
   listSort: 'priority',
   listColumn: 'engagement',
   listDir: 'asc',
+  userId: localStorage.getItem('cep.user') || '',
+  demoUsers: [],
+  users: [],
+  userEngagements: [],
+  usersError: null,
+  selectedUserId: '',
+  userQuery: '',
   loading: false,
   error: null,
   list: [],
@@ -861,7 +926,7 @@ function toast(msg) {
 }
 
 function qs(extra = {}) {
-  return new URLSearchParams({ role: state.role, client: state.clientId || '', ...extra }).toString();
+  return new URLSearchParams({ user: state.userId || '', role: state.role, client: state.clientId || '', ...extra }).toString();
 }
 
 async function api(path, options = {}) {
@@ -969,19 +1034,22 @@ function ask({ title, text, fields = [], ok = 'Conferma', danger = false }) {
 
 /* ====== NAVIGAZIONE ====== */
 function updateHeader() {
-  let name = ROLE_NAMES[state.role] || 'Demo User';
-  let av = (ROLES[state.role] || {}).av || '–';
-  if (isClient()) {
+  const demo = demoUserById(state.userId);
+  let name = demo?.name || ROLE_NAMES[state.role] || 'Demo User';
+  let roleLabel = (ROLES[state.role] || {}).role || state.role;
+
+  if (isClient() && !demo) {
     const account = state.clients.find(c => c.id === state.clientId);
     const contact = account && account.users && account.users[0];
     if (contact) {
       name = contact.name;
-      av = contact.name.split(/\s+/).map(p => p[0]).join('').slice(0, 2).toUpperCase();
+      roleLabel = 'Cliente';
     }
   }
+
   $('#uname').textContent = name;
-  $('#urole').textContent = ROLES[state.role].role;
-  $('#av').textContent = av;
+  $('#urole').textContent = roleLabel;
+  $('#av').textContent = initialsOf(name);
   syncHeaderOffset();
 }
 
@@ -994,8 +1062,51 @@ function syncHeaderOffset() {
 }
 window.addEventListener('resize', syncHeaderOffset);
 
-function fillClientSelect() {
-  const select = $('#client');
+function fillUserSelect() {
+  const select = $('#demoUser');
+  if (!select) return;
+
+  const roleOrder = ['Manager', 'PMO', 'Pentester', 'Auditor', 'Client'];
+  const groups = roleOrder
+    .map(role => [role, state.demoUsers.filter(user => user.role === role)])
+    .filter(([, list]) => list.length);
+
+  select.innerHTML = groups.length
+    ? groups.map(([role, list]) =>
+        `<optgroup label="${esc(ROLES[role]?.label || role)}">${list.map(user =>
+          `<option value="${esc(user.id)}" ${user.id === state.userId ? 'selected' : ''}>${esc(user.name)}${user.role === 'Client' && user.clientId ? ` · ${esc(clientLabel(user.clientId))}` : ''}</option>`
+        ).join('')}</optgroup>`).join('')
+    : '<option value="">Nessun utente disponibile</option>';
+
+  if (state.userId && !state.demoUsers.some(user => user.id === state.userId))
+    select.value = '';
+  else
+    select.value = state.userId || '';
+}
+
+async function loadDemoUsers() {
+  try {
+    state.demoUsers = await api('/api/demo/users');
+  } catch {
+    state.demoUsers = [];
+  }
+
+  const saved = localStorage.getItem('cep.user');
+  const user = demoUserById(saved) ||
+    state.demoUsers.find(item => item.role === state.role) ||
+    state.demoUsers.find(item => item.role === 'Manager') ||
+    state.demoUsers[0];
+
+  if (user) {
+    state.userId = user.id;
+    state.role = user.role;
+    state.clientId = user.role === 'Client' ? (user.clientId || '') : '';
+  }
+
+  fillUserSelect();
+}
+
+function fillClientSelect() {  const select = $('#client');
   const clients = state.clients || [];
   const known = clients.length
     ? clients.map(c => [c.id, c.name])
@@ -1019,9 +1130,48 @@ function fillClientSelect() {
   }
 }
 
+function demoUserById(id) {
+  return state.demoUsers.find(user => user.id === id) || null;
+}
+
+function setDemoUser(id) {
+  const user = demoUserById(id);
+  if (!user) return;
+
+  state.userId = user.id;
+  state.role = user.role;
+  state.clients = [];
+  state.clientId = user.role === 'Client' ? (user.clientId || '') : '';
+  state.view = 'list';
+  state.detail = null;
+  state.tab = 'docs';
+  state.listTab = 'eng';
+  state.scope = null;
+  state.credentials = null;
+  localStorage.setItem('cep.user', state.userId);
+  localStorage.setItem('cep.role', state.role);
+  localStorage.setItem('cep.client', state.clientId || '');
+  $('#role').value = state.role;
+  fillUserSelect();
+  fillClientSelect();
+  updateHeader();
+  loadClients().then(loadList);
+}
+
 function setRole(role) {
   if (!ROLES[role]) return;
+
+  const candidate = state.demoUsers.find(user =>
+    user.role === role &&
+    (role !== 'Client' || user.clientId));
+
+  if (candidate) {
+    setDemoUser(candidate.id);
+    return;
+  }
+
   state.role = role;
+  state.userId = '';
   if (role === 'Client') {
     // La lista clienti di un profilo Cliente è solo la propria: si riparte
     // dalla risposta del server per non ereditare quella del profilo interno.
@@ -1036,8 +1186,10 @@ function setRole(role) {
   state.listTab = 'eng';
   state.scope = null;
   state.credentials = null;
+  localStorage.setItem('cep.user', '');
   localStorage.setItem('cep.role', role);
   localStorage.setItem('cep.client', state.clientId || '');
+  fillUserSelect();
   fillClientSelect();
   updateHeader();
   loadClients().then(loadList);
@@ -1555,9 +1707,9 @@ function renderList() {
     : (isClient() ? 'Il tuo cliente' : 'Tutti i clienti');
 
   const headActions = canCreateEngagement()
-    ? `<button class="btn sec" data-act="clients">Clienti e utenze</button><button class="btn pri" data-act="new-engagement">+ Nuovo engagement</button>`
+    ? `${state.role === 'Manager' ? '<button class="btn sec" data-act="users">Utenti e accessi</button>' : ''}<button class="btn sec" data-act="clients">Clienti e utenze</button><button class="btn pri" data-act="new-engagement">+ Nuovo engagement</button>`
     : isInternalRole()
-      ? `<button class="btn sec" data-act="clients">Clienti e utenze</button>`
+      ? `${state.role === 'Manager' ? '<button class="btn sec" data-act="users">Utenti e accessi</button>' : ''}<button class="btn sec" data-act="clients">Clienti e utenze</button>`
       : '';
 
   const tile = (key, cls, count, label) =>
@@ -2235,7 +2387,7 @@ function tabPlan(d) {
         <b>${fmt(accepted.startDate)} → ${fmt(accepted.endDate)}</b><br>
         Approvata dal Manager${accepted.from === 'Client' ? ' · proposta del cliente' : ' · proposta del PMO'}.</div>${action}`;
   } else if (!canPropose) {
-    right = `<h2>Nuova proposta</h2><div class="note lockbox">Sola lettura: proposte di date solo da cliente e PMO.</div>`;
+    right = `<h2>Nuova proposta</h2><div class="note lockbox">Sola lettura: le date sono gestite da cliente, PMO e Manager.</div>`;
   } else {
     right = `<h2>Nuova proposta</h2>
       ${earlyWarning}
@@ -2773,6 +2925,198 @@ function tabLog(d) {
 }
 
 /* ====== CLIENTI ====== */
+async function loadUsers() {
+  state.usersError = null;
+  try {
+    state.users = await api('/api/users?' + qs());
+    state.userEngagements = await api('/api/engagements?' + qs({ client: '' }));
+    if (!state.users.some(user => user.id === state.selectedUserId)) {
+      const current = state.users.find(user => user.id === state.userId);
+      state.selectedUserId = current?.id || state.users[0]?.id || '';
+    }
+  } catch (error) {
+    state.usersError = error.message;
+    state.users = [];
+  }
+  if (state.view === 'users') renderUsers();
+}
+
+function renderUsers() {
+  if (state.role !== 'Manager') {
+    $('#app').innerHTML = `<div class="note lockbox"><b>Accesso riservato.</b> La sezione Utenti è gestita dal Manager.</div>`;
+    return;
+  }
+
+  const query = normText(state.userQuery);
+  const filtered = state.users.filter(user =>
+    !query || normText([
+      user.name, user.email, user.role,
+      ...(user.clients || []).map(client => client.name)
+    ].join(' ')).includes(query));
+  const selected = state.users.find(user =>
+    user.id === state.selectedUserId) || filtered[0] || null;
+
+  if (selected) state.selectedUserId = selected.id;
+
+  const roleBadge = role => `<span class="badge ${role === 'Manager' ? 'mgr' : role === 'Cliente' ? 'ext' : 'int'}">${esc(ROLE_LABEL[role] || role)}</span>`;
+
+  const list = filtered.length
+    ? filtered.map(user => `
+      <button class="user-row ${selected?.id === user.id ? 'on' : ''}" data-act="select-user" data-id="${esc(user.id)}">
+        <span class="avatar">${esc(initialsOf(user.name))}</span>
+        <span class="who"><span class="nm">${esc(user.name)}</span><span class="em">${esc(user.email)}</span></span>
+        <span class="end">${roleBadge(user.role)}<span class="cnt" title="clienti">${user.isManager ? 'Tutti' : user.effectiveClientIds.length}</span><span class="cnt" title="engagement">${user.effectiveEngagementIds.length}</span></span>
+      </button>`).join('')
+    : '<div class="empty">Nessun utente corrisponde alla ricerca.</div>';
+
+  const detail = selected
+    ? renderUserDetail(selected)
+    : '<div class="empty">Seleziona un utente.</div>';
+
+  $('#app').innerHTML = `
+    <button class="crumb" data-act="list">← Tutti gli engagement</button>
+    <div class="headrow">
+      <div><h1>Utenti e accessi</h1>
+        <p class="sub" style="margin-bottom:0">Persone interne e visibilità per assegnazione · ${state.users.length} utenti</p></div>
+      <div class="head-acts"><button class="btn sec" data-act="new-user">+ Utente interno</button></div>
+    </div>
+    ${state.usersError ? `<div class="errorbox"><span>${esc(state.usersError)}</span><button class="btn sec sm" data-act="users">Riprova</button></div>` : ''}
+    <div class="users-split">
+      <section class="card users-list">
+        <div class="users-list-head"><h2>Utenti <span class="cnt">${filtered.length}</span></h2></div>
+        <div class="search" style="margin-bottom:10px"><svg class="search-ico" aria-hidden="true"><use href="#i-search"></use></svg>
+          <input type="search" id="user-search" value="${esc(state.userQuery)}" placeholder="Cerca nome, email, ruolo o cliente…" aria-label="Cerca utenti">
+        </div>
+        <div class="users-rows">${list}</div>
+      </section>
+      <section class="card users-detail">${detail}</section>
+    </div>`;
+}
+
+function renderUserDetail(user) {
+  const roleBadge = `<span class="badge ${user.role === 'Manager' ? 'mgr' : user.role === 'Cliente' ? 'ext' : 'int'}">${esc(ROLE_LABEL[user.role] || user.role)}</span>`;
+  const head = `<div class="udetail-head">
+    <span class="avatar lg">${esc(initialsOf(user.name))}</span>
+    <div class="t"><h2>${esc(user.name)}</h2><p class="sub">${esc(user.email)} · ${esc(ROLE_LABEL[user.role] || user.role)}</p></div>
+    ${roleBadge}${user.active ? pill(['Attivo', 'ok']) : pill(['Disattivo', 'mute'])}
+  </div>`;
+
+  if (user.isManager) {
+    return `${head}
+      <div class="user-global"><b>Accesso globale</b><span>Il Manager vede tutti i clienti e tutti gli engagement. Non servono assegnazioni.</span></div>
+      <div class="user-kpis">
+        <div><b>${user.effectiveClientIds.length}</b><span>clienti visibili</span></div>
+        <div><b>${user.effectiveEngagementIds.length}</b><span>engagement visibili</span></div>
+      </div>
+      ${userPermissions(user)}`;
+  }
+
+  if (user.isClient) {
+    const clientChip = (user.clients || []).map(client => `
+      <span class="user-chip">
+        <button class="user-chip-main" data-act="open-client" data-client="${esc(client.id)}" title="Apri ${esc(client.name)}">${esc(client.name)}</button>
+      </span>`).join('');
+    const engagementChips = (user.engagements || []).map(engagement => `
+      <span class="user-chip">
+        <button class="user-chip-main" data-act="open" data-id="${esc(engagement.id)}" title="Apri ${esc(engagement.name)}">${esc(engagement.id)} · ${esc(engagement.name)}</button>
+      </span>`).join('');
+    return `${head}
+      <div class="user-block">
+        <h3>Cliente</h3>
+        <p class="hint">L'utente cliente è collegato al proprio cliente; gli accessi si gestiscono in Clienti e utenze.</p>
+        <div class="user-chips">${clientChip}</div>
+      </div>
+      <div class="user-block">
+        <h3>Engagement visibili <span class="cnt">${(user.engagements || []).length}</span></h3>
+        <p class="hint">Il cliente vede tutti gli engagement del proprio cliente. Clicca per aprire.</p>
+        <div class="user-chips">${engagementChips || '<span class="tiny">Nessun engagement.</span>'}</div>
+      </div>
+      <div class="user-visibility"><b>Visibilità effettiva:</b> 1 cliente, ${(user.engagements || []).length} engagement.</div>
+      ${userPermissions(user)}`;
+  }
+
+  const clients = (user.clientIds || []).map(id => `
+    <span class="user-chip">
+      <button class="user-chip-main" data-act="open-client" data-client="${esc(id)}" title="Apri gli engagement di ${esc(clientName(id))}">${esc(clientName(id))}</button>
+      <button class="user-chip-x" data-act="user-remove-client" data-id="${esc(user.id)}" data-client="${esc(id)}" title="Rimuovi ${esc(clientName(id))}">×</button>
+    </span>`).join('');
+
+  const engagementIds = user.engagementIds || [];
+  const engagements = engagementIds.map(id => {
+    const item = (user.engagements || []).find(engagement => engagement.id === id);
+    return `<span class="user-chip">
+      <button class="user-chip-main" data-act="open" data-id="${esc(id)}" title="Apri ${esc(item?.name || id)}">${esc(id)}${item ? ` · ${esc(item.name)}` : ''}</button>
+      <button class="user-chip-x" data-act="user-remove-engagement" data-id="${esc(user.id)}" data-engagement="${esc(id)}" title="Rimuovi ${esc(id)}">×</button>
+    </span>`;
+  }).join('');
+
+  const availableClients = state.clients
+    .filter(client => !(user.clientIds || []).includes(client.id));
+  const assignedClients = new Set(user.clientIds || []);
+  const availableEngagements = state.userEngagements
+    .filter(engagement => !assignedClients.has(engagement.clientId) &&
+      !engagementIds.includes(engagement.id));
+  const visibleEngagements = (user.engagements || []).map(engagement => `
+    <span class="user-chip">
+      <button class="user-chip-main" data-act="open" data-id="${esc(engagement.id)}" title="Apri ${esc(engagement.name)}">${esc(engagement.id)} · ${esc(engagement.name)}</button>
+    </span>`).join('');
+  const derivedClients = (user.clients || []).filter(client =>
+    !(user.clientIds || []).includes(client.id));
+  const derivedClientsHtml = derivedClients.map(client => `
+    <span class="user-chip">
+      <button class="user-chip-main" data-act="open-client" data-client="${esc(client.id)}" title="Apri ${esc(client.name)}">${esc(client.name)}</button>
+    </span>`).join('');
+
+  return `${head}
+    <div class="user-block">
+      <h3>Clienti assegnati <span class="cnt">${clients ? (user.clientIds || []).length : 0}</span></h3>
+      <p class="hint">Cliente assegnato = tutti i suoi engagement. Clicca il nome per aprire il cliente; × per rimuovere.</p>
+      <div class="user-chips">${clients || '<span class="tiny">Nessun cliente assegnato.</span>'}</div>
+      ${availableClients.length ? `<div class="user-addline">
+        <select id="user-client-select" aria-label="Aggiungi cliente">${availableClients.map(client => `<option value="${esc(client.id)}">${esc(client.name)}</option>`).join('')}</select>
+        <button class="btn sec sm" data-act="user-add-client" data-id="${esc(user.id)}">Aggiungi cliente</button>
+      </div>` : ''}
+    </div>
+    <div class="user-block">
+      <h3>Engagement specifici <span class="cnt">${engagementIds.length}</span></h3>
+      <p class="hint">Aggiunge un solo engagement, oltre ai clienti assegnati. Clicca per aprirlo; × per rimuovere.</p>
+      <div class="user-chips">${engagements || '<span class="tiny">Nessun engagement specifico.</span>'}</div>
+      ${availableEngagements.length ? `<div class="user-addline">
+        <select id="user-engagement-select" aria-label="Aggiungi engagement">${availableEngagements.map(engagement => `<option value="${esc(engagement.id)}">${esc(engagement.id)} · ${esc(engagement.name)}</option>`).join('')}</select>
+        <button class="btn sec sm" data-act="user-add-engagement" data-id="${esc(user.id)}">Aggiungi engagement</button>
+      </div>` : ''}
+    </div>
+    <div class="user-visibility"><b>Visibilità effettiva:</b> ${user.effectiveClientIds.length} clienti, ${user.effectiveEngagementIds.length} engagement.<br>
+      ${user.role === 'PMO' ? 'Dati e operazioni sui clienti/engagement assegnati; costi e margine sì.' :
+        user.role === 'Pentester' ? 'Scope, credenziali e report degli engagement assegnati; costi e margine no.' :
+        'Sola lettura sugli engagement assegnati.'}
+    </div>
+    <div class="user-block">
+      <h3>Engagement visibili <span class="cnt">${(user.engagements || []).length}</span></h3>
+      <p class="hint">Tutti gli engagement visibili per effetto delle assegnazioni. Clicca per aprire.</p>
+      <div class="user-chips">${visibleEngagements || '<span class="tiny">Nessun engagement visibile.</span>'}</div>
+    </div>
+    ${derivedClients.length ? `<div class="user-block">
+      <h3>Clienti visibili <span class="cnt">${derivedClients.length}</span></h3>
+      <p class="hint">Clienti visibili per effetto degli engagement assegnati. Clicca per aprire.</p>
+      <div class="user-chips">${derivedClientsHtml}</div>
+    </div>` : ''}
+    ${userPermissions(user)}`;
+}
+
+function userPermissions(user) {
+  const rows = user.isManager
+    ? [['Clienti', 'Tutti'], ['Engagement', 'Tutti'], ['Costi e margine', 'Sì'], ['Utenti', 'Amministra']]
+    : user.isClient
+      ? [['Cliente', 'Proprio'], ['Engagement', 'Del cliente'], ['Costi e margine', 'No'], ['Utenti', 'No']]
+      : user.role === 'PMO'
+        ? [['Clienti', 'Assegnati'], ['Engagement', 'Assegnati'], ['Costi e margine', 'Sì'], ['Utenti', 'No']]
+        : user.role === 'Pentester'
+          ? [['Clienti', 'Solo riferimento'], ['Engagement', 'Assegnati'], ['Costi e margine', 'No'], ['Utenti', 'No']]
+          : [['Clienti', 'Assegnati'], ['Engagement', 'Assegnati'], ['Costi e margine', 'No'], ['Utenti', 'No']];
+  return `<div class="user-block"><h3>Permessi</h3><dl class="user-perms">${rows.map(([label, value]) => `<dt>${label}</dt><dd>${value}</dd>`).join('')}</dl></div>`;
+}
+
 function renderClients() {
   const manage = canManageClients();
   const items = state.clients || [];
@@ -2866,6 +3210,7 @@ function renderClients() {
 function render() {
   updateHeader();
   if (state.view === 'clients') renderClients();
+  else if (state.view === 'users') renderUsers();
   else if (state.view === 'solicitations') renderSolicitations();
   else if (state.view === 'detail' && state.detail) renderDetail();
   else renderList();
@@ -2881,6 +3226,80 @@ const actions = {
   clients: () => {
     state.view = 'clients';
     loadClients().then(render);
+  },
+  users: () => {
+    if (state.role !== 'Manager') {
+      toast('Sezione riservata al Manager');
+      return;
+    }
+    state.view = 'users';
+    state.userQuery = '';
+    state.selectedUserId = state.selectedUserId || state.userId;
+    loadUsers();
+  },
+  'select-user': el => {
+    state.selectedUserId = el.dataset.id;
+    renderUsers();
+  },
+  'user-add-client': async el => {
+    const select = $('#user-client-select');
+    if (!select || !select.value) return;
+    try {
+      await api(`/api/users/${encodeURIComponent(el.dataset.id)}/assignments?` + qs(), {
+        method: 'POST',
+        body: JSON.stringify({ type: 'client', targetId: select.value })
+      });
+      toast('Cliente assegnato');
+      await loadUsers();
+    } catch (error) { toast(error.message); }
+  },
+  'user-remove-client': async el => {
+    try {
+      await api(`/api/users/${encodeURIComponent(el.dataset.id)}/assignments/client/${encodeURIComponent(el.dataset.client)}?` + qs(), { method: 'DELETE' });
+      toast('Cliente rimosso');
+      await loadUsers();
+    } catch (error) { toast(error.message); }
+  },
+  'user-add-engagement': async el => {
+    const select = $('#user-engagement-select');
+    if (!select || !select.value) return;
+    try {
+      await api(`/api/users/${encodeURIComponent(el.dataset.id)}/assignments?` + qs(), {
+        method: 'POST',
+        body: JSON.stringify({ type: 'engagement', targetId: select.value })
+      });
+      toast('Engagement assegnato');
+      await loadUsers();
+    } catch (error) { toast(error.message); }
+  },
+  'user-remove-engagement': async el => {
+    try {
+      await api(`/api/users/${encodeURIComponent(el.dataset.id)}/assignments/engagement/${encodeURIComponent(el.dataset.engagement)}?` + qs(), { method: 'DELETE' });
+      toast('Engagement rimosso');
+      await loadUsers();
+    } catch (error) { toast(error.message); }
+  },
+  'new-user': async () => {
+    const v = await ask({
+      title: 'Nuovo utente interno',
+      text: 'L\'utente potrà accedere solo ai clienti/engagement che gli assegnerai.',
+      ok: 'Crea',
+      fields: [
+        { id: 'name', label: 'Nome e cognome*' },
+        { id: 'email', label: 'Email*', type: 'email', ph: 'nome@provider.example' },
+        { id: 'role', label: 'Ruolo', type: 'select', options: [['Pentester', 'Pentester'], ['PMO', 'PMO'], ['Auditor', 'Auditor'], ['Manager', 'Manager']] }
+      ]
+    });
+    if (!v) return;
+    if (!v.name || !v.email || !v.email.includes('@')) { toast('Nome ed email valida sono obbligatori'); return; }
+    try {
+      await api('/api/users?' + qs(), {
+        method: 'POST',
+        body: JSON.stringify({ name: v.name, email: v.email, role: v.role || 'Pentester' })
+      });
+      toast('Utente creato');
+      await loadUsers();
+    } catch (error) { toast(error.message); }
   },
   'open-client': el => {
     state.clientId = el.dataset.client;
@@ -3306,10 +3725,12 @@ const actions = {
       if (!proceed) return;
     }
     try {
-      await api(`/api/engagements/${engagedId()}/proposals?` + qs(), {
+      const result = await api(`/api/engagements/${engagedId()}/proposals?` + qs(), {
         method: 'POST', body: JSON.stringify({ startDate, endDate, note })
       });
-      toast('Proposta inviata');
+      toast(result && result.status === 'Accepted'
+        ? 'Pianificazione confermata'
+        : 'Proposta inviata');
       await refreshDetail();
     } catch (error) { toast(error.message); }
   },
@@ -3329,10 +3750,12 @@ const actions = {
     if (!v) return;
     if (!v.startDate || !v.endDate || !v.note) { toast('Compila date e motivazione'); return; }
     try {
-      await api(`/api/engagements/${engagedId()}/proposals?` + qs(), {
+      const result = await api(`/api/engagements/${engagedId()}/proposals?` + qs(), {
         method: 'POST', body: JSON.stringify({ startDate: v.startDate, endDate: v.endDate, note: v.note })
       });
-      toast('Richiesta inviata');
+      toast(result && result.status === 'Accepted'
+        ? 'Pianificazione aggiornata'
+        : 'Richiesta inviata');
       await refreshDetail();
     } catch (error) { toast(error.message); }
   },
@@ -3679,6 +4102,17 @@ document.addEventListener('click', event => {
 });
 
 document.addEventListener('input', event => {
+  if (event.target.id === 'user-search') {
+    state.userQuery = event.target.value;
+    renderUsers();
+    const input = $('#user-search');
+    if (input) {
+      input.focus();
+      const end = input.value.length;
+      try { input.setSelectionRange(end, end); } catch { /* noop */ }
+    }
+    return;
+  }
   if (event.target.id !== 'list-search') return;
   state.listQuery = event.target.value;
   renderList();
@@ -3732,20 +4166,24 @@ function init() {
   roleSelect.value = state.role;
   roleSelect.onchange = event => setRole(event.target.value);
 
+  $('#demoUser').onchange = event => setDemoUser(event.target.value);
   $('#client').onchange = event => setClient(event.target.value);
 
-  fillClientSelect();
-  updateHeader();
-
-  loadClients().then(async () => {
-    if (isClient() && !state.clients.length && !state.clientId) {
-      // Server irraggiungibile: si mostra comunque il cliente demo atteso.
-      state.clientId = ROLES.Client.client || '';
-      localStorage.setItem('cep.client', state.clientId);
-      fillClientSelect();
-    }
+  loadDemoUsers().then(() => {
+    roleSelect.value = state.role;
+    fillClientSelect();
     updateHeader();
-    await loadList();
+
+    loadClients().then(async () => {
+      if (isClient() && !state.clients.length && !state.clientId) {
+        // Server irraggiungibile: si mostra comunque il cliente demo atteso.
+        state.clientId = ROLES.Client.client || '';
+        localStorage.setItem('cep.client', state.clientId);
+        fillClientSelect();
+      }
+      updateHeader();
+      await loadList();
+    });
   });
 }
 

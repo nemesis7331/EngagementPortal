@@ -17,8 +17,10 @@ public static class DatabaseBootstrap
         db.Database.EnsureCreated();
 
         // Le installazioni esistenti non ricevono le nuove tabelle da
-        // EnsureCreated: la tabella delle impostazioni viene creata qui.
+        // EnsureCreated: le tabelle delle impostazioni e degli utenti
+        // vengono create qui.
         EnsureSettingsTable(db, logger);
+        EnsureUsersTable(db, logger);
 
         if (!db.Clients.Any())
         {
@@ -73,6 +75,31 @@ public static class DatabaseBootstrap
                     "Seed engagement già presente, nessuna modifica.");
             }
         }
+
+        if (!db.Users.Any())
+        {
+            var users = InMemoryUserRepository.CreateSeed();
+            db.Users.AddRange(users.Select(user => new UserRecord
+            {
+                Id = user.Id,
+                Payload = PortalJson.Serialize(user),
+                UpdatedAt = user.CreatedDate
+            }));
+
+            try
+            {
+                db.SaveChanges();
+                logger.LogInformation(
+                    "Database inizializzato con {Count} utenti demo.",
+                    users.Count);
+            }
+            catch (DbUpdateException)
+            {
+                db.ChangeTracker.Clear();
+                logger.LogInformation(
+                    "Seed utenti già presente, nessuna modifica.");
+            }
+        }
     }
 
     private static void EnsureSettingsTable(
@@ -107,6 +134,41 @@ public static class DatabaseBootstrap
                 exception,
                 "Impossibile verificare la tabella Settings: i template " +
                 "standard resteranno in memoria.");
+        }
+    }
+
+    private static void EnsureUsersTable(
+        PortalDbContext db,
+        ILogger logger)
+    {
+        try
+        {
+            var provider = db.Database.ProviderName ?? string.Empty;
+
+            if (provider.Contains("Sqlite", StringComparison.OrdinalIgnoreCase))
+            {
+                db.Database.ExecuteSqlRaw(
+                    "CREATE TABLE IF NOT EXISTS Users (" +
+                    "Id TEXT NOT NULL PRIMARY KEY, " +
+                    "Payload TEXT NOT NULL, " +
+                    "UpdatedAt TEXT NOT NULL);");
+            }
+            else
+            {
+                db.Database.ExecuteSqlRaw(
+                    "IF OBJECT_ID(N'Users', N'U') IS NULL " +
+                    "CREATE TABLE Users (" +
+                    "Id nvarchar(64) NOT NULL PRIMARY KEY, " +
+                    "Payload nvarchar(max) NOT NULL, " +
+                    "UpdatedAt datetimeoffset NOT NULL);");
+            }
+        }
+        catch (Exception exception)
+        {
+            logger.LogWarning(
+                exception,
+                "Impossibile verificare la tabella Users: la sezione " +
+                "Utenti resterà in memoria.");
         }
     }
 }
