@@ -261,19 +261,21 @@ public class WorkflowTests
     }
 
     [Fact]
-    public void Todo_CredentialsWhenScopeDone()
+    public void Credentials_AreOptional_NoTodoAndNoBlockingPhase()
     {
         var engagement = NewEngagement();
         engagement.ScopeDone = true;
         engagement.CredentialsDone = false;
         AddAcceptedProposal(engagement, Today.AddDays(2), Today.AddDays(5));
 
-        var todo = new TodoResolver(Workflow())
-            .Resolve(engagement, Roles.Client);
+        // Le credenziali vivono nello scope e non generano un task bloccante.
+        Assert.Null(
+            new TodoResolver(Workflow())
+                .Resolve(engagement, Roles.Client));
 
-        Assert.NotNull(todo);
-        Assert.Equal("Fornisci le credenziali di accesso", todo.Action);
-        Assert.Equal("cred", todo.TargetTab);
+        Assert.Equal(
+            EngagementPhase.Scheduled,
+            Workflow().Resolve(engagement));
     }
 
     [Fact]
@@ -439,14 +441,15 @@ public class WorkflowTests
     }
 
     [Fact]
-    public void MissingCredentials_AfterAcceptedProposal_ReturnsCredentials()
+    public void MissingCredentials_AfterAcceptedProposal_IsScheduled()
     {
         var engagement = NewEngagement();
         engagement.CredentialsDone = false;
         AddAcceptedProposal(engagement, Today.AddDays(2), Today.AddDays(5));
 
+        // Senza credenziali si va comunque avanti: non sono obbligatorie.
         Assert.Equal(
-            EngagementPhase.Credentials,
+            EngagementPhase.Scheduled,
             Workflow().Resolve(engagement));
     }
 
@@ -486,13 +489,12 @@ public class WorkflowTests
         Assert.Equal(1, EngagementWorkflow.StepIndex(EngagementPhase.Docs));
         Assert.Equal(2, EngagementWorkflow.StepIndex(EngagementPhase.Scope));
         Assert.Equal(3, EngagementWorkflow.StepIndex(EngagementPhase.Planning));
-        Assert.Equal(4, EngagementWorkflow.StepIndex(EngagementPhase.Credentials));
-        Assert.Equal(5, EngagementWorkflow.StepIndex(EngagementPhase.Reachability));
-        Assert.Equal(6, EngagementWorkflow.StepIndex(EngagementPhase.Running));
-        Assert.Equal(7, EngagementWorkflow.StepIndex(EngagementPhase.Reporting));
-        Assert.Equal(8, EngagementWorkflow.StepIndex(EngagementPhase.Retest));
-        Assert.Equal(9, EngagementWorkflow.StepIndex(EngagementPhase.RetestReporting));
-        Assert.Equal(10, EngagementWorkflow.StepIndex(EngagementPhase.Done));
+        Assert.Equal(4, EngagementWorkflow.StepIndex(EngagementPhase.Reachability));
+        Assert.Equal(5, EngagementWorkflow.StepIndex(EngagementPhase.Running));
+        Assert.Equal(6, EngagementWorkflow.StepIndex(EngagementPhase.Reporting));
+        Assert.Equal(7, EngagementWorkflow.StepIndex(EngagementPhase.Retest));
+        Assert.Equal(8, EngagementWorkflow.StepIndex(EngagementPhase.RetestReporting));
+        Assert.Equal(9, EngagementWorkflow.StepIndex(EngagementPhase.Done));
     }
 
     [Fact]

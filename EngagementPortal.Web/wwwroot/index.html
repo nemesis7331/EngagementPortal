@@ -488,6 +488,33 @@ a.obj-period:focus-visible{outline:2px solid var(--brand-500);outline-offset:2px
 }
 @media(max-width:700px){.tl-card{padding:10px}.tl-axis,.tl-row{grid-template-columns:160px minmax(680px,1fr)}.tl-axis-label,.tl-label{padding:6px 8px}
 }
+/* ====== SCOPE: target in scope e raggiungibilità ====== */
+.target-list{border-top:1px solid var(--line-soft);margin:4px 0 0}
+.target-row{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid var(--line-soft);min-width:0}
+.target-ck{width:16px;height:16px;accent-color:var(--brand-600);flex:none;cursor:pointer}
+.target-dot{width:10px;height:10px;border-radius:50%;border:1.5px solid var(--line-strong);background:#fff;flex:none;margin:0 3px}
+.target-dot.ok{background:var(--st-done);border-color:var(--st-done)}
+.target-main{flex:1;min-width:0;font-size:var(--fs-md);color:var(--brand-900);overflow-wrap:anywhere}
+.target-main b{font-weight:var(--fw-semibold)}
+.target-pill{flex:none;font-size:var(--fs-2xs);font-weight:var(--fw-semibold);padding:2px 8px;border-radius:var(--radius-pill);white-space:nowrap}
+.target-pill.ok{background:var(--st-done-bg);color:var(--st-done);border:1px solid var(--st-done-border)}
+.target-pill.wait{background:var(--st-wait-bg);color:var(--st-wait);border:1px solid var(--st-wait-border)}
+.target-x{width:22px;height:22px;flex:none;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--muted);line-height:1;cursor:pointer}
+.target-x:hover{border-color:var(--st-negative-border);color:var(--st-negative)}
+.target-add{display:flex;gap:8px;margin:10px 0 4px}
+.target-add input{flex:1;margin:0}
+.reach-banner{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border:1px solid var(--st-wait-border);background:var(--st-wait-bg);color:var(--st-wait);border-radius:10px;padding:9px 11px;margin-top:10px;font-size:var(--fs-sm)}
+.reach-banner.ok{border-color:var(--st-done-border);background:var(--st-done-bg);color:var(--st-done)}
+.rb-t{display:flex;flex-direction:column;gap:1px;min-width:220px}
+.rb-t b{font-size:var(--fs-md)}
+.rb-prog{display:block;flex:1;min-width:80px;height:6px;border-radius:99px;background:#fff;overflow:hidden;border:1px solid rgba(0,0,0,.06)}
+.rb-prog i{display:block;height:100%;background:currentColor}
+.scope-cred summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;font-weight:var(--fw-bold);color:var(--brand-900)}
+.scope-cred summary::-webkit-details-marker{display:none}
+.scope-cred summary::before{content:"▸";color:var(--brand-600)}
+.scope-cred[open] summary::before{content:"▾"}
+.scope-cred .opt-tag{font-size:10px;font-weight:600;color:var(--muted);background:var(--surface-2);border-radius:99px;padding:1px 7px}
+@media(max-width:620px){.target-pill{display:none}}
 </style>
 </head>
 <body>
@@ -629,9 +656,8 @@ const DELIVERABLE_KINDS = [
 const STEPS = [
   ['Setup', 'Team, distribution list, lingua e tipologie di deliverable'],
   ['Documenti', 'Scheda tecnica, ordine, costi e margine approvati'],
-  ['Scope', 'Perimetro e obiettivi dell\'attività'],
+  ['Scope', 'Perimetro, target e credenziali facoltative'],
   ['Pianificazione', 'Proposta e approvazione delle date'],
-  ['Credenziali', 'Dati di accesso per l\'esecuzione'],
   ['Raggiungibilità', 'Verifica che tutti i target in scope rispondano'],
   ['Esecuzione', 'Attività in corso'],
   ['Report', 'Revisione e consegna'],
@@ -1018,7 +1044,7 @@ function docTag(kind, opts = {}) {
 // Anello di avanzamento: stessi numeri della pastiglia engagement, riusabile
 // dove serve una versione compatta (lista, calendario).
 function progressRing(e, opts = {}) {
-  const total = Number(e && e.stepCount) || (e && e.retestPlanned ? 10 : 8);
+  const total = Number(e && e.stepCount) || (e && e.retestPlanned ? 9 : 7);
   const index = Math.max(0, Math.min(Number(e && e.stepIndex) || 0, total));
   const percent = Math.round((index / total) * 100);
   const label = `Passo ${index} di ${total}`;
@@ -1035,7 +1061,7 @@ function engPill(e, opts = {}) {
     : daysSince((actionState(e) || {}).since) >= STALE_DAYS;
   const client = clientFor(e);
   const src = faviconUrl(client && client.website);
-  const total = Number(e.stepCount) || (e.retestPlanned ? 10 : 8);
+  const total = Number(e.stepCount) || (e.retestPlanned ? 9 : 7);
   const index = Math.max(0, Math.min(Number(e.stepIndex) || 0, total));
 
   return `<span class="eng-pill${late ? ' late' : ''}" title="${esc(e.name)} · ${esc(e.clientName || '')} · passo ${index} di ${total}">
@@ -1528,7 +1554,6 @@ async function openEngagement(id) {
 async function setTab(tab) {
   state.tab = tab;
   if (tab === 'scope') await loadScope();
-  if (tab === 'cred') await loadCredentials();
   render();
 }
 
@@ -1603,7 +1628,6 @@ async function loadDetail(id) {
     await ensureActivityTypes();
     if (!state.tab) state.tab = defaultTab(detail);
     if (state.tab === 'scope') await loadScope();
-    if (state.tab === 'cred') await loadCredentials();
   } catch (error) {
     state.error = error.message;
     toast(error.message);
@@ -1625,6 +1649,10 @@ async function refreshDetail() {
 async function loadScope() {
   const id = state.detail.engagement.id;
   state.scope = await api(`/api/engagements/${id}/scope?` + qs());
+  // Copia di lavoro dei target: le voci nuove restano "non salvate" finché
+  // non si preme Salva scope.
+  state.scopeTargets = (state.scope.scope?.targets || [])
+    .map(target => ({ ...target, saved: true }));
 }
 
 async function loadCredentials() {
@@ -1819,8 +1847,8 @@ function legacyTabState(d, k) {
 
 function defaultTab(d) {
   const tabs = isClient()
-    ? ['docs', 'scope', 'plan', 'cred', 'reports']
-    : ['setup', 'docs', 'scope', 'plan', 'cred', 'reports'];
+    ? ['docs', 'scope', 'plan', 'reports']
+    : ['setup', 'docs', 'scope', 'plan', 'reports'];
   const todo = tabs.find(k => tabState(d, k) === 'todo');
   if (todo) return todo;
   const byPhase = {
@@ -2098,7 +2126,6 @@ const PHASES = [
   ['Docs', 'Documenti'],
   ['Scope', 'Scope'],
   ['Planning', 'Pianificazione'],
-  ['Credentials', 'Credenziali'],
   ['Reachability', 'Raggiungibilità'],
   ['Scheduled', 'Pianificato'],
   ['Running', 'In esecuzione'],
@@ -2675,10 +2702,10 @@ function nextAction(d) {
       break;
     case 'Reachability': {
       const reach = d.reachability || {};
-      const targets = [d.scope?.host, d.scope?.ipRange].filter(Boolean);
+      const deadline = reach.deadline ? ` entro il ${fmt(reach.deadline)}` : '';
       message = reach.verified
-        ? `Target verificati dal Pentester${reach.verifiedBy ? ` (${reach.verifiedBy})` : ''}: l'attività può partire.`
-        : `Credenziali ricevute: il Pentester deve verificare che tutti i target in scope rispondano${targets.length ? ` (${targets.join(', ')})` : ''}.`;
+        ? 'Tutti i target in scope sono stati verificati: l\'attività può partire.'
+        : `Il Pentester deve verificare la raggiungibilità di tutti i target in scope${deadline}.`;
       break;
     }
     case 'Scheduled':
@@ -2741,12 +2768,11 @@ const DETAIL_PANELS = {
   docs: { n:'1', short:'Documenti', group:'Workflow', title:'Documenti', desc:'Scheda tecnica, ordine e dati economici', phase:'Docs' },
   scope: { n:'2', short:'Scope', group:'Workflow', title:'Scope', desc:'Perimetro, finestre e referente', phase:'Scope' },
   plan: { n:'3', short:'Pianificazione', group:'Workflow', title:'Pianificazione', desc:'Proposta e approvazione delle date', phase:'Planning' },
-  cred: { n:'4', short:'Credenziali', group:'Workflow', title:'Credenziali', desc:'Accessi per l\'esecuzione', phase:'Credentials' },
-  reach: { n:'5', short:'Raggiungibilità', group:'Workflow', tab:'cred', title:'Raggiungibilità', desc:'Verifica che tutti i target in scope rispondano', phase:'Reachability' },
-  run: { n:'6', short:'Esecuzione', group:'Workflow', title:'Esecuzione', desc:'Avanzamento dell\'attività', phase:'Scheduled,Running' },
-  reports: { n:'7', short:'Report', group:'Workflow', title:'Report', desc:'Revisione e consegna dei deliverable', phase:'Reporting' },
-  retest: { n:'8', short:'Retest', group:'Workflow', tab:'reports', title:'Retest', desc:'Verifiche dopo i fix: richiesta del cliente e date', phase:'Retest' },
-  retestreport: { n:'9', short:'Report retest', group:'Workflow', tab:'reports', title:'Report di retest', desc:'Invio al cliente senza revisione', phase:'RetestReporting' },
+  reach: { n:'4', short:'Raggiungibilità', group:'Workflow', tab:'scope', title:'Raggiungibilità', desc:'Verifica che tutti i target in scope rispondano', phase:'Reachability' },
+  run: { n:'5', short:'Esecuzione', group:'Workflow', title:'Esecuzione', desc:'Avanzamento dell\'attività', phase:'Scheduled,Running' },
+  reports: { n:'6', short:'Report', group:'Workflow', title:'Report', desc:'Revisione e consegna dei deliverable', phase:'Reporting' },
+  retest: { n:'7', short:'Retest', group:'Workflow', tab:'reports', title:'Retest', desc:'Verifiche dopo i fix: richiesta del cliente e date', phase:'Retest' },
+  retestreport: { n:'8', short:'Report retest', group:'Workflow', tab:'reports', title:'Report di retest', desc:'Invio al cliente senza revisione', phase:'RetestReporting' },
   dl: { n:'', short:'Distribution list', group:'Gestione', title:'Distribution list', desc:'Notifiche e invio deliverables' },
   team: { n:'', short:'Team', group:'Gestione', title:'Team esterno', desc:'Partecipanti al cliente e all\'engagement' },
   mail: { n:'', short:'Comunicazioni', group:'Gestione', title:'Comunicazioni', desc:'Email automatiche e registro invii' },
@@ -2756,8 +2782,8 @@ const DETAIL_PANELS = {
 // I due passi del retest esistono solo se il recheck è previsto.
 function workflowSteps(d) {
   const base = isClient()
-    ? ['docs', 'scope', 'plan', 'cred', 'reach', 'run', 'reports']
-    : ['setup', 'docs', 'scope', 'plan', 'cred', 'reach', 'run', 'reports'];
+    ? ['docs', 'scope', 'plan', 'reach', 'run', 'reports']
+    : ['setup', 'docs', 'scope', 'plan', 'reach', 'run', 'reports'];
 
   return d.retest?.planned ? [...base, 'retest', 'retestreport'] : base;
 }
@@ -2833,7 +2859,6 @@ function renderDetail() {
     docs: tabDocs,
     plan: tabPlan,
     scope: tabScope,
-    cred: tabCred,
     run: tabRun,
     reports: tabReports,
     dl: tabDl,
@@ -3236,124 +3261,114 @@ function tabScope(d) {
 
   const info = state.scope;
   if (!info) return `<div class="card"><p class="sub">Caricamento…</p></div>`;
-  const s = info.scope || {};
 
-  if (!info.canEdit) {
-    if (!s.done) {
-      return `<div class="note waiting">In attesa che lo scope venga fornito dal cliente.</div>`;
-    }
-    return `<div class="card">
-      <p class="sub">Fornito da ${esc(authorOf(s))} il ${fmt(s.date)} · sola lettura per il tuo profilo.</p>
-      <table class="detail-table">${[
-        ['Target (hostname / URL)', s.host],
-        ['Indirizzi / range IP', s.ipRange || '–'],
-        ['Fuori scope', s.outOfScope || '–'],
-        ['Finestra oraria e vincoli', s.window || '–'],
-        ['Referente tecnico', s.contact],
-        ['Note', s.notes || '–']
-      ].map(r => `<tr><td>${r[0]}</td><td><b>${esc(r[1])}</b></td></tr>`).join('')}
-      </table>
-    </div>`;
-  }
+  const s = info.scope || {};
+  const canEdit = !!info.canEdit;
+  const reach = d.reachability || {};
+  const canVerify = !!reach.canVerify;
+  const targets = state.scopeTargets ||
+    (s.targets || []).map(target => ({ ...target, saved: true }));
+
+  const rows = targets.length ? targets.map(target => `
+    <div class="target-row">
+      ${canVerify && target.saved
+        ? `<input type="checkbox" class="target-ck" data-change="verify-target" data-value="${esc(target.value)}"
+             ${target.verified ? 'checked' : ''} aria-label="Verifica ${esc(target.value)}">`
+        : `<span class="target-dot${target.verified ? ' ok' : ''}" aria-hidden="true"></span>`}
+      <span class="target-main"><b>${esc(target.value)}</b>
+        ${target.saved ? '' : '<span class="hint"> · non salvato</span>'}</span>
+      ${target.saved
+        ? `<span class="target-pill ${target.verified ? 'ok' : 'wait'}">${target.verified
+            ? `Verificato${target.verifiedBy ? ` · ${esc(target.verifiedBy)}` : ''}`
+            : 'Da verificare'}</span>`
+        : ''}
+      ${canEdit ? `<button class="target-x" data-act="scope-remove-target" data-value="${esc(target.value)}"
+          title="Rimuovi" aria-label="Rimuovi ${esc(target.value)}">×</button>` : ''}
+    </div>`).join('')
+    : '<div class="empty">Nessun target: aggiungi almeno una voce per completare lo scope.</div>';
+
+  const total = Number(reach.targets) || 0;
+  const verified = Number(reach.verifiedTargets) || 0;
+  const percent = total ? Math.round((verified / total) * 100) : 0;
+  const deadline = reach.deadline;
+  const days = reach.daysToDeadline;
+  const deadlineText = deadline
+    ? `Verifica completa entro il <b>${fmt(deadline)}</b>${days == null ? '' : days > 0
+        ? ` · tra ${plural(days, 'giorno', 'giorni')}`
+        : days === 0 ? ' · scade oggi' : ` · scaduta da ${plural(-days, 'giorno', 'giorni')}`}`
+    : 'La verifica si apre due settimane prima del test, quando le date sono concordate.';
+
+  const readOnly = canEdit ? '' : 'disabled';
 
   return `<div class="card">
-    <p class="sub">${s.done
-      ? `Fornito da ${esc(authorOf(s))} il ${fmt(s.date)}. Puoi modificare i valori e salvare.`
-      : 'Compila perimetro, finestre e referente. I campi sono già attivi.'}</p>
-    ${!e.acceptedProposal ? '<div class="note progress">La pianificazione non è ancora confermata: puoi compilare lo scope già ora, resterà valido.</div>' : ''}
-    ${!isClient() ? '<div class="note">Stai compilando <b>per conto del cliente</b>.</div>' : ''}
-    <div class="fgrid">
-      <div><label for="f_host">Target (hostname / URL)*</label><input type="text" id="f_host" value="${esc(s.host || '')}" placeholder="es. api-uat.cliente.it"></div>
-      <div><label for="f_ipRange">Indirizzi / range IP</label><input type="text" id="f_ipRange" value="${esc(s.ipRange || '')}" placeholder="es. 10.0.0.0/28"></div>
-      <div><label for="f_outOfScope">Fuori scope</label><input type="text" id="f_outOfScope" value="${esc(s.outOfScope || '')}" placeholder="Sistemi o ambienti da non testare"></div>
-      <div><label for="f_window">Finestra oraria e vincoli</label><input type="text" id="f_window" value="${esc(s.window || '')}" placeholder="es. notturno 22:00–06:00"></div>
-      <div><label for="f_contact">Referente tecnico*</label><input type="text" id="f_contact" value="${esc(s.contact || '')}" placeholder="Nome, telefono"></div>
-      <div class="full"><label for="f_notes">Note</label><textarea id="f_notes" rows="3">${esc(s.notes || '')}</textarea></div>
-    </div>
-    <div class="inline-actions">
-      <button class="btn pri" data-act="save-scope">Salva scope</button>
-      <span class="hint">Salva prima di cambiare sezione: i campi non vengono inviati in automatico.</span>
-    </div>
-  </div>`;
-}
-
-// Verifica raggiungibilità: il Pentester conferma che i target in scope
-// rispondano con le credenziali ricevute (prima dell'esecuzione).
-function reachabilityCard(d) {
-  const r = d.reachability || {};
-  const targets = [d.scope?.host, d.scope?.ipRange].filter(Boolean);
-  const status = r.verified
-    ? pill(['Verificata', 'ok'])
-    : pill(['Da verificare', 'action']);
-
-  return `<div class="card" style="margin-top:12px">
-    <h2>Verifica raggiungibilità ${status}</h2>
-    <p class="sub">Il Pentester controlla che tutti i target in scope rispondano con le credenziali fornite, prima dell'avvio.</p>
-    <div class="note">Target in scope: ${targets.length
-      ? targets.map(target => `<b>${esc(target)}</b>`).join(' · ')
-      : 'non indicati nello scope'}.</div>
-    ${r.verified
-      ? `<p class="hint">Verificata da ${esc(r.verifiedBy || 'Pentester')}${r.verifiedDate ? ` il ${fmt(r.verifiedDate)}` : ''}.</p>`
-      : '<p class="hint">In attesa della conferma del Pentester.</p>'}
-    ${r.canVerify ? `<div class="inline-actions">
-      ${r.verified
-        ? '<button class="btn sec" data-act="verify-reachability" data-verified="0">Annulla verifica</button>'
-        : '<button class="btn pri" data-act="verify-reachability" data-verified="1">Confermo: tutti i target sono raggiungibili</button>'}
+    <h2>Target in scope <span class="cnt">${targets.length}</span></h2>
+    <p class="sub">Una voce per target: IP, hostname o descrizione libera (es. “IPA/APK fornita dallo store”).</p>
+    <div class="target-list">${rows}</div>
+    ${canEdit ? `<div class="target-add">
+      <input type="text" id="f_target" placeholder="IP, hostname o descrizione del target…">
+      <button class="btn sec sm" data-act="scope-add-target">Aggiungi</button>
     </div>` : ''}
-  </div>`;
+
+    ${total ? `<div class="reach-banner${reach.verified ? ' ok' : ''}">
+      <span class="rb-t"><b>Raggiungibilità ${verified} di ${total}</b><span>${deadlineText}</span></span>
+      <span class="rb-prog"><i style="width:${percent}%"></i></span>
+      ${reach.verified ? pill(['Completa', 'ok']) : ''}
+    </div>` : ''}
+
+    <div class="fgrid" style="margin-top:14px">
+      <div><label for="f_outOfScope">Fuori scope</label><input type="text" id="f_outOfScope" value="${esc(s.outOfScope || '')}" placeholder="Sistemi o ambienti da non testare" ${readOnly}></div>
+      <div><label for="f_window">Finestra oraria e vincoli</label><input type="text" id="f_window" value="${esc(s.window || '')}" placeholder="es. notturno 22:00–06:00" ${readOnly}></div>
+      <div><label for="f_contact">Referente tecnico*</label><input type="text" id="f_contact" value="${esc(s.contact || '')}" placeholder="Nome, telefono" ${readOnly}></div>
+      <div class="full"><label for="f_notes">Note</label><textarea id="f_notes" rows="3" ${readOnly}>${esc(s.notes || '')}</textarea></div>
+    </div>
+    ${canEdit ? `<div class="inline-actions">
+      <button class="btn pri" data-act="save-scope">Salva scope</button>
+      <span class="hint">Salva prima di cambiare sezione: le voci aggiunte qui non vengono inviate in automatico.</span>
+    </div>` : `<p class="hint" style="margin-top:10px">Fornito da ${esc(authorOf(s))} il ${fmt(s.date)} · sola lettura per il tuo profilo.</p>`}
+  </div>
+  ${credentialsBlock(d, canEdit)}`;
 }
 
-function tabCred(d) {
-  const e = d.engagement;
-  if (!e.hasManleva || !e.orderConfirmed || !e.financialsDone || !e.financialsApproved) {
-    return `<div class="note lockbox"><b>Sezione bloccata.</b> Le credenziali si sbloccano dopo la firma della manleva, la registrazione dell'ordine e l'approvazione di costi e margine.</div>`;
-  }
-
-  const info = state.credentials;
-  if (!info) return `<div class="card"><p class="sub">Caricamento…</p></div>`;
-  if (!info.credentials) {
-    return `<div class="note lockbox"><b>Accesso non consentito.</b> Le credenziali non sono visibili al profilo ${esc(ROLE_LABEL[state.role])}.</div>`;
-  }
-
-  const c = info.credentials;
-
-  if (!info.canEdit) {
-    if (!c.done) {
-      return `<div class="note waiting">Credenziali non ancora fornite: in attesa del cliente.</div>`;
-    }
-    return `<div class="card">
-      <p class="sub">Fornite da ${esc(authorOf(c))} il ${fmt(c.date)} · sola lettura per il tuo profilo.</p>
-      <table class="detail-table">${[
-        ['VPN', c.vpn],
-        ['Utenze di test', c.users],
-        ['Metodo di consegna dei segreti', c.deliveryMethod],
-        ['Note', c.notes || '–']
-      ].map(r => `<tr><td>${r[0]}</td><td><b>${esc(r[1])}</b></td></tr>`).join('')}
-      </table>
-    </div>${reachabilityCard(d)}`;
-  }
+// Credenziali facoltative: vivono dentro lo scope, non bloccano il workflow.
+function credentialsBlock(d, canEdit) {
+  const c = d.credentials;
+  if (!c) return '';
 
   const options = ['Vault aziendale', 'File cifrato (password su canale separato)', 'Altro (concordato con Pentester)'];
-  return `<div class="card">
-    <p class="sub">${c.done ? `Fornite da ${esc(authorOf(c))} il ${fmt(c.date)}. Puoi aggiornarle e salvare.` : 'Indica come verranno consegnati gli accessi: le password non vengono conservate.'}</p>
-    ${!e.acceptedProposal ? '<div class="note progress">La pianificazione non è ancora confermata: puoi fornirle già ora, resteranno valide.</div>' : ''}
-    <div class="note">Non scrivere password in questo modulo: indica solo dove e come verranno consegnate.</div>
-    ${state.role === 'PMO' ? '<div class="note">Stai compilando come PMO <b>per conto del cliente</b>.</div>' : ''}
-    <div class="fgrid">
-      <div><label for="f_vpn">VPN (endpoint e profilo)*</label><input type="text" id="f_vpn" value="${esc(c.vpn || '')}" placeholder="es. vpn.cliente.it – profilo test"></div>
-      <div><label for="f_users">Utenze di test*</label><input type="text" id="f_users" value="${esc(c.users || '')}" placeholder="es. 2 utenze: utente e amministratore"></div>
-      <div><label for="f_deliveryMethod">Metodo di consegna dei segreti*</label>
-        <select class="f" id="f_deliveryMethod">
-          <option value="">Seleziona…</option>
-          ${options.map(o => `<option ${c.deliveryMethod === o ? 'selected' : ''}>${esc(o)}</option>`).join('')}
-        </select></div>
-      <div class="full"><label for="f_credNotes">Note</label><textarea id="f_credNotes" rows="3">${esc(c.notes || '')}</textarea></div>
-    </div>
-    <div class="inline-actions">
-      <button class="btn pri" data-act="save-credentials">Salva credenziali</button>
-      <span class="hint">Salva prima di cambiare sezione.</span>
-    </div>
-  </div>${reachabilityCard(d)}`;
+  const state = c.done
+    ? pill(['Fornite', 'ok'])
+    : '<span class="opt-tag">facoltative</span>';
+
+  const body = canEdit
+    ? `<div class="note">Non scrivere password in questo modulo: indica solo dove e come verranno consegnate.</div>
+       <div class="fgrid">
+         <div><label for="f_vpn">VPN (endpoint e profilo)</label><input type="text" id="f_vpn" value="${esc(c.vpn || '')}" placeholder="es. vpn.cliente.it – profilo test"></div>
+         <div><label for="f_users">Utenze di test</label><input type="text" id="f_users" value="${esc(c.users || '')}" placeholder="es. 2 utenze: utente e amministratore"></div>
+         <div><label for="f_deliveryMethod">Metodo di consegna dei segreti</label>
+           <select class="f" id="f_deliveryMethod">
+             <option value="">Seleziona…</option>
+             ${options.map(o => `<option ${c.deliveryMethod === o ? 'selected' : ''}>${esc(o)}</option>`).join('')}
+           </select></div>
+         <div class="full"><label for="f_credNotes">Note</label><textarea id="f_credNotes" rows="2">${esc(c.notes || '')}</textarea></div>
+       </div>
+       <div class="inline-actions">
+         <button class="btn sec" data-act="save-credentials">Salva credenziali</button>
+       </div>`
+    : `<table class="detail-table">${[
+        ['VPN', c.vpn || '–'],
+        ['Utenze di test', c.users || '–'],
+        ['Metodo di consegna dei segreti', c.deliveryMethod || '–'],
+        ['Note', c.notes || '–']
+      ].map(r => `<tr><td>${r[0]}</td><td><b>${esc(r[1])}</b></td></tr>`).join('')}</table>`;
+
+  return `<div class="card" style="margin-top:12px">
+    <details class="scope-cred"${c.done ? '' : ''}>
+      <summary>Credenziali ${state}</summary>
+      <p class="sub" style="margin:8px 0">Facoltative: servono al Pentester per lavorare, ma non bloccano il workflow e si possono aggiornare fino all'avvio.</p>
+      <div class="note blocked"><b>Conservazione:</b> le credenziali vengono eliminate automaticamente al termine del test; se l'attività prevede il retest, restano valide fino alla chiusura del retest.</div>
+      ${body}
+    </details>
+  </div>`;
 }
 
 function reviewCard(d) {
@@ -5604,7 +5619,7 @@ const BASE_ROUTES = {
   solicitations: '/solicitations',
   users: '/users'
 };
-const DETAIL_TABS = ['setup', 'docs', 'scope', 'plan', 'cred', 'run', 'reports', 'mail'];
+const DETAIL_TABS = ['setup', 'docs', 'scope', 'plan', 'run', 'reports', 'mail'];
 const ROUTE_ADMIN_TABS = ADMIN_TABS.map(([id]) => id);
 const LIST_FILTERS = ['action', 'waiting', 'progress', 'done', 'risk'];
 
@@ -6821,15 +6836,16 @@ const actions = {
   },
 
   'save-scope': async () => {
+    const targets = (state.scopeTargets || []).map(target => target.value);
     const body = {
-      host: $('#f_host').value.trim(),
-      ipRange: $('#f_ipRange').value.trim(),
-      outOfScope: $('#f_outOfScope').value.trim(),
-      window: $('#f_window').value.trim(),
-      contact: $('#f_contact').value.trim(),
-      notes: $('#f_notes').value.trim()
+      targets,
+      outOfScope: $('#f_outOfScope')?.value.trim() || '',
+      window: $('#f_window')?.value.trim() || '',
+      contact: $('#f_contact')?.value.trim() || '',
+      notes: $('#f_notes')?.value.trim() || ''
     };
-    if (!body.host || !body.contact) { toast('Target e referente tecnico sono obbligatori'); return; }
+    if (!targets.length) { toast('Aggiungi almeno un target in scope'); return; }
+    if (!body.contact) { toast('Il referente tecnico è obbligatorio'); return; }
     try {
       await api(`/api/engagements/${engagedId()}/scope?` + qs(), { method: 'PUT', body: JSON.stringify(body) });
       delete state.editing.scope;
@@ -6861,16 +6877,44 @@ const actions = {
     } catch (error) { toast(error.message); }
   },
 
-  'verify-reachability': async el => {
-    const verified = el.dataset.verified === '1';
+  'scope-add-target': () => {
+    const input = $('#f_target');
+    const value = (input?.value || '').trim();
+    if (!value) { toast('Scrivi un IP, un hostname o una descrizione'); return; }
+    const targets = state.scopeTargets || [];
+    if (targets.some(target => target.value.toLowerCase() === value.toLowerCase())) {
+      toast('Target già presente');
+      return;
+    }
+    state.scopeTargets = [...targets, { value, verified: false, saved: false }];
+    render();
+    setTimeout(() => $('#f_target')?.focus(), 30);
+  },
+
+  'scope-remove-target': el => {
+    const value = el.dataset.value || '';
+    state.scopeTargets = (state.scopeTargets || [])
+      .filter(target => target.value !== value);
+    render();
+  },
+
+  'verify-target': async el => {
+    const value = el.dataset.value || '';
+    const verified = !!el.checked;
+    el.disabled = true;
     try {
       await api(`/api/engagements/${engagedId()}/reachability?` + qs(), {
-        method: 'POST', body: JSON.stringify({ verified })
+        method: 'POST', body: JSON.stringify({ target: value, verified })
       });
-      toast(verified ? 'Raggiungibilità confermata' : 'Verifica annullata');
+      toast(verified ? 'Target verificato' : 'Verifica rimossa');
       await refreshDetail();
-      await loadList();
-    } catch (error) { toast(error.message); }
+      await loadScope();
+      render();
+    } catch (error) {
+      el.checked = !verified;
+      el.disabled = false;
+      toast(error.message);
+    }
   },
 
   'upload-report': async el => {
@@ -7194,7 +7238,6 @@ const busyActions = new Set([
   'new-engagement', 'save-rule-details', 'send-solicitation', 'upload-manleva',
   'upload-ingaggio', 'register-order', 'save-order', 'edit-financials', 'save-financials-inline', 'approve-financials', 'propose', 'reschedule',
   'decide', 'save-scope', 'save-credentials', 'save-setup', 'upload-report',
-  'verify-reachability',
   'download-report', 'create-download-link', 'submit-review', 'review-decide', 'publish', 'add-dl',
   'remove-dl', 'invite-team', 'remove-team', 'toggle-mail', 'send-mail', 'export-log', 'retry-list',
   'admin-save-templates'
@@ -7277,6 +7320,9 @@ document.addEventListener('change', event => {
     // Catalogo tipi: si salva da solo a ogni modifica della riga.
     const row = el.closest('.act-row');
     if (row) Promise.resolve(saveActivityRow(row)).catch(error => toast(error.message));
+  }
+  if (kind === 'verify-target') {
+    Promise.resolve(actions['verify-target'](el)).catch(error => toast(error.message));
   }
   if (kind === 'client-dl') {
     Promise.resolve(actions['client-dl-toggle'](el)).catch(error => toast(error.message));

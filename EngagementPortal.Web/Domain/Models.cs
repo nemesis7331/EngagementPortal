@@ -77,6 +77,8 @@ public static class Roles
 
 public sealed class ScopeData
 {
+    // Target in scope: una voce libera per riga (IP, hostname o descrizione).
+    public List<ScopeTarget> Targets { get; set; } = [];
     public string? Host { get; set; }
     public string? IpRange { get; set; }
     public string? OutOfScope { get; set; }
@@ -86,6 +88,18 @@ public sealed class ScopeData
     public bool Done { get; set; }
     public string? By { get; set; }
     public DateTimeOffset? Date { get; set; }
+}
+
+/// <summary>
+/// Un target in scope con la conferma di raggiungibilità: è il Pentester a
+/// verificare ogni voce, due settimane prima del test.
+/// </summary>
+public sealed class ScopeTarget
+{
+    public required string Value { get; set; }
+    public bool Verified { get; set; }
+    public string? VerifiedBy { get; set; }
+    public DateTimeOffset? VerifiedDate { get; set; }
 }
 
 public sealed class CredentialData
@@ -485,7 +499,8 @@ public sealed record ScopeRequest(
     string? OutOfScope,
     string? Window,
     string? Contact,
-    string? Notes);
+    string? Notes,
+    List<string>? Targets = null);
 
 public sealed record CredentialsRequest(
     string? Vpn,
@@ -493,8 +508,8 @@ public sealed record CredentialsRequest(
     string? DeliveryMethod,
     string? Notes);
 
-/// <summary>Conferma o annulla la verifica di raggiungibilità dei target.</summary>
-public sealed record ReachabilityRequest(bool Verified);
+/// <summary>Conferma o annulla la raggiungibilità di un singolo target.</summary>
+public sealed record ReachabilityRequest(string Target, bool Verified);
 
 public sealed record DistributionEntryRequest(
     string Name,

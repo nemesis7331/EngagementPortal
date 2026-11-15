@@ -621,7 +621,7 @@ api.MapGet("/admin/mailing-lists", (
             EngagementType = engagement.TypeKey,
             StepIndex = EngagementWorkflow.StepIndex(
                 workflow.Resolve(engagement, clock.Today)),
-            StepCount = engagement.RetestPlanned ? 10 : 8,
+            StepCount = engagement.RetestPlanned ? 9 : 7,
             Kind = "notifications",
             KindLabel = "Notifiche",
             Recipients = engagement.DistributionList,
@@ -644,7 +644,7 @@ api.MapGet("/admin/mailing-lists", (
             EngagementType = engagement.TypeKey,
             StepIndex = EngagementWorkflow.StepIndex(
                 workflow.Resolve(engagement, clock.Today)),
-            StepCount = engagement.RetestPlanned ? 10 : 8,
+            StepCount = engagement.RetestPlanned ? 9 : 7,
             Kind = "deliverables",
             KindLabel = "Deliverables",
             Recipients = engagement.DeliverablesDistributionList,
@@ -2036,17 +2036,61 @@ api.MapPut("/engagements/{id}/scope", (
     scope.Window = request.Window?.Trim();
     scope.Contact = request.Contact?.Trim();
     scope.Notes = request.Notes?.Trim();
-    scope.Done = !string.IsNullOrWhiteSpace(scope.Host) &&
+
+    // Target in scope: elenco libero. Le voci già presenti mantengono la
+    // verifica di raggiungibilità, le nuove partono da verificare.
+    if (request.Targets is not null)
+    {
+        var values = request.Targets
+            .Where(value => !string.IsNullOrWhiteSpace(value))
+            .Select(value => value.Trim())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        var existing = scope.Targets
+            .GroupBy(target => target.Value, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(
+                group => group.Key,
+                group => group.First(),
+                StringComparer.OrdinalIgnoreCase);
+
+        scope.Targets = values
+            .Select(value => existing.TryGetValue(value, out var target)
+                ? target
+                : new ScopeTarget { Value = value })
+            .ToList();
+    }
+
+    scope.Done = scope.Targets.Count > 0 &&
                  !string.IsNullOrWhiteSpace(scope.Contact);
     scope.By = user.Role;
     scope.Date = clock.UtcNow;
 
     engagement.ScopeDone = scope.Done;
 
+    // La verifica di raggiungibilità è completa solo se tutte le voci lo sono.
+    var allVerified = scope.Targets.Count > 0 &&
+        scope.Targets.All(target => target.Verified);
+    engagement.ReachabilityVerified = allVerified;
+
+    if (allVerified)
+    {
+        var last = scope.Targets
+            .OrderByDescending(target => target.VerifiedDate)
+            .First();
+        engagement.ReachabilityVerifiedBy = last.VerifiedBy;
+        engagement.ReachabilityVerifiedDate = last.VerifiedDate;
+    }
+    else
+    {
+        engagement.ReachabilityVerifiedBy = null;
+        engagement.ReachabilityVerifiedDate = null;
+    }
+
     engagement.AddAudit(
         user.Name,
         user.Role,
-        "Scope aggiornato",
+        $"Scope aggiornato · {scope.Targets.Count} target",
         AuditVisibility.ProviderOnly,
         "Scope aggiornato");
 
@@ -2139,8 +2183,8 @@ api.MapPost("/engagements/{id}/reachability", (
     if (user.Role != Roles.Pentester)
         return Forbidden();
 
-    if (!engagement.CredentialsDone)
-        return Results.BadRequest("Prima servono le credenziali di accesso.");
+    if (engagement.AcceptedProposal is null)
+        return Results.BadRequest("Servono prima le date concordate.");
 
     var phase = workflow.Resolve(engagement, clock.Today);
 
@@ -2150,23 +2194,53 @@ api.MapPost("/engagements/{id}/reachability", (
             "La verifica si può fare solo prima dell'esecuzione.");
     }
 
-    if (request.Verified != engagement.ReachabilityVerified)
-    {
-        engagement.ReachabilityVerified = request.Verified;
-        engagement.ReachabilityVerifiedBy = request.Verified ? user.Name : null;
-        engagement.ReachabilityVerifiedDate = request.Verified ? clock.UtcNow : null;
+    var value = request.Target?.Trim();
+    var target = engagement.Scope.Targets.FirstOrDefault(item =>
+        string.Equals(item.Value, value, StringComparison.OrdinalIgnoreCase));
 
-        engagement.AddAudit(
-            user.Name,
-            user.Role,
-            request.Verified
-                ? "Verificata la raggiungibilità di tutti i target in scope"
-                : "Verifica di raggiungibilità annullata",
-            AuditVisibility.ProviderOnly);
+    if (target is null)
+        return Results.NotFound();
+
+    if (target.Verified != request.Verified)
+    {
+        target.Verified = request.Verified;
+        target.VerifiedBy = request.Verified ? user.Name : null;
+        target.VerifiedDate = request.Verified ? clock.UtcNow : null;
     }
 
+    // La verifica dell'attività è completa solo con tutte le voci confermate.
+    var allVerified = engagement.Scope.Targets.Count > 0 &&
+        engagement.Scope.Targets.All(item => item.Verified);
+    engagement.ReachabilityVerified = allVerified;
+
+    if (allVerified)
+    {
+        var last = engagement.Scope.Targets
+            .OrderByDescending(item => item.VerifiedDate)
+            .First();
+        engagement.ReachabilityVerifiedBy = last.VerifiedBy;
+        engagement.ReachabilityVerifiedDate = last.VerifiedDate;
+    }
+    else
+    {
+        engagement.ReachabilityVerifiedBy = null;
+        engagement.ReachabilityVerifiedDate = null;
+    }
+
+    engagement.AddAudit(
+        user.Name,
+        user.Role,
+        request.Verified
+            ? $"Verificato target in scope: {target.Value}"
+            : $"Verifica rimossa: {target.Value}",
+        AuditVisibility.ProviderOnly);
+
     repository.Save(engagement);
-    return Results.Ok(new { verified = engagement.ReachabilityVerified });
+    return Results.Ok(new
+    {
+        verified = target.Verified,
+        allVerified
+    });
 });
 
 api.MapGet("/engagements/{id}/reports", (
@@ -3970,7 +4044,7 @@ static object Summary(
         Phase = phase,
         StepIndex = EngagementWorkflow.StepIndex(phase),
         // Passi totali: sette, piu i due di retest quando il recheck e previsto.
-        StepCount = engagement.RetestPlanned ? 10 : 8,
+        StepCount = engagement.RetestPlanned ? 9 : 7,
         RetestPlanned = engagement.RetestPlanned,
         Todo = todos.Resolve(engagement, user.Role),
         ActionState = todos.ResolveAction(
@@ -4260,18 +4334,31 @@ static object Detail(
         Phase = phase,
         StepIndex = EngagementWorkflow.StepIndex(phase),
         // Passi totali: otto, piu i due di retest quando il recheck e previsto.
-        StepCount = engagement.RetestPlanned ? 10 : 8,
+        StepCount = engagement.RetestPlanned ? 9 : 7,
         RetestPlanned = engagement.RetestPlanned,
-        // Verifica raggiungibilità: la conferma è del Pentester, prima
-        // dell'esecuzione; si può annullare finché l'attività non è partita.
+        // Verifica raggiungibilità: la conferma è del Pentester, per ogni
+        // target, due settimane prima del test.
         Reachability = new
         {
             Verified = engagement.ReachabilityVerified,
             VerifiedBy = engagement.ReachabilityVerifiedBy,
             VerifiedDate = engagement.ReachabilityVerifiedDate?.ToString("yyyy-MM-dd"),
+            Deadline = engagement.AcceptedProposal is null
+                ? null
+                : engagement.AcceptedProposal.StartDate
+                    .AddDays(-14)
+                    .ToString("yyyy-MM-dd"),
+            DaysToDeadline = engagement.AcceptedProposal is null
+                ? (int?)null
+                : engagement.AcceptedProposal.StartDate
+                    .AddDays(-14)
+                    .DayNumber - clock.Today.DayNumber,
+            Targets = engagement.Scope.Targets.Count,
+            VerifiedTargets = engagement.Scope.Targets.Count(target => target.Verified),
             CanVerify = user.Role == Roles.Pentester &&
+                engagement.AcceptedProposal is not null &&
                 (phase is EngagementPhase.Reachability or EngagementPhase.Scheduled) &&
-                engagement.CredentialsDone
+                engagement.Scope.Targets.Count > 0
         },
         Todo = todos.Resolve(engagement, user.Role),
         ActionState = todos.ResolveAction(

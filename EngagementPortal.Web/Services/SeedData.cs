@@ -366,7 +366,7 @@ public static class SeedData
             "CR API pagamenti", EngagementType.CodeReview, 8,
             reachabilityVerified: false);
 
-        var start = Monday(3);
+        var start = Monday(1);
         var end = Friday(start);
 
         Docs(engagement, "PO-2026-0164");
@@ -599,8 +599,22 @@ public static class SeedData
         DateOnly date)
     {
         engagement.ScopeDone = true;
+        // Target come elenco libero: host e range storici diventano due voci;
+        // se l'attività è già oltre la preparazione risultano verificati.
+        var targets = new[] { host, ipRange }
+            .Where(value => !string.IsNullOrWhiteSpace(value))
+            .Select(value => new ScopeTarget
+            {
+                Value = value,
+                Verified = engagement.ReachabilityVerified,
+                VerifiedBy = engagement.ReachabilityVerified ? "Sara Conti" : null,
+                VerifiedDate = engagement.ReachabilityVerified ? At(date) : null
+            })
+            .ToList();
+
         engagement.Scope = new ScopeData
         {
+            Targets = targets,
             Host = host,
             IpRange = ipRange,
             OutOfScope = outOfScope,
