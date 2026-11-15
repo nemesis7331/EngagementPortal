@@ -1273,6 +1273,8 @@ const state = {
   adminTemplates: null,
   adminMailingId: '',
   adminTemplateTarget: { scope: 'standard', clientId: '', type: 'start' },
+  // Blocchi del Setup aperti/chiusi: aperti di default, la scelta resta.
+  setupFold: { team: true, dl: true },
   adminError: null,
   loading: false,
   error: null,
@@ -3609,11 +3611,11 @@ function tabSetup(d) {
         : ''}
     </div>
   </div>
-  <details class="setup-fold">
+  <details class="setup-fold" data-fold="team" ${state.setupFold.team ? 'open' : ''}>
     <summary>Team · ${team} persone</summary>
     ${tabTeam(d)}
   </details>
-  <details class="setup-fold">
+  <details class="setup-fold" data-fold="dl" ${state.setupFold.dl ? 'open' : ''}>
     <summary>Distribution list · ${notifications} notifiche · ${deliverables} deliverables</summary>
     ${tabDl(d)}
   </details>`;
@@ -5544,7 +5546,18 @@ function render() {
   else if (state.view === 'detail' && state.detail) renderDetail();
   else renderList();
   renderUserModal();
+  rememberSetupFolds();
   syncRoute();
+}
+
+// I blocchi del Setup sono aperti di default e la scelta dell'utente resta
+// anche dopo un render (l'evento toggle non risale, quindi si aggancia qui).
+function rememberSetupFolds() {
+  document.querySelectorAll('details[data-fold]').forEach(details => {
+    details.addEventListener('toggle', () => {
+      state.setupFold[details.dataset.fold] = details.open;
+    });
+  });
 }
 
 /* ====== AZIONI ====== */
