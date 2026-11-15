@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace EngagementPortal.Web.Domain;
 
 public enum EngagementType
@@ -6,7 +8,10 @@ public enum EngagementType
     VulnerabilityAssessment,
     RedTeam,
     CodeReview,
-    CloudSecurity
+    CloudSecurity,
+    // Tipo creato da Amministrazione › Tipi di attività: la chiave vera sta
+    // in Engagement.ActivityTypeKey e il catalogo la risolve.
+    Custom
 }
 
 public enum EngagementPhase
@@ -244,6 +249,20 @@ public sealed class Engagement
     public required string ClientName { get; set; }
     public required string Name { get; set; }
     public required EngagementType Type { get; init; }
+
+    /// <summary>
+    /// Chiave del catalogo dei tipi di attività. I tipi standard coincidono con
+    /// l'enum; quelli creati da Amministrazione hanno una chiave propria e
+    /// portano <see cref="Type"/> a <see cref="EngagementType.Custom"/>.
+    /// </summary>
+    public string? ActivityTypeKey { get; set; }
+
+    /// <summary>Chiave da usare ovunque al posto dell'enum.</summary>
+    [JsonIgnore]
+    public string TypeKey => string.IsNullOrWhiteSpace(ActivityTypeKey)
+        ? Type.ToString()
+        : ActivityTypeKey;
+
     public required string Owner { get; init; }
 
     public DateTimeOffset CreatedDate { get; init; } = DateTimeOffset.UtcNow;
@@ -560,7 +579,7 @@ public sealed record RetestReportRequest(
 
 public sealed record CreateEngagementRequest(
     string Name,
-    EngagementType Type,
+    string? Type,
     string? ClientId,
     string? Id);
 

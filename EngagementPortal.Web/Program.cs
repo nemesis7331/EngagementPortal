@@ -463,6 +463,29 @@ api.MapGet("/activity-types", (
         : Results.Ok(activities.All());
 });
 
+api.MapPost("/activity-types", (
+    ActivityTypeRequest request,
+    HttpContext context,
+    ActivityTypes activities) =>
+{
+    var current = GetUser(context);
+
+    if (current.Role is not (Roles.Manager or Roles.PMO))
+        return Forbidden();
+
+    var created = activities.Create(
+        request.Label,
+        request.Short,
+        request.Description,
+        request.RetestPlanned,
+        request.DeliverableTypes,
+        out var error);
+
+    return created is null
+        ? Results.BadRequest(error)
+        : Results.Ok(created);
+});
+
 api.MapPut("/activity-types/{key}", (
     string key,
     ActivityTypeRequest request,
@@ -495,6 +518,32 @@ api.MapPut("/activity-types/{key}", (
     }
 
     return Results.Ok(new { status = "ok", reset = false });
+});
+
+api.MapDelete("/activity-types/{key}", (
+    string key,
+    HttpContext context,
+    ActivityTypes activities,
+    IEngagementRepository repository) =>
+{
+    var current = GetUser(context);
+
+    if (current.Role is not (Roles.Manager or Roles.PMO))
+        return Forbidden();
+
+    // Un tipo in uso resta: gli engagement non devono perdere la loro chiave.
+    var used = repository.List(string.Empty, true).Count(item =>
+        string.Equals(item.TypeKey, key, StringComparison.OrdinalIgnoreCase));
+
+    if (used > 0)
+    {
+        return Results.BadRequest(
+            $"Il tipo è usato da {used} engagement: non si può eliminare.");
+    }
+
+    return activities.Delete(key, out var error)
+        ? Results.Ok(new { status = "ok", deleted = true })
+        : Results.BadRequest(error);
 });
 
 api.MapGet("/admin/mailing-lists", (
@@ -571,7 +620,7 @@ api.MapGet("/admin/mailing-lists", (
             EngagementId = engagement.Id,
             EngagementName = engagement.Name,
             // Servono alla pastiglia dell'engagement nella mailing list.
-            EngagementType = engagement.Type.ToString(),
+            EngagementType = engagement.TypeKey,
             StepIndex = EngagementWorkflow.StepIndex(
                 workflow.Resolve(engagement, clock.Today)),
             StepCount = engagement.RetestPlanned ? 9 : 7,
@@ -594,7 +643,7 @@ api.MapGet("/admin/mailing-lists", (
             EngagementId = engagement.Id,
             EngagementName = engagement.Name,
             // Servono alla pastiglia dell'engagement nella mailing list.
-            EngagementType = engagement.Type.ToString(),
+            EngagementType = engagement.TypeKey,
             StepIndex = EngagementWorkflow.StepIndex(
                 workflow.Resolve(engagement, clock.Today)),
             StepCount = engagement.RetestPlanned ? 9 : 7,
@@ -1311,6 +1360,17 @@ api.MapPost("/engagements", (
     if (repository.Get(id, string.Empty, true) is not null)
         return Results.Conflict();
 
+    var type = activities.Get(
+        string.IsNullOrWhiteSpace(request.Type)
+            ? nameof(EngagementType.PenetrationTest)
+            : request.Type);
+
+    if (type is null)
+        return Results.BadRequest("type non corrisponde a un tipo di attività.");
+
+    var builtIn = Enum.TryParse<EngagementType>(type.Key, true, out var standardType) &&
+        Enum.IsDefined(standardType);
+
     var engagement = new Engagement
     {
         Id = id,
@@ -1319,13 +1379,14 @@ api.MapPost("/engagements", (
         // tutti gli engagement senza duplicare il dato.
         ClientName = client.Name,
         Name = request.Name.Trim(),
-        Type = request.Type,
+        Type = builtIn ? standardType : EngagementType.Custom,
+        ActivityTypeKey = type.Key,
         Owner = user.Name,
         CreatedDate = clock.UtcNow,
         SetupDone = false,
         Language = "it",
         // Default dal tipo di attività: il Setup potrà cambiarlo.
-        RetestPlanned = activities.Get(request.Type.ToString())?.RetestPlanned ?? false
+        RetestPlanned = type.RetestPlanned
     };
     engagement.DeliverableTypes.Clear();
 
@@ -3705,7 +3766,7 @@ static object Summary(
         engagement.ClientId,
         engagement.Name,
         engagement.ClientName,
-        engagement.Type,
+        Type = engagement.TypeKey,
         Owner = user.Role == Roles.Client
             ? null
             : engagement.Owner,
@@ -3941,7 +4002,7 @@ static object Detail(
             engagement.ClientId,
             engagement.ClientName,
             engagement.Name,
-            engagement.Type,
+            Type = engagement.TypeKey,
             engagement.SetupDone,
             engagement.Language,
             engagement.DeliverableTypes,
