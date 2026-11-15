@@ -15,6 +15,26 @@ public static class SeedData
     private static DateTimeOffset DaysAgo(int days) =>
         DateTimeOffset.UtcNow.AddDays(-days);
 
+    private static DateTimeOffset At(DateOnly date) =>
+        new(date.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero);
+
+    /// <summary>
+    /// Lunedì della settimana corrente (0) o di una settimana prima/ dopo:
+    /// le attività demo partono sempre a inizio settimana.
+    /// </summary>
+    private static DateOnly Monday(int weeksFromThisWeek = 0)
+    {
+        var monday = Today.AddDays(-(((int)Today.DayOfWeek + 6) % 7));
+        return monday.AddDays(7 * weeksFromThisWeek);
+    }
+
+    /// <summary>
+    /// Venerdì di chiusura della finestra: una settimana standard, tre o
+    /// quattro per le attività lunghe (red team).
+    /// </summary>
+    private static DateOnly Friday(DateOnly monday, int weeks = 1) =>
+        monday.AddDays(7 * weeks - 3);
+
     public static List<Engagement> Engagements()
     {
         var engagements = new List<Engagement>
@@ -75,10 +95,13 @@ public static class SeedData
             "ENG-2026-001", "anthropic", "Anthropic",
             "PT perimetro esterno", EngagementType.PenetrationTest, 6);
 
+        var start = Monday(2);
+        var end = Friday(start);
+
         Docs(engagement, "PO-2026-0142");
         Financials(engagement, 12000m, 46m);
         Distribution(engagement);
-        Proposal(engagement, "P-001", Today.AddDays(7), Today.AddDays(12),
+        Proposal(engagement, "P-001", start, end,
             ProposalStatus.Pending, note: "Finestra proposta dal team PMO");
         Audit(engagement, "Luca Ferri", Roles.PMO,
             "Proposta di pianificazione creata");
@@ -104,19 +127,24 @@ public static class SeedData
             "ENG-2026-003", "anthropic", "Anthropic",
             "WAPT portale clienti", EngagementType.PenetrationTest, 25);
 
+        var start = Monday(-1);
+        var end = Friday(start);
+
         Docs(engagement, "PO-2026-0107");
         Financials(engagement, 9000m, 46m);
         Scope(engagement,
             "app.anthropic.example", "10.20.30.0/24",
             "Ambienti di produzione", "Lun-Ven 20:00-06:00",
-            "security@anthropic.example", "Retest dopo remediation", 12);
+            "security@anthropic.example", "Retest dopo remediation",
+            start.AddDays(-3));
         Credentials(engagement,
             "VPN-ANTHROPIC-01", "2 utenze di test",
-            "Azure Key Vault", "Nessuna password condivisa", 12);
+            "Azure Key Vault", "Nessuna password condivisa",
+            start.AddDays(-3));
         Distribution(engagement);
-        Mail(engagement, "start", 10);
-        Mail(engagement, "end", 4);
-        Proposal(engagement, "P-003", Today.AddDays(-10), Today.AddDays(-5),
+        Mail(engagement, "start", start);
+        Mail(engagement, "end", start.AddDays(3));
+        Proposal(engagement, "P-003", start, end,
             ProposalStatus.Accepted, ProposalParty.Client, "Marta Rinaldi");
         engagement.DeliverableTypes.Clear();
         engagement.DeliverableTypes.AddRange(
@@ -140,6 +168,9 @@ public static class SeedData
         engagement.ReviewStatus = ReviewStatus.Pending;
         Audit(engagement, "Sara Conti", Roles.Pentester,
             "Deliverable inviato in revisione");
+        SolicitationMail(engagement, "review", Today.AddDays(-2),
+            "giorgio.marino@provider.example",
+            "Sollecito: revisione dei deliverable ENG-2026-003");
         return engagement;
     }
 
@@ -147,21 +178,26 @@ public static class SeedData
     {
         var engagement = New(
             "ENG-2026-004", "nvidia", "Nvidia",
-            "RT rete interna", EngagementType.RedTeam, 12);
+            "RT rete interna", EngagementType.RedTeam, 25);
+
+        // Red team: quattro settimane, dal lunedì al venerdì.
+        var start = Monday(-2);
+        var end = Friday(start, 4);
 
         Docs(engagement, "PO-2026-0188");
         Financials(engagement, 18000m, 46m);
         Scope(engagement,
             "redteam.nvidia.example", "10.40.0.0/16",
             "Sistemi di pagamento", "Sempre attivo",
-            "soc@nvidia.example", "Esercitazione con regole concordate", 7);
+            "soc@nvidia.example", "Esercitazione con regole concordate",
+            start.AddDays(-4));
         Credentials(engagement,
             "VPN-NOVA-02", "4 utenze dedicate",
-            "Portale sicuro", "Credenziali consegnate su canale cifrato", 7);
+            "Portale sicuro", "Credenziali consegnate su canale cifrato",
+            start.AddDays(-4));
         Distribution(engagement);
-        Mail(engagement, "start", 3);
-        Proposal(engagement, "P-004", Today.AddDays(-3), Today.AddDays(4),
-            ProposalStatus.Accepted);
+        Mail(engagement, "start", start);
+        Proposal(engagement, "P-004", start, end, ProposalStatus.Accepted);
         Audit(engagement, "Luca Ferri", Roles.PMO, "Engagement avviato");
         return engagement;
     }
@@ -172,19 +208,22 @@ public static class SeedData
             "ENG-2026-005", "anthropic", "Anthropic",
             "VA cloud pre-produzione", EngagementType.CloudSecurity, 4);
 
+        var start = Monday(1);
+        var end = Friday(start);
+
         Docs(engagement, "PO-2026-0201");
         Financials(engagement, 15000m, 46m);
         Scope(engagement,
             "cloud.anthropic.example", "Sottoscrizioni Azure",
             "Ambiente di produzione", "Lun-Ven 09:00-18:00",
             "cloud-security@anthropic.example",
-            "Assessment su ambiente di pre-produzione", 2);
+            "Assessment su ambiente di pre-produzione", start.AddDays(-6));
         Credentials(engagement,
             "Non richiesta", "Service principal di sola lettura",
-            "Azure Key Vault", "Nessuna password condivisa", 2);
+            "Azure Key Vault", "Nessuna password condivisa",
+            start.AddDays(-6));
         Distribution(engagement);
-        Proposal(engagement, "P-005", Today.AddDays(7), Today.AddDays(17),
-            ProposalStatus.Accepted);
+        Proposal(engagement, "P-005", start, end, ProposalStatus.Accepted);
         Audit(engagement, "Luca Ferri", Roles.PMO,
             "Proposta di pianificazione accettata");
         return engagement;
@@ -195,23 +234,28 @@ public static class SeedData
         var engagement = New(
             "ENG-2026-006", "nvidia", "Nvidia",
             "WAPT sito vetrina",
-            EngagementType.PenetrationTest, 40);
+            EngagementType.PenetrationTest, 50);
+
+        var start = Monday(-5);
+        var end = Friday(start);
+        var retestStart = Monday(-2);
+        var retestEnd = Friday(retestStart);
 
         Docs(engagement, "PO-2026-0091");
         Financials(engagement, 20000m, 46m);
         Scope(engagement,
             "portal.nvidia.example", "10.50.10.0/24",
             "App mobile", "Lun-Ven 20:00-06:00",
-            "appsec@nvidia.example", "Test completato", 35);
+            "appsec@nvidia.example", "Test completato", start.AddDays(-5));
         Credentials(engagement,
             "VPN-NOVA-01", "3 utenze di test",
-            "Azure Key Vault", "Credenziali revocate a fine test", 35);
+            "Azure Key Vault", "Credenziali revocate a fine test",
+            start.AddDays(-5));
         Distribution(engagement);
-        Mail(engagement, "start", 30);
-        Mail(engagement, "end", 21);
-        Mail(engagement, "deliver", 20);
-        Proposal(engagement, "P-006", Today.AddDays(-30), Today.AddDays(-20),
-            ProposalStatus.Accepted);
+        Mail(engagement, "start", start);
+        Mail(engagement, "end", end);
+        Mail(engagement, "deliver", end.AddDays(10));
+        Proposal(engagement, "P-006", start, end, ProposalStatus.Accepted);
         Report(engagement, "R-006",
             "Report_ENG-2026-006_finale.txt", true, 21);
         engagement.ReviewStatus = ReviewStatus.Approved;
@@ -220,31 +264,31 @@ public static class SeedData
 
         // Retest concluso: richiesto dal cliente, date approvate, report
         // inviato senza revisione. Caso demo del percorso completo.
-        engagement.RetestRequestedDate = DaysAgo(18);
+        engagement.RetestRequestedDate = At(retestStart.AddDays(-5));
         engagement.RetestRequestedByName = "Giulia Sala";
         engagement.RetestProposals.Add(new Proposal
         {
             Id = "RE-01",
             By = "Luca Ferri",
             Kind = "retest",
-            StartDate = Today.AddDays(-15),
-            EndDate = Today.AddDays(-13),
-            Date = Today.AddDays(-16),
+            StartDate = retestStart,
+            EndDate = retestEnd,
+            Date = retestStart.AddDays(-4),
             Status = ProposalStatus.Accepted,
             Note = "Retest dopo i fix"
         });
         engagement.AcceptedRetestProposal = engagement.RetestProposals[0];
-        engagement.RetestCompletedDate = DaysAgo(12);
+        engagement.RetestCompletedDate = At(retestEnd);
         engagement.RetestReport = new ReportFile(
             "R-006-RT",
             "Report_ENG-2026-006_retest.txt",
             "PDF",
             0,
-            DaysAgo(12),
+            At(retestEnd),
             true,
             "Retest");
-        engagement.RetestReportSentDate = DaysAgo(11);
-        Mail(engagement, "retestreport", 11);
+        engagement.RetestReportSentDate = At(retestEnd.AddDays(1));
+        Mail(engagement, "retestreport", retestEnd.AddDays(1));
         Audit(engagement, "Sara Conti", Roles.Pentester,
             "Report di retest inviato al cliente (senza revisione)");
         return engagement;
@@ -255,23 +299,27 @@ public static class SeedData
         var engagement = New(
             "ENG-2026-015", "anthropic", "Anthropic",
             "VA rete interna",
-            EngagementType.VulnerabilityAssessment, 45);
+            EngagementType.VulnerabilityAssessment, 55);
+
+        var start = Monday(-6);
+        var end = Friday(start);
 
         Docs(engagement, "PO-2026-0088");
         Financials(engagement, 7000m, 46m);
         Scope(engagement,
             "intranet.anthropic.example", "10.20.50.0/24",
             "Sistemi di produzione", "Lun-Ven 20:00-06:00",
-            "security@anthropic.example", "Assessment concluso", 40);
+            "security@anthropic.example", "Assessment concluso",
+            start.AddDays(-5));
         Credentials(engagement,
             "VPN-ANTHROPIC-02", "2 utenze di test",
-            "Azure Key Vault", "Credenziali revocate a fine test", 40);
+            "Azure Key Vault", "Credenziali revocate a fine test",
+            start.AddDays(-5));
         Distribution(engagement);
-        Mail(engagement, "start", 35);
-        Mail(engagement, "end", 26);
-        Mail(engagement, "deliver", 25);
-        Proposal(engagement, "P-015", Today.AddDays(-35), Today.AddDays(-25),
-            ProposalStatus.Accepted);
+        Mail(engagement, "start", start);
+        Mail(engagement, "end", end);
+        Mail(engagement, "deliver", end.AddDays(10));
+        Proposal(engagement, "P-015", start, end, ProposalStatus.Accepted);
         engagement.DeliverableTypes.Clear();
         engagement.DeliverableTypes.AddRange(
         [
@@ -299,11 +347,13 @@ public static class SeedData
             "ENG-2026-007", "anthropic", "Anthropic",
             "VA configurazione M365", EngagementType.CloudSecurity, 5);
 
+        var start = Monday(2);
+        var end = Friday(start);
+
         Docs(engagement, "PO-2026-0197");
         Financials(engagement, 11000m, 46m);
         Distribution(engagement);
-        Proposal(engagement, "P-007", Today.AddDays(9), Today.AddDays(19),
-            ProposalStatus.Accepted);
+        Proposal(engagement, "P-007", start, end, ProposalStatus.Accepted);
         Audit(engagement, "Luca Ferri", Roles.PMO,
             "Proposta di pianificazione accettata");
         return engagement;
@@ -315,18 +365,23 @@ public static class SeedData
             "ENG-2026-008", "nvidia", "Nvidia",
             "CR API pagamenti", EngagementType.CodeReview, 8);
 
+        var start = Monday(3);
+        var end = Friday(start);
+
         Docs(engagement, "PO-2026-0164");
         Financials(engagement, 14000m, 46m);
         Scope(engagement,
             "pay-api.nvidia.example", "10.20.40.0/24",
             "Produzione", "Lun-Ven 21:00-06:00",
             "appsec@nvidia.example",
-            "Revisione dei servizi di pagamento", 6);
+            "Revisione dei servizi di pagamento", start.AddDays(-6));
         Distribution(engagement);
-        Proposal(engagement, "P-008", Today.AddDays(14), Today.AddDays(24),
-            ProposalStatus.Accepted);
+        Proposal(engagement, "P-008", start, end, ProposalStatus.Accepted);
         Audit(engagement, "Luca Ferri", Roles.PMO,
             "Scope completato, credenziali in attesa");
+        SolicitationMail(engagement, "credentials", Today.AddDays(-3),
+            string.Join("; ", NotificationContacts("nvidia")),
+            "Sollecito: credenziali di accesso ENG-2026-008");
         return engagement;
     }
 
@@ -343,8 +398,14 @@ public static class SeedData
             "mobile.anthropic.example", "10.30.0.0/16",
             "Backend core", "Sempre attivo",
             "security@anthropic.example",
-            "Test su build di pre-produzione", 2);
+            "Test su build di pre-produzione", Today.AddDays(-2));
         Distribution(engagement);
+        // Proposta di date del cliente in attesa del Manager: è il caso in cui
+        // PMO e cliente possono sollecitare il Manager per la pianificazione.
+        var start = Monday(2);
+        Proposal(engagement, "P-009", start, Friday(start),
+            ProposalStatus.Pending, ProposalParty.Client, "Marta Rinaldi",
+            "Finestra proposta dal cliente");
         Audit(engagement, "Luca Ferri", Roles.PMO,
             "Scope completato, pianificazione da avviare");
         return engagement;
@@ -357,20 +418,22 @@ public static class SeedData
             "VA rete OT",
             EngagementType.VulnerabilityAssessment, 15);
 
+        var start = Monday(4);
+        var end = Friday(start);
+
         Docs(engagement, "PO-2026-0177");
         Financials(engagement, 24000m, 46m);
         Scope(engagement,
             "scada.nvidia.example", "10.60.0.0/16",
             "Rete corporate", "Notturno 22:00-06:00",
             "ot-security@nvidia.example",
-            "Verifica della segmentazione rete OT", 12);
+            "Verifica della segmentazione rete OT", start.AddDays(-7));
         Credentials(engagement,
             "VPN-NVIDIA-OT", "4 utenze dedicate",
             "Vault aziendale",
-            "Accesso limitato alla finestra notturna", 12);
+            "Accesso limitato alla finestra notturna", start.AddDays(-7));
         Distribution(engagement);
-        Proposal(engagement, "P-010", Today.AddDays(21), Today.AddDays(30),
-            ProposalStatus.Accepted);
+        Proposal(engagement, "P-010", start, end, ProposalStatus.Accepted);
         Audit(engagement, "Luca Ferri", Roles.PMO,
             "Pianificazione confermata");
         return engagement;
@@ -383,21 +446,25 @@ public static class SeedData
             "VA fornitore critico",
             EngagementType.VulnerabilityAssessment, 20);
 
+        var start = Monday(-1);
+        var end = Friday(start);
+
         Docs(engagement, "PO-2026-0129");
         Financials(engagement, 13000m, 46m);
         Scope(engagement,
             "thirdparty.anthropic.example", "10.50.20.0/24",
             "Dati di produzione", "Lun-Ven 09:00-18:00",
             "vendorrisk@anthropic.example",
-            "Assessment del fornitore critico", 16);
+            "Assessment del fornitore critico", start.AddDays(-4));
         Credentials(engagement,
             "VPN-NOVA-03", "2 utenze fornitore",
             "File cifrato (password su canale separato)",
-            "Credenziali condivise con il fornitore", 16);
+            "Credenziali condivise con il fornitore",
+            start.AddDays(-4));
         Distribution(engagement);
-        Mail(engagement, "start", 14);
-        Mail(engagement, "end", 7);
-        Proposal(engagement, "P-011", Today.AddDays(-15), Today.AddDays(-8),
+        Mail(engagement, "start", start);
+        Mail(engagement, "end", end);
+        Proposal(engagement, "P-011", start, end,
             ProposalStatus.Accepted, ProposalParty.Client, "Giulia Sala");
         Report(engagement, "R-011",
             "Report_ENG-2026-011_fornitore.txt", false, 2);
@@ -434,20 +501,24 @@ public static class SeedData
             "ENG-2026-013", "anthropic", "Anthropic",
             "RT e-commerce", EngagementType.RedTeam, 10);
 
+        // Red team: tre settimane, in corso.
+        var start = Monday(0);
+        var end = Friday(start, 3);
+
         Docs(engagement, "PO-2026-0194");
         Financials(engagement, 30000m, 46m);
         Scope(engagement,
             "shop.anthropic.example", "10.90.0.0/16",
             "Pagamenti", "Lun-Ven 22:00-06:00",
             "security@anthropic.example",
-            "Red team sull'e-commerce", 7);
+            "Red team sull'e-commerce", start.AddDays(-4));
         Credentials(engagement,
             "VPN-ANTHROPIC-01", "5 utenze di test",
-            "Azure Key Vault", "Credenziali temporanee", 7);
+            "Azure Key Vault", "Credenziali temporanee",
+            start.AddDays(-4));
         Distribution(engagement);
-        Mail(engagement, "start", 4);
-        Proposal(engagement, "P-013", Today.AddDays(-2), Today.AddDays(8),
-            ProposalStatus.Accepted);
+        Mail(engagement, "start", start);
+        Proposal(engagement, "P-013", start, end, ProposalStatus.Accepted);
         Audit(engagement, "Luca Ferri", Roles.PMO, "Engagement avviato");
         return engagement;
     }
@@ -459,19 +530,21 @@ public static class SeedData
             "VA SAP S/4HANA",
             EngagementType.VulnerabilityAssessment, 18);
 
+        var start = Monday(3);
+        var end = Friday(start);
+
         Docs(engagement, "PO-2026-0151");
         Financials(engagement, 28000m, 46m);
         Scope(engagement,
             "sap.nvidia.example", "10.80.0.0/16",
             "Sistemi finanziari", "Lun-Ven 20:00-06:00",
             "sap-security@nvidia.example",
-            "Assessment SAP S/4HANA", 14);
+            "Assessment SAP S/4HANA", start.AddDays(-7));
         Credentials(engagement,
             "VPN-NVIDIA-01", "3 utenze di test",
-            "Vault aziendale", "Accesso al mandante", 14);
+            "Vault aziendale", "Accesso al mandante", start.AddDays(-7));
         Distribution(engagement);
-        Proposal(engagement, "P-014", Today.AddDays(12), Today.AddDays(22),
-            ProposalStatus.Accepted);
+        Proposal(engagement, "P-014", start, end, ProposalStatus.Accepted);
         Audit(engagement, "Luca Ferri", Roles.PMO,
             "Pianificazione confermata");
         return engagement;
@@ -518,7 +591,7 @@ public static class SeedData
         string window,
         string contact,
         string notes,
-        int daysAgo)
+        DateOnly date)
     {
         engagement.ScopeDone = true;
         engagement.Scope = new ScopeData
@@ -531,7 +604,7 @@ public static class SeedData
             Notes = notes,
             Done = true,
             By = "Client User",
-            Date = DaysAgo(daysAgo)
+            Date = At(date)
         };
     }
 
@@ -541,7 +614,7 @@ public static class SeedData
         string users,
         string deliveryMethod,
         string notes,
-        int daysAgo)
+        DateOnly date)
     {
         engagement.CredentialsDone = true;
         engagement.SecretReference = $"kv://demo/{engagement.Id}";
@@ -553,7 +626,7 @@ public static class SeedData
             Notes = notes,
             Done = true,
             By = "Client User",
-            Date = DaysAgo(daysAgo)
+            Date = At(date)
         };
     }
 
@@ -623,13 +696,15 @@ public static class SeedData
             By = by,
             StartDate = start,
             EndDate = end,
-            Date = DateOnly.FromDateTime(DaysAgo(2).DateTime),
+            // La proposta nasce qualche giorno prima della finestra, mai nel
+            // futuro.
+            Date = start.AddDays(-5) > Today ? Today : start.AddDays(-5),
             Note = note,
             Status = status
         });
     }
 
-    private static void Mail(Engagement engagement, string type, int daysAgo)
+    private static void Mail(Engagement engagement, string type, DateOnly when)
     {
         var isDeliver = type is "deliver" or "retestreport";
         var list = isDeliver
@@ -642,7 +717,7 @@ public static class SeedData
         engagement.MailLog.Add(new MailLogEntry(
             $"M-{engagement.Id}-{type}",
             type,
-            DaysAgo(daysAgo),
+            At(when),
             string.Join(
                 "; ",
                 baseRecipients
@@ -650,6 +725,25 @@ public static class SeedData
                     .Distinct(StringComparer.OrdinalIgnoreCase)),
             true,
             "All"));
+    }
+
+    // Solleciti già partiti (registro demo): alimentano "Solleciti ricevuti"
+    // nella pagina Solleciti, senza bloccare l'invio di oggi.
+    private static void SolicitationMail(
+        Engagement engagement,
+        string taskKey,
+        DateOnly when,
+        string to,
+        string subject)
+    {
+        engagement.MailLog.Add(new MailLogEntry(
+            $"M-{engagement.Id}-{taskKey}-{when:yyyyMMdd}",
+            SolicitationService.LogPrefix + taskKey,
+            At(when),
+            to,
+            true,
+            "All",
+            subject));
     }
 
     // Destinatari base demo del cliente: rispecchiano il seed di

@@ -82,7 +82,9 @@ public static class Solicitation
         string taskKey,
         ResolvedMailTemplate template,
         IReadOnlyList<DistributionEntry> recipients,
-        IDateProvider clock) =>
+        IDateProvider clock,
+        string? sentBy = null,
+        string? sentByName = null) =>
         engagement.MailLog.Add(new MailLogEntry(
             $"M-{Guid.NewGuid():N}"[..10],
             SolicitationService.LogPrefix + taskKey,
@@ -92,7 +94,9 @@ public static class Solicitation
             "All",
             template.Subject,
             template.Body,
-            template.Source));
+            template.Source,
+            sentBy,
+            sentByName));
 }
 
 /// <summary>
@@ -156,20 +160,77 @@ public sealed class SolicitationService(EngagementWorkflow workflow)
             "Promemoria ravvicinato: senza credenziali l'attività non parte.")
     ];
 
-    private readonly ConcurrentDictionary<string, bool> _enabled = new(
-        Rules.ToDictionary(rule => rule.Key, rule => rule.Enabled));
+    private readonly ConcurrentDictionary<string, SolicitationRule> _rules = new(
+        Rules.ToDictionary(rule => rule.Key, rule => rule));
 
     public IReadOnlyList<SolicitationRule> All() =>
-        Rules.Select(rule => rule with { Enabled = _enabled[rule.Key] }).ToList();
+        Rules.Select(rule => _rules[rule.Key]).ToList();
 
-    public bool Update(string key, bool enabled)
+    /// <summary>Regola con le modifiche correnti (accensione, soglie).</summary>
+    public SolicitationRule? Current(string key) =>
+        _rules.TryGetValue(key, out var rule) ? rule : null;
+
+    /// <summary>
+    /// Aggiorna una regola: i campi null restano come sono. Le soglie fuori
+    /// scala vengono ignorate invece di rompere il calcolo dei solleciti.
+    /// </summary>
+    public bool Update(
+        string key,
+        bool? enabled = null,
+        int? thresholdDays = null,
+        int? minDays = null,
+        bool? countBusinessDays = null)
     {
-        if (!Rules.Any(rule => rule.Key == key))
+        if (!_rules.TryGetValue(key, out var rule))
             return false;
 
-        _enabled[key] = enabled;
+        _rules[key] = rule with
+        {
+            Enabled = enabled ?? rule.Enabled,
+            ThresholdDays = thresholdDays is >= 0 and <= 365
+                ? thresholdDays.Value
+                : rule.ThresholdDays,
+            MinDays = minDays is >= 0 and <= 365
+                ? minDays.Value
+                : rule.MinDays,
+            CountBusinessDays = countBusinessDays ?? rule.CountBusinessDays
+        };
+
         return true;
     }
+
+    /// <summary>Etichetta leggibile del task di un sollecito (per il registro).</summary>
+    public static string TaskLabel(string taskKey) =>
+        Rules.FirstOrDefault(rule => rule.TaskKey == taskKey)?.Label
+        ?? (TaskLabels.TryGetValue(taskKey, out var label) ? label : taskKey);
+
+    /// <summary>
+    /// Ruolo che deve rispondere a un sollecito, a partire dall'etichetta della
+    /// regola ("Cliente" è il ruolo <see cref="Roles.Client"/>).
+    /// </summary>
+    public static string RecipientRole(string recipient) =>
+        recipient == "Cliente" ? Roles.Client : recipient;
+
+    /// <summary>
+    /// Task che non hanno una regola automatica ma possono generare un
+    /// sollecito manuale dall'engagement.
+    /// </summary>
+    private static readonly IReadOnlyDictionary<string, string> TaskLabels =
+        new Dictionary<string, string>
+        {
+            ["setup"] = "Setup iniziale",
+            ["manleva"] = "Firma della manleva",
+            ["order"] = "Registrazione dell'ordine",
+            ["financials"] = "Inserimento di costi e margine",
+            ["financials-approval"] = "Approvazione di costi e margine",
+            ["proposal"] = "Proposta delle date",
+            ["proposal-approval"] = "Approvazione della proposta di date",
+            ["scope"] = "Fornitura dello scope",
+            ["credentials"] = "Fornitura delle credenziali",
+            ["reports"] = "Caricamento dei deliverable",
+            ["review"] = "Revisione dei deliverable",
+            ["publish"] = "Pubblicazione dei deliverable"
+        };
 
     public static SolicitationRule? Rule(string key) =>
         Rules.FirstOrDefault(rule => rule.Key == key);
@@ -203,11 +264,18 @@ public sealed class SolicitationService(EngagementWorkflow workflow)
     public static DateOnly? PlannedEnd(Engagement engagement) =>
         engagement.AcceptedProposal?.EndDate;
 
-    /// <summary>Ultimo invio registrato per un task, in data locale.</summary>
-    public static DateOnly? LastSent(Engagement engagement, string taskKey)
+    /// <summary>
+    /// Ultimo invio registrato per un task, in data locale. Con `senderId` si
+    /// guarda solo ciò che ha inviato quella persona: il limite è per mittente.
+    /// </summary>
+    public static DateOnly? LastSent(
+        Engagement engagement,
+        string taskKey,
+        string? senderId = null)
     {
         var entry = engagement.MailLog
             .Where(item => item.Type == LogPrefix + taskKey)
+            .Where(item => senderId is null || item.SentBy == senderId)
             .OrderByDescending(item => item.Date)
             .FirstOrDefault();
 
@@ -218,7 +286,8 @@ public sealed class SolicitationService(EngagementWorkflow workflow)
 
     public IReadOnlyList<SolicitationDue> Due(
         IEnumerable<Engagement> engagements,
-        DateOnly today)
+        DateOnly today,
+        string? senderId = null)
     {
         var result = new List<SolicitationDue>();
 
@@ -230,8 +299,10 @@ public sealed class SolicitationService(EngagementWorkflow workflow)
                 ? startDate.DayNumber - today.DayNumber
                 : (int?)null;
 
-            var reportRule = Rule("rep")!;
-            var reviewRule = Rule("rev")!;
+            var reportRule = Current("rep")!;
+            var reviewRule = Current("rev")!;
+            var credentialsEarly = Current("cred3")!;
+            var credentialsLate = Current("cred2")!;
 
             Add(
                 "rep",
@@ -249,30 +320,33 @@ public sealed class SolicitationService(EngagementWorkflow workflow)
                 applies: engagement.ReviewStatus == ReviewStatus.Pending,
                 daysToStart: null);
 
-            // Due promemoria per le credenziali, in due finestre distinte:
-            // il primo da 3 settimane, il secondo da 2 settimane all'avvio.
+            // Due promemoria per le credenziali, in due finestre distinte: la
+            // prima alla soglia della regola "cred3", la seconda alla soglia
+            // "cred2" (14 giorni di default), entrambe modificabili.
             Add(
                 "cred3",
-                days: daysToStart is { } early ? 21 - early : 0,
+                days: daysToStart is { } early ? credentialsEarly.ThresholdDays - early : 0,
                 applies: !engagement.CredentialsDone &&
-                    daysToStart is { } days3 && days3 is > 14 and <= 21,
+                    daysToStart is { } days3 &&
+                    days3 > credentialsLate.ThresholdDays &&
+                    days3 <= credentialsEarly.ThresholdDays,
                 daysToStart: daysToStart);
 
             Add(
                 "cred2",
-                days: daysToStart is { } late ? 14 - late : 0,
+                days: daysToStart is { } late ? credentialsLate.ThresholdDays - late : 0,
                 applies: !engagement.CredentialsDone &&
-                    daysToStart is { } days2 && days2 <= 14,
+                    daysToStart is { } days2 && days2 <= credentialsLate.ThresholdDays,
                 daysToStart: daysToStart);
 
             void Add(string key, int days, bool applies, int? daysToStart)
             {
-                var rule = Rule(key)!;
+                var rule = Current(key)!;
 
-                if (!applies || !_enabled[key] || days < rule.MinDays)
+                if (!applies || !rule.Enabled || days < rule.MinDays)
                     return;
 
-                var sent = LastSent(engagement, rule.TaskKey);
+                var sent = LastSent(engagement, rule.TaskKey, senderId);
 
                 result.Add(new SolicitationDue(
                     $"{engagement.Id}:{key}",
@@ -301,8 +375,13 @@ public sealed class SolicitationService(EngagementWorkflow workflow)
     /// <summary>
     /// Attesa in corso: chi deve agire adesso e quindi chi si può sollecitare.
     /// Null quando non c'è nulla in sospeso (pianificato, in corso, concluso).
+    /// Con `senderId` l'ultimo invio è quello della persona: il limite è per
+    /// mittente, non per task.
     /// </summary>
-    public SolicitationTask? Pending(Engagement engagement, DateOnly today)
+    public SolicitationTask? Pending(
+        Engagement engagement,
+        DateOnly today,
+        string? senderId = null)
     {
         var phase = workflow.Resolve(engagement, today);
 
@@ -341,7 +420,7 @@ public sealed class SolicitationService(EngagementWorkflow workflow)
         if (task is null)
             return null;
 
-        var sent = LastSent(engagement, task.Key);
+        var sent = LastSent(engagement, task.Key, senderId);
 
         return task with
         {

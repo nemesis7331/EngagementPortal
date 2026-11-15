@@ -153,7 +153,16 @@ api.MapGet("/demo/users", (
     IClientRepository clients) =>
 {
     var current = GetUser(context);
-    var internalUser = current.Role != Roles.Client;
+    // `role` qui è il ruolo che il selettore demo vuole mostrare: è un filtro
+    // dell'elenco, non l'identità della richiesta (che arriva dai cookie).
+    var requestedRole = context.Request.Query["role"].FirstOrDefault();
+    var directoryRole = requestedRole is (
+        Roles.Client or Roles.PMO or Roles.Pentester or Roles.Manager or Roles.Auditor)
+        ? requestedRole
+        : current.Role;
+    var internalUser = directoryRole != Roles.Client;
+    // Per il profilo Cliente la demo usa il cliente fisso, come GetUser.
+    var directoryClient = directoryRole == Roles.Client ? "anthropic" : current.ClientId;
     var result = new List<object>();
 
     if (internalUser)
@@ -172,7 +181,7 @@ api.MapGet("/demo/users", (
     }
 
     foreach (var client in clients.List().Where(client =>
-        internalUser || client.Id == current.ClientId))
+        internalUser || client.Id == directoryClient))
     {
         foreach (var clientUser in client.Users)
         {
@@ -3330,6 +3339,7 @@ api.MapGet("/solicitations/rules", (
             rule.Recipient,
             rule.When,
             rule.ThresholdDays,
+            rule.MinDays,
             rule.CountBusinessDays,
             rule.Enabled,
             rule.Description
@@ -3344,10 +3354,17 @@ api.MapPut("/solicitations/rules/{key}", (
 {
     var user = GetUser(context);
 
-    if (user.Role != Roles.PMO)
+    // Regole globali: le amministrano Manager e PMO dalla sezione
+    // Amministrazione › Solleciti.
+    if (user.Role is not (Roles.Manager or Roles.PMO))
         return Forbidden();
 
-    return solicitations.Update(key, request.Enabled)
+    return solicitations.Update(
+            key,
+            request.Enabled,
+            request.ThresholdDays,
+            request.MinDays,
+            request.CountBusinessDays)
         ? Results.Ok(solicitations.All()
             .First(rule => rule.Key == key))
         : Results.NotFound();
@@ -3366,7 +3383,8 @@ api.MapGet("/solicitations/due", (
 
     var due = solicitations.Due(
         Access.VisibleEngagements(repository, user),
-        clock.Today);
+        clock.Today,
+        user.UserId);
 
     return Results.Ok(due.Select(item => new
     {
@@ -3384,8 +3402,51 @@ api.MapGet("/solicitations/due", (
         item.SentDate,
         item.SentOn,
         item.SentToday,
-        canSend = user.Role == Roles.PMO && !item.SentToday
+        canSend = user.Role != Roles.Auditor &&
+            !item.SentToday &&
+            SolicitationService.RecipientRole(item.Recipient) != user.Role
     }));
+});
+
+// Registro dei solleciti già partiti sul perimetro visibile: alimenta la
+// pagina "Solleciti" (sezione Solleciti ricevuti).
+api.MapGet("/solicitations/sent", (
+    HttpContext context,
+    IEngagementRepository repository) =>
+{
+    var user = GetUser(context);
+
+    if (user.Role == Roles.Client)
+        return Forbidden();
+
+    var sent = Access.VisibleEngagements(repository, user)
+        .SelectMany(engagement => engagement.MailLog
+            .Where(entry => entry.Type.StartsWith(
+                SolicitationService.LogPrefix,
+                StringComparison.Ordinal))
+            .Select(entry =>
+            {
+                var task = entry.Type[SolicitationService.LogPrefix.Length..];
+
+                return new
+                {
+                    EngagementId = engagement.Id,
+                    EngagementName = engagement.Name,
+                    engagement.ClientName,
+                    Task = task,
+                    Label = SolicitationService.TaskLabel(task),
+                    entry.Date,
+                    SentOn = entry.Date.ToLocalTime().ToString("dd/MM/yyyy"),
+                    entry.Recipients,
+                    entry.Subject,
+                    SentBy = entry.SentByName ?? "Sistema"
+                };
+            }))
+        .OrderByDescending(item => item.Date)
+        .Take(80)
+        .ToList();
+
+    return Results.Ok(sent);
 });
 
 // Un solo sollecito al giorno per task: il registro tiene traccia dell'invio.
@@ -3401,7 +3462,9 @@ api.MapPost("/solicitations/{key}/send", (
 {
     var user = GetUser(context);
 
-    if (user.Role != Roles.PMO)
+    // Sollecita chi deve rispondere: chiunque veda l'attività, tranne chi ha
+    // l'azione in carico (non si sollecita da solo) e il profilo in sola lettura.
+    if (user.Role == Roles.Auditor)
         return Forbidden();
 
     var parts = key.Split(':', 2);
@@ -3414,17 +3477,20 @@ api.MapPost("/solicitations/{key}/send", (
     if (rule is null)
         return Results.BadRequest("Regola di sollecito non valida.");
 
+    if (SolicitationService.RecipientRole(rule.Recipient) == user.Role)
+        return Results.BadRequest("L'azione è in carico al tuo profilo.");
+
     var engagement = Find(repository, parts[0], user);
 
     if (engagement is null)
         return Results.NotFound();
 
-    if (SolicitationService.LastSent(engagement, rule.TaskKey) == clock.Today)
+    if (SolicitationService.LastSent(engagement, rule.TaskKey, user.UserId) == clock.Today)
         return Results.Conflict(
-            "Hai già inviato questo sollecito oggi: se ne può mandare uno al giorno per task.");
+            "Hai già inviato questo sollecito oggi: se ne può mandare uno al giorno per persona.");
 
     var due = solicitations
-        .Due([engagement], clock.Today)
+        .Due([engagement], clock.Today, user.UserId)
         .FirstOrDefault(item => item.RuleKey == rule.Key);
 
     var recipients = Solicitation.Recipients(
@@ -3444,9 +3510,10 @@ api.MapPost("/solicitations/{key}/send", (
         standard,
         clients.Get(engagement.ClientId)?.MailTemplates,
         clock.Today,
-        due?.Days ?? 0);
+        due?.Days ?? 0,
+        recipient: recipients.FirstOrDefault()?.Name);
 
-    Solicitation.Record(engagement, rule.TaskKey, resolved, recipients, clock);
+    Solicitation.Record(engagement, rule.TaskKey, resolved, recipients, clock, user.UserId, user.Name);
 
     engagement.AddAudit(
         user.Name,
@@ -3472,7 +3539,9 @@ api.MapPost("/engagements/{id}/solicitations", (
 {
     var user = GetUser(context);
 
-    if (!Roles.IsInternal(user.Role) || user.Role == Roles.Auditor)
+    // Anche un utente cliente può sollecitare chi deve rispondere (per esempio
+    // il Manager che deve approvare le date); l'Auditor resta in sola lettura.
+    if (user.Role == Roles.Auditor)
         return Forbidden();
 
     var engagement = Find(repository, id, user);
@@ -3480,7 +3549,7 @@ api.MapPost("/engagements/{id}/solicitations", (
     if (engagement is null)
         return Results.NotFound();
 
-    var task = solicitations.Pending(engagement, clock.Today);
+    var task = solicitations.Pending(engagement, clock.Today, user.UserId);
 
     if (task is null)
         return Results.BadRequest("Non c'è nulla in attesa su questa attività.");
@@ -3489,9 +3558,9 @@ api.MapPost("/engagements/{id}/solicitations", (
     if (task.OwnerRoles.Contains(user.Role))
         return Results.BadRequest("L'azione è in carico al tuo profilo.");
 
-    if (SolicitationService.LastSent(engagement, task.Key) == clock.Today)
+    if (SolicitationService.LastSent(engagement, task.Key, user.UserId) == clock.Today)
         return Results.Conflict(
-            "Hai già inviato questo sollecito oggi: se ne può mandare uno al giorno per task.");
+            "Hai già inviato questo sollecito oggi: se ne può mandare uno al giorno per persona.");
 
     var client = clients.Get(engagement.ClientId);
 
@@ -3513,14 +3582,17 @@ api.MapPost("/engagements/{id}/solicitations", (
         client?.MailTemplates,
         clock.Today,
         0,
-        task.Label);
+        task.Label,
+        recipients.FirstOrDefault()?.Name);
 
     Solicitation.Record(
         engagement,
         task.Key,
         resolved,
         recipients,
-        clock);
+        clock,
+        user.UserId,
+        user.Name);
 
     engagement.AddAudit(
         user.Name,
@@ -3550,16 +3622,26 @@ static bool IsEmail(string? value)
 
 static UserContext GetUser(HttpContext context)
 {
-    var userId = context.Request.Query["user"].FirstOrDefault()?.Trim();
+    // Identità demo nei cookie (impostati dal menu in alto). La query resta
+    // come fallback per test e link storici, ma un cookie presente vince:
+    // ?role=... nell'URL non può più cambiare profilo.
+    var userId = context.Request.Cookies["cep_user"]?.Trim();
+
+    if (string.IsNullOrWhiteSpace(userId))
+        userId = context.Request.Query["user"].FirstOrDefault()?.Trim();
+
+    // `client` esplicito nella query è un filtro voluto (anche vuoto = tutti);
+    // altrimenti vale il cliente scelto nei cookie.
+    var clientQuery = context.Request.Query["client"];
+    var requestedClient = clientQuery.Count > 0
+        ? clientQuery.ToString().Trim()
+        : context.Request.Cookies["cep_client"]?.Trim();
 
     if (!string.IsNullOrWhiteSpace(userId))
     {
         var users = context.RequestServices
             .GetService<IUserRepository>();
         var account = users?.Get(userId);
-        var requestedClient = context.Request.Query["client"]
-            .FirstOrDefault()?
-            .Trim();
 
         if (account is { Active: true })
         {
@@ -3595,7 +3677,10 @@ static UserContext GetUser(HttpContext context)
         }
     }
 
-    var role = context.Request.Query["role"].FirstOrDefault();
+    var role = context.Request.Cookies["cep_role"]?.Trim();
+
+    if (string.IsNullOrWhiteSpace(role))
+        role = context.Request.Query["role"].FirstOrDefault();
 
     if (role is not (
         Roles.Client or
@@ -3609,7 +3694,7 @@ static UserContext GetUser(HttpContext context)
         role = Roles.Client;
     }
 
-    var clientId = context.Request.Query["client"].FirstOrDefault()?.Trim();
+    var clientId = requestedClient;
 
     if (role == Roles.Client)
     {
@@ -3900,9 +3985,9 @@ static object? MapSolicitation(
         task.SentToday,
         CanSend = allowed && !task.SentToday,
         blockedReason = task.SentToday
-            ? "Hai già inviato questo sollecito oggi: se ne può mandare uno al giorno per task."
+            ? "Hai già inviato questo sollecito oggi: se ne può mandare uno al giorno per persona."
             : task.OwnerRoles.Contains(user.Role)
-                ? "L'azione è in carico al tuo profilo."
+                ? "L'azione è in carico al tuo profilo: sei tu a dover rispondere."
                 : null
     };
 }
@@ -4057,13 +4142,13 @@ static object Detail(
             ? EngagementWorkflow.PlanningNotice(engagement, clock.Today)
             : null,
         TabStates = todos.ResolveTabs(engagement, user.Role, phase),
-        Solicitation = user.Role == Roles.Client
-            ? null
-            : MapSolicitation(
-                solicitations.Pending(engagement, clock.Today),
-                user,
-                clock.Today,
-                canSend: user.Role != Roles.Auditor),
+        // Anche al cliente si mostra l'attesa in corso: se deve rispondere lui
+        // il pulsante è bloccato, se aspetta il Manager può sollecitarlo.
+        Solicitation = MapSolicitation(
+            solicitations.Pending(engagement, clock.Today, user.UserId),
+            user,
+            clock.Today,
+            canSend: user.Role != Roles.Auditor),
         Retest = MapRetest(engagement, user, phase, clock.Today),
         Audit = VisibleAudit(engagement, user),
         Scope = engagement.Scope,
@@ -4127,7 +4212,7 @@ static object Detail(
             CanManageMailTemplates = user.Role is Roles.Manager or Roles.Pentester,
             CanManageSetup = user.Role is Roles.Manager or Roles.PMO,
             CanManageMail = user.Role == Roles.PMO,
-            CanManageSolicitations = user.Role == Roles.PMO,
+            CanManageSolicitations = user.Role != Roles.Auditor,
             CanReview = user.Role == Roles.Manager,
             CanPublish = user.Role == Roles.Pentester,
             CanUploadManleva = user.Role is Roles.Client or Roles.PMO,

@@ -80,11 +80,14 @@
 }*{box-sizing:border-box}body{margin:0;font-family:var(--font-sans);background:var(--bg);color:var(--ink);font-size:var(--fs-base);line-height:var(--lh-base);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;font-variant-numeric:tabular-nums}button{font:inherit;cursor:pointer}/* Header */
 .shell-main > header{background:linear-gradient(100deg,var(--brand-950),var(--brand-900) 60%,var(--brand-700));color:#fff;position:sticky;top:0;z-index:20}.hwrap{max-width:var(--page-max);margin:0;padding:12px 16px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}.logo{display:flex;align-items:center;gap:10px;font-weight:var(--fw-bold);font-size:var(--fs-xl);letter-spacing:0}.logo i{width:30px;height:30px;border-radius:var(--radius-md);background:var(--accent);display:grid;place-items:center;color:var(--brand-950);font-style:normal;font-weight:var(--fw-black)}.logo small{display:block;font-weight:var(--fw-regular);font-size:var(--fs-xs);opacity:.7;letter-spacing:var(--tracking-caps);text-transform:uppercase}.spacer{flex:1}.user{display:flex;align-items:center;gap:10px;font-size:var(--fs-md)}.avatar{width:34px;height:34px;border-radius:50%;background:var(--brand-500);display:grid;place-items:center;font-weight:var(--fw-bold)}/* ====== SHELL: SIDEBAR GLOBALE ====== */
 .shell{display:grid;grid-template-columns:228px minmax(0,1fr);min-height:100vh}.shell-main{min-width:0;display:flex;flex-direction:column}.shell-main > main{width:100%}.app-side{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:10px;padding:14px 10px;background:linear-gradient(180deg,var(--brand-950),var(--brand-900) 65%,#08243f);color:#c9d9e7;z-index:40;overflow-y:auto;overflow-x:hidden;transition:width .18s ease,padding .18s ease}.app-side-head{display:flex;align-items:center;gap:8px;padding:2px 6px 8px;min-width:0}.app-logo{display:flex;align-items:center;gap:9px;color:#fff;font-weight:var(--fw-bold);font-size:12.5px;min-width:0}.app-logo i{width:30px;height:30px;border-radius:var(--radius-md);background:var(--accent);color:var(--brand-950);display:grid;place-items:center;font-style:normal;font-weight:var(--fw-black);flex:none;font-size:var(--fs-sm)}.app-logo small{display:block;font-size:var(--fs-2xs);letter-spacing:var(--tracking-caps);text-transform:uppercase;color:#9db8ce;font-weight:var(--fw-regular)}.app-logo .logo-txt{min-width:0;white-space:normal;line-height:1.2;font-size:12px;overflow-wrap:break-word}.side-close{display:none;margin-left:auto;width:30px;height:30px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:#fff;border-radius:8px;align-items:center;justify-content:center;font-size:20px;line-height:1}.app-nav{display:grid;gap:10px}.nav-group{display:grid;gap:2px}.nav-group[hidden]{display:none}.nav-label{font-size:var(--fs-2xs);letter-spacing:var(--tracking-caps);text-transform:uppercase;color:#7d9bb4;font-weight:var(--fw-bold);padding:4px 8px 5px;white-space:nowrap}.nav-item{display:flex;align-items:center;gap:9px;width:100%;border:0;background:none;color:#b9cee0;border-radius:var(--radius-md);padding:9px 9px;text-align:left;font-size:var(--fs-md);font-weight:var(--fw-semibold);white-space:nowrap;transition:background .15s,color .15s}.nav-item:hover{background:rgba(255,255,255,.07);color:#fff}.nav-item.on{background:#123e63;color:#fff;box-shadow:inset 3px 0 0 var(--accent)}.nav-item:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}.nav-item[hidden]{display:none}.nav-ico{width:16px;height:16px;fill:currentColor;opacity:.92;flex:none}.nav-txt{min-width:0;overflow:hidden;text-overflow:ellipsis}.nav-item.nav-sub{padding-top:6px;padding-bottom:6px;padding-left:31px;font-size:var(--fs-sm);font-weight:var(--fw-regular);color:#9db8ce}.nav-item.nav-sub:hover{color:#fff}.nav-item.nav-sub.on{box-shadow:inset 3px 0 0 var(--st-wait);background:rgba(245,158,11,.12);color:#fcd34d}.nav-count{margin-left:auto;display:inline-grid;place-items:center;min-width:19px;height:19px;padding:0 6px;border-radius:999px;background:var(--st-action-bg);color:var(--st-action);font-size:10px;font-weight:800}.nav-item[data-nav="waiting"] .nav-count{background:var(--st-wait-bg);color:var(--st-wait)}.nav-count[hidden]{display:none}body.side-collapsed .nav-count{display:none}.app-side-foot{margin-top:auto;padding-top:10px}.side-collapse{display:flex;align-items:center;gap:9px;width:100%;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);color:#c9d9e7;border-radius:var(--radius-md);padding:8px 9px;font-size:var(--fs-sm);font-weight:var(--fw-semibold)}.side-collapse:hover{background:rgba(255,255,255,.09);color:#fff}.side-collapse svg{flex:none;transition:transform .18s}.side-scrim{display:none}.hside{width:34px;height:34px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.08);color:#fff;border-radius:8px;display:grid;place-items:center;flex:none}.hside:hover{background:rgba(255,255,255,.16)}.header-section{display:flex;flex-direction:column;line-height:1.15;min-width:0}.header-section span{font-size:var(--fs-2xs);letter-spacing:var(--tracking-caps);text-transform:uppercase;color:#9db8ce;font-weight:var(--fw-bold)}.header-section b{font-size:var(--fs-lg);color:#fff;font-weight:var(--fw-semibold);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:340px}.hbrand{display:none}
-@media(max-width:1500px){.demo-switch label{font-size:0;gap:0}.demo-switch select{font-size:var(--fs-sm);max-width:170px}.demo-switch #role{max-width:120px}.demo-switch #client{max-width:165px}
-}
+/* Barra demo: si sceglie solo l'utente; profilo e cliente derivano da lui.
+   I due select restano nel DOM (servono alla logica), ma non si vedono. */
+.demo-switch .demo-field-role,.demo-switch .demo-field-client{display:none}
 @media(max-width:1200px){.hwrap .user > div:last-child{display:none}
 }
-@media(max-width:900px){.demo-switch select{max-width:none}
+/* Header demo: sotto i 1100px lo spazio è poco, quindi il contesto di pagina
+   resta nel titolo. */
+@media(max-width:1100px){.header-section{display:none}
 }
 @media(min-width:901px){body.side-collapsed .shell{grid-template-columns:64px minmax(0,1fr)}body.side-collapsed .app-side{padding:14px 8px}body.side-collapsed .app-logo{justify-content:center}body.side-collapsed .app-logo .logo-txt,body.side-collapsed .nav-label,body.side-collapsed .nav-txt{display:none}body.side-collapsed .nav-item{justify-content:center;padding:10px 0;gap:0}body.side-collapsed .side-collapse{justify-content:center;padding:8px 0;gap:0}body.side-collapsed .side-collapse svg{transform:rotate(180deg)}
 }
@@ -117,7 +120,9 @@ table{width:100%;border-collapse:collapse}th{text-align:left;font-size:var(--fs-
 .note.action{background:var(--st-action-bg);border-color:var(--st-action-border);color:var(--st-action)}.note.waiting{background:var(--st-wait-bg);border-color:var(--st-wait-border);color:var(--st-wait)}.note.progress{background:var(--st-progress-bg);border-color:var(--st-progress-border);color:var(--st-progress)}.note.done{background:var(--st-done-bg);border-color:var(--st-done-border);color:var(--st-done)}.note.blocked{background:var(--st-blocked-bg);border-color:var(--st-blocked-border);color:var(--st-blocked)}.note-head{display:flex;align-items:center;gap:8px;font-weight:var(--fw-bold);margin-bottom:4px}.note-ico{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:var(--fs-xs);font-weight:var(--fw-black);background:currentColor;color:#fff;flex:none}.note.action .note-ico{background:var(--st-action)}.note.waiting .note-ico{background:var(--st-wait)}.note.progress .note-ico{background:var(--st-progress)}.note.done .note-ico{background:var(--st-done)}.note.blocked .note-ico{background:var(--st-blocked)}/* stato in lista */
 .status-cell{display:flex;flex-direction:column;gap:3px;align-items:flex-start}.status-owner{font-size:var(--fs-sm);color:var(--muted)}.solicit-line{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:9px;padding-top:9px;border-top:1px solid rgba(0,0,0,.08)}.solicit-line .hint{font-size:var(--fs-xs);opacity:.85}.status-age{font-size:var(--fs-xs);color:var(--st-wait);font-weight:var(--fw-bold)}.status-age.overdue{color:var(--st-wait-strong)}.status-age.late{color:var(--st-action)}.delay{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--st-action-border);color:var(--st-negative);border-radius:var(--radius-pill);padding:3px 10px;font-size:var(--fs-sm);font-weight:var(--fw-semibold);white-space:nowrap}.delay-none{color:var(--muted)}/* Icona cliente (favicon con fallback a iniziali) */
 .cav{position:relative;display:inline-grid;place-items:center;width:28px;height:28px;border-radius:var(--radius-sm);background:var(--brand-50);border:1px solid var(--brand-100);color:var(--brand-700);font-size:var(--fs-xs);font-weight:var(--fw-black);flex:none;overflow:hidden}.cav.lg{width:40px;height:40px;border-radius:var(--radius-md);font-size:var(--fs-base)}.cav img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#fff;padding:4px}.client-cell span{overflow-wrap:anywhere}.listcard{overflow-x:auto}.listcard .client-cell{min-width:110px}.listcard .client-cell span{white-space:nowrap;overflow-wrap:normal}.client-link span{color:var(--brand-600);font-weight:var(--fw-semibold)}.client-link:hover span{text-decoration:underline}.client-link:focus-visible{outline:2px solid var(--brand-500);outline-offset:2px}.client-card{scroll-margin-top:calc(var(--app-header-h, 64px) + 14px);transition:box-shadow .2s,border-color .2s}.client-card.focus{border-color:var(--brand-500);box-shadow:0 0 0 3px var(--brand-100),var(--shadow)}tr.row.is-action{background:var(--row-action)}tr.row.is-waiting{background:var(--row-wait)}tr.row.is-done{background:var(--row-done)}tr.row.is-action td:first-child{box-shadow:inset 3px 0 var(--st-action)}tr.row.is-waiting td:first-child{box-shadow:inset 3px 0 var(--st-wait)}tr.row.is-done td:first-child{box-shadow:inset 3px 0 var(--st-done)}.note-ico svg{width:10px;height:10px;fill:#fff;display:block}/* ====== HOMEPAGE: azione prima (variante B) ====== */
-.headrow{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:flex-start}.head-acts{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.home-main{min-width:0}.colhead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 8px;flex-wrap:wrap}.colhead h2{margin:0;font-size:var(--fs-lg);display:flex;align-items:center;gap:8px}.colhead .cnt{background:var(--surface-2);color:var(--muted);font-size:var(--fs-xs)}.colhead .cnt.c-action{background:var(--st-action-bg);color:var(--st-action)}.colhead .cnt.c-wait{background:var(--st-wait-bg);color:var(--st-wait)}.home-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}.home-toolbar .search{flex:1;min-width:180px;max-width:none;position:relative}.home-toolbar .search input{width:100%;margin:0;padding:9px 12px 9px 38px;border-radius:var(--radius-pill);font-size:var(--fs-md)}.home-toolbar .search-ico{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:16px;height:16px;fill:var(--muted);pointer-events:none}.home-toolbar select{background:#fff;border:1px solid var(--line);border-radius:var(--radius-pill);padding:8px 11px;font:inherit;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--brand-900)}.listcard{padding:6px 8px}.list-compact th{padding:8px 8px}.th-sort{border:0;background:none;padding:0;font:inherit;font-size:var(--fs-xs);letter-spacing:var(--tracking-caps);text-transform:uppercase;color:var(--muted);font-weight:700;display:inline-flex;align-items:center;gap:4px;cursor:pointer;border-radius:4px}.th-sort:hover,.th-sort.on{color:var(--brand-700)}.sort-arrow{font-size:9px;line-height:1}.toolbar-reset{white-space:nowrap}.list-compact td{padding:9px 8px}.phase{display:grid;gap:3px}.phase-name{font-size:var(--fs-2xs);line-height:1.1;color:var(--muted);max-width:92px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rowname b{display:block;font-size:var(--fs-md);line-height:1.3;color:var(--brand-900);font-weight:var(--fw-semibold)}.rowmeta{display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:var(--fs-xs);color:var(--muted);margin-top:1px;white-space:nowrap}
+.headrow{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:flex-start}.head-acts{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.home-main{min-width:0}.colhead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 8px;flex-wrap:wrap}.colhead h2{margin:0;font-size:var(--fs-lg);display:flex;align-items:center;gap:8px}.colhead .cnt{background:var(--surface-2);color:var(--muted);font-size:var(--fs-xs)}.colhead .cnt.c-action{background:var(--st-action-bg);color:var(--st-action)}.colhead .cnt.c-wait{background:var(--st-wait-bg);color:var(--st-wait)}.home-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}.home-toolbar .search{flex:1;min-width:180px;max-width:none;position:relative}.home-toolbar .search input{width:100%;margin:0;padding:9px 12px 9px 38px;border-radius:var(--radius-pill);font-size:var(--fs-md)}.home-toolbar .search-ico{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:16px;height:16px;fill:var(--muted);pointer-events:none}.home-toolbar select{background:#fff;border:1px solid var(--line);border-radius:var(--radius-pill);padding:8px 11px;font:inherit;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--brand-900)}.listcard{padding:6px 8px}.list-compact th{padding:8px 8px}.th-sort{border:0;background:none;padding:0;font:inherit;font-size:var(--fs-xs);letter-spacing:var(--tracking-caps);text-transform:uppercase;color:var(--muted);font-weight:700;display:inline-flex;align-items:center;gap:4px;cursor:pointer;border-radius:4px}.th-sort:hover,.th-sort.on{color:var(--brand-700)}.sort-arrow{font-size:9px;line-height:1}.toolbar-reset{white-space:nowrap}.list-compact td{padding:9px 8px}.phase{display:grid;gap:3px}.phase-name{font-size:var(--fs-2xs);line-height:1.1;color:var(--muted);max-width:92px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rowname b{display:block;font-size:var(--fs-md);line-height:1.3;color:var(--brand-900);font-weight:var(--fw-semibold)}.list-cell-eng{display:flex;align-items:center;gap:8px;min-width:0}.list-cell-eng>.obj-type{flex:none}.list-cell-eng .rowname{min-width:0;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* Nome della fase sotto i segmenti: va a capo invece di essere tagliato. */
+.list-table .phase-name{white-space:normal;overflow:visible;text-overflow:clip;max-width:130px;line-height:1.15}
 .list-table td:first-child{min-width:150px}.status-mini{gap:1px}.status-mini .status-owner,.status-mini .status-age{font-size:var(--fs-xs)}.delay-sm{padding:2px 7px;font-size:var(--fs-xs)}.period{font-size:var(--fs-sm);color:var(--brand-900);white-space:nowrap}/* skeleton */
 .skeleton{background:linear-gradient(90deg,var(--skeleton-a) 25%,var(--skeleton-b) 37%,var(--skeleton-a) 63%);background-size:400% 100%;animation:sk 1.2s ease infinite;border-radius:var(--radius-sm);height:14px}
 @keyframes sk{0%{background-position:100% 50%}100%{background-position:0 50%}}/* busy */
@@ -127,9 +132,8 @@ table{width:100%;border-collapse:collapse}th{text-align:left;font-size:var(--fs-
 @media(min-width:1100px){}
 @media(min-width:2000px){}/* lista come card su mobile */
 @media(max-width:1200px){
-  /* Elenco più stretto: la fase resta nei pallini (con tooltip), il periodo
-     perde l'icona e le colonne respirano meno. */
-  .list-table .phase-name{display:none}
+  /* Elenco più stretto: la fase resta con nome e pallini, il periodo perde
+     l'icona e le colonne respirano meno. */
   .list-table .obj-period svg{display:none}
   .list-table .obj-period{padding:3px 8px;gap:4px;font-size:var(--fs-xs)}
   .list-table .mini{gap:3px}
@@ -167,10 +171,11 @@ table{width:100%;border-collapse:collapse}th{text-align:left;font-size:var(--fs-
   .spacer{display:none}
   .user{order:2;margin-left:auto;gap:7px}
   .avatar{width:30px;height:30px;font-size:var(--fs-sm)}
-  .demo-switch{order:3;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:6px;border-radius:var(--radius-lg);flex-wrap:nowrap}
+  .demo-switch{order:3;width:100%;display:grid;grid-template-columns:1fr;gap:6px;padding:6px;border-radius:var(--radius-lg);flex-wrap:nowrap}
   .demo-switch .demo-tag{display:none}
   .demo-switch label{display:grid;gap:2px;min-width:0;font-size:var(--fs-2xs);color:rgba(255,255,255,.62)}
-  .demo-switch select{width:100%;min-width:0;padding:5px 8px;font-size:var(--fs-xs)}
+  .demo-switch select{width:100%;min-width:0;padding:5px 8px}
+  .demo-switch label select{font-size:var(--fs-xs)}
 }
 @media(max-width:560px){.head-acts{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:8px}.head-acts .btn{width:100%}.tile b{font-size:var(--fs-2xl)}.home-toolbar select{flex:1;min-width:0}
 }
@@ -178,7 +183,26 @@ table{width:100%;border-collapse:collapse}th{text-align:left;font-size:var(--fs-
 }/* ====== UTENTI E ACCESSI ====== */
 .users-split{display:grid;grid-template-columns:minmax(300px,360px) minmax(0,1fr);gap:16px;align-items:start;margin-top:14px}.users-list-head h2{font-size:var(--fs-lg);margin:0}.users-list .search{position:relative;margin:0}.users-list .search input{width:100%;margin:0;padding:9px 12px 9px 36px;border-radius:var(--radius-pill);font-size:var(--fs-md)}.users-list .search-ico{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:15px;height:15px;fill:var(--muted);pointer-events:none}.user-row:hover{background:var(--surface-2)}.user-row.on{border-color:var(--brand-500);background:var(--brand-50);box-shadow:inset 3px 0 0 var(--brand-600)}.user-row .who{flex:1;min-width:0}.user-row .nm{display:block;font-size:var(--fs-sm);font-weight:650;color:var(--brand-900);line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.user-row .em{display:block;font-size:var(--fs-2xs);color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.user-row .end{display:flex;align-items:center;gap:5px;flex-wrap:wrap;justify-content:flex-end}.udetail-head .avatar.lg{width:42px;height:42px;font-size:var(--fs-base)}.udetail-head .t{flex:1;min-width:180px}.udetail-head h2{font-size:var(--fs-xl);margin:0;line-height:1.2}.udetail-head .sub{font-size:var(--fs-sm);margin:2px 0 0}.user-block{border:1px solid var(--line);border-radius:10px;padding:11px 12px;margin-bottom:10px;background:#fff}.user-block h3{font-size:var(--fs-sm);margin:0 0 4px;display:flex;align-items:center;gap:7px}.user-block .hint{margin:0 0 8px}.user-chips{display:flex;gap:6px;flex-wrap:wrap;min-height:20px}.user-chip{display:inline-flex;align-items:stretch;border:1px solid var(--st-done-border);border-radius:6px;background:var(--st-done-bg);overflow:hidden}.user-chip-main{border:0;background:none;padding:3px 7px;color:var(--st-done);font-size:var(--fs-2xs);font-weight:650;text-align:left;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.user-chip-main:hover{text-decoration:underline}.user-chip-x{border:0;border-left:1px solid var(--st-done-border);background:rgba(255,255,255,.35);color:var(--st-done);font-size:var(--fs-sm);line-height:1;padding:3px 6px}.user-chip-x:hover{background:var(--st-action-bg);color:var(--st-action)}.user-addline{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}.user-addline select{flex:1;min-width:170px;border:1px solid var(--line);border-radius:7px;padding:7px 9px;font:inherit;font-size:var(--fs-sm);background:#fff}.user-visibility{background:var(--brand-50);border:1px solid var(--brand-100);border-radius:9px;padding:10px 11px;font-size:var(--fs-sm);color:var(--brand-800);margin-bottom:10px}.user-visibility b{color:var(--brand-900)}.user-global{background:linear-gradient(180deg,var(--brand-50),#fff);border:1px solid var(--brand-100);border-radius:10px;padding:12px 13px;margin-bottom:10px}.user-global b{display:block;font-size:var(--fs-base);color:var(--brand-900);margin-bottom:2px}.user-global span{font-size:var(--fs-sm);color:var(--muted)}.user-kpis{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}.user-kpis div{background:var(--surface-2);border:1px solid var(--line);border-radius:9px;padding:9px 10px}.user-kpis b{display:block;font-size:var(--fs-xl);color:var(--brand-900)}.user-kpis span{font-size:var(--fs-2xs);color:var(--muted)}.user-perms{display:grid;grid-template-columns:auto minmax(0,1fr);gap:5px 12px;margin:0;font-size:var(--fs-sm)}.user-perms dt{color:var(--muted)}.user-perms dd{margin:0;text-align:right;color:var(--brand-900);font-weight:650}/* ====== AMMINISTRAZIONE ====== */
 .admin-head{display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap;margin:10px 0 12px}.admin-head > div:first-child{flex:1;min-width:220px}.admin-head .side-kicker{margin:0 0 2px}.admin-head h1{margin:0 0 3px}.admin-head .sub{margin:0}.admin-rail button{display:flex;align-items:center;gap:9px;width:100%;border:0;border-bottom:1px solid var(--line-soft);background:#fff;padding:11px 13px;text-align:left;color:var(--muted);font-size:var(--fs-sm);font-weight:600}.admin-rail button:last-child{border-bottom:0}.admin-rail button:hover{background:var(--surface-2)}.admin-rail button.on{background:var(--brand-50);box-shadow:inset 3px 0 0 var(--brand-600);color:var(--brand-700)}.admin-rail .ico{width:26px;height:26px;border-radius:7px;background:var(--brand-100);color:var(--brand-700);display:grid;place-items:center;font-size:9px;font-weight:800;flex:none}.admin-rail .cnt{margin-left:auto;display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 5px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);font-size:var(--fs-2xs);color:var(--muted);font-weight:700}.admin-rail button.on .cnt{background:var(--brand-100);border-color:var(--brand-100);color:var(--brand-700)}.admin-main{min-width:0}.admin-main .search{position:relative;margin:0}.admin-main .search input{width:100%;margin:0;padding:9px 12px 9px 36px;border-radius:var(--radius-pill);font-size:var(--fs-md)}.admin-main .search-ico{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:15px;height:15px;fill:var(--muted);pointer-events:none}/* Template mail: matrice IT/EN in una schermata */
-.admin-tpl-card{padding:14px}/* ====== RETEST: righe informative nel pannello ====== */
+.admin-tpl-card{padding:14px}/* ====== SOLLECITI: tabella del perimetro ====== */
+.solicit-table td:last-child{white-space:nowrap}
+.solicit-table td:last-child .btn{white-space:nowrap}
+.solicit-table th{white-space:nowrap}
+/* ====== REGOLE DEI SOLLECITI (Amministrazione) ====== */.rule-row{border-bottom:1px solid var(--line-soft);padding:14px 0}
+.rule-row:last-child{border-bottom:0;padding-bottom:0}
+.rule-head{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap}
+.rule-head .t{flex:1;min-width:240px}
+.rule-head .t > b{display:block;color:var(--brand-900)}
+.rule-head .t > span{display:block;color:var(--muted);font-size:var(--fs-sm)}
+.rule-head .t > span b{color:var(--brand-900);font-weight:var(--fw-semibold)}
+.rule-head .sw{flex:none;padding-top:2px}
+.rule-fields{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-top:10px}
+.rule-fields label{margin:0;font-size:var(--fs-xs);color:var(--muted);font-weight:var(--fw-semibold)}
+.rule-fields input[type=number]{width:96px;margin-top:4px}
+.rule-fields .rule-bd{display:inline-flex;align-items:center;gap:7px;font-size:var(--fs-sm);color:var(--brand-900);padding-bottom:9px}
+.rule-fields .rule-bd input{accent-color:var(--brand-600)}
+.rule-fields .btn{margin-left:auto}
+@media(max-width:620px){.rule-fields .btn{margin-left:0;width:100%}}
+/* ====== RETEST: righe informative nel pannello ====== */
 .kv{display:grid;gap:6px;margin:0}.kvline{display:flex;justify-content:space-between;gap:12px;font-size:var(--fs-sm);color:var(--muted);border-bottom:1px solid var(--line-soft);padding-bottom:5px}.kvline:last-child{border-bottom:0;padding-bottom:0}.kvline b{color:var(--brand-900);text-align:right;font-weight:var(--fw-semibold)}/* Campo di ricerca con icona: stile di base,valido in qualunque contesto. */
 .search{position:relative}.search input{width:100%;margin:0;padding:9px 12px 9px 36px;border-radius:var(--radius-pill);font-size:var(--fs-md)}.search-ico{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:15px;height:15px;fill:var(--muted);pointer-events:none}/* ====== CLIENTI · esploratore ====== */
 .clients-explorer{display:grid;grid-template-columns:300px minmax(0,1fr);gap:14px;align-items:start}.clients-rail{background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow);padding:12px}.clients-rail .list{max-height:520px}.clients-panel{background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow);padding:16px;min-width:0}.cl-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line-soft);padding-bottom:12px;margin-bottom:12px}.cl-head .t{flex:1;min-width:180px}.cl-head p{margin:0;font-size:var(--fs-sm);color:var(--muted)}.cl-head p a{color:var(--brand-600)}.cl-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}.cl-tab{border:1px solid var(--line);background:#fff;border-radius:var(--radius-pill);padding:5px 13px;font:inherit;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--muted);cursor:pointer}.cl-tab:hover{border-color:var(--brand-500);color:var(--brand-900)}.cl-tab.on{background:var(--brand-900);border-color:var(--brand-900);color:#fff}.cl-tab .cnt{margin-left:5px;font-size:var(--fs-2xs);font-weight:var(--fw-black);opacity:.75}.cl-block .hint{margin:0 0 10px}.cl-rows{display:grid;gap:0}.cl-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:9px 0;border-bottom:1px solid var(--line-soft)}.cl-row:last-child{border-bottom:0}.cl-row .cl-mail{flex:1;min-width:180px;font-size:var(--fs-xs);color:var(--muted);overflow-wrap:anywhere}
@@ -193,7 +217,11 @@ table{width:100%;border-collapse:collapse}th{text-align:left;font-size:var(--fs-
 .cl-people .cl-group b{font-size:var(--fs-xs);color:var(--brand-900)}
 .cl-people .cl-group small{font-size:var(--fs-2xs);color:var(--muted)}
 .cl-people .cl-group .grow{flex:1}
-.cl-people .cl-headrow,.cl-people .cl-row{display:grid;grid-template-columns:minmax(160px,1.5fr) 132px 62px 62px auto;align-items:center;gap:10px}
+.cl-people .cl-headrow,.cl-people .cl-row{display:grid;grid-template-columns:minmax(160px,1.5fr) 132px 62px 62px 96px;align-items:center;gap:10px}
+/* La colonna azioni ha larghezza fissa: se fosse "auto" le righe senza il
+   pulsante Rimuovi stringerebbero la colonna persona e sposterebbero le
+   caselle rispetto all'intestazione. */
+.cl-act{display:flex;justify-content:flex-end;min-width:0}
 .cl-people .cl-headrow{padding:5px 0;border-bottom:1px solid var(--line);font-size:var(--fs-2xs);text-transform:uppercase;letter-spacing:.06em;color:var(--muted-2);font-weight:var(--fw-bold)}
 .cl-people .cl-headrow span:nth-child(3),.cl-people .cl-headrow span:nth-child(4){text-align:center}
 .cl-people .cl-row{padding:8px 0}
@@ -218,12 +246,12 @@ table{width:100%;border-collapse:collapse}th{text-align:left;font-size:var(--fs-
 .ckbox input:disabled:checked + i{background:#9db8cf;border-color:#9db8cf}
 .ckbox:hover i{border-color:var(--brand-500)}
 @media(max-width:1080px){
-  .cl-people .cl-headrow,.cl-people .cl-row{grid-template-columns:minmax(150px,1fr) 62px 62px auto}
+  .cl-people .cl-headrow,.cl-people .cl-row{grid-template-columns:minmax(150px,1fr) 62px 62px 96px}
   .cl-people .cl-headrow span:nth-child(2),.cl-people .cl-tag{display:none}
 }
 @media(max-width:760px){
   .cl-people .cl-headrow{display:none}
-  .cl-people .cl-row{grid-template-columns:minmax(0,1fr) 56px 56px auto}
+  .cl-people .cl-row{grid-template-columns:minmax(0,1fr) 56px 56px 84px}
 }
 .clients-rail .row{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line-soft);background:#fff;padding:9px 11px;cursor:pointer;color:inherit;font:inherit}.clients-rail .row:last-child{border-bottom:0}.clients-rail .row:hover{background:var(--surface-3)}.clients-rail .row.on{background:var(--brand-50);box-shadow:inset 3px 0 0 var(--brand-600)}.clients-rail .row .who{flex:1;min-width:0}.clients-rail .row .who small{font-size:var(--fs-2xs);color:var(--muted)}
 @media(max-width:1000px){.clients-explorer{grid-template-columns:minmax(0,1fr)}}/* ====== OGGETTI STANDARD ======
@@ -312,23 +340,81 @@ table{width:100%;border-collapse:collapse}th{text-align:left;font-size:var(--fs-
 }
 @media(max-width:560px){.user-row .end{width:100%;margin-left:39px;justify-content:flex-start}.user-addline .btn{width:100%}
 }/* ====== DETTAGLIO C3 · SPLIT CON CONTESTO ====== */
-.eng-hero{display:flex;align-items:flex-start;gap:18px;flex-wrap:wrap;margin:2px 0 4px}.eng-hero-t{flex:1;min-width:260px}.eng-hero-t h1{font-size:var(--fs-2xl);line-height:1.2;margin:2px 0 3px}.eng-hero-t .sub{font-size:var(--fs-md);color:var(--muted);margin:0}.eng-hero-s{display:flex;flex-direction:column;align-items:flex-end;gap:6px;padding-top:4px}.eng-hero-s .status-owner{font-size:var(--fs-sm);color:var(--muted);white-space:nowrap}.code-pill{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--brand-700);background:var(--brand-50);border:1px solid var(--brand-100);border-radius:6px;padding:2px 7px;white-space:nowrap}.split-detail{display:grid;grid-template-columns:224px minmax(0,1fr) 286px;gap:18px;align-items:start;margin-top:16px}.workflow-nav{border:1px solid var(--line);border-radius:var(--radius-lg);background:#fff;overflow:hidden;position:sticky;top:calc(var(--app-header-h,64px) + 12px);z-index:5;box-shadow:var(--shadow)}.wnav-group{padding:10px 12px 6px;font-size:var(--fs-2xs);letter-spacing:.7px;text-transform:uppercase;color:var(--muted);font-weight:800;display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid var(--line-soft)}.wnav-group:not(:first-child){border-top:1px solid var(--line);margin-top:2px;padding-top:12px}.wnav-btn{display:flex;align-items:flex-start;gap:9px;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line-soft);background:#fff;padding:10px 11px;color:inherit;position:relative}.wnav-btn:last-child{border-bottom:0}.wnav-btn:hover{background:var(--surface-2)}.wnav-btn.on{background:var(--brand-50);box-shadow:inset 3px 0 0 var(--brand-600)}.wnav-num{width:21px;height:21px;border-radius:50%;display:grid;place-items:center;font-size:var(--fs-2xs);font-weight:800;background:var(--st-neutral-bg);color:var(--st-neutral);border:1px solid var(--line);flex:none;margin-top:1px}.wnav-num svg{width:12px;height:12px}.wnav-h{min-width:0;flex:1}.wnav-h b{display:block;font-size:var(--fs-sm);color:var(--brand-900);line-height:1.25;font-weight:700}.wnav-h span{display:block;font-size:var(--fs-2xs);color:var(--muted);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.wnav-btn.s-ok .wnav-num{background:var(--st-done);border-color:var(--st-done);color:#fff}.wnav-btn.s-ok .wnav-h b{color:var(--st-done)}.wnav-btn.s-todo .wnav-num{background:var(--st-action);border-color:var(--st-action);color:#fff}.wnav-btn.s-todo .wnav-h b{color:var(--st-action)}.wnav-btn.s-wait .wnav-num{background:var(--st-wait-bg);border-color:var(--st-wait-border);color:var(--st-wait)}.wnav-btn.s-wait .wnav-h b{color:var(--st-wait)}.wnav-btn.s-progress .wnav-num{background:var(--st-progress-bg);border-color:var(--st-progress-border);color:var(--st-progress)}.wnav-btn.s-progress .wnav-h b{color:var(--st-progress)}.wnav-btn.s-lock .wnav-num{background:var(--st-neutral-bg);border-color:var(--line);color:var(--st-neutral)}.wnav-btn.s-lock .wnav-h b{color:var(--muted)}.wnav-btn.extra .wnav-num{background:var(--brand-100);border-color:var(--brand-100);color:var(--brand-700)}.wnav-btn.extra .wnav-h b{font-weight:600}.work-panel{border:1px solid var(--line);border-radius:var(--radius-lg);background:#fff;overflow:hidden;min-width:0;box-shadow:var(--shadow)}.work-panel-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:16px 18px;background:var(--brand-50);border-bottom:1px solid var(--line-soft)}.wp-num{width:30px;height:30px;border-radius:50%;background:var(--brand-600);color:#fff;display:grid;place-items:center;font-size:var(--fs-sm);font-weight:800;flex:none}.wp-t{flex:1;min-width:180px}.wp-kicker{display:block;font-size:var(--fs-2xs);letter-spacing:.7px;text-transform:uppercase;color:var(--brand-700);font-weight:800;margin-bottom:2px}.wp-t h2{font-size:var(--fs-xl);margin:0;line-height:1.2}.wp-t p{font-size:var(--fs-sm);color:var(--muted);margin:2px 0 0}.work-panel-body{padding:18px}.work-panel-body .note:first-child{margin-top:0}.work-panel-body > .card + .card{margin-top:16px}.work-panel-body .grid.two{grid-template-columns:1fr 1fr}.context-rail{display:grid;gap:12px;position:sticky;top:calc(var(--app-header-h,64px) + 12px);z-index:5}.context-rail .note{margin:0}.ctx-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius-md);padding:13px 14px;box-shadow:var(--shadow)}.ctx-card h3{font-size:var(--fs-2xs);letter-spacing:.7px;text-transform:uppercase;color:var(--muted);font-weight:800;margin:0 0 9px}.ctx-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}.ctx-head h3{margin:0}.ctx-add{width:24px;height:24px;border:1px solid var(--line);border-radius:7px;background:#fff;color:var(--brand-700);font-size:16px;line-height:1;display:grid;place-items:center;font-weight:700}.ctx-add:hover{background:var(--brand-50);border-color:var(--brand-100)}.ctx-person-row{display:flex;align-items:center;gap:2px;min-width:0}.ctx-person{display:flex;align-items:center;gap:8px;padding:5px 4px;min-width:0;flex:1;border:0;background:none;text-align:left;border-radius:6px;color:inherit}.ctx-person:hover{background:var(--surface-2)}.ctx-person-x{width:22px;height:22px;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--muted);font-size:13px;line-height:1;display:grid;place-items:center;flex:none}.ctx-person-x:hover{color:var(--st-action);border-color:var(--st-action-border);background:var(--st-action-bg)}.ctx-link{margin-top:6px;border:0;background:none;padding:2px 4px;color:var(--brand-600);font-size:var(--fs-sm);font-weight:650;text-align:left}.ctx-link:hover{text-decoration:underline}.ctx-person .avatar{width:27px;height:27px;font-size:var(--fs-2xs);flex:none}.ctx-person b{display:block;font-size:var(--fs-sm);color:var(--brand-900);line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ctx-person span span{display:block;font-size:var(--fs-2xs);color:var(--muted)}.ctx-kv{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 10px;margin:0;font-size:var(--fs-sm)}.ctx-kv dt{color:var(--muted)}.ctx-kv dd{margin:0;text-align:right;font-weight:650;color:var(--brand-900);overflow-wrap:anywhere}.inline-block{border:1px solid var(--line);border-radius:var(--radius-md);padding:13px 14px;background:var(--surface-2);margin-top:14px}.inline-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:11px}.inline-head h3{font-size:var(--fs-base);margin:0}.inline-row{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap}.inline-row .field{min-width:200px}.inline-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px}.inline-actions .hint{margin:0;max-width:520px}.inline-block.bc-collapse{padding:0;overflow:hidden}.bc-summary{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 14px;cursor:pointer;list-style:none}.bc-summary::-webkit-details-marker{display:none}.bc-summary:hover{background:var(--brand-50)}.bc-summary-title{display:flex;align-items:center;gap:8px;flex:1;min-width:180px}.bc-summary-title b{font-size:var(--fs-base);color:var(--brand-900)}.bc-summary-right{display:flex;align-items:center;gap:8px;margin-left:auto}.bc-open,.econ-open{font-size:var(--fs-xs);font-weight:700;color:var(--brand-600)}.bc-close,.econ-close{display:none;font-size:var(--fs-xs);font-weight:700;color:var(--brand-600)}.bc-collapse[open] .bc-open,.econ-collapse[open] .econ-open{display:none}.bc-collapse[open] .bc-close,.econ-collapse[open] .econ-close{display:inline}.bc-content{padding:0 14px 14px}.econ-collapse>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;list-style:none}.econ-collapse>summary::-webkit-details-marker{display:none}.econ-collapse>summary h3{margin:0}.econ-collapse[open]>summary{margin-bottom:9px}.detail-table{width:100%;border-collapse:collapse;font-size:var(--fs-md)}.detail-table td{padding:9px 0;border-bottom:1px solid var(--line-soft);vertical-align:top}.detail-table td:first-child{color:var(--muted);width:34%}.detail-table tr:last-child td{border-bottom:0}.report-actions{display:flex;gap:6px;flex-wrap:wrap;align-items:center;justify-content:flex-end;margin-left:auto}.run-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.run-grid>div{border:1px solid var(--line);border-radius:var(--radius-md);padding:11px;background:var(--surface-2)}.run-grid b{display:block;font-size:var(--fs-lg);color:var(--brand-900)}.run-grid span{font-size:var(--fs-2xs);color:var(--muted)}
-@media(max-width:1240px){.split-detail{grid-template-columns:200px minmax(0,1fr) 260px}
+.eng-hero{display:flex;align-items:flex-start;gap:18px;flex-wrap:wrap;margin:2px 0 4px}.eng-hero-t{flex:1;min-width:260px}.eng-hero-t h1{font-size:var(--fs-2xl);line-height:1.2;margin:2px 0 3px}.eng-hero-t .sub{font-size:var(--fs-md);color:var(--muted);margin:0}.eng-hero-s{display:flex;flex-direction:column;align-items:flex-end;gap:6px;padding-top:4px}.eng-hero-s .status-owner{font-size:var(--fs-sm);color:var(--muted);white-space:nowrap}.code-pill{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--brand-700);background:var(--brand-50);border:1px solid var(--brand-100);border-radius:6px;padding:2px 7px;white-space:nowrap}.detail-cols{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:18px;align-items:start;margin-top:14px}.workflow-nav{border:1px solid var(--line);border-radius:var(--radius-lg);background:#fff;overflow:hidden;position:sticky;top:calc(var(--app-header-h,64px) + 12px);z-index:5;box-shadow:var(--shadow)}.wnav-group{padding:10px 12px 6px;font-size:var(--fs-2xs);letter-spacing:.7px;text-transform:uppercase;color:var(--muted);font-weight:800;display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid var(--line-soft)}.wnav-group:not(:first-child){border-top:1px solid var(--line);margin-top:2px;padding-top:12px}.wnav-btn{display:flex;align-items:flex-start;gap:9px;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line-soft);background:#fff;padding:10px 11px;color:inherit;position:relative}.wnav-btn:last-child{border-bottom:0}.wnav-btn:hover{background:var(--surface-2)}.wnav-btn.on{background:var(--brand-50);box-shadow:inset 3px 0 0 var(--brand-600)}.wnav-num{width:21px;height:21px;border-radius:50%;display:grid;place-items:center;font-size:var(--fs-2xs);font-weight:800;background:var(--st-neutral-bg);color:var(--st-neutral);border:1px solid var(--line);flex:none;margin-top:1px}.wnav-num svg{width:12px;height:12px}.wnav-h{min-width:0;flex:1}.wnav-h b{display:block;font-size:var(--fs-sm);color:var(--brand-900);line-height:1.25;font-weight:700}.wnav-h span{display:block;font-size:var(--fs-2xs);color:var(--muted);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.wnav-btn.s-ok .wnav-num{background:var(--st-done);border-color:var(--st-done);color:#fff}.wnav-btn.s-ok .wnav-h b{color:var(--st-done)}.wnav-btn.s-todo .wnav-num{background:var(--st-action);border-color:var(--st-action);color:#fff}.wnav-btn.s-todo .wnav-h b{color:var(--st-action)}.wnav-btn.s-wait .wnav-num{background:var(--st-wait-bg);border-color:var(--st-wait-border);color:var(--st-wait)}.wnav-btn.s-wait .wnav-h b{color:var(--st-wait)}.wnav-btn.s-progress .wnav-num{background:var(--st-progress-bg);border-color:var(--st-progress-border);color:var(--st-progress)}.wnav-btn.s-progress .wnav-h b{color:var(--st-progress)}.wnav-btn.s-lock .wnav-num{background:var(--st-neutral-bg);border-color:var(--line);color:var(--st-neutral)}.wnav-btn.s-lock .wnav-h b{color:var(--muted)}.wnav-btn.extra .wnav-num{background:var(--brand-100);border-color:var(--brand-100);color:var(--brand-700)}.wnav-btn.extra .wnav-h b{font-weight:600}.work-panel{border:1px solid var(--line);border-radius:var(--radius-lg);background:#fff;overflow:hidden;min-width:0;box-shadow:var(--shadow)}.work-panel-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:16px 18px;background:var(--brand-50);border-bottom:1px solid var(--line-soft)}.wp-num{width:30px;height:30px;border-radius:50%;background:var(--brand-600);color:#fff;display:grid;place-items:center;font-size:var(--fs-sm);font-weight:800;flex:none}.wp-t{flex:1;min-width:180px}.wp-kicker{display:block;font-size:var(--fs-2xs);letter-spacing:.7px;text-transform:uppercase;color:var(--brand-700);font-weight:800;margin-bottom:2px}.wp-t h2{font-size:var(--fs-xl);margin:0;line-height:1.2}.wp-t p{font-size:var(--fs-sm);color:var(--muted);margin:2px 0 0}.work-panel-body{padding:18px}.work-panel-body .note:first-child{margin-top:0}.work-panel-body > .card + .card{margin-top:16px}.work-panel-body .grid.two{grid-template-columns:1fr 1fr}.context-rail{display:grid;gap:12px;position:sticky;top:calc(var(--app-header-h,64px) + 12px);z-index:5}.context-rail .note{margin:0}.ctx-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius-md);padding:13px 14px;box-shadow:var(--shadow)}.ctx-card h3{font-size:var(--fs-2xs);letter-spacing:.7px;text-transform:uppercase;color:var(--muted);font-weight:800;margin:0 0 9px}.ctx-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}.ctx-head h3{margin:0}.ctx-add{width:24px;height:24px;border:1px solid var(--line);border-radius:7px;background:#fff;color:var(--brand-700);font-size:16px;line-height:1;display:grid;place-items:center;font-weight:700}.ctx-add:hover{background:var(--brand-50);border-color:var(--brand-100)}.ctx-person-row{display:flex;align-items:center;gap:2px;min-width:0}.ctx-person{display:flex;align-items:center;gap:8px;padding:5px 4px;min-width:0;flex:1;border:0;background:none;text-align:left;border-radius:6px;color:inherit}.ctx-person:hover{background:var(--surface-2)}.ctx-person-x{width:22px;height:22px;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--muted);font-size:13px;line-height:1;display:grid;place-items:center;flex:none}.ctx-person-x:hover{color:var(--st-action);border-color:var(--st-action-border);background:var(--st-action-bg)}.ctx-link{margin-top:6px;border:0;background:none;padding:2px 4px;color:var(--brand-600);font-size:var(--fs-sm);font-weight:650;text-align:left}.ctx-link:hover{text-decoration:underline}.ctx-person .avatar{width:27px;height:27px;font-size:var(--fs-2xs);flex:none}.ctx-person b{display:block;font-size:var(--fs-sm);color:var(--brand-900);line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ctx-person span span{display:block;font-size:var(--fs-2xs);color:var(--muted)}.ctx-kv{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 10px;margin:0;font-size:var(--fs-sm)}.ctx-kv dt{color:var(--muted)}.ctx-kv dd{margin:0;text-align:right;font-weight:650;color:var(--brand-900);overflow-wrap:anywhere}.inline-block{border:1px solid var(--line);border-radius:var(--radius-md);padding:13px 14px;background:var(--surface-2);margin-top:14px}.inline-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:11px}.inline-head h3{font-size:var(--fs-base);margin:0}.inline-row{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap}.inline-row .field{min-width:200px}.inline-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px}.inline-actions .hint{margin:0;max-width:520px}.inline-block.bc-collapse{padding:0;overflow:hidden}.bc-summary{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 14px;cursor:pointer;list-style:none}.bc-summary::-webkit-details-marker{display:none}.bc-summary:hover{background:var(--brand-50)}.bc-summary-title{display:flex;align-items:center;gap:8px;flex:1;min-width:180px}.bc-summary-title b{font-size:var(--fs-base);color:var(--brand-900)}.bc-summary-right{display:flex;align-items:center;gap:8px;margin-left:auto}.bc-open,.econ-open{font-size:var(--fs-xs);font-weight:700;color:var(--brand-600)}.bc-close,.econ-close{display:none;font-size:var(--fs-xs);font-weight:700;color:var(--brand-600)}.bc-collapse[open] .bc-open,.econ-collapse[open] .econ-open{display:none}.bc-collapse[open] .bc-close,.econ-collapse[open] .econ-close{display:inline}.bc-content{padding:0 14px 14px}.econ-collapse>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;list-style:none}.econ-collapse>summary::-webkit-details-marker{display:none}.econ-collapse>summary h3{margin:0}.econ-collapse[open]>summary{margin-bottom:9px}.detail-table{width:100%;border-collapse:collapse;font-size:var(--fs-md)}.detail-table td{padding:9px 0;border-bottom:1px solid var(--line-soft);vertical-align:top}.detail-table td:first-child{color:var(--muted);width:34%}.detail-table tr:last-child td{border-bottom:0}.report-actions{display:flex;gap:6px;flex-wrap:wrap;align-items:center;justify-content:flex-end;margin-left:auto}.run-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.run-grid>div{border:1px solid var(--line);border-radius:var(--radius-md);padding:11px;background:var(--surface-2)}.run-grid b{display:block;font-size:var(--fs-lg);color:var(--brand-900)}.run-grid span{font-size:var(--fs-2xs);color:var(--muted)}
+/* ====== WORKFLOW COMPATTO IN ALTO ====== */
+/* Un segmento per passo: verde chiuso, rosso azione richiesta, ambra attesa,
+   grigio bloccato; il passo corrente ha il numero in evidenza. */
+.wf-top{background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow);padding:10px 12px 9px;margin:12px 0 14px;min-width:0}
+.wf-head{display:flex;align-items:baseline;gap:8px;margin:0 0 8px;font-size:var(--fs-2xs);text-transform:uppercase;letter-spacing:var(--tracking-caps);color:var(--muted-2);font-weight:var(--fw-bold)}
+.wf-head span{font-weight:var(--fw-semibold);letter-spacing:0;text-transform:none;color:var(--muted)}
+.wf-steps{display:flex;gap:8px;min-width:0}
+.wf-step{flex:1;min-width:0;border:0;border-radius:var(--radius-sm);background:none;padding:2px 2px 3px;text-align:left;cursor:pointer;font:inherit;color:inherit}
+.wf-step:hover{background:var(--surface-3)}
+.wf-step:focus-visible{outline:2px solid var(--brand-500);outline-offset:2px}
+.wf-bar{display:block;height:4px;border-radius:3px;background:var(--line);transition:background .15s}
+.wf-step .wf-lbl{display:flex;align-items:center;gap:5px;margin-top:5px;font-size:var(--fs-2xs);line-height:1.2;color:var(--muted-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wf-step .wf-lbl b{font-weight:var(--fw-bold);opacity:.7;flex:none}
+.wf-step.s-ok .wf-bar{background:var(--st-done)}
+.wf-step.s-ok .wf-lbl{color:var(--muted)}
+.wf-step.s-todo .wf-bar{background:var(--st-action)}
+.wf-step.s-todo .wf-lbl{color:var(--st-action);font-weight:var(--fw-semibold)}
+.wf-step.s-wait .wf-bar{background:var(--st-wait-border)}
+.wf-step.s-wait .wf-lbl{color:var(--st-wait)}
+.wf-step.s-lock .wf-bar{background:var(--line-strong)}
+.wf-step.cur .wf-bar{box-shadow:0 0 0 2px var(--brand-100)}
+.wf-step.cur .wf-lbl{color:var(--brand-900);font-weight:var(--fw-bold)}
+.wf-step.cur .wf-lbl b{opacity:1;background:var(--brand-900);color:#fff;border-radius:4px;padding:0 3px}
+.wf-extras{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:9px;padding-top:8px;border-top:1px solid var(--line-soft)}
+.wf-extra{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);background:#fff;border-radius:var(--radius-pill);padding:3px 9px;font:inherit;font-size:var(--fs-2xs);font-weight:var(--fw-semibold);color:var(--muted);cursor:pointer;white-space:nowrap}
+.wf-extra:hover{border-color:var(--brand-500);color:var(--brand-700)}
+.wf-extra.on{background:var(--brand-50);border-color:var(--brand-500);color:var(--brand-700)}
+.wf-extra b{color:var(--brand-900)}
+.wf-ico{width:12px;height:12px;fill:currentColor;flex:none}
+@media(max-width:1240px){.detail-cols{grid-template-columns:minmax(0,1fr) 270px}
 }
-@media(max-width:1040px){.split-detail{grid-template-columns:210px minmax(0,1fr)}.context-rail{grid-column:1/-1;grid-template-columns:repeat(4,minmax(0,1fr));position:static}.context-rail>details{grid-column:1/-1}
+@media(max-width:1040px){.detail-cols{grid-template-columns:minmax(0,1fr)}.context-rail{grid-column:1/-1;grid-template-columns:repeat(4,minmax(0,1fr));position:static}.context-rail>details{grid-column:1/-1}
 }
 @media(max-width:900px){.run-grid{grid-template-columns:1fr 1fr}.work-panel-body .grid.two{grid-template-columns:1fr}
 }
-@media(max-width:760px){.split-detail{grid-template-columns:1fr}.workflow-nav{display:flex;overflow:auto;position:static;border-radius:var(--radius-md)}.wnav-group{display:none}.wnav-btn{min-width:158px;border-bottom:0;border-right:1px solid var(--line-soft);padding:9px 10px}.wnav-h span{white-space:normal}.context-rail{grid-template-columns:1fr}.eng-hero-s{align-items:flex-start}
+@media(max-width:760px){.detail-cols{grid-template-columns:1fr}.wf-steps{overflow-x:auto;padding-bottom:2px}.wf-step{min-width:86px;flex:0 0 auto}.context-rail{grid-template-columns:1fr}.eng-hero-s{align-items:flex-start}
 }
 @media(max-width:560px){.run-grid{grid-template-columns:1fr}.inline-actions .btn{width:100%}.inline-actions .hint{max-width:none}
 }/* ====== CALENDARIO ====== */
-.cal-head{display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:12px}.cal-head > div{flex:1;min-width:220px}.cal-head h1{margin-bottom:3px}.cal-head .sub{margin:0}.cal-legend{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 14px;font-size:var(--fs-sm);color:var(--muted)}.cal-legend .lg{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--line);border-radius:var(--radius-pill);padding:4px 10px;font-weight:var(--fw-semibold)}.cal-legend .lg i{width:9px;height:9px;border-radius:3px;flex:none}.cal-legend .lg b{color:var(--brand-900)}.cal-legend .lg.planned i{background:#2a86d8}.cal-legend .lg.proposed i{background:#d9a514}.cal-legend .lg.weekend i{background:var(--surface-2);border:1px solid var(--line)}.cal-legend .hint{margin-left:auto;color:var(--muted);font-size:var(--fs-xs)}.cal-grid{display:grid;grid-template-columns:1fr;gap:16px;align-items:start}.cal-month{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:14px;min-width:0;box-shadow:var(--shadow)}.cal-month-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:10px}.cal-month-head h2{font-size:var(--fs-lg);margin:0;text-transform:capitalize}.cal-month-head span{font-size:var(--fs-xs);color:var(--muted)}.cal-week,.cal-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}.cal-week{margin-bottom:4px}.cal-dow{font-size:var(--fs-2xs);text-transform:uppercase;letter-spacing:var(--tracking-caps);color:var(--muted);font-weight:var(--fw-bold);text-align:center;padding:2px 0}.cal-dow.we{color:var(--muted-2)}.cal-day{min-height:96px;border:1px solid var(--line-soft);border-radius:8px;padding:4px 5px;background:#fff;display:flex;flex-direction:column;gap:3px;min-width:0}.cal-day.out{background:var(--surface-3);border-color:transparent}.cal-day.past{background:var(--surface-3);opacity:.55}.cal-day.we{background:var(--surface-2)}.cal-day.today{border-color:var(--brand-500);box-shadow:0 0 0 2px var(--brand-100)}.cal-day .n{font-size:var(--fs-2xs);font-weight:var(--fw-bold);color:var(--muted);line-height:1.2}.cal-day.today .n{color:var(--brand-700)}.cal-ev{display:block;width:100%;border:1px solid;border-radius:5px;padding:2px 5px;font-size:10px;line-height:1.25;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:var(--fw-semibold)}.cal-ev.planned{background:#e7f1fc;border-color:#cfe0f5;color:#1a5f9e}.cal-ev.planned:hover{background:#d8e9fa}.cal-ev.proposed{background:#fff5d6;border-color:#ead48a;color:#8a5b00}.cal-ev.proposed:hover{background:#ffedb8}.cal-ev:focus-visible{outline:2px solid var(--brand-500);outline-offset:1px}.cal-more{font-size:9px;color:var(--muted);font-weight:var(--fw-semibold);padding-left:2px}.cal-empty{background:var(--brand-50);border:1px solid var(--brand-100);border-radius:var(--radius-md);padding:12px 14px;color:var(--brand-700);font-size:var(--fs-sm);margin-bottom:14px}/* ====== CALENDARIO · TIMELINE ====== */
-.cal-switch{display:inline-flex;align-items:center;gap:2px;background:#fff;border:1px solid var(--line);border-radius:var(--radius-pill);padding:2px}.cal-switch button{appearance:none;border:0;background:transparent;border-radius:var(--radius-pill);padding:5px 12px;font:inherit;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--muted);cursor:pointer;line-height:1.2}.cal-switch button:hover{background:var(--surface-3);color:var(--brand-900)}.cal-switch button[aria-pressed="true"]{background:var(--brand-900);color:#fff}.cal-switch button:focus-visible{outline:2px solid var(--brand-500);outline-offset:2px}.tl-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:12px;display:flex;flex-direction:column;gap:10px;min-width:0}.tl-toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0}.tl-range{font-size:var(--fs-sm);color:var(--muted);font-weight:var(--fw-semibold);white-space:nowrap}.tl-range b{color:var(--brand-900)}.tl-weekend-key{display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-2xs);color:var(--muted);font-weight:var(--fw-semibold);white-space:nowrap}.tl-weekend-key i{width:9px;height:9px;border-radius:3px;flex:none;background:var(--surface-2);border:1px solid var(--line)}.tl-filters{display:inline-flex;align-items:center;gap:5px;flex-wrap:wrap;margin-left:auto}.tl-filter{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);background:#fff;border-radius:var(--radius-pill);padding:4px 9px;font:inherit;font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--muted);cursor:pointer;line-height:1.2}.tl-filter:hover{border-color:var(--brand-500);color:var(--brand-900)}.tl-filter[aria-pressed="true"]{border-color:var(--brand-500);background:var(--brand-50);color:var(--brand-700)}.tl-filter b{font-size:var(--fs-2xs);background:var(--surface-2);border-radius:var(--radius-pill);padding:0 5px;color:var(--brand-900);font-weight:var(--fw-bold)}.tl-filter:focus-visible{outline:2px solid var(--brand-500);outline-offset:2px}.tl-scroll{overflow:auto;border:1px solid var(--line);border-radius:var(--radius-md);max-height:460px;min-width:0}.tl-axis{display:grid;grid-template-columns:220px minmax(760px,1fr);position:sticky;top:0;z-index:3;background:#fff;border-bottom:1px solid var(--line)}.tl-axis-label{position:sticky;left:0;z-index:4;background:#fff;border-right:1px solid var(--line);padding:8px 10px;font-size:var(--fs-2xs);text-transform:uppercase;letter-spacing:var(--tracking-caps);color:var(--muted);font-weight:var(--fw-bold);display:flex;align-items:flex-end}.tl-axis-track{display:flex;flex-direction:column;min-width:0}.tl-months{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));font-size:var(--fs-2xs);font-weight:var(--fw-bold);color:var(--brand-900);text-transform:uppercase;letter-spacing:var(--tracking-caps)}.tl-month{padding:5px 6px;border-left:1px solid var(--line-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:var(--surface-3)}.tl-month:first-child{border-left:0}.tl-days{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));border-top:1px solid var(--line-soft)}.tl-day{height:22px;display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--muted);border-left:1px solid var(--line-soft);line-height:1;font-variant-numeric:tabular-nums}.tl-day:first-child{border-left:0}.tl-day.mon{color:var(--brand-900);font-weight:var(--fw-bold)}.tl-day.we{background:var(--surface-2);color:var(--muted-2)}.tl-day.today{background:var(--brand-100);color:var(--brand-800);font-weight:var(--fw-bold)}.tl-row{display:grid;grid-template-columns:220px minmax(760px,1fr);border-top:1px solid var(--line-soft);min-width:0}.tl-row:first-child{border-top:0}.tl-label{position:sticky;left:0;z-index:2;background:#fff;border:0;border-right:1px solid var(--line);padding:6px 10px;display:flex;flex-direction:column;gap:2px;justify-content:center;min-width:0;text-align:left;font:inherit;cursor:pointer;color:inherit}.tl-label:hover{background:var(--surface-3)}.tl-label:focus-visible{outline:2px solid var(--brand-500);outline-offset:-2px}.tl-label b{font-size:var(--fs-sm);font-weight:var(--fw-semibold);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--brand-900);line-height:1.25}.tl-label small{font-size:var(--fs-2xs);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.25}.tl-kind{display:inline-flex;align-items:center;gap:4px;font-weight:var(--fw-semibold)}.tl-kind i{width:6px;height:6px;border-radius:2px;flex:none;background:var(--brand-500)}.tl-kind.proposed i{background:#d9a514}.tl-track{position:relative;display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));align-items:center;height:34px;background-image:linear-gradient(to right,var(--line-soft) 1px,transparent 1px);background-repeat:repeat-x;background-size:calc(100% / var(--n)) 100%;min-width:0}.tl-weekend{position:absolute;top:0;bottom:0;z-index:0;background:var(--surface-2);border-left:1px solid var(--line-soft);pointer-events:none}.tl-weekend.first{border-left:0}.tl-bar{grid-row:1;height:22px;border-radius:5px;border:1px solid;padding:0 6px;display:flex;align-items:center;gap:4px;font:inherit;font-size:10px;font-weight:var(--fw-semibold);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;position:relative;z-index:1;min-width:0;text-align:left;line-height:1.2}.tl-bar.planned{background:#e7f1fc;border-color:#cfe0f5;color:#1a5f9e}.tl-bar.proposed{background:#fff5d6;border-color:#ead48a;color:#8a5b00}.tl-bar:hover{filter:brightness(.985)}.tl-bar.sel{outline:2px solid var(--brand-500);outline-offset:1px;box-shadow:0 0 0 3px var(--brand-100)}.tl-bar:focus-visible{outline:2px solid var(--brand-500);outline-offset:1px}.tl-bar.inprogress{border-left-style:dashed}.tl-empty{padding:24px 16px;text-align:center;color:var(--muted);font-size:var(--fs-sm)}.tl-detail{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-top:1px solid var(--line-soft);padding-top:10px;min-height:42px}.tl-detail .tl-info{flex:1;min-width:220px;font-size:var(--fs-sm);color:var(--muted);line-height:1.45}.tl-detail .tl-info b{color:var(--brand-900)}.tl-detail .tl-info .tl-meta{color:var(--muted);font-size:var(--fs-xs)}.tl-detail .tl-actions{display:flex;gap:8px;flex-wrap:wrap}.tl-detail .tl-hint{color:var(--muted);font-size:var(--fs-sm)}
-@media(max-width:1200px){.cal-grid{grid-template-columns:1fr}}
+.cal-head{display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:12px}.cal-head > div{flex:1;min-width:220px}.cal-head h1{margin-bottom:3px}.cal-head .sub{margin:0}.cal-empty{background:var(--brand-50);border:1px solid var(--brand-100);border-radius:var(--radius-md);padding:12px 14px;color:var(--brand-700);font-size:var(--fs-sm);margin-bottom:14px}/* ====== CALENDARIO · TIMELINE ====== */
+.tl-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:12px;display:flex;flex-direction:column;gap:10px;min-width:0}.tl-toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0}.tl-range{font-size:var(--fs-sm);color:var(--muted);font-weight:var(--fw-semibold);white-space:nowrap}.tl-range b{color:var(--brand-900)}.tl-filters{display:inline-flex;align-items:center;gap:5px;flex-wrap:wrap;margin-left:auto}.tl-filter{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);background:#fff;border-radius:var(--radius-pill);padding:4px 9px;font:inherit;font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--muted);cursor:pointer;line-height:1.2}.tl-filter:hover{border-color:var(--brand-500);color:var(--brand-900)}.tl-filter[aria-pressed="true"]{border-color:var(--brand-500);background:var(--brand-50);color:var(--brand-700)}.tl-filter b{font-size:var(--fs-2xs);background:var(--surface-2);border-radius:var(--radius-pill);padding:0 5px;color:var(--brand-900);font-weight:var(--fw-bold)}.tl-filter:focus-visible{outline:2px solid var(--brand-500);outline-offset:2px}.tl-scroll{overflow:auto;border:1px solid var(--line);border-radius:var(--radius-md);max-height:460px;min-width:0}.tl-axis{display:grid;grid-template-columns:220px minmax(760px,1fr);position:sticky;top:0;z-index:3;background:#fff;border-bottom:1px solid var(--line)}.tl-axis-label{position:sticky;left:0;z-index:4;background:#fff;border-right:1px solid var(--line);padding:8px 10px;font-size:var(--fs-2xs);text-transform:uppercase;letter-spacing:var(--tracking-caps);color:var(--muted);font-weight:var(--fw-bold);display:flex;align-items:flex-end}.tl-axis-track{display:flex;flex-direction:column;min-width:0}.tl-months{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));font-size:var(--fs-2xs);font-weight:var(--fw-bold);color:var(--brand-900);text-transform:uppercase;letter-spacing:var(--tracking-caps)}.tl-month{padding:5px 6px;border-left:1px solid var(--line-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:var(--surface-3)}.tl-month:first-child{border-left:0}.tl-days{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));border-top:1px solid var(--line-soft)}.tl-day{height:22px;display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--muted);border-left:1px solid var(--line-soft);line-height:1;font-variant-numeric:tabular-nums}.tl-day:first-child{border-left:0}.tl-day.mon{color:var(--brand-900);font-weight:var(--fw-bold)}.tl-day.we{background:var(--surface-2);color:var(--muted-2)}.tl-day.today{background:var(--brand-100);color:var(--brand-800);font-weight:var(--fw-bold)}.tl-row{display:grid;grid-template-columns:220px minmax(760px,1fr);border-top:1px solid var(--line-soft);min-width:0}.tl-row:first-child{border-top:0}.tl-label{position:sticky;left:0;z-index:2;background:#fff;border:0;border-right:1px solid var(--line);padding:6px 10px;display:flex;flex-direction:column;gap:2px;justify-content:center;min-width:0;text-align:left;font:inherit;cursor:pointer;color:inherit}.tl-label:hover{background:var(--surface-3)}.tl-label:focus-visible{outline:2px solid var(--brand-500);outline-offset:-2px}.tl-label b{font-size:var(--fs-sm);font-weight:var(--fw-semibold);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--brand-900);line-height:1.25}.tl-label small{font-size:var(--fs-2xs);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.25}.tl-kind{display:inline-flex;align-items:center;gap:4px;font-weight:var(--fw-semibold)}.tl-kind i{width:6px;height:6px;border-radius:2px;flex:none;background:var(--brand-500)}.tl-kind.proposed i{background:#d9a514}.tl-track{position:relative;display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));align-items:center;min-height:34px;background-image:linear-gradient(to right,var(--line-soft) 1px,transparent 1px);background-repeat:repeat-x;background-size:calc(100% / var(--n)) 100%;min-width:0}/* Le fasce coprono anche il bordo della riga: la colonna del fine settimana
+   resta continua invece di spezzarsi a ogni riga. */
+.tl-weekend{position:absolute;top:-1px;bottom:-1px;z-index:0;background:var(--surface-2);border-left:1px solid var(--line-soft);pointer-events:none}.tl-weekend.first{border-left:0}.tl-bar{grid-row:1;height:22px;border-radius:5px;border:1px solid;padding:0 6px;display:flex;align-items:center;gap:4px;font:inherit;font-size:10px;font-weight:var(--fw-semibold);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;position:relative;z-index:1;min-width:0;text-align:left;line-height:1.2}.tl-bar.planned{background:#e7f1fc;border-color:#cfe0f5;color:#1a5f9e}.tl-bar.proposed{background:#fff5d6;border-color:#ead48a;color:#8a5b00}.tl-bar:hover{filter:brightness(.985)}.tl-bar.sel{outline:2px solid var(--brand-500);outline-offset:1px;box-shadow:0 0 0 3px var(--brand-100)}.tl-bar:focus-visible{outline:2px solid var(--brand-500);outline-offset:1px}.tl-bar.inprogress{border-left-style:dashed}.tl-empty{padding:24px 16px;text-align:center;color:var(--muted);font-size:var(--fs-sm)}.tl-detail{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-top:1px solid var(--line-soft);padding-top:10px;min-height:42px}.tl-detail .tl-info{flex:1;min-width:220px;font-size:var(--fs-sm);color:var(--muted);line-height:1.45}.tl-detail .tl-info b{color:var(--brand-900)}.tl-detail .tl-info .tl-meta{color:var(--muted);font-size:var(--fs-xs)}.tl-detail .tl-actions{display:flex;gap:8px;flex-wrap:wrap}.tl-detail .tl-hint{color:var(--muted);font-size:var(--fs-sm)}
+/* Periodo cliccabile: porta alla timeline con l'engagement evidenziato. */
+a.obj-period{text-decoration:none;cursor:pointer}
+a.obj-period:hover{border-color:var(--brand-500);background:var(--brand-50)}
+a.obj-period:focus-visible{outline:2px solid var(--brand-500);outline-offset:2px}
+/* Anello di avanzamento riusabile (pastiglia engagement e calendario). */
+.ring{width:17px;height:17px;flex:none;display:block}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:4}
+.ring .track{stroke:var(--surface-2)}
+.ring .fill{stroke:var(--brand-600);stroke-linecap:round}
+.ring.late .fill{stroke:var(--st-action)}
+/* Calendario: la riga riprende tipo, icona cliente e anello della pastiglia. */
+.tl-label .tl-main{display:flex;align-items:center;gap:6px;min-width:0}
+.tl-label .tl-main b{flex:1;min-width:0}
+.tl-label .tl-main .obj-type{width:18px;height:18px;border-radius:4px;font-size:8px;border-width:1px}
+.tl-label .tl-main .ring{width:16px;height:16px}
+.tl-label .tl-sub{display:flex;align-items:center;gap:5px;min-width:0}
+.tl-label .tl-sub .mark{width:15px;height:15px;font-size:6px}
+.tl-label .tl-sub .tl-client{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tl-label .tl-sub .tl-kind{flex:none}
+/* L'icona cliente della pastiglia è definita dentro .obj-client: qui serve
+   la stessa resa (cerchio con favicon) in due contesti nuovi. */
+.tl-label .tl-sub .mark,.tl-info .mark{position:relative;display:grid;place-items:center;flex:none;overflow:hidden;background:#fff;border:1px solid var(--brand-100);border-radius:50%;color:var(--brand-700);font-weight:var(--fw-black);line-height:1}
+.tl-label .tl-sub .mark img,.tl-info .mark img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#fff}
+.tl-info .mark{display:inline-grid;width:18px;height:18px;font-size:7px;vertical-align:-4px}
+.tl-row.focus{background:var(--brand-50);box-shadow:inset 3px 0 0 var(--brand-600)}
+.tl-row.focus .tl-label b{color:var(--brand-700)}
+.tl-bar.focus{outline:2px solid var(--brand-700);outline-offset:1px;box-shadow:0 0 0 4px var(--brand-100)}
 @media(max-width:900px){.tl-axis,.tl-row{grid-template-columns:180px minmax(720px,1fr)}.tl-filters{margin-left:0}
 }
-@media(max-width:700px){.cal-month{padding:10px;overflow-x:auto}.cal-week,.cal-days{min-width:560px}.cal-day{min-height:68px;padding:3px}.cal-ev{font-size:9px;padding:1px 3px}.cal-more{font-size:8px}.tl-card{padding:10px}.tl-axis,.tl-row{grid-template-columns:160px minmax(680px,1fr)}.tl-axis-label,.tl-label{padding:6px 8px}
+@media(max-width:700px){.tl-card{padding:10px}.tl-axis,.tl-row{grid-template-columns:160px minmax(680px,1fr)}.tl-axis-label,.tl-label{padding:6px 8px}
 }
 </style>
 </head>
@@ -338,6 +424,10 @@ table{width:100%;border-collapse:collapse}th{text-align:left;font-size:var(--fs-
   <symbol id="i-cal" viewBox="0 0 16 16"><path d="M10.854 8.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708 0"/><path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M2 2a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1z"/><path d="M2.5 4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H3a.5.5 0 0 1-.5-.5z"/></symbol>
   <symbol id="i-key" viewBox="0 0 16 16"><path d="M0 8a4 4 0 0 1 7.465-2H14a.5.5 0 0 1 .354.146l1.5 1.5a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0L13 9.207l-.646.647a.5.5 0 0 1-.708 0L11 9.207l-.646.647a.5.5 0 0 1-.708 0L9 9.207l-.646.647A.5.5 0 0 1 8 10h-.535A4 4 0 0 1 0 8m4-3a3 3 0 1 0 2.712 4.285A.5.5 0 0 1 7.163 9h.63l.853-.854a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.793-.793-1-1h-6.63a.5.5 0 0 1-.451-.285A3 3 0 0 0 4 5"/><path d="M4 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/></symbol>
   <symbol id="i-play" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/><path d="M6.271 5.055a.5.5 0 0 1 .52.038l3.5 2.5a.5.5 0 0 1 0 .814l-3.5 2.5A.5.5 0 0 1 6 10.5v-5a.5.5 0 0 1 .271-.445"/></symbol>
+  <!-- Campanella: solleciti e promemoria. -->
+  <symbol id="i-bell" viewBox="0 0 16 16"><path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2"/><path d="M8 1.918l-.797.161A4 4 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4 4 0 0 0-3.203-3.92z"/><path d="M14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5 5 0 0 1 13 6c0 .88.32 4.2 1.22 6"/></symbol>
+  <!-- Stessa campanella con le onde: regole che fanno scattare i solleciti. -->
+  <symbol id="i-bell-alarm" viewBox="0 0 16 16"><path fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" d="M2.7 1.3 1.3 2.7M13.3 1.3l1.4 1.4"/><path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2"/><path d="M8 1.918l-.797.161A4 4 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4 4 0 0 0-3.203-3.92z"/><path d="M14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5 5 0 0 1 13 6c0 .88.32 4.2 1.22 6"/></symbol>
   <symbol id="i-report" viewBox="0 0 16 16"><path d="M9.5 0a.5.5 0 0 1 .5.5.5.5 0 0 0 .5.5.5.5 0 0 1 .5.5V2a.5.5 0 0 1-.5.5h-5A.5.5 0 0 1 5 2v-.5a.5.5 0 0 1 .5-.5.5.5 0 0 0 .5-.5.5.5 0 0 1 .5-.5z"/><path d="M3 2.5a.5.5 0 0 1 .5-.5H4a.5.5 0 0 0 0-1h-.5A1.5 1.5 0 0 0 2 2.5v12A1.5 1.5 0 0 0 3.5 16h9a1.5 1.5 0 0 0 1.5-1.5v-12A1.5 1.5 0 0 0 12.5 1H12a.5.5 0 0 0 0 1h.5a.5.5 0 0 1 .5.5v12a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5z"/><path d="M10.854 7.854a.5.5 0 0 0-.708-.708L7.5 9.793 6.354 8.646a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0z"/></symbol>
   <symbol id="i-chart" viewBox="0 0 16 16"><path d="M4 11H2v3h2zm5-4H7v7h2zm5-5v12h-2V2zm-2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM6 7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1zm-5 4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1z"/></symbol>
 <symbol id="i-code" viewBox="0 0 16 16"><path d="M10.478 1.647a.5.5 0 1 0-.956-.294l-4 13a.5.5 0 0 0 .956.294zM4.854 4.146a.5.5 0 0 1 0 .708L1.707 8l3.147 3.146a.5.5 0 0 1-.708.708l-3.5-3.5a.5.5 0 0 1 0-.708l3.5-3.5a.5.5 0 0 1 .708 0m6.292 0a.5.5 0 0 0 0 .708L14.293 8l-3.147 3.146a.5.5 0 0 0 .708.708l3.5-3.5a.5.5 0 0 0 0-.708l-3.5-3.5a.5.5 0 0 0-.708 0"/></symbol>
@@ -371,7 +461,7 @@ table{width:100%;border-collapse:collapse}th{text-align:left;font-size:var(--fs-
         <button class="nav-item nav-sub" data-act="nav" data-nav="waiting" data-view="list" data-filter="waiting" title="In attesa di cliente, manager o altri soggetti"><svg class="nav-ico" aria-hidden="true"><use href="#i-clock"></use></svg><span class="nav-txt">In attesa di terzi</span><span class="nav-count" hidden>0</span></button>
         <button class="nav-item" data-act="nav" data-nav="clients" data-view="clients" title="Clienti"><svg class="nav-ico" aria-hidden="true"><use href="#i-team"></use></svg><span class="nav-txt">Clienti</span></button>
         <button class="nav-item" data-act="nav" data-nav="calendar" data-view="calendar" title="Calendario"><svg class="nav-ico" aria-hidden="true"><use href="#i-cal"></use></svg><span class="nav-txt">Calendario</span></button>
-        <button class="nav-item" data-act="nav" data-nav="solicitations" data-view="solicitations" title="Solleciti"><svg class="nav-ico" aria-hidden="true"><use href="#i-play"></use></svg><span class="nav-txt">Solleciti</span></button>
+        <button class="nav-item" data-act="nav" data-nav="solicitations" data-view="solicitations" title="Solleciti"><svg class="nav-ico" aria-hidden="true"><use href="#i-bell"></use></svg><span class="nav-txt">Solleciti</span></button>
       </div>
       <div class="nav-group" data-group="admin" hidden>
         <div class="nav-label">Amministrazione</div>
@@ -379,6 +469,7 @@ table{width:100%;border-collapse:collapse}th{text-align:left;font-size:var(--fs-
         <button class="nav-item" data-act="nav" data-nav="admin-users" data-view="admin" data-tab="users" title="Utenti"><svg class="nav-ico" aria-hidden="true"><use href="#i-users"></use></svg><span class="nav-txt">Utenti</span></button>
         <button class="nav-item" data-act="nav" data-nav="admin-mailing" data-view="admin" data-tab="mailing" title="Mailing list"><svg class="nav-ico" aria-hidden="true"><use href="#i-mail"></use></svg><span class="nav-txt">Mailing list</span></button>
         <button class="nav-item" data-act="nav" data-nav="admin-templates" data-view="admin" data-tab="templates" title="Template mail"><svg class="nav-ico" aria-hidden="true"><use href="#i-doc"></use></svg><span class="nav-txt">Template mail</span></button>
+        <button class="nav-item" data-act="nav" data-nav="admin-solicitations" data-view="admin" data-tab="solicitations" title="Regole dei solleciti"><svg class="nav-ico" aria-hidden="true"><use href="#i-bell-alarm"></use></svg><span class="nav-txt">Regole solleciti</span></button>
         <button class="nav-item" data-act="nav" data-nav="admin-settings" data-view="admin" data-tab="settings" title="Impostazioni"><svg class="nav-ico" aria-hidden="true"><use href="#i-lock"></use></svg><span class="nav-txt">Impostazioni</span></button>
       </div>
     </nav>
@@ -401,13 +492,13 @@ table{width:100%;border-collapse:collapse}th{text-align:left;font-size:var(--fs-
         <div class="spacer"></div>
         <div class="demo-switch" role="group" aria-label="Modalità demo">
           <span class="demo-tag">Demo</span>
-          <label for="demoUser">Utente
+          <label class="demo-field-user" for="demoUser">Utente
             <select id="demoUser" aria-label="Utente demo"></select>
           </label>
-          <label for="role">Profilo
+          <label class="demo-field-role" for="role">Profilo
             <select id="role" aria-label="Profilo demo"></select>
           </label>
-          <label for="client">Cliente
+          <label class="demo-field-client" for="client">Cliente
             <select id="client" aria-label="Cliente demo"></select>
           </label>
         </div>
@@ -465,7 +556,7 @@ const DELIVERABLE_KINDS = [
 ];
 const STEPS = [
   ['Setup', 'Team, distribution list, lingua e tipologie di deliverable'],
-  ['Documenti e dati economici', 'Scheda tecnica, ordine, costi e margine approvati'],
+  ['Documenti', 'Scheda tecnica, ordine, costi e margine approvati'],
   ['Scope', 'Perimetro e obiettivi dell\'attività'],
   ['Pianificazione', 'Proposta e approvazione delle date'],
   ['Credenziali', 'Dati di accesso per l\'esecuzione'],
@@ -512,20 +603,52 @@ const VISIBILITY = {
   Auditor: 'tutti i file, senza dati economici, in sola lettura; le credenziali non sono visibili'
 };
 
-// Identità della demo: l'URL ha la precedenza sulla memoria del browser, così
-// un link condiviso (o un refresh) riapre lo stesso profilo.
-const demoParams = new URLSearchParams(location.search);
-const demoRole = demoParams.get('role');
-const demoUser = demoParams.get('user');
-const demoClient = demoParams.get('client');
+// Identità della demo in cookie, non nell'URL: un link condiviso non può
+// cambiare profilo (`?role=...` viene ignorato). Il server legge gli stessi
+// cookie, così le chiamate API non devono rimandare ruolo e utente.
+const ID_COOKIE = { role: 'cep_role', user: 'cep_user', client: 'cep_client' };
 
-if (demoRole) localStorage.setItem('cep.role', demoRole);
-if (demoUser !== null) localStorage.setItem('cep.user', demoUser);
-if (demoClient !== null) localStorage.setItem('cep.client', demoClient);
+function readCookie(name) {
+  const prefix = `${name}=`;
+  const row = document.cookie.split('; ').find(item => item.startsWith(prefix));
+  if (!row) return null;
+  try { return decodeURIComponent(row.slice(prefix.length)); } catch { return row.slice(prefix.length); }
+}
+
+function writeCookie(name, value) {
+  document.cookie = `${name}=${encodeURIComponent(value || '')}; path=/; max-age=31536000; SameSite=Lax`;
+}
+
+// Allinea i cookie allo stato corrente (usata dopo ogni cambio nel menu demo).
+function writeIdentity() {
+  writeCookie(ID_COOKIE.role, state.role);
+  writeCookie(ID_COOKIE.user, state.userId || '');
+  writeCookie(ID_COOKIE.client, state.clientId || '');
+}
+
+// Primo accesso: profilo Manager.
+if (readCookie(ID_COOKIE.role) === null) writeCookie(ID_COOKIE.role, 'Manager');
+if (readCookie(ID_COOKIE.user) === null) writeCookie(ID_COOKIE.user, '');
+if (readCookie(ID_COOKIE.client) === null) writeCookie(ID_COOKIE.client, '');
+['cep.role', 'cep.user', 'cep.client'].forEach(key => localStorage.removeItem(key));
+
+// I vecchi link possono avere ?role=.../&user=.../&client=...: si tolgono
+// dalla barra degli indirizzi, l'identità ora vive solo nei cookie.
+{
+  const urlParams = new URLSearchParams(location.search);
+  let cleaned = false;
+  ['role', 'user', 'client'].forEach(key => {
+    if (urlParams.has(key)) { urlParams.delete(key); cleaned = true; }
+  });
+  if (cleaned) {
+    const query = urlParams.toString();
+    history.replaceState(null, '', location.pathname + (query ? `?${query}` : '') + location.hash);
+  }
+}
 
 const state = {
-  role: demoRole || localStorage.getItem('cep.role') || 'Pentester',
-  clientId: demoClient !== null ? demoClient : (localStorage.getItem('cep.client') || ''),
+  role: readCookie(ID_COOKIE.role) || 'Manager',
+  clientId: readCookie(ID_COOKIE.client) || '',
   sideCollapsed: localStorage.getItem('cep.sideCollapsed') === '1',
   view: 'dashboard',
   listTab: 'eng',
@@ -534,7 +657,7 @@ const state = {
   listSort: 'priority',
   listColumn: 'engagement',
   listDir: 'asc',
-  userId: demoUser !== null ? demoUser : (localStorage.getItem('cep.user') || ''),
+  userId: readCookie(ID_COOKIE.user) || '',
   demoUsers: [],
   users: [],
   userEngagements: [],
@@ -565,14 +688,17 @@ const state = {
   error: null,
   list: [],
   calendarProposals: [],
-  calendarView: localStorage.getItem('cep.calendarView') || 'timeline',
   calendarFilter: 'all',
   calendarSel: '',
+  // Engagement evidenziato arrivando da un link "Periodo" (?eng=...).
+  calendarFocus: '',
+  calendarFocusPending: false,
   clients: [],
   detail: null,
   tab: 'docs',
   rules: [],
   due: [],
+  sent: [],
   scope: null,
   credentials: null,
   logAuthor: '',
@@ -642,8 +768,8 @@ const isInternalRole = () => state.role === 'PMO' || state.role === 'Pentester' 
 // Sezioni di Amministrazione visibili per profilo: il Pentester entra solo per
 // il testo delle email dei suoi engagement, dalle mailing list.
 const ADMIN_TABS_BY_ROLE = {
-  Manager: ['activities', 'users', 'clients', 'mailing', 'templates', 'settings'],
-  PMO: ['activities', 'users', 'clients', 'mailing', 'templates', 'settings'],
+  Manager: ['activities', 'users', 'clients', 'mailing', 'templates', 'solicitations', 'settings'],
+  PMO: ['activities', 'users', 'clients', 'mailing', 'templates', 'solicitations', 'settings'],
   Pentester: ['mailing']
 };
 const adminTabsForRole = () => ADMIN_TABS_BY_ROLE[state.role] || [];
@@ -790,12 +916,17 @@ function objState(e, opts = {}) {
   return `<span class="obj-state ${cls}"><i></i>${esc(label)}${days ? `<em>${days} gg</em>` : ''}</span>`;
 }
 
-// Periodo: riquadro con l'icona calendario.
+// Periodo: riquadro con l'icona calendario. Con `opts.id` diventa un link al
+// calendario che evidenzia l'engagement (?eng=CODICE).
 function periodBox(start, end, opts = {}) {
   if (!start) return `<span style="color:var(--muted)">Da definire</span>`;
-  return `<span class="obj-period ${opts.live ? 'live' : ''}">
-    <svg aria-hidden="true"><use href="#i-cal"></use></svg>${fmt(start)}${end ? ` <span class="arrow">→</span> ${fmt(end)}` : ''}
-  </span>`;
+  const cls = `obj-period${opts.live ? ' live' : ''}${opts.id ? ' cal-link' : ''}`;
+  const body = `<svg aria-hidden="true"><use href="#i-cal"></use></svg>${fmt(start)}${end ? ` <span class="arrow">→</span> ${fmt(end)}` : ''}`;
+
+  if (!opts.id) return `<span class="${cls}">${body}</span>`;
+
+  return `<a class="${cls}" href="/calendar?${qs({ eng: opts.id })}" data-act="open-calendar"
+    title="Apri nel calendario${opts.name ? `: ${esc(opts.name)}` : ''}">${body}</a>`;
 }
 
 // Deliverable: icona per tipologia, nome, versione e stato di pubblicazione.
@@ -809,16 +940,28 @@ function docTag(kind, opts = {}) {
   </span>`;
 }
 
+// Anello di avanzamento: stessi numeri della pastiglia engagement, riusabile
+// dove serve una versione compatta (lista, calendario).
+function progressRing(e, opts = {}) {
+  const total = Number(e && e.stepCount) || (e && e.retestPlanned ? 9 : 7);
+  const index = Math.max(0, Math.min(Number(e && e.stepIndex) || 0, total));
+  const percent = Math.round((index / total) * 100);
+  const label = `Passo ${index} di ${total}`;
+
+  return `<span class="ring${opts.late ? ' late' : ''}" title="${esc(label)}" role="img" aria-label="${esc(label)}">
+    <svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="15.9" class="track"></circle><circle cx="18" cy="18" r="15.9" class="fill" style="stroke-dasharray:${percent} 100"></circle></svg>
+  </span>`;
+}
+
 // Engagement: pastiglia compatta (tipo, nome, cliente, avanzamento ad anello).
 function engPill(e, opts = {}) {
-  const total = Number(e.stepCount) || (e.retestPlanned ? 9 : 7);
-  const index = Math.max(0, Math.min(Number(e.stepIndex) || 0, total));
-  const percent = Math.round((index / total) * 100);
   const late = opts.late !== undefined
     ? opts.late
     : daysSince((actionState(e) || {}).since) >= STALE_DAYS;
   const client = clientFor(e);
   const src = faviconUrl(client && client.website);
+  const total = Number(e.stepCount) || (e.retestPlanned ? 9 : 7);
+  const index = Math.max(0, Math.min(Number(e.stepIndex) || 0, total));
 
   return `<span class="eng-pill${late ? ' late' : ''}" title="${esc(e.name)} · ${esc(e.clientName || '')} · passo ${index} di ${total}">
     ${typeBadge(e.type)}
@@ -826,9 +969,7 @@ function engPill(e, opts = {}) {
     <span class="cli" title="${esc(e.clientName || '')}">${src
       ? `<img src="${esc(src)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`
       : esc(initialsOf(e.clientName))}</span>
-    <span class="ring" title="Passo ${index} di ${total}" role="img" aria-label="Passo ${index} di ${total}">
-      <svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="15.9" class="track"></circle><circle cx="18" cy="18" r="15.9" class="fill" style="stroke-dasharray:${percent} 100"></circle></svg>
-    </span>
+    ${progressRing(e, { late })}
   </span>`;
 }
 
@@ -865,12 +1006,15 @@ function toast(msg) {
   toast._t = setTimeout(() => t.classList.remove('show'), 2800);
 }
 
+// Solo i parametri propri della richiesta: ruolo, utente e cliente viaggiano
+// nei cookie di identità, non nell'URL.
 function qs(extra = {}) {
-  return new URLSearchParams({ user: state.userId || '', role: state.role, client: state.clientId || '', ...extra }).toString();
+  return new URLSearchParams(extra).toString();
 }
 
 async function api(path, options = {}) {
-  const response = await fetch(path, {
+  const url = path.replace(/\?$/, '');
+  const response = await fetch(url, {
     ...options,
     headers: { 'Content-Type': 'application/json', ...(options.headers || {}) }
   });
@@ -1083,6 +1227,7 @@ function updateNav() {
     clients: 'Clienti',
     mailing: 'Mailing list',
     templates: 'Template mail',
+    solicitations: 'Regole solleciti',
     settings: 'Impostazioni'
   };
 
@@ -1159,7 +1304,7 @@ async function loadDemoUsers(preferredRole) {
     state.demoUsers = [];
   }
 
-  const savedId = localStorage.getItem('cep.user');
+  const savedId = readCookie(ID_COOKIE.user);
   const saved = demoUserById(savedId);
   const user = (saved && saved.role === role ? saved : null) ||
     state.demoUsers.find(item => item.role === role) ||
@@ -1169,6 +1314,8 @@ async function loadDemoUsers(preferredRole) {
     state.userId = user.id;
     state.role = user.role;
     state.clientId = user.role === 'Client' ? (user.clientId || '') : '';
+    // Il server legge l'identità dai cookie: si tiene allineata alla scelta.
+    writeIdentity();
   }
 
   fillUserSelect();
@@ -1194,7 +1341,7 @@ function fillClientSelect() {  const select = $('#client');
       ? (clients[0] ? clients[0].id : '')
       : '';
     select.value = state.clientId;
-    localStorage.setItem('cep.client', state.clientId);
+    writeCookie(ID_COOKIE.client, state.clientId);
   }
 }
 
@@ -1216,9 +1363,9 @@ function setDemoUser(id) {
   state.listTab = 'eng';
   state.scope = null;
   state.credentials = null;
-  localStorage.setItem('cep.user', state.userId);
-  localStorage.setItem('cep.role', state.role);
-  localStorage.setItem('cep.client', state.clientId || '');
+  writeCookie(ID_COOKIE.user, state.userId);
+  writeCookie(ID_COOKIE.role, state.role);
+  writeCookie(ID_COOKIE.client, state.clientId || '');
   $('#role').value = state.role;
   fillUserSelect();
   fillClientSelect();
@@ -1259,9 +1406,9 @@ async function setRole(role) {
   state.listTab = 'eng';
   state.scope = null;
   state.credentials = null;
-  localStorage.setItem('cep.user', '');
-  localStorage.setItem('cep.role', role);
-  localStorage.setItem('cep.client', state.clientId || '');
+  writeCookie(ID_COOKIE.user, '');
+  writeCookie(ID_COOKIE.role, role);
+  writeCookie(ID_COOKIE.client, state.clientId || '');
   fillUserSelect();
   fillClientSelect();
   updateHeader();
@@ -1270,7 +1417,7 @@ async function setRole(role) {
 
 function setClient(clientId) {
   state.clientId = clientId;
-  localStorage.setItem('cep.client', clientId || '');
+  writeCookie(ID_COOKIE.client, clientId || '');
   updateHeader();
   if (state.view === 'detail' && state.detail) {
     // Un utente interno che cambia cliente torna alla lista: il dettaglio
@@ -1330,6 +1477,7 @@ async function loadList() {
 
 async function loadCalendar() {
   state.calendarProposals = [];
+  await ensureActivityTypes();
   await loadList();
 
   const pending = (state.list || []).filter(e => e.pendingProposal);
@@ -1349,7 +1497,9 @@ async function loadCalendar() {
         kind: 'proposed',
         start: String(p.startDate).slice(0, 10),
         end: String(p.endDate || p.startDate).slice(0, 10),
-        from: p.from
+        from: p.from,
+        // L'engagement del dettaglio non ha il passo: si ripiega su state.list.
+        ref: e
       }));
   });
 
@@ -1416,9 +1566,11 @@ async function loadSolicitations() {
   try {
     state.rules = await api('/api/solicitations/rules?' + qs());
     state.due = await api('/api/solicitations/due?' + qs());
+    state.sent = await api('/api/solicitations/sent?' + qs());
   } catch {
     state.rules = [];
     state.due = [];
+    state.sent = [];
   }
 }
 
@@ -1431,7 +1583,7 @@ async function loadClients() {
   if (isClient() && state.clients.length &&
       !state.clients.some(c => c.id === state.clientId)) {
     state.clientId = state.clients[0].id;
-    localStorage.setItem('cep.client', state.clientId);
+    writeCookie(ID_COOKIE.client, state.clientId);
   }
   fillClientSelect();
   updateHeader();
@@ -1449,7 +1601,10 @@ function statusPill(e) {
   switch (s.kind) {
     case 'action': return ['Da gestire', 'action'];
     case 'waiting': return ['In attesa', 'wait'];
-    case 'progress': return ['In corso', 'progress'];
+    case 'progress':
+      // "Pianificato dal ..." è sì un progress, ma l'attività non è ancora
+      // iniziata: in Dashboard e in lista il piano non deve leggersi "in corso".
+      return [s.label && s.label.startsWith('Pianificato') ? 'Pianificato' : 'In corso', 'progress'];
     case 'done': return ['Completato', 'done'];
     case 'blocked': return ['Bloccato', 'blocked'];
     default: return [s.label || 'Stato non disponibile', 'neutral'];
@@ -1514,16 +1669,20 @@ function delayBadge(e) {
 }
 
 // Fase del workflow in poco spazio: barra a un segmento per passo + nome.
+// La lunghezza non è fissa: senza retest il workflow ha 7 passi, con il
+// retest 9. Il conteggio arriva dal server in `e.stepCount`.
 function phaseCell(e) {
   const raw = Number(e.stepIndex) || 0;
-  const index = Math.max(0, Math.min(raw, STEPS.length - 1));
-  const done = raw >= STEPS.length;
-  const name = done ? 'Completato' : STEPS[index][0];
+  const total = Number(e.stepCount) === 7 ? 7 : STEPS.length;
+  const steps = STEPS.slice(0, total);
+  const index = Math.max(0, Math.min(raw, total - 1));
+  const done = raw >= total;
+  const name = done ? 'Completato' : steps[index][0];
   const title = done
-    ? 'Workflow completato'
-    : `Passo ${index + 1} di ${STEPS.length}: ${STEPS[index][0]} — ${STEPS[index][1]}`;
+    ? `Workflow completato · ${total} passi`
+    : `Passo ${index + 1} di ${total}: ${steps[index][0]} — ${steps[index][1]}`;
 
-  return `<span class="phase" title="${esc(title)}">${mini(raw)}<span class="phase-name">${esc(name)}</span></span>`;
+  return `<span class="phase" title="${esc(title)}">${mini(raw, total)}<span class="phase-name">${esc(name)}</span></span>`;
 }
 
 function statusCellCompact(e) {
@@ -1622,8 +1781,9 @@ function canEditCredentials(d) {
 }
 
 /* ====== COMPONENTI ====== */
-function mini(stepIndex) {
-  return `<div class="mini" aria-hidden="true">${STEPS.map((_, i) =>
+function mini(stepIndex, stepCount = STEPS.length) {
+  const total = Number(stepCount) === 7 ? 7 : STEPS.length;
+  return `<div class="mini" aria-hidden="true">${STEPS.slice(0, total).map((_, i) =>
     `<i class="${stepIndex > i ? 'on' : stepIndex === i ? 'cur' : ''}"></i>`).join('')}</div>`;
 }
 
@@ -1641,14 +1801,6 @@ function entryAuto(mail, key) {
 }
 
 /* ====== LISTA ====== */
-function listTabs() {
-  if (isClient()) return '';
-  return `<div class="seg" role="tablist">
-    <button role="tab" aria-selected="${state.listTab === 'eng'}" class="${state.listTab === 'eng' ? 'on' : ''}" data-act="list-tab" data-tab="eng">Engagement</button>
-    <button role="tab" aria-selected="${state.listTab === 'rem'}" class="${state.listTab === 'rem' ? 'on' : ''}" data-act="list-tab" data-tab="rem">Solleciti automatici <span class="cnt">${state.due.length}</span></button>
-  </div>`;
-}
-
 const normText = v => String(v == null ? '' : v)
   .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
   .toLowerCase();
@@ -1779,24 +1931,19 @@ function renderList() {
   const all = state.list;
   const data = filteredList();
   const hasFilters = state.listFilter !== 'all' || state.listQuery.trim() !== '';
-  const who = state.clientId
-    ? `Engagement di ${esc(clientLabel(state.clientId))}`
-    : (isClient() ? 'Il tuo cliente' : 'Tutti i clienti');
 
   const headActions = canCreateEngagement()
     ? '<button class="btn pri" data-act="new-engagement">+ Nuovo engagement</button>'
     : '';
-
   const rows = data.map(e => {
     const start = e.periodStart;
     return `<tr class="row${rowClass(e)}" data-act="open" data-id="${esc(e.id)}">
-      <td data-label="Engagement"><button class="linkb rowname" data-act="open" data-id="${esc(e.id)}"><b>${esc(e.name)}</b></button>
-        <span class="rowmeta">${esc(e.id)} ${typeBadge(e.type)}</span></td>
+      <td data-label="Engagement"><span class="list-cell-eng">${typeBadge(e.type)}<button class="linkb rowname" data-act="open" data-id="${esc(e.id)}" title="${esc(e.name)}"><b>${esc(e.name)}</b></button></span></td>
       ${isClient() ? '' : `<td data-label="Cliente">${clientChip(clientFor(e))}</td>`}
       <td data-label="Fase">${phaseCell(e)}</td>
       <td data-label="Stato">${statusCellCompact(e)}</td>
       <td data-label="Ritardo">${delayCellCompact(e)}</td>
-      <td data-label="Periodo">${periodBox(start, e.periodEnd)}</td>
+      <td data-label="Periodo">${periodBox(start, e.periodEnd, { id: e.id, name: e.name })}</td>
     </tr>`;
   }).join('');
 
@@ -1834,25 +1981,12 @@ function renderList() {
           <tbody>${rows || `<tr><td colspan="${isClient() ? 5 : 6}">${empty}</td></tr>`}</tbody>
         </table></div>`;
 
-  // Il titolo dell'elenco segue il filtro attivo.
-  const listTitle = {
-    action: 'Da gestire',
-    waiting: 'In attesa di terzi'
-  }[state.listFilter] || 'Tutti gli engagement';
-
   $('#app').innerHTML = `
-    <div class="headrow">
-      <div>
-        <h1>I miei engagement</h1>
-        <p class="sub" style="margin-bottom:0">${who} · aggiornato al ${fmt(today())}</p>
-      </div>
+    <div class="headrow" style="margin-bottom:16px">
+      <h1>I miei engagement</h1>
       <div class="head-acts">${headActions}</div>
     </div>
     <section class="home-main">
-        <div class="colhead">
-          <h2>${esc(listTitle)} <span class="cnt">${data.length}${data.length !== all.length ? ` di ${all.length}` : ''}</span></h2>
-          ${isClient() ? '' : `<button class="linkb" data-act="list-tab" data-tab="rem">Solleciti automatici · ${state.due.length}</button>`}
-        </div>
         <div class="home-toolbar">
           <div class="search">
             <svg class="search-ico" aria-hidden="true"><use href="#i-search"></use></svg>
@@ -1886,7 +2020,7 @@ const DASHBOARD_PILL = {
 };
 const PHASES = [
   ['Setup', 'Setup'],
-  ['Docs', 'Documenti e dati'],
+  ['Docs', 'Documenti'],
   ['Scope', 'Scope'],
   ['Planning', 'Pianificazione'],
   ['Credentials', 'Credenziali'],
@@ -2022,7 +2156,7 @@ function dashStartsHTML() {
     return `<tr class="${urgent ? 'is-late' : ''}" data-act="open" data-id="${esc(e.id)}">
       ${dashEngCell(e)}
       <td>${esc(e.clientName || '')}</td>
-      <td>${periodBox(e.periodStart, e.periodEnd)}</td>
+      <td>${periodBox(e.periodStart, e.periodEnd, { id: e.id, name: e.name })}</td>
       <td>${dashPill([days === 0 ? 'oggi' : days === 1 ? 'domani' : `${days} gg`, dayKind])}</td>
       <td class="dash-opt">${phaseCell(e)}</td>
       <td class="dash-flags">${flags.join('') || '<span class="dash-mute">Nessuna criticità</span>'}</td>
@@ -2208,7 +2342,7 @@ function dashDeliverablesHTML() {
     </table></div>`);
 }
 
-// 8. Solleciti: le situazioni che il PMO deve sollecitare oggi.
+// 8. Solleciti: le situazioni aperte, da sollecitare da chi aspetta risposta.
 function dashSolicitationsHTML() {
   const due = state.due || [];
   const rows = due.slice(0, 6).map(item => {
@@ -2219,14 +2353,18 @@ function dashSolicitationsHTML() {
       <td class="dash-opt">${esc(item.recipient || '')}</td>
       <td>${item.sentToday
         ? pill(['Inviato oggi', 'ok'])
-        : pill([state.role === 'PMO' ? 'Da inviare' : 'Attesa del PMO', state.role === 'PMO' ? 'action' : 'warn'])}</td>
+        : item.canSend
+          ? pill(['Da inviare', 'action'])
+          : state.role === 'Auditor'
+            ? pill(['Sola lettura', 'neutral'])
+            : pill([item.recipient === recipientLabel(state.role) ? 'Spetta a te' : 'Non disponibile', 'warn'])}</td>
     </tr>`;
   }).join('');
 
   return dashPanel(
     'Solleciti',
     due.length,
-    'Le situazioni che richiedono un sollecito oggi. L\'invio è riservato al PMO.',
+    'Le situazioni che richiedono un sollecito oggi: sollecita chi deve rispondere.',
     `<div class="tablewrap"><table class="kpi-table dash-table">
       <caption class="sr-only">Solleciti dovuti oggi</caption>
       <thead><tr><th>Engagement</th><th>Situazione</th><th class="dash-opt">Destinatario</th><th>Stato</th></tr></thead>
@@ -2237,15 +2375,7 @@ function dashSolicitationsHTML() {
 
 function renderDashboard() {
   const all = state.list || [];
-  const active = all.filter(e => e.phase !== 'Done');
-  const requests = all.filter(e => (actionState(e) || {}).kind === 'action');
-  const waiting = all.filter(e => (actionState(e) || {}).kind === 'waiting');
-  const late = all.filter(e => dashAge(e) >= STALE_DAYS);
   const manager = state.role === 'Manager' || state.role === 'PMO';
-  const internal = !isClient();
-  const scope = isClient() || !state.clientId
-    ? ''
-    : ` · cliente ${esc(clientLabel(state.clientId))}`;
 
   // Box finali per profilo: chi coordina vede team e clienti, gli altri il
   // proprio portafoglio (o i deliverable, per il cliente).
@@ -2263,17 +2393,6 @@ function renderDashboard() {
     <div class="headrow">
       <div>
         <h1>Dashboard</h1>
-        <p class="sub" style="margin-bottom:0">
-          ${plural(active.length, 'engagement attivo', 'engagement attivi')} ·
-          ${plural(requests.length, 'richiesta aperta', 'richieste aperte')} ·
-          ${plural(waiting.length, 'attesa di terzi', 'attese di terzi')}${late.length ? ` · ${plural(late.length, `fermo da ${STALE_DAYS}+ giorni`, `fermi da ${STALE_DAYS}+ giorni`)}` : ''}${scope} ·
-          aggiornata al ${fmt(today())}
-        </p>
-      </div>
-      <div class="head-acts">
-        ${manager ? '<button class="btn pri" data-act="new-engagement">+ Nuovo engagement</button>' : ''}
-        <button class="btn sec" data-act="nav" data-view="list">Tutti gli engagement</button>
-        ${internal ? `<button class="btn sec" data-act="nav" data-view="solicitations">Solleciti · ${(state.due || []).length}</button>` : ''}
       </div>
     </div>
 
@@ -2300,35 +2419,47 @@ function solicitationDetail(item) {
   if (item.daysToStart !== null && item.daysToStart !== undefined) {
     const days = item.daysToStart;
     return days > 0
-      ? `avvio tra ${days} giorni`
+      ? `avvio tra ${plural(days, 'giorno', 'giorni')}`
       : days === 0
         ? 'avvio oggi'
-        : `avvio superato di ${-days} giorni`;
+        : `avvio superato di ${plural(-days, 'giorno', 'giorni')}`;
   }
   return item.ruleKey === 'rep'
-    ? `${item.days} giorni lavorativi di ritardo`
-    : `${item.days} giorni in revisione`;
+    ? `${plural(item.days, 'giorno lavorativo', 'giorni lavorativi')} di ritardo`
+    : `${plural(item.days, 'giorno', 'giorni')} in revisione`;
 }
 
+function solicitationSentTable() {
+  const me = (demoUserById(state.userId) || {}).email || '';
+  const toMe = recipients => !!me &&
+    String(recipients || '').toLowerCase().includes(me.toLowerCase());
+
+  if (!(state.sent || []).length)
+    return '<div class="empty">Nessun sollecito inviato per ora.</div>';
+
+  return `<table><thead><tr><th>Data</th><th>Da</th><th>Engagement</th><th>Regola</th><th>Destinatari</th><th>Oggetto</th></tr></thead><tbody>
+    ${state.sent.map(item => `<tr>
+      <td>${esc(item.sentOn)}</td>
+      <td>${esc(item.sentBy || 'Sistema')}</td>
+      <td class="name"><b>${esc(item.engagementId)}</b><span>${esc(item.clientName)}</span></td>
+      <td>${esc(item.label)}${toMe(item.recipients) ? ` ${pill(['A te', 'progress'])}` : ''}</td>
+      <td><span class="hint">${esc(item.recipients)}</span></td>
+      <td><span class="hint">${esc(item.subject || '')}</span></td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+// Etichetta con cui il server indica il destinatario di un sollecito.
+const recipientLabel = role => (role === 'Client' ? 'Cliente' : role);
+
 function renderSolicitations() {
-  const editable = state.role === 'PMO';
-  const rules = (state.rules || []).map(rule => `
-    <div class="mailc">
-      <div class="t">
-        <b>${esc(rule.label)}</b>
-        <span>${esc(rule.when)}</span>
-        <span>Destinatario: <b>${esc(rule.recipient)}</b> · soglia ${rule.thresholdDays}${rule.countBusinessDays ? ' giorni lavorativi' : ' giorni'}</span>
-        <span class="hint">Testo modificabile e bilingue in <b>Amministrazione › Template mail</b>.</span>
-      </div>
-      <div class="ctl">
-        ${editable
-          ? `<label class="sw"><input type="checkbox" id="on_${esc(rule.key)}" data-change="rule" data-key="${esc(rule.key)}" ${rule.enabled ? 'checked' : ''}><i></i><span>${rule.enabled ? 'Attiva' : 'Disattivata'}</span></label>`
-          : `<span style="color:var(--muted);font-size:var(--fs-md)">${rule.enabled ? 'Attiva' : 'Disattivata'}</span>`}
-      </div>
-    </div>`).join('');
+  // Sollecita chi deve rispondere: tutti tranne chi ha l'azione in carico
+  // (e l'Auditor, che è in sola lettura). Il server decide riga per riga.
+  const canSendAny = state.role !== 'Auditor';
+  const dueCount = state.due.filter(item => item.canSend).length;
 
   const due = state.due.length ? `
-    <table><thead><tr><th>Engagement</th><th>Regola</th><th>Dettaglio</th><th>Destinatario</th><th>Stato</th><th></th></tr></thead><tbody>
+    <table class="solicit-table"><thead><tr><th>Engagement</th><th>Regola</th><th>Dettaglio</th><th>Destinatario</th><th>Stato</th>${canSendAny ? '<th></th>' : ''}</tr></thead><tbody>
       ${state.due.map(item => `<tr>
         <td class="name"><b>${esc(item.engagementId)}</b><span>${esc(item.clientName)}</span></td>
         <td>${esc(item.label)}</td>
@@ -2336,21 +2467,27 @@ function renderSolicitations() {
         <td>${esc(item.recipient)}</td>
         <td>${item.sentToday
           ? pill(['Inviato oggi', 'done'])
-          : pill([editable ? 'Da inviare' : 'In attesa del PMO', editable ? 'action' : 'wait'])}</td>
-        <td style="text-align:right">${editable
-          ? `<button class="btn sec sm" data-act="send-solicitation" data-key="${esc(item.key)}" ${item.canSend ? '' : 'disabled title="' + esc(item.sentToday ? 'Sollecito già inviato oggi' : 'Non disponibile') + '"'}>Invia ora</button>`
-          : ''}</td>
+          : item.canSend
+            ? pill(['Da inviare', 'action'])
+            : state.role === 'Auditor'
+              ? pill(['Sola lettura', 'neutral'])
+              : pill([item.recipient === recipientLabel(state.role) ? 'Spetta a te' : 'Non disponibile', 'wait'])}</td>
+        ${canSendAny ? `<td style="text-align:right"><button class="btn sec sm" data-act="send-solicitation" data-key="${esc(item.key)}" ${item.canSend ? '' : 'disabled title="' + esc(item.sentToday ? 'Sollecito già inviato oggi' : 'L\'azione è in carico al tuo profilo') + '"'}>Invia ora</button></td>` : ''}
       </tr>`).join('')}
     </tbody></table>` : '<div class="empty">Nessuna situazione da sollecitare.</div>';
 
   $('#app').innerHTML = `
-    <h1>Solleciti automatici</h1>
-    <p class="sub">${editable
-      ? 'Pannello PMO: accendi le regole e invia i solleciti dovuti.'
-      : 'Sola lettura: i solleciti sono inviati dal PMO.'} Data di riferimento: ${fmt(today())} · massimo <b>un sollecito al giorno per task</b>.</p>
-    ${listTabs()}
-    <div class="card"><h2>Regole</h2>${rules || '<div class="empty">Nessuna regola.</div>'}</div>
-    <div class="card" style="margin-top:16px"><h2>Situazioni che richiedono un sollecito</h2>${due}</div>`;
+    <h1>Solleciti</h1>
+    <p class="sub">Le situazioni aperte nel tuo perimetro e i solleciti già partiti: puoi sollecitare chi deve rispondere, chi ha l'azione in carico non si sollecita da solo. Data di riferimento: ${fmt(today())} · ogni persona può inviare <b>un sollecito al giorno per task</b>. Le regole si gestiscono in <b>Amministrazione › Regole solleciti</b>.</p>
+    <div class="card">
+      <div class="colhead"><h2>Da inviare <span class="cnt${dueCount ? ' c-action' : ''}">${dueCount}</span></h2></div>
+      ${due}
+    </div>
+    <div class="card" style="margin-top:16px">
+      <div class="colhead"><h2>Solleciti ricevuti <span class="cnt">${(state.sent || []).length}</span></h2></div>
+      <p class="hint" style="margin:-4px 0 10px">Registro dei solleciti inviati sul perimetro visibile: data, mittente, destinatari e testo.</p>
+      ${solicitationSentTable()}
+    </div>`;
 }
 
 /* ====== DETTAGLIO ====== */
@@ -2444,7 +2581,7 @@ function solicitButton(d) {
   if (!s) return '';
 
   if (s.sentToday) {
-    return `<div class="solicit-line"><span class="pill p-ok">Sollecito inviato oggi a ${esc(s.recipient)}</span></div>`;
+    return `<div class="solicit-line"><span class="pill p-ok">Sollecito inviato oggi</span><span class="hint">${esc(s.recipient)}</span></div>`;
   }
 
   if (!s.canSend) {
@@ -2464,7 +2601,7 @@ function solicitButton(d) {
 // dove vivono i comandi, e compaiono solo se il recheck è previsto.
 const DETAIL_PANELS = {
   setup: { n:'0', short:'Setup', group:'Workflow', title:'Setup', desc:'Info, team, liste, lingua e deliverable', phase:'Setup' },
-  docs: { n:'1', short:'Documenti', group:'Workflow', title:'Documenti e dati economici', desc:'Scheda tecnica, ordine e dati economici', phase:'Docs' },
+  docs: { n:'1', short:'Documenti', group:'Workflow', title:'Documenti', desc:'Scheda tecnica, ordine e dati economici', phase:'Docs' },
   scope: { n:'2', short:'Scope', group:'Workflow', title:'Scope', desc:'Perimetro, finestre e referente', phase:'Scope' },
   plan: { n:'3', short:'Pianificazione', group:'Workflow', title:'Pianificazione', desc:'Proposta e approvazione delle date', phase:'Planning' },
   cred: { n:'4', short:'Credenziali', group:'Workflow', title:'Credenziali', desc:'Accessi per l\'esecuzione', phase:'Credentials' },
@@ -2592,9 +2729,9 @@ function renderDetail() {
     // Evidenzia il passo corrispondente alla fase corrente, non tutti quelli
     // che aprono la stessa scheda (Report, Retest e Report retest).
     const isCurrent = currentStepKey(d) === key;
-    return `<button class="wnav-btn s-${s} ${state.tab === tab && isCurrent ? 'on' : ''}" data-act="tab" data-tab="${tab}" title="${esc(meta.title)} · ${esc(panelStateLabel(d, key))}">
-      <span class="wnav-num">${s === 'ok' ? '✓' : meta.n}</span>
-      <span class="wnav-h"><b>${esc(meta.short)}</b><span>${esc(meta.desc)}</span></span>
+    return `<button class="wf-step s-${s}${isCurrent ? ' cur' : ''}" data-act="tab" data-tab="${tab}" title="${esc(meta.title)} · ${esc(panelStateLabel(d, key))}">
+      <span class="wf-bar"></span>
+      <span class="wf-lbl"><b>${s === 'ok' ? '✓' : Number(meta.n) + 1}</b>${esc(meta.short)}</span>
     </button>`;
   }).join('');
 
@@ -2605,9 +2742,9 @@ function renderDetail() {
     ['log', 'i-list', 'Registro', (d.audit || []).length]
   ];
   const extraNav = extras.map(([key, icon, label, count]) => `
-    <button class="wnav-btn extra ${state.tab === key ? 'on' : ''}" data-act="tab" data-tab="${key}" title="${esc(label)} · ${count}">
-      <span class="wnav-num"><svg aria-hidden="true"><use href="#${icon}"></use></svg></span>
-      <span class="wnav-h"><b>${esc(label)}</b><span>${count}</span></span>
+    <button class="wf-extra${state.tab === key ? ' on' : ''}" data-act="tab" data-tab="${key}" title="${esc(label)} · ${count}">
+      <svg class="wf-ico" aria-hidden="true"><use href="#${icon}"></use></svg>
+      <span>${esc(label)}</span><b>${count}</b>
     </button>`).join('');
 
   const statePill = activeState === 'gestione'
@@ -2663,18 +2800,17 @@ function renderDetail() {
       </div>
     </div>
     ${prep ? `<div class="note waiting" style="margin:12px 0 0"><b>Preparazione in ritardo.</b> ${esc(prepText)}.</div>` : ''}
-    <div class="split-detail">
-      <nav class="workflow-nav" aria-label="Workflow e gestione">
-        <div class="wnav-group">Workflow <span>${completedSteps}/${steps.length} passi</span></div>
-        ${stepNav}
-        <div class="wnav-group">Gestione</div>
-        ${extraNav}
-      </nav>
+    <section class="wf-top" aria-label="Workflow e gestione">
+      <div class="wf-head">Workflow <span>${completedSteps}/${steps.length} passi completati</span></div>
+      <div class="wf-steps">${stepNav}</div>
+      <div class="wf-extras">${extraNav}</div>
+    </section>
+    <div class="detail-cols">
       <section class="work-panel">
         <header class="work-panel-head">
           <span class="wp-num">${panelMeta.n || '•'}</span>
           <div class="wp-t">
-            <span class="wp-kicker">${esc(panelMeta.group)}${panelMeta.n ? ` · Passo ${panelMeta.n} di ${STEPS.length}` : ''}</span>
+            <span class="wp-kicker">${esc(panelMeta.group)}${panelMeta.n ? ` · Passo ${Number(panelMeta.n) + 1} di ${steps.length}` : ''}</span>
             <h2>${esc(panelMeta.title)}</h2>
             <p>${esc(panelMeta.desc)}</p>
           </div>
@@ -3965,6 +4101,7 @@ const ADMIN_TABS = [
   ['clients', 'CL', 'Clienti'],
   ['mailing', 'ML', 'Mailing list'],
   ['templates', 'TP', 'Template mail'],
+  ['solicitations', 'SO', 'Solleciti'],
   ['settings', 'ST', 'Impostazioni']
 ];
 
@@ -3995,6 +4132,10 @@ async function loadAdmin() {
 
     if (state.adminTab === 'templates') {
       state.adminTemplates = await api('/api/admin/mail-templates?' + qs());
+    }
+
+    if (state.adminTab === 'solicitations') {
+      state.rules = await api('/api/solicitations/rules?' + qs());
     }
   } catch (error) {
     state.adminError = error.message;
@@ -4111,6 +4252,7 @@ function renderAdmin() {
     clients: adminClientsHTML,
     mailing: adminMailingHTML,
     templates: adminTemplatesHTML,
+    solicitations: adminSolicitationsHTML,
     settings: adminSettingsHTML
   }[state.adminTab] || adminUsersHTML;
 
@@ -4128,6 +4270,7 @@ function renderAdmin() {
     clients: 'Clienti',
     mailing: 'Mailing list',
     templates: 'Template mail',
+    solicitations: 'Regole dei solleciti',
     settings: 'Impostazioni'
   }[state.adminTab] || 'Utenti e accessi';
 
@@ -4137,6 +4280,7 @@ function renderAdmin() {
     clients: 'Anagrafiche, utenze, team e mailing list base',
     mailing: 'Liste notifiche e deliverables · base cliente e engagement',
     templates: 'Template standard, per cliente e per engagement',
+    solicitations: 'Regole globali · accensione e soglie dei promemoria automatici',
     settings: 'Sicurezza, visibilità e accessi'
   }[state.adminTab] || '';
 
@@ -4478,6 +4622,40 @@ function adminTemplatesHTML() {
   </div>`;
 }
 
+function adminSolicitationsHTML() {
+  const rules = state.rules || [];
+
+  if (!rules.length)
+    return `<div class="card"><div class="empty">Nessuna regola configurata.</div></div>`;
+
+  return `
+    <div class="note">Le regole valgono per tutti i clienti (globali): si accendono, si spengono e si regolano le soglie qui. Il testo del promemoria resta bilingue in <b>Template mail</b>.</div>
+    <div class="card">
+      ${rules.map(rule => `
+        <div class="rule-row">
+          <div class="rule-head">
+            <label class="sw"><input type="checkbox" id="on_${esc(rule.key)}" ${rule.enabled ? 'checked' : ''}><i></i><span>${rule.enabled ? 'Attiva' : 'Disattivata'}</span></label>
+            <div class="t">
+              <b>${esc(rule.label)}</b>
+              <span>${esc(rule.when)}</span>
+              <span class="hint">${esc(rule.description)}</span>
+              <span class="hint">Destinatario <b>${esc(rule.recipient)}</b> · template <b>${esc(rule.templateType)}</b></span>
+            </div>
+          </div>
+          <div class="rule-fields">
+            <label for="rl_th_${esc(rule.key)}">Soglia (giorni)
+              <input type="number" min="0" max="365" id="rl_th_${esc(rule.key)}" value="${Number(rule.thresholdDays) || 0}">
+            </label>
+            <label for="rl_min_${esc(rule.key)}">Minimo per inviare
+              <input type="number" min="0" max="365" id="rl_min_${esc(rule.key)}" value="${Number(rule.minDays) || 0}">
+            </label>
+            <label class="rule-bd"><input type="checkbox" id="rl_bd_${esc(rule.key)}" ${rule.countBusinessDays ? 'checked' : ''}> Giorni lavorativi</label>
+            <button class="btn pri sm" data-act="save-rule-details" data-key="${esc(rule.key)}">Salva regola</button>
+          </div>
+        </div>`).join('')}
+    </div>`;
+}
+
 function adminSettingsHTML() {
   return `<div class="card"><h2>Sicurezza e accessi</h2>
     <div class="detail-table" style="display:grid;gap:9px">
@@ -4560,11 +4738,6 @@ function calLongDate(d) {
   return new Intl.DateTimeFormat('it-IT', { day: 'numeric', month: 'long', year: 'numeric' }).format(d);
 }
 
-function calMonthLabel(d) {
-  const label = d.toLocaleDateString('it-IT', { month: 'long', year: 'numeric' });
-  return label.charAt(0).toUpperCase() + label.slice(1);
-}
-
 function calendarEvents(list) {
   const events = [];
   const seen = new Set();
@@ -4580,7 +4753,9 @@ function calendarEvents(list) {
         client: e.clientName,
         kind: 'planned',
         start: String(planned.startDate).slice(0, 10),
-        end: String(planned.endDate || planned.startDate).slice(0, 10)
+        end: String(planned.endDate || planned.startDate).slice(0, 10),
+        // Engagement completo: al calendario servono tipo, cliente e passo.
+        ref: e
       });
     }
 
@@ -4598,7 +4773,8 @@ function calendarEvents(list) {
         kind: 'proposed',
         start,
         end,
-        from: p.from
+        from: p.from,
+        ref: e
       });
     }
   }
@@ -4606,65 +4782,33 @@ function calendarEvents(list) {
   return events.filter(ev => ev.end >= ev.start);
 }
 
-function renderCalendarMonth(month, events, todayKey) {
-  const year = month.getFullYear();
-  const index = month.getMonth();
-  const first = new Date(year, index, 1);
-  const offset = (first.getDay() + 6) % 7;
-  const total = new Date(year, index + 1, 0).getDate();
-  const monthStart = calYmd(first);
-  const monthEnd = calYmd(new Date(year, index + 1, 0));
-  const count = events.filter(ev =>
-    ev.start <= monthEnd && ev.end >= monthStart && ev.end >= todayKey).length;
-
-  const cells = [];
-
-  for (let i = 0; i < offset; i += 1) {
-    const pad = new Date(year, index, 1 - offset + i);
-    const we = pad.getDay() === 0 || pad.getDay() === 6;
-    cells.push(`<div class="cal-day out${we ? ' we' : ''}" aria-hidden="true"></div>`);
-  }
-
-  for (let day = 1; day <= total; day += 1) {
-    const date = new Date(year, index, day);
-    const key = calYmd(date);
-    const weekend = date.getDay() === 0 || date.getDay() === 6;
-    const past = key < todayKey;
-    const dayEvents = past
-      ? []
-      : events
-        .filter(ev => key >= ev.start && key <= ev.end)
-        .sort((a, b) => (a.kind === 'proposed' ? 0 : 1) - (b.kind === 'proposed' ? 0 : 1));
-    const shown = dayEvents.slice(0, 3);
-
-    cells.push(`<div class="cal-day${past ? ' past' : ''}${weekend ? ' we' : ''}${key === todayKey ? ' today' : ''}">
-      <span class="n">${day}</span>
-      ${shown.map(ev => `<button class="cal-ev ${ev.kind}" data-act="open-action" data-id="${esc(ev.id)}" data-tab="${ev.kind === 'proposed' ? 'plan' : ''}" title="${esc(ev.name)} · ${esc(ev.client)} · ${ev.kind === 'planned' ? 'Pianificato' : 'Proposto'} · ${fmt(ev.start)} – ${fmt(ev.end)}">${esc(ev.name)}</button>`).join('')}
-      ${dayEvents.length > 3 ? `<span class="cal-more">+${dayEvents.length - 3} altri</span>` : ''}
-    </div>`);
-  }
-
-  const trailing = (7 - ((offset + total) % 7)) % 7;
-  for (let i = 0; i < trailing; i += 1) {
-    const pad = new Date(year, index + 1, i + 1);
-    const we = pad.getDay() === 0 || pad.getDay() === 6;
-    cells.push(`<div class="cal-day out${we ? ' we' : ''}" aria-hidden="true"></div>`);
-  }
-
-  return `<section class="cal-month">
-    <div class="cal-month-head"><h2>${calMonthLabel(first)}</h2><span>${count} eventi</span></div>
-    <div class="cal-week">${['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'].map((d, i) => `<div class="cal-dow${i >= 5 ? ' we' : ''}">${d}</div>`).join('')}</div>
-    <div class="cal-days">${cells.join('')}</div>
-  </section>`;
-}
-
 /* ====== CALENDARIO · TIMELINE ====== */
 const CAL_TIMELINE_MONTHS = ['gen', 'feb', 'mar', 'apr', 'mag', 'giu', 'lug', 'ago', 'set', 'ott', 'nov', 'dic'];
 
-function calTimelineRange() {
+function calTimelineRange(focusEvents = []) {
   const now = new Date();
-  const start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const end = new Date(now.getFullYear(), now.getMonth() + 2, 0);
+  // La timeline parte dal lunedì della settimana corrente: si allinea con il
+  // mese e con le finestre che iniziano a inizio settimana.
+  let start = new Date(
+    now.getFullYear(), now.getMonth(),
+    now.getDate() - ((now.getDay() + 6) % 7));
+  let end = new Date(now.getFullYear(), now.getMonth() + 2, 0);
+
+  // Con un engagement evidenziato si inquadra il suo periodo, anche se è nel
+  // passato: dal lunedì della settimana d'inizio al mese successivo alla fine.
+  if (focusEvents.length) {
+    const first = focusEvents.reduce((min, ev) => (ev.start < min ? ev.start : min), focusEvents[0].start);
+    const last = focusEvents.reduce((max, ev) => (ev.end > max ? ev.end : max), focusEvents[0].end);
+    const from = calDate(first);
+    const to = calDate(last);
+    start = new Date(from.getFullYear(), from.getMonth(), from.getDate() - ((from.getDay() + 6) % 7));
+    end = new Date(to.getFullYear(), to.getMonth() + 2, 0);
+
+    // Periodi molto lunghi: la finestra resta leggibile.
+    const span = Math.round((end - start) / 86400000) + 1;
+    if (span > 180) end = new Date(start.getFullYear(), start.getMonth(), start.getDate() + 179);
+  }
+
   const days = Math.round((end - start) / 86400000) + 1;
   return { start, end, startKey: calYmd(start), endKey: calYmd(end), days };
 }
@@ -4677,12 +4821,22 @@ function calEventKey(ev) {
   return `${ev.id}|${ev.kind}|${ev.start}`;
 }
 
-function renderCalendarTimeline(events, todayKey, counts) {
-  const range = calTimelineRange();
+// Engagement dietro un evento: la copia nella lista ha tipo, cliente e passo,
+// mentre gli eventi nati dai dettagli portano solo i dati minimi.
+function calEngagement(ev) {
+  if (!ev) return null;
+  if (ev.ref && ev.ref.stepCount !== undefined) return ev.ref;
+  return (state.list || []).find(item => item.id === ev.id) || ev.ref || null;
+}
+
+function renderCalendarTimeline(events, todayKey, counts, range, focus = '') {
   const n = range.days;
   const filter = state.calendarFilter || 'all';
 
-  const visible = events.filter(ev => ev.start <= range.endKey && ev.end >= todayKey);
+  // Normale: da oggi in avanti. Con l'engagement evidenziato si mostra tutto
+  // il periodo inquadrato, anche ciò che è già passato.
+  const visible = events.filter(ev => ev.start <= range.endKey && ev.end >= range.startKey &&
+    (focus || ev.end >= todayKey));
   const rows = visible
     .filter(ev => filter === 'all' || ev.kind === filter)
     .sort((a, b) => a.start.localeCompare(b.start) || String(a.name).localeCompare(String(b.name)));
@@ -4732,16 +4886,30 @@ function renderCalendarTimeline(events, todayKey, counts) {
     const kindLabel = ev.kind === 'planned' ? 'Pianificato' : 'Proposto';
     const key = calEventKey(ev);
     const sel = selected === ev ? ' sel' : '';
-    const progress = ev.kind === 'planned' && ev.start < todayKey ? ' inprogress' : '';
+    const running = ev.kind === 'planned' && ev.start < todayKey ? ' inprogress' : '';
+    const isFocus = !!focus && ev.id === focus;
 
-    return `<div class="tl-row">
-      <button class="tl-label" data-act="cal-select" data-key="${esc(key)}" title="${esc(ev.name)} · ${esc(ev.client)}">
-        <b>${esc(ev.name)}</b>
-        <small><span class="tl-kind ${ev.kind}"><i></i>${kindLabel}</span> · ${esc(ev.client || '')}</small>
+    // Dalla pastiglia engagement: tipo, icona cliente e anello di avanzamento.
+    const eng = calEngagement(ev);
+    const late = !!eng && daysSince((actionState(eng) || {}).since) >= STALE_DAYS;
+    const client = eng ? clientFor(eng) : { id: '', name: ev.client || '' };
+
+    return `<div class="tl-row${isFocus ? ' focus' : ''}" data-eng="${esc(ev.id)}">
+      <button class="tl-label" data-act="cal-select" data-key="${esc(key)}" title="${esc(ev.name)} · ${esc(ev.client || '')}">
+        <span class="tl-main">
+          ${eng ? typeBadge(eng.type) : ''}
+          <b>${esc(ev.name)}</b>
+          ${eng ? progressRing(eng, { late }) : ''}
+        </span>
+        <small class="tl-sub">
+          ${clientMark(client)}
+          <span class="tl-client">${esc(ev.client || client.name || '')}</span>
+          <span class="tl-kind ${ev.kind}"><i></i>${kindLabel}</span>
+        </small>
       </button>
       <div class="tl-track" style="--n:${n}">
         ${weekendBands}
-        <button class="tl-bar ${ev.kind}${sel}${progress}" data-act="cal-select" data-key="${esc(key)}"
+        <button class="tl-bar ${ev.kind}${sel}${running}${isFocus ? ' focus' : ''}" data-act="cal-select" data-key="${esc(key)}"
           style="grid-column:${from + 1}/span ${span}"
           title="${esc(ev.name)} · ${esc(ev.client)} · ${kindLabel} · ${fmt(ev.start)} – ${fmt(ev.end)}">${esc(ev.name)}</button>
       </div>
@@ -4749,22 +4917,25 @@ function renderCalendarTimeline(events, todayKey, counts) {
   }).join('');
 
   const detail = selected
-    ? `<div class="tl-detail">
+    ? (() => {
+        const eng = calEngagement(selected);
+        const client = eng ? clientFor(eng) : { id: '', name: selected.client || '' };
+        return `<div class="tl-detail">
         <div class="tl-info">
-          <b>${esc(selected.name)}</b> · ${esc(selected.client || '')}<br>
+          <b>${esc(selected.name)}</b> · ${clientMark(client)} ${esc(selected.client || client.name || '')}<br>
           <span class="tl-meta">${selected.kind === 'planned' ? 'Pianificato' : 'Proposto'}${selected.from ? ` da ${esc(selected.from)}` : ''} · ${fmt(selected.start)} – ${fmt(selected.end)}</span>
         </div>
         <div class="tl-actions">
           <button class="btn pri sm" data-act="open-action" data-id="${esc(selected.id)}" data-tab="${selected.kind === 'proposed' ? 'plan' : ''}">Apri engagement</button>
           <button class="btn sec sm" data-act="cal-select" data-key="">Chiudi</button>
         </div>
-      </div>`
+      </div>`;
+      })()
     : '<div class="tl-detail"><span class="tl-hint">Clicca una barra o un nome per vedere i dettagli dell\'engagement.</span></div>';
 
   return `<div class="tl-card">
     <div class="tl-toolbar">
       <span class="tl-range"><b>${fmt(range.startKey)}</b> – <b>${fmt(range.endKey)}</b></span>
-      <span class="tl-weekend-key"><i></i>Sab e dom: nessun test</span>
       <div class="tl-filters" role="group" aria-label="Filtra gli eventi">
         ${[['all', 'Tutti'], ['planned', 'Pianificati'], ['proposed', 'Proposti']]
           .map(([value, label]) => `<button class="tl-filter" data-act="cal-filter" data-filter="${value}" aria-pressed="${filter === value}">${label} <b>${counts[value]}</b></button>`)
@@ -4788,52 +4959,43 @@ function renderCalendarTimeline(events, todayKey, counts) {
 function renderCalendar() {
   const now = new Date();
   const todayKey = calYmd(now);
-  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-  const endDate = new Date(now.getFullYear(), now.getMonth() + 2, 0);
-  const endKey = calYmd(endDate);
 
   const all = [...calendarEvents(state.list || []), ...(state.calendarProposals || [])];
   const unique = [...new Map(all.map(ev => [`${ev.id}|${ev.kind}|${ev.start}|${ev.end}`, ev])).values()];
-  const visible = unique.filter(ev => ev.end >= todayKey && ev.start <= endKey);
+
+  // L'engagement arrivato da ?eng= viene evidenziato; se non ha eventi nel
+  // calendario (o il codice non esiste) la vista resta quella normale.
+  const focus = state.calendarFocus || '';
+  const focusEvents = focus ? unique.filter(ev => ev.id === focus) : [];
+  const activeFocus = focusEvents.length ? focus : '';
+  const range = calTimelineRange(focusEvents);
+
+  const visible = unique.filter(ev => ev.start <= range.endKey && ev.end >= range.startKey &&
+    (activeFocus || ev.end >= todayKey));
   const planned = visible.filter(ev => ev.kind === 'planned').length;
   const proposed = visible.filter(ev => ev.kind === 'proposed').length;
-
-  const months = [
-    startOfMonth,
-    new Date(now.getFullYear(), now.getMonth() + 1, 1)
-  ];
-
-  const view = state.calendarView === 'month' ? 'month' : 'timeline';
 
   $('#app').innerHTML = `
     <div class="cal-head">
       <div>
         <p class="side-kicker">Portale</p>
         <h1>Calendario</h1>
-        <p class="sub">Da oggi a ${esc(calLongDate(endDate))} · ${state.clientId ? `cliente ${esc(clientLabel(state.clientId))}` : 'engagement visibili per il tuo profilo'}</p>
-      </div>
-      <div class="head-acts">
-        <div class="cal-switch" role="group" aria-label="Vista del calendario">
-          <button data-act="cal-view" data-view="timeline" aria-pressed="${view === 'timeline'}">Timeline</button>
-          <button data-act="cal-view" data-view="month" aria-pressed="${view === 'month'}">Mese</button>
-        </div>
-        <button class="btn sec" data-act="nav" data-view="list">Vai alla lista</button>
+        <p class="sub">${activeFocus
+          ? `Periodo dell'engagement evidenziato · ${fmt(range.startKey)} – ${fmt(range.endKey)}`
+          : `Da oggi a ${esc(calLongDate(range.end))}`} · ${state.clientId ? `cliente ${esc(clientLabel(state.clientId))}` : 'engagement visibili per il tuo profilo'}</p>
       </div>
     </div>
     ${state.error ? `<div class="errorbox"><span>${esc(state.error)}</span><button class="btn sec sm" data-act="nav" data-view="calendar">Riprova</button></div>` : ''}
     ${!visible.length ? '<div class="cal-empty">Nessun engagement proposto o pianificato nel periodo.</div>' : ''}
-    ${view === 'month'
-      ? `<div class="cal-legend">
-          <span class="lg planned"><i></i>Pianificati <b>${planned}</b></span>
-          <span class="lg proposed"><i></i>Proposti <b>${proposed}</b></span>
-          <span class="lg weekend"><i></i>Sab e dom: nessun test</span>
-          <span class="hint">Clicca un evento per aprire l'engagement</span>
-        </div>
-        <div class="cal-grid">
-          ${months.map(month => renderCalendarMonth(month, visible, todayKey)).join('')}
-        </div>`
-      : renderCalendarTimeline(unique, todayKey, { all: visible.length, planned, proposed })}
+    ${renderCalendarTimeline(unique, todayKey, { all: visible.length, planned, proposed }, range, activeFocus)}
   `;
+
+  // Porta subito in vista la riga evidenziata, una volta sola all'arrivo.
+  if (state.calendarFocusPending) {
+    state.calendarFocusPending = false;
+    const row = document.querySelector('.tl-row.focus');
+    if (row) requestAnimationFrame(() => row.scrollIntoView({ block: 'center', inline: 'center' }));
+  }
 }
 
 function renderClients() {
@@ -5162,7 +5324,7 @@ function parseRoute(value) {
     }
 
     case 'clients': return { view: 'clients' };
-    case 'calendar': return { view: 'calendar' };
+    case 'calendar': return { view: 'calendar', engagement: params.get('eng') || '' };
     case 'solicitations': return { view: 'solicitations' };
     // /kpi resta valido per i link salvati prima della Dashboard.
     case 'dashboard':
@@ -5179,6 +5341,9 @@ async function applyRoute(target) {
   const filter = LIST_FILTERS.includes(route.filter) ? route.filter : 'all';
 
   if (route.view === 'admin' && !isAdmin) return applyRoute({ view: 'list' });
+  // La pagina Solleciti è per il team interno: un profilo cliente resta
+  // sull'elenco e sollecita dall'engagement (dove vede la propria attesa).
+  if (route.view === 'solicitations' && isClient()) return applyRoute({ view: 'list' });
 
   if (route.view === 'detail') {
     const tab = DETAIL_TABS.includes(route.tab) ? route.tab : '';
@@ -5228,6 +5393,13 @@ async function applyRoute(target) {
   if (route.view === 'calendar') {
     state.view = 'calendar';
     state.listFilter = filter;
+    // ?eng=CODICE: la timeline si apre sul periodo dell'engagement e lo evidenzia.
+    state.calendarFocus = route.engagement || '';
+    state.calendarFocusPending = !!state.calendarFocus;
+    if (state.calendarFocus) {
+      state.calendarFilter = 'all';
+      state.calendarSel = '';
+    }
     updateHeader();
     await loadCalendar();
     if (state.view === 'calendar') renderCalendar();
@@ -5350,6 +5522,8 @@ const actions = {
 
     if (view === 'calendar') {
       state.view = 'calendar';
+      state.calendarFocus = '';
+      state.calendarFocusPending = false;
       loadCalendar();
       return;
     }
@@ -5556,7 +5730,7 @@ const actions = {
   'dashboard-client': el => {
     // Drill-down: la dashboard segue il cliente scelto in header.
     state.clientId = el.dataset.client || '';
-    localStorage.setItem('cep.client', state.clientId);
+    writeCookie(ID_COOKIE.client, state.clientId);
     state.view = 'dashboard';
     fillClientSelect();
     updateHeader();
@@ -5709,7 +5883,7 @@ const actions = {
   },
   'open-client': el => {
     state.clientId = el.dataset.client;
-    localStorage.setItem('cep.client', state.clientId);
+    writeCookie(ID_COOKIE.client, state.clientId);
     state.view = 'list';
     state.listFilter = 'all';
     state.listQuery = '';
@@ -5990,20 +6164,10 @@ const actions = {
   },
   'retry-list': () => loadList(),
   tab: el => setTab(el.dataset.tab),
-  'list-tab': el => {
-    state.listTab = el.dataset.tab;
-    if (state.listTab === 'rem') {
-      state.view = 'solicitations';
-      loadSolicitations().then(render);
-    } else {
-      state.view = 'list';
-      render();
-    }
-  },
-  'cal-view': el => {
-    state.calendarView = el.dataset.view === 'month' ? 'month' : 'timeline';
-    localStorage.setItem('cep.calendarView', state.calendarView);
-    renderCalendar();
+  // Link "Periodo": il parametro ?eng= evidenzia l'engagement nella timeline.
+  'open-calendar': el => {
+    const href = el.getAttribute('href');
+    if (href) location.assign(href);
   },
   'cal-filter': el => {
     state.calendarFilter = el.dataset.filter || 'all';
@@ -6052,16 +6216,23 @@ const actions = {
     } catch (error) { toast(error.message); }
   },
 
-  'save-rule': input => {
-    const key = input.dataset.key;
-    const enabled = !!$('#on_' + key)?.checked;
-    return api(`/api/solicitations/rules/${encodeURIComponent(key)}?` + qs(), {
-      method: 'PUT', body: JSON.stringify({ enabled })
-    }).then(async () => {
-      toast(enabled ? 'Regola attivata' : 'Regola disattivata');
-      await loadSolicitations();
-      render();
-    }).catch(error => toast(error.message));
+  'save-rule-details': async el => {
+    const key = el.dataset.key;
+    const body = {
+      enabled: !!$('#on_' + key)?.checked,
+      thresholdDays: Number($('#rl_th_' + key)?.value || 0),
+      minDays: Number($('#rl_min_' + key)?.value || 0),
+      countBusinessDays: !!$('#rl_bd_' + key)?.checked
+    };
+
+    try {
+      await api(`/api/solicitations/rules/${encodeURIComponent(key)}?` + qs(), {
+        method: 'PUT', body: JSON.stringify(body)
+      });
+      state.rules = await api('/api/solicitations/rules?' + qs());
+      toast('Regola aggiornata');
+      renderAdmin();
+    } catch (error) { toast(error.message); }
   },
 
   'send-solicitation': async el => {
@@ -6430,7 +6601,8 @@ const actions = {
       }
     }
     try {
-      const response = await fetch(`/api/engagements/${engagedId()}/reports/${encodeURIComponent(el.dataset.rid)}/download?` + qs() + (otp ? `&otp=${encodeURIComponent(otp)}` : ''), {
+      const q = qs({ ...(otp ? { otp } : {}) });
+      const response = await fetch(`/api/engagements/${engagedId()}/reports/${encodeURIComponent(el.dataset.rid)}/download${q ? '?' + q : ''}`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' }
       });
       if (!response.ok) throw new Error(`Errore ${response.status}`);
@@ -6604,7 +6776,8 @@ const actions = {
 
   'export-log': async () => {
     try {
-      const response = await fetch(`/api/engagements/${engagedId()}/log/export?` + qs());
+      const q = qs();
+      const response = await fetch(`/api/engagements/${engagedId()}/log/export${q ? '?' + q : ''}`);
       if (!response.ok) throw new Error(`Errore ${response.status}`);
       await downloadResponse(response, 'registro.csv');
       toast('Registro esportato');
@@ -6617,7 +6790,7 @@ const busyActions = new Set([
   'new-client', 'rename-client', 'add-client-user', 'remove-client-user',
   'add-client-dl', 'remove-client-address',
   'invite-client-team', 'remove-client-team',
-  'new-engagement', 'save-rule', 'send-solicitation', 'upload-manleva',
+  'new-engagement', 'save-rule-details', 'send-solicitation', 'upload-manleva',
   'upload-ingaggio', 'register-order', 'save-order', 'edit-financials', 'save-financials-inline', 'approve-financials', 'propose', 'reschedule',
   'decide', 'save-scope', 'save-credentials', 'save-setup', 'upload-report',
   'download-report', 'create-download-link', 'submit-review', 'review-decide', 'publish', 'add-dl',
@@ -6698,9 +6871,6 @@ document.addEventListener('change', event => {
   const el = event.target.closest('[data-change]');
   if (!el) return;
   const kind = el.dataset.change;
-  if (kind === 'rule') {
-    Promise.resolve(actions['save-rule'](el)).catch(error => toast(error.message));
-  }
   if (kind === 'client-dl') {
     Promise.resolve(actions['client-dl-toggle'](el)).catch(error => toast(error.message));
   }
@@ -6777,9 +6947,9 @@ window.addEventListener('popstate', handleRoute);
 
 /* ====== INIT ====== */
 function init() {
-  // Ruolo assente o non riconosciuto: come lato server si parte dal profilo
-  // meno privilegiato (Cliente), non da un utente interno.
-  if (!ROLES[state.role]) state.role = 'Client';
+  // Ruolo dal cookie; se assente o sconosciuto si usa il Manager impostato al
+  // primo caricamento.
+  if (!ROLES[state.role]) state.role = 'Manager';
 
   applyShell();
 
@@ -6802,7 +6972,7 @@ function init() {
       if (isClient() && !state.clients.length && !state.clientId) {
         // Server irraggiungibile: si mostra comunque il cliente demo atteso.
         state.clientId = ROLES.Client.client || '';
-        localStorage.setItem('cep.client', state.clientId);
+        writeCookie(ID_COOKIE.client, state.clientId);
         fillClientSelect();
       }
       updateHeader();

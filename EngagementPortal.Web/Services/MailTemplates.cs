@@ -143,14 +143,14 @@ public static class MailTemplates
         {
             Subject = "Sollecito: revisione deliverable – {{engagement}}",
             Body =
-                "Gentile Manager,\n\n" +
+                "Gentile {{owner}},\n\n" +
                 "i deliverable dell'attività {{engagement}} ({{code}}) per {{client}} " +
                 "sono in revisione da {{days}} giorni.\n" +
                 "Ti chiediamo di approvarli o richiedere le modifiche.\n\n" +
                 "Questa è una comunicazione automatica del portale.",
             SubjectEn = "Reminder: deliverable review – {{engagement}}",
             BodyEn =
-                "Dear Manager,\n\n" +
+                "Dear {{owner}},\n\n" +
                 "the deliverables for the activity {{engagement}} ({{code}}) for {{client}} " +
                 "have been waiting for review for {{days}} days.\n" +
                 "Please approve them or request changes.\n\n" +
@@ -384,7 +384,8 @@ public static class MailTemplates
         MailTemplateSet? client,
         DateOnly today,
         int days = 0,
-        string? task = null)
+        string? task = null,
+        string? recipient = null)
     {
         var pick = Pick(type, engagement, standard, client, null);
 
@@ -397,6 +398,11 @@ public static class MailTemplates
                 ? "completamento dell'azione richiesta"
                 : task
         };
+
+        // Il saluto va a chi riceve il sollecito, non al titolare dell'attività:
+        // "Gentile {{owner}}" sarebbe il nome sbagliato.
+        if (!string.IsNullOrWhiteSpace(recipient))
+            replacements["{{owner}}"] = recipient;
 
         return new ResolvedMailTemplate(
             Render(pick.Template.SubjectFor(pick.Language), replacements),

@@ -228,7 +228,11 @@ public sealed record MailLogEntry(
     string Visibility,
     string? Subject = null,
     string? Body = null,
-    string? TemplateSource = null);
+    string? TemplateSource = null,
+    // Chi ha premuto "invia" su un sollecito: il limite giornaliero è per
+    // persona, quindi serve sapere il mittente e non solo il task.
+    string? SentBy = null,
+    string? SentByName = null);
 
 
 public static class DeliverableKinds
@@ -555,7 +559,15 @@ public sealed record FinancialsRequest(decimal? Cost, decimal? Margin);
 
 public sealed record AddClientUserRequest(string Name, string Email);
 
-public sealed record SolicitationRuleRequest(bool Enabled);
+/// <summary>
+/// Modifica di una regola di sollecito. Ogni campo è facoltativo: il client
+/// manda solo ciò che cambia, il resto resta com'è.
+/// </summary>
+public sealed record SolicitationRuleRequest(
+    bool? Enabled = null,
+    int? ThresholdDays = null,
+    int? MinDays = null,
+    bool? CountBusinessDays = null);
 
 /// <summary>Modifica di un tipo di attività dal catalogo.</summary>
 public sealed record ActivityTypeRequest(
