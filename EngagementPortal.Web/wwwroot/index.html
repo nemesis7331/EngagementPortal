@@ -187,6 +187,7 @@ table{width:100%;border-collapse:collapse}th{text-align:left;font-size:var(--fs-
 .solicit-table td:last-child{white-space:nowrap}
 .solicit-table td:last-child .btn{white-space:nowrap}
 .solicit-table th{white-space:nowrap}
+.recipient{white-space:nowrap}
 /* ====== REGOLE DEI SOLLECITI (Amministrazione) ====== */.rule-row{border-bottom:1px solid var(--line-soft);padding:14px 0}
 .rule-row:last-child{border-bottom:0;padding-bottom:0}
 .rule-head{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap}
@@ -2350,7 +2351,7 @@ function dashSolicitationsHTML() {
     return `<tr>
       <td class="name"><b>${esc(engagement ? engagement.name : item.engagementId)}</b><span>${esc(item.clientName || '')}</span></td>
       <td class="dash-task">${esc(item.label || '')}<span>${esc(solicitationDetail(item))}</span></td>
-      <td class="dash-opt">${esc(item.recipient || '')}</td>
+      <td class="dash-opt">${recipientCell(item)}</td>
       <td>${item.sentToday
         ? pill(['Inviato oggi', 'ok'])
         : item.canSend
@@ -2452,6 +2453,20 @@ function solicitationSentTable() {
 // Etichetta con cui il server indica il destinatario di un sollecito.
 const recipientLabel = role => (role === 'Client' ? 'Cliente' : role);
 
+// Destinatario vero: i nomi dietro il ruolo, con le email nel tooltip.
+// Se il server non li risolve (nessun contatto configurato) resta il ruolo.
+function recipientCell(item) {
+  const owners = (Array.isArray(item.owners) ? item.owners : [])
+    .filter(owner => owner && owner.name);
+  if (!owners.length) return `<span class="hint">${esc(item.recipient || '')}</span>`;
+
+  const title = owners
+    .map(owner => (owner.email ? `${owner.name} <${owner.email}>` : owner.name))
+    .join(', ');
+  const extra = owners.length > 1 ? ` <span class="cnt">+${owners.length - 1}</span>` : '';
+  return `<span class="recipient" title="${esc(title)}">${esc(owners[0].name)}${extra}</span>`;
+}
+
 function renderSolicitations() {
   // Sollecita chi deve rispondere: tutti tranne chi ha l'azione in carico
   // (e l'Auditor, che è in sola lettura). Il server decide riga per riga.
@@ -2464,7 +2479,7 @@ function renderSolicitations() {
         <td class="name"><b>${esc(item.engagementId)}</b><span>${esc(item.clientName)}</span></td>
         <td>${esc(item.label)}</td>
         <td>${esc(solicitationDetail(item))}</td>
-        <td>${esc(item.recipient)}</td>
+        <td>${recipientCell(item)}</td>
         <td>${item.sentToday
           ? pill(['Inviato oggi', 'done'])
           : item.canSend
@@ -2580,8 +2595,17 @@ function solicitButton(d) {
   const s = d.solicitation;
   if (!s) return '';
 
+  // Il destinatario vero (nome), non il ruolo: "il Manager" da solo non dice chi.
+  const owners = (Array.isArray(s.owners) ? s.owners : [])
+    .filter(owner => owner && owner.name);
+  const who = owners.length ? owners[0].name : s.recipient;
+  const more = owners.length > 1 ? ` +${owners.length - 1}` : '';
+  const title = owners
+    .map(owner => (owner.email ? `${owner.name} <${owner.email}>` : owner.name))
+    .join(', ') || s.recipient;
+
   if (s.sentToday) {
-    return `<div class="solicit-line"><span class="pill p-ok">Sollecito inviato oggi</span><span class="hint">${esc(s.recipient)}</span></div>`;
+    return `<div class="solicit-line"><span class="pill p-ok">Sollecito inviato oggi</span><span class="hint" title="${esc(title)}">${esc(who)}${more}</span></div>`;
   }
 
   if (!s.canSend) {
@@ -2591,7 +2615,7 @@ function solicitButton(d) {
   }
 
   return `<div class="solicit-line">
-    <button class="btn pri sm" data-act="solicit-engagement">Sollecita ${esc(s.recipient)}</button>
+    <button class="btn pri sm" data-act="solicit-engagement" title="${esc(title)}">Sollecita ${esc(who)}${more}</button>
     <span class="hint">${esc(s.label)}${s.sentDate ? ` · ultimo sollecito ${esc(s.sentDate)}` : ''}</span>
   </div>`;
 }

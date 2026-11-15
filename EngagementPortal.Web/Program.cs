@@ -1413,6 +1413,7 @@ api.MapPost("/engagements", (
             client.DeliverablesDistributionList,
             client.Team,
             users.List().Select(account => account.Email).ToList(),
+            users.List(),
             solicitations));
 });
 
@@ -1445,6 +1446,7 @@ api.MapGet("/engagements/{id}", (
         client?.DeliverablesDistributionList ?? [],
         client?.Team ?? [],
         users.List().Select(account => account.Email).ToList(),
+        users.List(),
         solicitations));
 });
 
@@ -3373,6 +3375,8 @@ api.MapPut("/solicitations/rules/{key}", (
 api.MapGet("/solicitations/due", (
     HttpContext context,
     IEngagementRepository repository,
+    IClientRepository clients,
+    IUserRepository users,
     SolicitationService solicitations,
     IDateProvider clock) =>
 {
@@ -3381,10 +3385,26 @@ api.MapGet("/solicitations/due", (
     if (user.Role == Roles.Client)
         return Forbidden();
 
-    var due = solicitations.Due(
-        Access.VisibleEngagements(repository, user),
-        clock.Today,
-        user.UserId);
+    var visible = Access.VisibleEngagements(repository, user).ToList();
+    var due = solicitations.Due(visible, clock.Today, user.UserId);
+
+    // Il destinatario vero: le persone dietro il ruolo della regola.
+    var byId = visible.ToDictionary(
+        engagement => engagement.Id,
+        StringComparer.Ordinal);
+    var accounts = users.List();
+
+    IReadOnlyList<DistributionEntry> Owners(SolicitationDue item)
+    {
+        if (!byId.TryGetValue(item.EngagementId, out var engagement))
+            return [];
+
+        return Solicitation.Owners(
+            engagement,
+            [SolicitationService.RecipientRole(item.Recipient)],
+            clients.Get(engagement.ClientId)?.DistributionList ?? [],
+            accounts);
+    }
 
     return Results.Ok(due.Select(item => new
     {
@@ -3395,6 +3415,8 @@ api.MapGet("/solicitations/due", (
         item.EngagementId,
         item.ClientName,
         item.Recipient,
+        Owners = Owners(item)
+            .Select(owner => new { owner.Name, owner.Email }),
         item.When,
         item.ThresholdDays,
         item.Days,
@@ -3968,7 +3990,8 @@ static object? MapSolicitation(
     SolicitationTask? task,
     UserContext user,
     DateOnly today,
-    bool canSend)
+    bool canSend,
+    IReadOnlyList<DistributionEntry> owners)
 {
     if (task is null)
         return null;
@@ -3981,6 +4004,8 @@ static object? MapSolicitation(
         task.Key,
         task.Label,
         task.Recipient,
+        // I nomi veri dietro il ruolo: "il Manager" da solo non dice chi è.
+        Owners = owners.Select(owner => new { owner.Name, owner.Email }),
         task.SentDate,
         task.SentToday,
         CanSend = allowed && !task.SentToday,
@@ -4002,6 +4027,7 @@ static object Detail(
     IReadOnlyList<DistributionEntry> baseDeliverables,
     IReadOnlyList<TeamMember> baseTeam,
     IReadOnlyList<string> providerEmails,
+    IReadOnlyList<UserAccount> accounts,
     SolicitationService solicitations)
 {
     var phase = workflow.Resolve(engagement, clock.Today);
@@ -4072,6 +4098,17 @@ static object Detail(
             }
             : entry)
         .ToList();
+
+    // Attesa in corso e persone che devono rispondere: l'API le espone con i
+    // nomi veri, così l'interfaccia non mostra solo "Cliente" o "Manager".
+    var pendingTask = solicitations.Pending(engagement, clock.Today, user.UserId);
+    var pendingOwners = pendingTask is null
+        ? []
+        : Solicitation.Owners(
+            engagement,
+            pendingTask.OwnerRoles,
+            baseDistribution,
+            accounts);
 
     return new
     {
@@ -4145,10 +4182,11 @@ static object Detail(
         // Anche al cliente si mostra l'attesa in corso: se deve rispondere lui
         // il pulsante è bloccato, se aspetta il Manager può sollecitarlo.
         Solicitation = MapSolicitation(
-            solicitations.Pending(engagement, clock.Today, user.UserId),
+            pendingTask,
             user,
             clock.Today,
-            canSend: user.Role != Roles.Auditor),
+            canSend: user.Role != Roles.Auditor,
+            owners: pendingOwners),
         Retest = MapRetest(engagement, user, phase, clock.Today),
         Audit = VisibleAudit(engagement, user),
         Scope = engagement.Scope,

@@ -160,14 +160,14 @@ public static class MailTemplates
         {
             Subject = "Sollecito: credenziali per {{engagement}}",
             Body =
-                "Gentile {{client}},\n\n" +
+                "Gentile {{owner}},\n\n" +
                 "l'attività {{engagement}} ({{code}}) è pianificata per il {{start}}: " +
                 "mancano 3 settimane e le credenziali di accesso non risultano ancora disponibili.\n" +
                 "Ti chiediamo di fornirle al più presto per non ritardare l'avvio.\n\n" +
                 "Questa è una comunicazione automatica del portale.",
             SubjectEn = "Reminder: credentials for {{engagement}}",
             BodyEn =
-                "Dear {{client}},\n\n" +
+                "Dear {{owner}},\n\n" +
                 "the activity {{engagement}} ({{code}}) is planned for {{start}}: " +
                 "3 weeks are left and the access credentials are still missing.\n" +
                 "Please provide them as soon as possible so the start is not delayed.\n\n" +
@@ -177,14 +177,14 @@ public static class MailTemplates
         {
             Subject = "Sollecito: credenziali mancanti – {{engagement}}",
             Body =
-                "Gentile {{client}},\n\n" +
+                "Gentile {{owner}},\n\n" +
                 "l'avvio dell'attività {{engagement}} ({{code}}) è previsto per il {{start}} " +
                 "e le credenziali di accesso non sono ancora state fornite.\n" +
                 "Senza credenziali l'attività non può partire: ti chiediamo di inviarle subito.\n\n" +
                 "Questa è una comunicazione automatica del portale.",
             SubjectEn = "Reminder: missing credentials – {{engagement}}",
             BodyEn =
-                "Dear {{client}},\n\n" +
+                "Dear {{owner}},\n\n" +
                 "the activity {{engagement}} ({{code}}) is due to start on {{start}} " +
                 "and the access credentials have not been provided yet.\n" +
                 "Without credentials the activity cannot start: please send them now.\n\n" +

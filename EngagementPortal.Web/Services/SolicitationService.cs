@@ -56,11 +56,22 @@ public static class Solicitation
         Engagement engagement,
         IReadOnlyCollection<string> ownerRoles,
         ClientAccount? client,
+        IReadOnlyList<UserAccount> users) =>
+        Recipients(
+            engagement,
+            ownerRoles,
+            client?.DistributionList ?? [],
+            users);
+
+    public static IReadOnlyList<DistributionEntry> Recipients(
+        Engagement engagement,
+        IReadOnlyCollection<string> ownerRoles,
+        IReadOnlyList<DistributionEntry> clientDistribution,
         IReadOnlyList<UserAccount> users)
     {
         var notification = Distribution.Effective(
             engagement,
-            client?.DistributionList ?? []);
+            clientDistribution);
 
         if (ownerRoles.Contains(Roles.Client) && notification.Count > 0)
             return notification;
@@ -75,6 +86,47 @@ public static class Solicitation
             .ToList();
 
         return accounts.Count > 0 ? accounts : notification;
+    }
+
+    /// <summary>
+    /// Chi deve rispondere, cioè le persone reali dietro i ruoli del task:
+    /// i colleghi attivi per un ruolo interno, i contatti del cliente per il
+    /// ruolo cliente (senza i colleghi messi in copia nella lista notifiche).
+    /// Serve a mostrare un nome e non solo "Cliente" o "Manager".
+    /// </summary>
+    public static IReadOnlyList<DistributionEntry> Owners(
+        Engagement engagement,
+        IReadOnlyCollection<string> ownerRoles,
+        IReadOnlyList<DistributionEntry> clientDistribution,
+        IReadOnlyList<UserAccount> users)
+    {
+        var result = new List<DistributionEntry>();
+        var internalRoles = ownerRoles
+            .Where(role => Roles.IsInternal(role))
+            .ToList();
+
+        if (internalRoles.Count > 0)
+        {
+            result.AddRange(users
+                .Where(user => user.Active && internalRoles.Contains(user.Role))
+                .Select(user => new DistributionEntry(
+                    user.Id,
+                    user.Name,
+                    user.Email,
+                    "Provider")));
+        }
+
+        if (ownerRoles.Contains(Roles.Client))
+        {
+            result.AddRange(Distribution
+                .Effective(engagement, clientDistribution)
+                .Where(entry => entry.Organization == "Cliente"));
+        }
+
+        return result
+            .GroupBy(entry => entry.Email, StringComparer.OrdinalIgnoreCase)
+            .Select(group => group.First())
+            .ToList();
     }
 
     public static void Record(
