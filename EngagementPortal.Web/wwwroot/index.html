@@ -3327,7 +3327,7 @@ function tabSetup(d) {
       </div>
       <div class="full">
         <label class="actcheck">
-          <input type="checkbox" id="setup_retest" ${e.retestPlanned ? 'checked' : ''} ${canEdit && (d.retest ? d.retest.canEditFlag : true) ? '' : 'disabled'}>
+          <input type="checkbox" id="setup_retest" ${(d.retest ? d.retest.planned : d.retestPlanned) ? 'checked' : ''} ${canEdit && (d.retest ? d.retest.canEditFlag : true) ? '' : 'disabled'}>
           <span>Recheck previsto (retest a fine attività)</span>
         </label>
         <p class="hint" style="margin:5px 0 0">${definition
