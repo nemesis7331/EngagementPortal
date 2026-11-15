@@ -102,7 +102,7 @@ public static class SeedData
     {
         var engagement = New(
             "ENG-2026-003", "anthropic", "Anthropic",
-            "WAPT portale clienti (retest)", EngagementType.PenetrationTest, 25);
+            "WAPT portale clienti", EngagementType.PenetrationTest, 25);
 
         Docs(engagement, "PO-2026-0107");
         Financials(engagement, 9000m, 46m);
