@@ -2872,23 +2872,43 @@ function solicitButton(d) {
   </div>`;
 }
 
+// I passi del workflow sono numerati da 0, allineati a STEPS. Gli ultimi due,
+// il retest e il report di retest, si aprono nella scheda Report (tab: 'reports')
+// dove vivono i comandi, e compaiono solo se il recheck è previsto.
 const DETAIL_PANELS = {
-  setup: { n:'1', short:'Setup', group:'Workflow', title:'Setup', desc:'Team, liste, lingua e deliverable' },
-  docs: { n:'2', short:'Documenti', group:'Workflow', title:'Documenti e dati economici', desc:'Scheda tecnica, ordine e dati economici' },
-  scope: { n:'3', short:'Scope', group:'Workflow', title:'Scope', desc:'Perimetro, finestre e referente' },
-  plan: { n:'4', short:'Pianificazione', group:'Workflow', title:'Pianificazione', desc:'Proposta e approvazione delle date' },
-  cred: { n:'5', short:'Credenziali', group:'Workflow', title:'Credenziali', desc:'Accessi per l\'esecuzione' },
-  run: { n:'6', short:'Esecuzione', group:'Workflow', title:'Esecuzione', desc:'Avanzamento dell\'attività' },
-  reports: { n:'7', short:'Report', group:'Workflow', title:'Report', desc:'Revisione e consegna dei deliverable' },
+  setup: { n:'0', short:'Setup', group:'Workflow', title:'Setup', desc:'Info, team, liste, lingua e deliverable', phase:'Setup' },
+  docs: { n:'1', short:'Documenti', group:'Workflow', title:'Documenti e dati economici', desc:'Scheda tecnica, ordine e dati economici', phase:'Docs' },
+  scope: { n:'2', short:'Scope', group:'Workflow', title:'Scope', desc:'Perimetro, finestre e referente', phase:'Scope' },
+  plan: { n:'3', short:'Pianificazione', group:'Workflow', title:'Pianificazione', desc:'Proposta e approvazione delle date', phase:'Planning' },
+  cred: { n:'4', short:'Credenziali', group:'Workflow', title:'Credenziali', desc:'Accessi per l\'esecuzione', phase:'Credentials' },
+  run: { n:'5', short:'Esecuzione', group:'Workflow', title:'Esecuzione', desc:'Avanzamento dell\'attività', phase:'Scheduled,Running' },
+  reports: { n:'6', short:'Report', group:'Workflow', title:'Report', desc:'Revisione e consegna dei deliverable', phase:'Reporting' },
+  retest: { n:'7', short:'Retest', group:'Workflow', tab:'reports', title:'Retest', desc:'Verifiche dopo i fix: richiesta del cliente e date', phase:'Retest' },
+  retestreport: { n:'8', short:'Report retest', group:'Workflow', tab:'reports', title:'Report di retest', desc:'Invio al cliente senza revisione', phase:'RetestReporting' },
   dl: { n:'', short:'Distribution list', group:'Gestione', title:'Distribution list', desc:'Notifiche e invio deliverables' },
   team: { n:'', short:'Team', group:'Gestione', title:'Team esterno', desc:'Partecipanti al cliente e all\'engagement' },
   mail: { n:'', short:'Comunicazioni', group:'Gestione', title:'Comunicazioni', desc:'Email automatiche e registro invii' },
   log: { n:'', short:'Registro', group:'Gestione', title:'Registro attività', desc:'Eventi e audit dell\'engagement' }
 };
 
+// I due passi del retest esistono solo se il recheck è previsto.
+function workflowSteps(d) {
+  const base = isClient()
+    ? ['docs', 'scope', 'plan', 'cred', 'run', 'reports']
+    : ['setup', 'docs', 'scope', 'plan', 'cred', 'run', 'reports'];
+
+  return d.retest?.planned ? [...base, 'retest', 'retestreport'] : base;
+}
+
+function currentStepKey(d) {
+  const entry = Object.entries(DETAIL_PANELS).find(([, meta]) =>
+    String(meta.phase || '').split(',').includes(d.phase));
+  return entry ? entry[0] : '';
+}
+
 function runState(d) {
   if (d.phase === 'Scheduled' || d.phase === 'Running') return 'progress';
-  if (d.phase === 'Reporting' || d.phase === 'Done') return 'ok';
+  if (d.phase === 'Reporting' || d.phase === 'Retest' || d.phase === 'RetestReporting' || d.phase === 'Done') return 'ok';
   return 'lock';
 }
 
@@ -2897,14 +2917,38 @@ function runReason(d) {
   if (!p) return 'Si sblocca dopo la conferma delle date';
   if (d.phase === 'Scheduled') return `Avvio il ${fmt(p.startDate)}`;
   if (d.phase === 'Running') return `In corso fino al ${fmt(p.endDate)}`;
-  if (d.phase === 'Reporting' || d.phase === 'Done') return 'Concluso';
+  if (d.phase === 'Done') return 'Concluso';
+  if (d.phase === 'Retest' || d.phase === 'RetestReporting') return 'Esecuzione conclusa, fasi di retest in corso';
+  if (d.phase === 'Reporting') return 'Concluso';
   return 'Si sblocca dopo pianificazione e credenziali';
 }
 
 function panelState(d, key) {
   if (key === 'run') return runState(d);
+  if (key === 'retest' || key === 'retestreport') return retestPanelState(d, key);
   if (key === 'dl' || key === 'team' || key === 'mail' || key === 'log') return 'gestione';
   return tabState(d, key);
+}
+
+// Stato dei due passi di retest: dipendono dalla fase e da chi deve agire.
+function retestPanelState(d, key) {
+  const r = d.retest;
+  if (!r) return 'lock';
+
+  const sent = !!r.sentDate;
+
+  if (key === 'retestreport') {
+    if (sent) return 'ok';
+    if (d.phase === 'RetestReporting')
+      return d.actionState?.kind === 'action' ? 'todo' : 'wait';
+    return 'lock';
+  }
+
+  if (sent || d.phase === 'RetestReporting') return 'ok';
+  if (d.phase === 'Retest')
+    return d.actionState?.kind === 'action' ? 'todo' : 'wait';
+
+  return 'lock';
 }
 
 function panelStateLabel(d, key) {
@@ -2912,8 +2956,7 @@ function panelStateLabel(d, key) {
     d.phase === 'Running' ? 'In corso' :
     d.phase === 'Reporting' || d.phase === 'Done' ? 'Concluso' : 'Bloccato';
   const s = panelState(d, key);
-  return s === 'ok' ? 'Completato' : s === 'todo' ? 'Da fare' : s === 'wait' ? 'In attesa' : s === 'lock' ? 'Bloccato' : '';
-}
+  return s === 'ok' ? 'Completato' : s === 'todo' ? 'Da fare' : s === 'wait' ? 'In attesa' : s === 'lock' ? 'Bloccato' : '';}
 
 function panelPillClass(s) {
   return s === 'ok' ? 'ok' : s === 'todo' ? 'action' : s === 'wait' ? 'wait' : s === 'progress' ? 'progress' : 'blocked';
@@ -2928,6 +2971,11 @@ function renderDetail() {
   const activeKey = isClient() && state.tab === 'setup' ? 'docs' : state.tab;
   const activeMeta = DETAIL_PANELS[activeKey] || DETAIL_PANELS.docs;
   const activeState = panelState(d, activeKey);
+  // La scheda Report ospita anche i due passi di retest: quando è il loro
+  // momento, l'intestazione del pannello segue il passo e non la scheda.
+  const stepKey = currentStepKey(d);
+  const stepMeta = DETAIL_PANELS[stepKey];
+  const panelMeta = stepMeta && (stepMeta.tab || stepKey) === activeKey ? stepMeta : activeMeta;
   const body = {
     setup: tabSetup,
     docs: tabDocs,
@@ -2958,14 +3006,17 @@ function renderDetail() {
     : 'Da definire';
   const pending = (e.proposals || []).find(p => p.status === 'Pending');
 
-  const steps = isClient()
-    ? ['docs', 'scope', 'plan', 'cred', 'run', 'reports']
-    : ['setup', 'docs', 'scope', 'plan', 'cred', 'run', 'reports'];
-  const stepNav = steps.map((key, index) => {
+  const steps = workflowSteps(d);
+  const completedSteps = steps.filter(key => panelState(d, key) === 'ok').length;
+  const stepNav = steps.map(key => {
     const s = panelState(d, key);
     const meta = DETAIL_PANELS[key];
-    return `<button class="wnav-btn s-${s} ${state.tab === key ? 'on' : ''}" data-act="tab" data-tab="${key}" title="${esc(meta.desc)} · ${esc(panelStateLabel(d, key))}">
-      <span class="wnav-num">${s === 'ok' ? '✓' : index + 1}</span>
+    const tab = meta.tab || key;
+    // Evidenzia il passo corrispondente alla fase corrente, non tutti quelli
+    // che aprono la stessa scheda (Report, Retest e Report retest).
+    const isCurrent = currentStepKey(d) === key;
+    return `<button class="wnav-btn s-${s} ${state.tab === tab && isCurrent ? 'on' : ''}" data-act="tab" data-tab="${tab}" title="${esc(meta.title)} · ${esc(panelStateLabel(d, key))}">
+      <span class="wnav-num">${s === 'ok' ? '✓' : meta.n}</span>
       <span class="wnav-h"><b>${esc(meta.short)}</b><span>${esc(meta.desc)}</span></span>
     </button>`;
   }).join('');
@@ -3033,18 +3084,18 @@ function renderDetail() {
     ${prep ? `<div class="note waiting" style="margin:12px 0 0"><b>Preparazione in ritardo.</b> ${esc(prepText)}.</div>` : ''}
     <div class="split-detail">
       <nav class="workflow-nav" aria-label="Workflow e gestione">
-        <div class="wnav-group">Workflow <span>${Math.min(6, Math.max(0, Number(d.stepIndex) || 0) + 1)}/6</span></div>
+        <div class="wnav-group">Workflow <span>${completedSteps}/${steps.length} passi</span></div>
         ${stepNav}
         <div class="wnav-group">Gestione</div>
         ${extraNav}
       </nav>
       <section class="work-panel">
         <header class="work-panel-head">
-          <span class="wp-num">${activeMeta.n || '•'}</span>
+          <span class="wp-num">${panelMeta.n || '•'}</span>
           <div class="wp-t">
-            <span class="wp-kicker">${esc(activeMeta.group)}${activeMeta.n ? ` · Passo ${activeMeta.n} di ${STEPS.length}` : ''}</span>
-            <h2>${esc(activeMeta.title)}</h2>
-            <p>${esc(activeMeta.desc)}</p>
+            <span class="wp-kicker">${esc(panelMeta.group)}${panelMeta.n ? ` · Passo ${panelMeta.n} di ${STEPS.length}` : ''}</span>
+            <h2>${esc(panelMeta.title)}</h2>
+            <p>${esc(panelMeta.desc)}</p>
           </div>
           ${statePill}
         </header>
