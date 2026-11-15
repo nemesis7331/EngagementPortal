@@ -116,6 +116,7 @@ button{font:inherit;cursor:pointer}
 .nav-item.nav-sub:hover{color:#fff}
 .nav-item.nav-sub.on{box-shadow:inset 3px 0 0 var(--st-wait);background:rgba(245,158,11,.12);color:#fcd34d}
 .nav-count{margin-left:auto;display:inline-grid;place-items:center;min-width:19px;height:19px;padding:0 6px;border-radius:999px;background:var(--st-action-bg);color:var(--st-action);font-size:10px;font-weight:800}
+.nav-item[data-nav="waiting"] .nav-count{background:var(--st-wait-bg);color:var(--st-wait)}
 .nav-count[hidden]{display:none}
 body.side-collapsed .nav-count{display:none}
 .app-side-foot{margin-top:auto;padding-top:10px}
@@ -273,31 +274,6 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--brand-500);outli
 .bars div em{position:absolute;bottom:-20px;left:0;right:0;text-align:center;font-style:normal;font-size:var(--fs-xs);color:var(--muted)}
 .sw{display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-size:var(--fs-md);font-weight:var(--fw-semibold);margin:0}.sw input{display:none}.sw i{width:38px;height:22px;border-radius:var(--radius-pill);background:var(--line-strong);position:relative;transition:.2s}.sw i::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.2s;box-shadow:var(--shadow-xs)}.sw input:checked+i{background:var(--accent)}.sw input:checked+i::after{left:19px}
 .mailc{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;padding:16px 0;border-bottom:1px solid var(--line)}.mailc:last-child{border-bottom:0}.mailc .t{flex:1;min-width:240px}.mailc .t b{display:block;color:var(--brand-900)}.mailc .t span{color:var(--muted);font-size:var(--fs-sm);display:block}.mailc .ctl{display:flex;flex-direction:column;gap:10px;align-items:flex-end}
-/* template email */
-.tpl-card{border:1px solid var(--line);border-radius:var(--radius-lg);padding:14px;margin-top:12px;background:#fff}
-.tpl-head{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
-.tpl-head b{color:var(--brand-900);font-size:var(--fs-md)}
-.tpl-scope{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.tpl-scope label{margin:0}
-.tpl-scope select{width:auto;min-width:190px}
-.tpl-grid{display:grid;gap:10px;margin-top:10px}
-.tpl-card label{margin-top:6px}
-.tpl-card textarea{font-family:var(--font-sans);min-height:120px}
-.tpl-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
-.tpl-preview{margin-top:10px;font-size:var(--fs-sm);color:var(--muted)}
-.tpl-preview summary{cursor:pointer;font-weight:var(--fw-semibold);color:var(--brand-600)}
-.tpl-mail{margin-top:8px;border:1px solid var(--line);border-radius:var(--radius-md);padding:12px;background:var(--brand-50)}
-.tpl-mail b{display:block;color:var(--brand-900);margin-bottom:6px}
-.tpl-mail pre{margin:0;white-space:pre-wrap;font-family:var(--font-sans);font-size:var(--fs-sm);color:var(--ink);line-height:var(--lh-base)}
-.tpl-langs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
-.tpl-lang{min-width:0;border:1px solid var(--line-soft);border-radius:9px;padding:9px 10px;background:var(--surface-3)}
-.tpl-lang h5{margin:0 0 4px;font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted-2);font-weight:800}
-.tpl-lang label{margin-top:4px;font-size:var(--fs-xs)}
-.tpl-lang textarea{min-height:84px}
-.tpl-previews{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.tpl-previews > div > b{display:block;margin-top:6px;font-size:var(--fs-xs);color:var(--muted)}
-@media(max-width:1000px){.tpl-langs,.tpl-previews{grid-template-columns:1fr}}
-@media(max-width:560px){.tpl-scope select{min-width:0;width:100%}.tpl-actions .btn{flex:1}}
 /* stato schede */
 .tab::before{content:"";display:inline-block;min-width:16px;height:16px;line-height:16px;border-radius:50%;margin-right:7px;font-size:var(--fs-xs);font-weight:var(--fw-black);text-align:center;vertical-align:1px}
 .tab.s-ok::before{content:"✓";background:var(--st-done);color:#fff}
@@ -394,6 +370,30 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--brand-500);outli
 .linkb{background:none;border:0;padding:0;text-align:left;font:inherit;color:inherit;cursor:pointer}
 .seg{display:inline-flex;background:var(--surface-2);border-radius:var(--radius-pill);padding:4px;margin-bottom:18px}.seg button{border:0;background:none;padding:7px 16px;border-radius:var(--radius-pill);font-weight:var(--fw-semibold);color:var(--muted)}.seg button.on{background:#fff;color:var(--brand-900);box-shadow:var(--shadow)}
 .modal{position:fixed;inset:0;background:var(--overlay);display:none;place-items:center;z-index:60;padding:16px}.modal.show{display:grid}.mbox{background:#fff;border-radius:var(--radius);padding:22px;max-width:480px;width:100%;box-shadow:var(--shadow-lg);max-height:90vh;overflow:auto}.mact{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
+/* ====== SCHEDA UTENTE (popup) ====== */
+.mbox.mbox-lg{max-width:1080px;width:100%;padding:0;display:flex;flex-direction:column;max-height:92vh;overflow:hidden}
+.umodal-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:16px 18px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,var(--brand-50),#fff)}
+.umodal-head .avatar.lg{width:46px;height:46px;font-size:var(--fs-lg)}
+.umodal-head .t{flex:1;min-width:190px}
+.umodal-head h2{font-size:var(--fs-2xl);margin:0;line-height:1.15}
+.umodal-head .sub{font-size:var(--fs-sm);margin:3px 0 0;color:var(--muted);overflow-wrap:anywhere}
+.umodal-head .tags{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.umodal-x{appearance:none;border:1px solid var(--line);background:#fff;border-radius:var(--radius-pill);width:32px;height:32px;font:inherit;font-size:18px;line-height:1;color:var(--muted);cursor:pointer;flex:none}
+.umodal-x:hover{background:var(--st-action-bg);border-color:var(--st-action-border);color:var(--st-action)}
+.umodal-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start;padding:16px 18px;overflow:auto}
+.umodal-col{min-width:0}
+.umodal-sec{border:1px solid var(--line);border-radius:10px;background:#fff;padding:12px 13px;margin-bottom:10px}
+.umodal-sec h3{display:flex;align-items:center;gap:7px;font-size:var(--fs-sm);margin:0 0 8px}
+.umodal-sec .hint{margin:0 0 8px}
+.ureadonly{background:var(--surface-3);border:1px dashed var(--line);border-radius:9px;padding:9px 11px;font-size:var(--fs-sm);color:var(--muted)}
+.umodal-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:12px 18px;border-top:1px solid var(--line);background:var(--surface-3)}
+.umodal-foot .left{font-size:var(--fs-sm);color:var(--muted);min-width:0}
+.umodal-foot .right{display:flex;gap:8px;flex-wrap:wrap}
+.umodal-err{background:var(--st-action-bg);border:1px solid var(--st-action-border);color:var(--st-action);border-radius:9px;padding:9px 11px;font-size:var(--fs-sm);margin:0 18px 12px}
+@media(max-width:900px){
+  .umodal-body{grid-template-columns:minmax(0,1fr)}
+  .mbox.mbox-lg{max-height:94vh}
+}
 button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--brand-500);outline-offset:2px}
 #toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,80px);background:var(--brand-900);color:#fff;padding:12px 20px;border-radius:var(--radius-md);box-shadow:var(--shadow);transition:.3s;opacity:0;z-index:90}
 #toast.show{transform:translate(-50%,0);opacity:1}
@@ -416,6 +416,8 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 /* stato in lista */
 .status-cell{display:flex;flex-direction:column;gap:3px;align-items:flex-start}
 .status-owner{font-size:var(--fs-sm);color:var(--muted)}
+.solicit-line{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:9px;padding-top:9px;border-top:1px solid rgba(0,0,0,.08)}
+.solicit-line .hint{font-size:var(--fs-xs);opacity:.85}
 .status-age{font-size:var(--fs-xs);color:var(--st-wait);font-weight:var(--fw-bold)}
 .status-age.overdue{color:var(--st-wait-strong)}
 .status-age.late{color:var(--st-action)}
@@ -447,35 +449,12 @@ tr.row.is-done td:first-child{box-shadow:inset 3px 0 var(--st-done)}
 /* ====== HOMEPAGE: azione prima (variante B) ====== */
 .headrow{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:flex-start}
 .head-acts{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:16px 0}
-.tile{background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);padding:10px 12px;text-align:left;border-left:4px solid var(--brand-500);display:block;color:inherit;font:inherit}
-.tile b{display:block;font-size:var(--fs-stat);line-height:1.1;color:var(--brand-900)}
-.tile span{font-size:var(--fs-sm);color:var(--muted)}
-.tile.a{border-left-color:var(--st-action)}.tile.a b{color:var(--st-action)}
-.tile.w{border-left-color:var(--st-wait)}.tile.w b{color:var(--st-wait)}
-.tile.r{border-left-color:var(--st-risk)}.tile.r b{color:var(--st-risk)}
-.tile[data-act]:hover{border-color:var(--brand-500)}
-.tile[data-act]{cursor:pointer}
-.tile.on{box-shadow:0 0 0 2px var(--brand-100);border-color:var(--brand-500)}
-.home-cols{display:grid;grid-template-columns:300px minmax(0,1fr);gap:16px;align-items:start}
-.home-side{display:grid;gap:14px;min-width:0;align-items:start}
 .home-main{min-width:0}
 .colhead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 8px;flex-wrap:wrap}
 .colhead h2{margin:0;font-size:var(--fs-lg);display:flex;align-items:center;gap:8px}
 .colhead .cnt{background:var(--surface-2);color:var(--muted);font-size:var(--fs-xs)}
 .colhead .cnt.c-action{background:var(--st-action-bg);color:var(--st-action)}
 .colhead .cnt.c-wait{background:var(--st-wait-bg);color:var(--st-wait)}
-.sideblock{padding:14px 16px}
-.focus-card{display:grid;gap:5px;border:1px solid var(--line);border-left:3px solid var(--st-action);border-radius:var(--radius-lg);padding:10px 12px;background:#fff;margin-bottom:8px}
-.focus-card:last-of-type{margin-bottom:0}
-.fcard-meta{font-size:var(--fs-xs);color:var(--muted);overflow-wrap:anywhere}
-.fcard-action{display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--st-action);flex-wrap:wrap}
-.wlist{display:grid}
-.wrow{display:flex;gap:9px;align-items:center;width:100%;background:none;border:0;border-bottom:1px solid var(--line-soft);padding:8px 0;text-align:left}
-.wrow:last-child{border-bottom:0}
-.wtt{flex:1;min-width:0}
-.wtt b{display:block;font-size:var(--fs-sm);color:var(--brand-900);font-weight:var(--fw-semibold);line-height:1.3}
-.wtt span{display:block;font-size:var(--fs-xs);color:var(--muted);overflow-wrap:anywhere}
 .home-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
 .home-toolbar .search{flex:1;min-width:180px;max-width:none;position:relative}
 .home-toolbar .search input{width:100%;margin:0;padding:9px 12px 9px 38px;border-radius:var(--radius-pill);font-size:var(--fs-md)}
@@ -498,9 +477,6 @@ tr.row.is-done td:first-child{box-shadow:inset 3px 0 var(--st-done)}
 .status-mini .status-owner,.status-mini .status-age{font-size:var(--fs-xs)}
 .delay-sm{padding:2px 7px;font-size:var(--fs-xs)}
 .period{font-size:var(--fs-sm);color:var(--brand-900);white-space:nowrap}
-@media(max-width:1199px){.home-cols{grid-template-columns:1fr}.home-side{grid-template-columns:1fr 1fr}.home-side .sideblock{height:100%}}
-@media(max-width:900px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:700px){.home-side{grid-template-columns:1fr}}
 /* skeleton */
 .skeleton{background:linear-gradient(90deg,var(--skeleton-a) 25%,var(--skeleton-b) 37%,var(--skeleton-a) 63%);background-size:400% 100%;animation:sk 1.2s ease infinite;border-radius:var(--radius-sm);height:14px}
 @keyframes sk{0%{background-position:100% 50%}100%{background-position:0 50%}}
@@ -536,12 +512,10 @@ tr.row.is-done td:first-child{box-shadow:inset 3px 0 var(--st-done)}
 /* ====== RESPONSIVE: monitor larghi ====== */
 @media(min-width:1440px){
   :root{--page-max:1440px}
-  .home-cols{grid-template-columns:340px minmax(0,1fr)}
   .workspace{grid-template-columns:360px minmax(0,1fr)}
 }
 @media(min-width:1800px){
   :root{--page-max:1680px}
-  .home-cols{grid-template-columns:360px minmax(0,1fr)}
   .workspace{grid-template-columns:380px minmax(0,1fr)}
   .list-compact td{padding:11px 12px}
   .list-compact th{padding:9px 12px}
@@ -650,31 +624,147 @@ tr.row.is-done td:first-child{box-shadow:inset 3px 0 var(--st-done)}
 .admin-main .search-ico{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:15px;height:15px;fill:var(--muted);pointer-events:none}
 /* Template mail: matrice IT/EN in una schermata */
 .admin-tpl-card{padding:14px}
-.tplx-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
-.tplx-scope{display:flex;align-items:center;gap:7px}
-.tplx-scope label{margin:0;font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
-.tplx-scope select{width:auto;min-width:240px;margin:0;padding:7px 10px;font-size:var(--fs-sm)}
+/* ====== RETEST: righe informative nel pannello ====== */
+.kv{display:grid;gap:6px;margin:0}
+.kvline{display:flex;justify-content:space-between;gap:12px;font-size:var(--fs-sm);color:var(--muted);border-bottom:1px solid var(--line-soft);padding-bottom:5px}
+.kvline:last-child{border-bottom:0;padding-bottom:0}
+.kvline b{color:var(--brand-900);text-align:right;font-weight:var(--fw-semibold)}
+/* ====== KPI: tessere, barre e tabelle ====== */
+.kpi-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin:16px 0}
+.kpi-card{background:#fff;border:1px solid var(--line);border-left:4px solid var(--brand-500);border-radius:var(--radius-lg);padding:11px 13px;min-width:0}
+.kpi-card b{display:block;font-size:var(--fs-stat);line-height:1.1;color:var(--brand-900)}
+.kpi-card span{display:block;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--muted)}
+.kpi-card small{display:block;margin-top:3px;font-size:var(--fs-2xs);color:var(--muted-2);overflow-wrap:anywhere}
+.kpi-card.a{border-left-color:var(--st-action)}.kpi-card.a b{color:var(--st-action)}
+.kpi-card.w{border-left-color:var(--st-wait)}.kpi-card.w b{color:var(--st-wait)}
+.kpi-card.r{border-left-color:var(--st-risk)}.kpi-card.r b{color:var(--st-risk)}
+.kpi-card.n{border-left-color:var(--brand-900)}
+.kpi-cols{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:14px;align-items:start;margin-bottom:14px}
+.kpi-panel{background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow);padding:14px;min-width:0;margin-bottom:14px}
+.kpi-cols .kpi-panel{margin-bottom:0}
+.kpi-panel > h2{margin:0 0 4px;font-size:var(--fs-lg)}
+.kpi-panel > .hint{margin:0 0 10px}
+.kpi-table{width:100%;border-collapse:collapse;font-size:var(--fs-md)}
+.kpi-table caption{text-align:left}
+.kpi-table th{text-align:left;font-size:var(--fs-2xs);text-transform:uppercase;letter-spacing:var(--tracking-caps);color:var(--muted-2);font-weight:var(--fw-black);padding:7px 9px;border-bottom:1px solid var(--line);white-space:nowrap}
+.kpi-table td{padding:9px;border-bottom:1px solid var(--line-soft);vertical-align:middle}
+.kpi-table tbody tr[data-act]{cursor:pointer}
+.kpi-table tbody tr[data-act]:hover{background:var(--surface-3)}
+.kpi-table .name b{display:block;font-size:var(--fs-md);color:var(--brand-900);line-height:1.25}
+.kpi-table .name span{display:block;font-size:var(--fs-2xs);color:var(--muted)}
+.kpi-num{display:inline-block;min-width:22px;font-weight:var(--fw-bold);color:var(--brand-900)}
+.kpi-bar{display:block;height:6px;border-radius:var(--radius-pill);background:var(--surface-2);overflow:hidden;margin-top:4px;min-width:60px}
+.kpi-bar i{display:block;height:100%;background:var(--brand-500);border-radius:var(--radius-pill)}
+.kpi-bar i.b{background:var(--st-progress)}
+.kpi-phases{display:grid;gap:9px}
+.kpi-phase{display:grid;grid-template-columns:104px 30px minmax(0,1fr);gap:9px;align-items:center}
+.kpi-phase-lbl{font-size:var(--fs-xs);color:var(--muted);font-weight:var(--fw-semibold);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi-phase .kpi-bar{margin:0}
+@media(max-width:1400px){.kpi-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:1100px){
+  .kpi-cols{grid-template-columns:minmax(0,1fr)}
+  .kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .kpi-panel{overflow-x:auto}
+}
+/* ====== TIPI DI ATTIVITÀ ====== */
+.actcard{margin-bottom:12px}
+.acthead{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.acthead .t{flex:1;min-width:200px}
+.acthead h3{margin:0;font-size:var(--fs-xl)}
+.actbadge{width:42px;height:42px;border-radius:var(--radius-md);background:var(--brand-50);border:1px solid var(--brand-100);color:var(--brand-700);display:grid;place-items:center;font-weight:var(--fw-black);font-size:var(--fs-md);flex:none}
+.actcheck{display:flex;align-items:center;gap:9px;margin:0;text-transform:none;letter-spacing:0;font-size:var(--fs-md);font-weight:var(--fw-semibold);color:var(--brand-900)}
+.actcheck input{width:auto;margin:0}
+/* ====== MAILING LIST: filtri, elenco, dettaglio ====== */
+.admin-mm{display:grid;gap:12px}
+.ml-filters{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow);padding:11px 12px}
+.ml-filters .search{flex:1;min-width:240px;margin:0}
+.ml-group{display:inline-flex;align-items:center;gap:5px;flex-wrap:wrap}
+.ml-lbl{font-size:10px;text-transform:uppercase;letter-spacing:var(--tracking-caps);color:var(--muted-2);font-weight:800}
+.chip{appearance:none;border:1px solid var(--line);background:#fff;border-radius:var(--radius-pill);padding:5px 12px;font:inherit;font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--muted);cursor:pointer;line-height:1.2}
+.chip:hover{border-color:var(--brand-500);color:var(--brand-900)}
+.chip[aria-pressed="true"]{border-color:var(--brand-500);background:var(--brand-50);color:var(--brand-700)}
+.chip:focus-visible{outline:2px solid var(--brand-500);outline-offset:2px}
+.ml-count{margin-left:auto;font-size:var(--fs-xs);color:var(--muted);font-weight:var(--fw-semibold);white-space:nowrap}
+.ml-list{background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow);overflow:auto;max-height:420px}
+.ml-item{display:flex;align-items:center;gap:11px;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line-soft);background:#fff;padding:10px 13px;cursor:pointer;color:inherit;font:inherit}
+.ml-list .ml-item:last-child{border-bottom:0}
+.ml-item:hover{background:var(--surface-3)}
+.ml-item.on{background:var(--brand-50);box-shadow:inset 3px 0 0 var(--brand-600)}
+.ml-item:focus-visible{outline:2px solid var(--brand-500);outline-offset:-2px}
+.ml-av{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-size:var(--fs-2xs);font-weight:var(--fw-black);flex:none;background:var(--brand-50);border:1px solid var(--brand-100);color:var(--brand-700)}
+.ml-av.eng{background:var(--st-progress-bg);border-color:var(--st-progress-border);color:var(--st-progress)}
+.ml-who{flex:1;min-width:0}
+.ml-who b{display:block;font-size:var(--fs-md);color:var(--brand-900);line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ml-who small{display:block;font-size:var(--fs-xs);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ml-end{display:flex;align-items:center;gap:7px;justify-content:flex-end;flex-wrap:wrap}
+.ml-detail{background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow);padding:16px}
+.ml-dhead{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line-soft);padding-bottom:12px;margin-bottom:14px}
+.ml-dhead .t{flex:1;min-width:200px}
+.ml-dhead h3{margin:0;font-size:var(--fs-xl)}
+.ml-dhead p{margin:3px 0 0;font-size:var(--fs-sm);color:var(--muted)}
+.ml-cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}
+.ml-block{border:1px solid var(--line);border-radius:var(--radius-md);background:#fff;padding:12px;margin-bottom:10px}
+.ml-block h4{margin:0 0 8px;font-size:var(--fs-md);display:flex;align-items:center;gap:8px}
+.ml-block h4 .cnt{font-size:var(--fs-2xs)}
+.ml-block .hint{margin:0 0 8px}
+.ml-block.ml-base{background:var(--surface-3);border-style:dashed}
+.ml-mini{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted-2);font-weight:var(--fw-bold);margin:8px 0 4px}
+.ml-people{display:grid;gap:7px}
+.ml-person{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr) 140px 30px;gap:7px;align-items:center}
+.ml-person input,.ml-person select{width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:var(--radius-sm);background:#fff;font:inherit;font-size:var(--fs-xs)}
+.ml-person input[readonly]{background:var(--surface-3);color:var(--muted)}
+.ml-x{width:30px;height:30px;border:1px solid var(--line);background:#fff;border-radius:var(--radius-sm);color:var(--muted);cursor:pointer;padding:0;font-size:var(--fs-lg);line-height:1}
+.ml-x:hover{border-color:var(--st-action-border);background:var(--st-action-bg);color:var(--st-action)}
+.ml-x-ph{width:30px;text-align:center;color:var(--muted-2)}
+.ml-subject{width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:var(--radius-sm);font:inherit;font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--brand-900)}
+.ml-subject-body{width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:var(--radius-sm);font:inherit;font-size:var(--fs-xs);line-height:1.45;min-height:104px;resize:vertical}
+.ml-blockacts{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:11px;border-top:1px solid var(--line-soft);padding-top:11px}
+@media(max-width:1200px){.ml-cols{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:900px){
+  .ml-count{margin-left:0}
+  .ml-person{grid-template-columns:1fr 1fr}
+}
+.tplx-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.tplx-scope{display:flex;align-items:center;gap:8px}
+.tplx-scope label{display:inline-flex;align-items:center;gap:6px;margin:0;font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.tplx-scope label svg{width:14px;height:14px;fill:currentColor;flex:none}
+/* Il select è fuori da .f: senza queste regole resterebbe nel look nativo. */
+.tplx-scope select{appearance:none;-webkit-appearance:none;width:auto;min-width:250px;margin:0;padding:8px 34px 8px 12px;border:1px solid var(--line);border-radius:var(--radius-pill);background-color:#fff;background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23566a80'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:11px;font:inherit;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--brand-900);cursor:pointer}
+.tplx-scope select:hover{border-color:var(--brand-500)}
+.tplx-scope select:focus-visible{outline:2px solid var(--brand-500);outline-offset:2px}
+.tplx-scope select:disabled{cursor:default;opacity:.75}
 .tplx-top-right{margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .tplx-top-right .hint{font-size:10.5px;max-width:270px;margin:0}
 .tplx-placeholders{display:flex;gap:4px;flex-wrap:wrap;align-items:center;margin:0 0 8px}
 .tplx-placeholders span{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:10px;border:1px solid var(--line);border-radius:5px;padding:1px 5px;background:var(--surface-3);color:var(--muted)}
 .tplx-placeholders .tplx-note{border:0;background:none;padding:0;margin-left:auto;font-family:var(--font-sans);font-size:10.5px;color:var(--muted-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:430px}
 .tplx{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
-.tplx-head,.tplx-row{display:grid;grid-template-columns:150px minmax(0,1fr) minmax(0,1fr)}
-.tplx-head{background:var(--surface-3);border-bottom:1px solid var(--line);font-size:9.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted-2);font-weight:800}
-.tplx-head>div,.tplx-row>div{padding:6px 10px;border-right:1px solid var(--line-soft);min-width:0}
+.tplx-head,.tplx-row{display:grid;grid-template-columns:168px minmax(0,1fr) minmax(0,1fr)}
+.tplx-head{background:var(--surface-2);border-bottom:1px solid var(--line);font-size:9.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted-2);font-weight:800}
+.tplx-head>div{display:flex;align-items:center;gap:6px}
+.tplx-head svg{width:12px;height:12px;fill:currentColor;flex:none}
+.tplx-head>div,.tplx-row>div{padding:8px 12px;border-right:1px solid var(--line-soft);min-width:0}
 .tplx-head>div:last-child,.tplx-row>div:last-child{border-right:0}
 .tplx-row{border-bottom:1px solid var(--line-soft)}
 .tplx-row:last-child{border-bottom:0}
+.tplx-group{grid-column:1/-1;background:var(--surface-3);border-bottom:1px solid var(--line);padding:7px 12px;font-size:9.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--brand-700);font-weight:800}
+.tplx-meta{background:var(--surface-2)}
+.tplx-meta-head{display:flex;align-items:center;gap:8px;margin-bottom:3px}
+.tplx-ico{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;background:var(--brand-50);border:1px solid var(--brand-100);color:var(--brand-700);flex:none}
+.tplx-ico svg{width:15px;height:15px;fill:currentColor}
 .tplx-meta b{display:block;color:var(--brand-900);font-size:var(--fs-md)}
-.tplx-meta > span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:var(--muted);font-size:var(--fs-sm);line-height:1.3;margin-top:2px}
-.tplx-meta-tags{display:flex;align-items:center;gap:6px;margin-top:5px}
-.tplx-reset{width:20px;height:20px;border:1px solid var(--line);background:#fff;border-radius:5px;color:var(--muted);display:grid;place-items:center;font-size:12px;line-height:1;padding:0}
+.tplx-meta > span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:var(--muted);font-size:var(--fs-sm);line-height:1.3}
+.tplx-meta-tags{display:flex;align-items:center;gap:6px;margin-top:6px}
+.tplx-reset{width:24px;height:24px;border:1px solid var(--line);background:#fff;border-radius:6px;color:var(--muted);display:grid;place-items:center;padding:0;cursor:pointer;flex:none}
+.tplx-reset svg{width:13px;height:13px;fill:currentColor}
 .tplx-reset:hover{color:var(--brand-600);border-color:var(--brand-500)}
+.tplx-reset:focus-visible{outline:2px solid var(--brand-500);outline-offset:2px}
 .tplx-cell{display:grid;gap:3px;align-content:start}
-.tplx-cell label{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted-2);margin:2px 0 0}
-.tplx-cell input{padding:5px 8px;font-size:var(--fs-sm)}
-.tplx-cell textarea{min-height:40px;padding:5px 8px;font-size:var(--fs-sm);line-height:1.4;resize:vertical}
+.tplx-cell label{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted-2);margin:4px 0 0}
+.tplx-cell label:first-child{margin-top:0}
+/* Oggetto e corpo sono entrambe textarea: l'oggetto sta su due righe senza tagliare il testo. */
+.tplx-cell textarea{min-height:150px;padding:7px 9px;font-size:var(--fs-sm);line-height:1.45;resize:vertical}
+.tplx-cell textarea.tplx-subject{min-height:58px;font-weight:var(--fw-semibold);color:var(--brand-900)}
 .tplx-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 0 0;margin-top:10px;border-top:1px solid var(--line-soft)}
 .tplx-bar .hint{flex:1;min-width:220px;margin:0}
 @media(max-width:1000px){
@@ -682,7 +772,17 @@ tr.row.is-done td:first-child{box-shadow:inset 3px 0 var(--st-done)}
   .tplx-head,.tplx-row{grid-template-columns:1fr}
   .tplx-row>div{border-right:0;border-bottom:1px solid var(--line-soft)}
   .tplx-row>div:last-child{border-bottom:0}
-  .tplx-meta{background:var(--surface-3)}
+  .tplx-meta{background:var(--surface-2)}
+}
+/* Matrice template: le colonne seguono il contenitore, non la finestra. */
+.admin-tpl-card{container-type:inline-size}
+@container (max-width:700px){
+  .tplx-head{display:none}
+  .tplx-head,.tplx-row{grid-template-columns:1fr}
+  .tplx-row>div{border-right:0;border-bottom:1px solid var(--line-soft)}
+  .tplx-row>div:last-child{border-bottom:0}
+  .tplx-meta{background:var(--surface-2)}
+  .tplx-scope select{min-width:0;width:100%}
 }
 .tablewrap{overflow:auto}
 .admin-split{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:14px;align-items:start}
@@ -859,17 +959,6 @@ tr.row.is-done td:first-child{box-shadow:inset 3px 0 var(--st-done)}
   .inline-actions .btn{width:100%}
   .inline-actions .hint{max-width:none}
 }
-@media(max-width:1560px){
-  .home-cols{grid-template-columns:1fr}
-  .home-side{display:grid;grid-template-columns:1fr;gap:16px;align-items:start}
-  .home-side .focus-card:nth-of-type(n+3){display:none}
-  .home-side .wrow:nth-of-type(n+3){display:none}
-}
-@media(max-width:900px){
-  .home-side{grid-template-columns:1fr}
-  .home-side .focus-card:nth-of-type(n+3){display:grid}
-  .home-side .wrow:nth-of-type(n+3){display:flex}
-}
 /* ====== CALENDARIO ====== */
 .cal-head{display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:12px}
 .cal-head > div{flex:1;min-width:220px}
@@ -904,13 +993,73 @@ tr.row.is-done td:first-child{box-shadow:inset 3px 0 var(--st-done)}
 .cal-ev:focus-visible{outline:2px solid var(--brand-500);outline-offset:1px}
 .cal-more{font-size:9px;color:var(--muted);font-weight:var(--fw-semibold);padding-left:2px}
 .cal-empty{background:var(--brand-50);border:1px solid var(--brand-100);border-radius:var(--radius-md);padding:12px 14px;color:var(--brand-700);font-size:var(--fs-sm);margin-bottom:14px}
+/* ====== CALENDARIO · TIMELINE ====== */
+.cal-switch{display:inline-flex;align-items:center;gap:2px;background:#fff;border:1px solid var(--line);border-radius:var(--radius-pill);padding:2px}
+.cal-switch button{appearance:none;border:0;background:transparent;border-radius:var(--radius-pill);padding:5px 12px;font:inherit;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--muted);cursor:pointer;line-height:1.2}
+.cal-switch button:hover{background:var(--surface-3);color:var(--brand-900)}
+.cal-switch button[aria-pressed="true"]{background:var(--brand-900);color:#fff}
+.cal-switch button:focus-visible{outline:2px solid var(--brand-500);outline-offset:2px}
+.tl-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:12px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.tl-toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0}
+.tl-range{font-size:var(--fs-sm);color:var(--muted);font-weight:var(--fw-semibold);white-space:nowrap}
+.tl-range b{color:var(--brand-900)}
+.tl-filters{display:inline-flex;align-items:center;gap:5px;flex-wrap:wrap;margin-left:auto}
+.tl-filter{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);background:#fff;border-radius:var(--radius-pill);padding:4px 9px;font:inherit;font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--muted);cursor:pointer;line-height:1.2}
+.tl-filter:hover{border-color:var(--brand-500);color:var(--brand-900)}
+.tl-filter[aria-pressed="true"]{border-color:var(--brand-500);background:var(--brand-50);color:var(--brand-700)}
+.tl-filter b{font-size:var(--fs-2xs);background:var(--surface-2);border-radius:var(--radius-pill);padding:0 5px;color:var(--brand-900);font-weight:var(--fw-bold)}
+.tl-filter:focus-visible{outline:2px solid var(--brand-500);outline-offset:2px}
+.tl-scroll{overflow:auto;border:1px solid var(--line);border-radius:var(--radius-md);max-height:460px;min-width:0}
+.tl-axis{display:grid;grid-template-columns:220px minmax(760px,1fr);position:sticky;top:0;z-index:3;background:#fff;border-bottom:1px solid var(--line)}
+.tl-axis-label{position:sticky;left:0;z-index:4;background:#fff;border-right:1px solid var(--line);padding:8px 10px;font-size:var(--fs-2xs);text-transform:uppercase;letter-spacing:var(--tracking-caps);color:var(--muted);font-weight:var(--fw-bold);display:flex;align-items:flex-end}
+.tl-axis-track{display:flex;flex-direction:column;min-width:0}
+.tl-months{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));font-size:var(--fs-2xs);font-weight:var(--fw-bold);color:var(--brand-900);text-transform:uppercase;letter-spacing:var(--tracking-caps)}
+.tl-month{padding:5px 6px;border-left:1px solid var(--line-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:var(--surface-3)}
+.tl-month:first-child{border-left:0}
+.tl-days{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));border-top:1px solid var(--line-soft)}
+.tl-day{height:22px;display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--muted);border-left:1px solid var(--line-soft);line-height:1;font-variant-numeric:tabular-nums}
+.tl-day:first-child{border-left:0}
+.tl-day.mon{color:var(--brand-900);font-weight:var(--fw-bold)}
+.tl-day.today{background:var(--brand-100);color:var(--brand-800);font-weight:var(--fw-bold)}
+.tl-row{display:grid;grid-template-columns:220px minmax(760px,1fr);border-top:1px solid var(--line-soft);min-width:0}
+.tl-row:first-child{border-top:0}
+.tl-label{position:sticky;left:0;z-index:2;background:#fff;border:0;border-right:1px solid var(--line);padding:6px 10px;display:flex;flex-direction:column;gap:2px;justify-content:center;min-width:0;text-align:left;font:inherit;cursor:pointer;color:inherit}
+.tl-label:hover{background:var(--surface-3)}
+.tl-label:focus-visible{outline:2px solid var(--brand-500);outline-offset:-2px}
+.tl-label b{font-size:var(--fs-sm);font-weight:var(--fw-semibold);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--brand-900);line-height:1.25}
+.tl-label small{font-size:var(--fs-2xs);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.25}
+.tl-kind{display:inline-flex;align-items:center;gap:4px;font-weight:var(--fw-semibold)}
+.tl-kind i{width:6px;height:6px;border-radius:2px;flex:none;background:var(--brand-500)}
+.tl-kind.proposed i{background:#d9a514}
+.tl-track{position:relative;display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));align-items:center;height:34px;background-image:linear-gradient(to right,var(--line-soft) 1px,transparent 1px);background-repeat:repeat-x;background-size:calc(100% / var(--n)) 100%;min-width:0}
+.tl-bar{grid-row:1;height:22px;border-radius:5px;border:1px solid;padding:0 6px;display:flex;align-items:center;gap:4px;font:inherit;font-size:10px;font-weight:var(--fw-semibold);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;position:relative;z-index:1;min-width:0;text-align:left;line-height:1.2}
+.tl-bar.planned{background:#e7f1fc;border-color:#cfe0f5;color:#1a5f9e}
+.tl-bar.proposed{background:#fff5d6;border-color:#ead48a;color:#8a5b00}
+.tl-bar:hover{filter:brightness(.985)}
+.tl-bar.sel{outline:2px solid var(--brand-500);outline-offset:1px;box-shadow:0 0 0 3px var(--brand-100)}
+.tl-bar:focus-visible{outline:2px solid var(--brand-500);outline-offset:1px}
+.tl-bar.inprogress{border-left-style:dashed}
+.tl-empty{padding:24px 16px;text-align:center;color:var(--muted);font-size:var(--fs-sm)}
+.tl-detail{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-top:1px solid var(--line-soft);padding-top:10px;min-height:42px}
+.tl-detail .tl-info{flex:1;min-width:220px;font-size:var(--fs-sm);color:var(--muted);line-height:1.45}
+.tl-detail .tl-info b{color:var(--brand-900)}
+.tl-detail .tl-info .tl-meta{color:var(--muted);font-size:var(--fs-xs)}
+.tl-detail .tl-actions{display:flex;gap:8px;flex-wrap:wrap}
+.tl-detail .tl-hint{color:var(--muted);font-size:var(--fs-sm)}
 @media(max-width:1200px){.cal-grid{grid-template-columns:1fr}}
+@media(max-width:900px){
+  .tl-axis,.tl-row{grid-template-columns:180px minmax(720px,1fr)}
+  .tl-filters{margin-left:0}
+}
 @media(max-width:700px){
   .cal-month{padding:10px;overflow-x:auto}
   .cal-week,.cal-days{min-width:560px}
   .cal-day{min-height:68px;padding:3px}
   .cal-ev{font-size:9px;padding:1px 3px}
   .cal-more{font-size:8px}
+  .tl-card{padding:10px}
+  .tl-axis,.tl-row{grid-template-columns:160px minmax(680px,1fr)}
+  .tl-axis-label,.tl-label{padding:6px 8px}
 }
 @media(max-width:1500px){
   .demo-switch select{font-size:var(--fs-sm)}
@@ -924,7 +1073,11 @@ tr.row.is-done td:first-child{box-shadow:inset 3px 0 var(--st-done)}
   <symbol id="i-key" viewBox="0 0 16 16"><path d="M0 8a4 4 0 0 1 7.465-2H14a.5.5 0 0 1 .354.146l1.5 1.5a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0L13 9.207l-.646.647a.5.5 0 0 1-.708 0L11 9.207l-.646.647a.5.5 0 0 1-.708 0L9 9.207l-.646.647A.5.5 0 0 1 8 10h-.535A4 4 0 0 1 0 8m4-3a3 3 0 1 0 2.712 4.285A.5.5 0 0 1 7.163 9h.63l.853-.854a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.793-.793-1-1h-6.63a.5.5 0 0 1-.451-.285A3 3 0 0 0 4 5"/><path d="M4 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/></symbol>
   <symbol id="i-play" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/><path d="M6.271 5.055a.5.5 0 0 1 .52.038l3.5 2.5a.5.5 0 0 1 0 .814l-3.5 2.5A.5.5 0 0 1 6 10.5v-5a.5.5 0 0 1 .271-.445"/></symbol>
   <symbol id="i-report" viewBox="0 0 16 16"><path d="M9.5 0a.5.5 0 0 1 .5.5.5.5 0 0 0 .5.5.5.5 0 0 1 .5.5V2a.5.5 0 0 1-.5.5h-5A.5.5 0 0 1 5 2v-.5a.5.5 0 0 1 .5-.5.5.5 0 0 0 .5-.5.5.5 0 0 1 .5-.5z"/><path d="M3 2.5a.5.5 0 0 1 .5-.5H4a.5.5 0 0 0 0-1h-.5A1.5 1.5 0 0 0 2 2.5v12A1.5 1.5 0 0 0 3.5 16h9a1.5 1.5 0 0 0 1.5-1.5v-12A1.5 1.5 0 0 0 12.5 1H12a.5.5 0 0 0 0 1h.5a.5.5 0 0 1 .5.5v12a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5z"/><path d="M10.854 7.854a.5.5 0 0 0-.708-.708L7.5 9.793 6.354 8.646a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0z"/></symbol>
-  <symbol id="i-check" viewBox="0 0 16 16"><path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425z"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 16 16"><path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/><path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/></symbol>
+<symbol id="i-undo" viewBox="0 0 16 16"><path d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2z"/><path d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466"/></symbol>
+<symbol id="i-layers" viewBox="0 0 16 16"><path d="M8.235 1.559a.5.5 0 0 0-.47 0l-7.5 4a.5.5 0 0 0 0 .882L3.188 8 .264 9.559a.5.5 0 0 0 0 .882l7.5 4a.5.5 0 0 0 .47 0l7.5-4a.5.5 0 0 0 0-.882L12.813 8l2.922-1.559a.5.5 0 0 0 0-.882zm3.515 7.008L14.438 10 8 13.433 1.562 10 4.25 8.567l3.515 1.874a.5.5 0 0 0 .47 0zM8 9.433 1.562 6 8 2.567 14.438 6z"/></symbol>
+<symbol id="i-globe" viewBox="0 0 16 16"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m7.5-6.923c-.67.204-1.335.82-1.887 1.855A8 8 0 0 0 5.145 4H7.5zM4.09 4a9.3 9.3 0 0 1 .64-1.539 7 7 0 0 1 .597-.933A7 7 0 0 0 2.255 4zm-.582 3.5c.03-.877.138-1.718.312-2.5H1.674a7 7 0 0 0-.656 2.5zM4.847 5a12.5 12.5 0 0 0-.338 2.5H7.5V5zM8.5 5v2.5h2.99a12.5 12.5 0 0 0-.337-2.5zM4.51 8.5a12.5 12.5 0 0 0 .337 2.5H7.5V8.5zm3.99 0V11h2.653c.187-.765.306-1.608.338-2.5zM5.145 12q.208.58.468 1.068c.552 1.035 1.218 1.65 1.887 1.855V12zm.182 2.472a7 7 0 0 1-.597-.933A9.3 9.3 0 0 1 4.09 12H2.255a7 7 0 0 0 3.072 2.472M3.82 11a13.7 13.7 0 0 1-.312-2.5h-2.49c.062.89.291 1.733.656 2.5zm6.853 3.472A7 7 0 0 0 13.745 12H11.91a9.3 9.3 0 0 1-.64 1.539 7 7 0 0 1-.597.933M8.5 12v2.923c.67-.204 1.335-.82 1.887-1.855q.26-.487.468-1.068zm3.68-1h2.146c.365-.767.594-1.61.656-2.5h-2.49a13.7 13.7 0 0 1-.312 2.5m2.802-3.5a7 7 0 0 0-.656-2.5H12.18c.174.782.282 1.623.312 2.5zM11.27 2.461c.247.464.462.98.64 1.539h1.835a7 7 0 0 0-3.072-2.472c.218.284.418.598.597.933M10.855 4a8 8 0 0 0-.468-1.068C9.835 1.897 9.17 1.282 8.5 1.077V4z"/></symbol>
+<symbol id="i-check" viewBox="0 0 16 16"><path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425z"/></symbol>
   <symbol id="i-search" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/></symbol>
   <symbol id="i-users" viewBox="0 0 16 16"><path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/></symbol>
   <symbol id="i-team" viewBox="0 0 16 16"><path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M14 9.5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1z"/></symbol>
@@ -943,12 +1096,15 @@ tr.row.is-done td:first-child{box-shadow:inset 3px 0 var(--st-done)}
         <div class="nav-label">Portale</div>
         <button class="nav-item" data-act="nav" data-nav="list" data-view="list" title="Engagement"><svg class="nav-ico" aria-hidden="true"><use href="#i-list"></use></svg><span class="nav-txt">Engagement</span></button>
         <button class="nav-item nav-sub" data-act="nav" data-nav="todo" data-view="list" data-filter="action" title="Da gestire ora"><svg class="nav-ico" aria-hidden="true"><use href="#i-check"></use></svg><span class="nav-txt">Da gestire</span><span class="nav-count" hidden>0</span></button>
+        <button class="nav-item nav-sub" data-act="nav" data-nav="waiting" data-view="list" data-filter="waiting" title="In attesa di cliente, manager o altri soggetti"><svg class="nav-ico" aria-hidden="true"><use href="#i-clock"></use></svg><span class="nav-txt">In attesa di terzi</span><span class="nav-count" hidden>0</span></button>
         <button class="nav-item" data-act="nav" data-nav="clients" data-view="clients" title="Clienti"><svg class="nav-ico" aria-hidden="true"><use href="#i-team"></use></svg><span class="nav-txt">Clienti</span></button>
         <button class="nav-item" data-act="nav" data-nav="calendar" data-view="calendar" title="Calendario"><svg class="nav-ico" aria-hidden="true"><use href="#i-cal"></use></svg><span class="nav-txt">Calendario</span></button>
         <button class="nav-item" data-act="nav" data-nav="solicitations" data-view="solicitations" title="Solleciti"><svg class="nav-ico" aria-hidden="true"><use href="#i-play"></use></svg><span class="nav-txt">Solleciti</span></button>
+        <button class="nav-item" data-act="nav" data-nav="kpi" data-view="kpi" title="KPI e andamento"><svg class="nav-ico" aria-hidden="true"><use href="#i-report"></use></svg><span class="nav-txt">KPI e andamento</span></button>
       </div>
       <div class="nav-group" data-group="admin" hidden>
         <div class="nav-label">Amministrazione</div>
+        <button class="nav-item" data-act="nav" data-nav="admin-activities" data-view="admin" data-tab="activities" title="Tipi di attività"><svg class="nav-ico" aria-hidden="true"><use href="#i-list"></use></svg><span class="nav-txt">Tipi di attività</span></button>
         <button class="nav-item" data-act="nav" data-nav="admin-users" data-view="admin" data-tab="users" title="Utenti"><svg class="nav-ico" aria-hidden="true"><use href="#i-users"></use></svg><span class="nav-txt">Utenti</span></button>
         <button class="nav-item" data-act="nav" data-nav="admin-mailing" data-view="admin" data-tab="mailing" title="Mailing list"><svg class="nav-ico" aria-hidden="true"><use href="#i-mail"></use></svg><span class="nav-txt">Mailing list</span></button>
         <button class="nav-item" data-act="nav" data-nav="admin-templates" data-view="admin" data-tab="templates" title="Template mail"><svg class="nav-ico" aria-hidden="true"><use href="#i-doc"></use></svg><span class="nav-txt">Template mail</span></button>
@@ -997,7 +1153,7 @@ tr.row.is-done td:first-child{box-shadow:inset 3px 0 var(--st-done)}
 <script>
 /* ====== PROFILI E CLIENTI ====== */
 const ROLES = {
-  Client:       { label: 'Cliente',      role: 'Cliente',                av: 'MR', client: 'contoso' },
+  Client:       { label: 'Cliente',      role: 'Cliente',                av: 'MR', client: 'anthropic' },
   PMO:     { label: 'PMO',     role: 'PMO',               av: 'LF', client: null },
   Pentester: { label: 'Pentester', role: 'Pentester',           av: 'SC', client: null },
   Manager:      { label: 'Manager',      role: 'Manager',                av: 'GM', client: null },
@@ -1019,10 +1175,8 @@ const ROLE_LABEL = {
 };
 const DEMO_CLIENTS = [
   // Cliente = anagrafica che raggruppa utenze ed engagement.
-  ['contoso', 'Contoso'],
-  ['fabrikam', 'Fabrikam'],
-  ['novabank', 'Nova Bank'],
-  ['orion', 'Orion Energia']
+  ['anthropic', 'Anthropic'],
+  ['nvidia', 'Nvidia']
 ];
 const TYPES = [
   ['PenetrationTest', 'Penetration Test'],
@@ -1031,6 +1185,13 @@ const TYPES = [
   ['CodeReview', 'Code Review'],
   ['CloudSecurity', 'Cloud Security']
 ];
+// Tipologie di deliverable: le stesse che il Setup usa per scegliere cosa produrre.
+const DELIVERABLE_KINDS = [
+  ['Executive', 'Executive', 'Sintesi per il management'],
+  ['Technical', 'Technical', 'Dettaglio tecnico ed evidenze'],
+  ['Activity', 'Activity', 'Log delle attività svolte'],
+  ['Custom', 'Custom', 'Deliverable personalizzato concordato']
+];
 const STEPS = [
   ['Setup', 'Team, distribution list, lingua e tipologie di deliverable'],
   ['Documenti e dati economici', 'Scheda tecnica, ordine, costi e margine approvati'],
@@ -1038,12 +1199,26 @@ const STEPS = [
   ['Pianificazione', 'Proposta e approvazione delle date'],
   ['Credenziali', 'Dati di accesso per l\'esecuzione'],
   ['Esecuzione', 'Attività in corso'],
-  ['Report', 'Revisione e consegna']
+  ['Report', 'Revisione e consegna'],
+  ['Retest', 'Verifiche dopo i fix: richiesta del cliente e date'],
+  ['Report retest', 'Invio al cliente senza revisione']
 ];
 const MAIL_META = {
   start:   { t: 'Inizio attività', subj: 'Avvio attività', desc: 'Comunica alla distribution list l\'avvio dell\'attività.' },
   end:     { t: 'Fine attività', subj: 'Conclusione attività', desc: 'Comunica alla distribution list la conclusione dell\'attività.' },
   deliver: { t: 'Consegna deliverables', subj: 'Consegna deliverables', desc: 'Notifica la disponibilità dei report e degli altri deliverables.' }
+};
+// Icona di ciascun template, presa dallo sprite SVG dell'app.
+const MAIL_ICON = {
+  start: 'i-play',
+  end: 'i-check',
+  deliver: 'i-report',
+  retestreport: 'i-report',
+  solrep: 'i-doc',
+  solrev: 'i-check',
+  solcred3: 'i-key',
+  solcred2: 'i-key',
+  solmanual: 'i-mail'
 };
 const PROPOSAL_STATUS = {
   Pending: ['In attesa', 'wait'],
@@ -1084,9 +1259,17 @@ const state = {
   usersError: null,
   selectedUserId: '',
   userQuery: '',
+  userModal: '',
+  userModalError: null,
+  usersRev: 0,
   adminTab: 'users',
   adminMailing: [],
   adminMailingQuery: '',
+  activityTypes: [],
+  adminMailingKind: 'all',
+  adminMailingScope: 'all',
+  adminMailingTemplates: null,
+  adminMailingTemplateType: '',
   adminTemplates: null,
   adminMailingId: '',
   adminTemplateTarget: { scope: 'standard', clientId: '', type: 'start' },
@@ -1095,6 +1278,9 @@ const state = {
   error: null,
   list: [],
   calendarProposals: [],
+  calendarView: localStorage.getItem('cep.calendarView') || 'timeline',
+  calendarFilter: 'all',
+  calendarSel: '',
   clients: [],
   detail: null,
   tab: 'docs',
@@ -1102,9 +1288,6 @@ const state = {
   due: [],
   scope: null,
   credentials: null,
-  mailTemplates: null,
-  mailTemplatesError: false,
-  mailTemplateScope: {},
   logAuthor: '',
   editing: {}
 };
@@ -1166,6 +1349,19 @@ const typeLabel = t => (TYPES.find(x => x[0] === t) || [t, t])[1];
 const clientLabel = t => clientName(t);
 const isClient = () => state.role === 'Client';
 const isInternalRole = () => state.role === 'PMO' || state.role === 'Pentester' || state.role === 'Manager' || state.role === 'Auditor';
+
+// Sezioni di Amministrazione visibili per profilo: il Pentester entra solo per
+// il testo delle email dei suoi engagement, dalle mailing list.
+const ADMIN_TABS_BY_ROLE = {
+  Manager: ['activities', 'users', 'clients', 'mailing', 'templates', 'settings'],
+  PMO: ['activities', 'users', 'clients', 'mailing', 'templates', 'settings'],
+  Pentester: ['mailing']
+};
+const adminTabsForRole = () => ADMIN_TABS_BY_ROLE[state.role] || [];
+const canUseAdminTab = tab => adminTabsForRole().includes(tab);
+// Le liste base dei clienti restano in mano a Manager e PMO.
+const canEditDistribution = () => state.role === 'Manager' || state.role === 'PMO';
+const canEditEngagementTemplate = () => adminTabsForRole().includes('mailing');
 const canCreateEngagement = () => state.role === 'PMO' || state.role === 'Manager';
 const canManageClients = () => state.role === 'Manager';
 const clientName = t => (state.clients.find(c => c.id === t) || {}).name
@@ -1409,13 +1605,15 @@ function closeSideOnMobile() {
 
 function updateNav() {
   const internal = isInternalRole();
-  const admin = state.role === 'Manager' || state.role === 'PMO';
+  const tabs = adminTabsForRole();
+  const admin = tabs.length > 0;
 
   document.querySelectorAll('[data-nav]').forEach(item => {
     const view = item.dataset.view;
     let show = true;
     if (view === 'clients' || view === 'solicitations') show = internal;
-    if (view === 'admin') show = admin;
+    if (view === 'kpi') show = canUseAdminTab('users');
+    if (view === 'admin') show = canUseAdminTab(item.dataset.tab);
     item.hidden = !show;
   });
 
@@ -1430,7 +1628,9 @@ function updateNav() {
         ? 'admin-users'
         : state.view === 'list' && state.listFilter === 'action'
           ? 'todo'
-          : state.view;
+          : state.view === 'list' && state.listFilter === 'waiting'
+            ? 'waiting'
+            : state.view;
 
   document.querySelectorAll('[data-nav]').forEach(item => {
     const on = item.dataset.nav === key;
@@ -1439,19 +1639,23 @@ function updateNav() {
     else item.removeAttribute('aria-current');
   });
 
-  const todoCount = (state.list || [])
-    .filter(item => (item.actionState || {}).kind === 'action').length;
-  const todoBadge = document.querySelector('[data-nav="todo"] .nav-count');
-  if (todoBadge) {
-    todoBadge.textContent = String(todoCount);
-    todoBadge.hidden = todoCount === 0;
-  }
+  const countByKind = kind => (state.list || [])
+    .filter(item => (item.actionState || {}).kind === kind).length;
+
+  [['todo', 'action'], ['waiting', 'waiting']].forEach(([nav, kind]) => {
+    const count = countByKind(kind);
+    const badge = document.querySelector(`[data-nav="${nav}"] .nav-count`);
+    if (!badge) return;
+    badge.textContent = String(count);
+    badge.hidden = count === 0;
+  });
 
   const kicker = $('#headerKicker');
   const section = $('#headerSection');
   if (!kicker || !section) return;
 
   const adminTabs = {
+    activities: 'Tipi di attività',
     users: 'Utenti',
     clients: 'Clienti',
     mailing: 'Mailing list',
@@ -1472,13 +1676,17 @@ function updateNav() {
   }
 
   kicker.textContent = 'Portale';
-  section.textContent = {
-    list: 'Engagement',
-    clients: 'Clienti',
-    calendar: 'Calendario',
-    solicitations: 'Solleciti',
-    users: 'Utenti'
-  }[state.view] || 'Engagement';
+  section.textContent =
+    state.view === 'list' && state.listFilter === 'action' ? 'Da gestire'
+      : state.view === 'list' && state.listFilter === 'waiting' ? 'In attesa di terzi'
+        : {
+          list: 'Engagement',
+          clients: 'Clienti',
+          calendar: 'Calendario',
+          solicitations: 'Solleciti',
+          kpi: 'KPI e andamento',
+          users: 'Utenti'
+        }[state.view] || 'Engagement';
 }
 
 // Il dettaglio usa rail e contesto sticky: l'offset deve seguire l'altezza
@@ -1657,9 +1865,6 @@ function backToList() {
   state.detail = null;
   state.scope = null;
   state.credentials = null;
-  state.mailTemplates = null;
-  state.mailTemplatesError = false;
-  state.mailTemplateScope = {};
   state.listTab = 'eng';
   loadList();
 }
@@ -1669,9 +1874,6 @@ async function openEngagement(id) {
   state.tab = null;
   state.scope = null;
   state.credentials = null;
-  state.mailTemplates = null;
-  state.mailTemplatesError = false;
-  state.mailTemplateScope = {};
   state.logAuthor = '';
   state.editing = {};
   await loadDetail(id);
@@ -1681,7 +1883,6 @@ async function setTab(tab) {
   state.tab = tab;
   if (tab === 'scope') await loadScope();
   if (tab === 'cred') await loadCredentials();
-  if (tab === 'mail') await loadMailTemplates();
   render();
 }
 
@@ -1731,16 +1932,29 @@ async function loadCalendar() {
   if (state.view === 'calendar') renderCalendar();
 }
 
+// Catalogo dei tipi di attività: serve al Setup e al form di creazione.
+async function ensureActivityTypes() {
+  if (state.activityTypes?.length) return state.activityTypes;
+
+  try {
+    state.activityTypes = await api('/api/activity-types?' + qs());
+  } catch {
+    state.activityTypes = [];
+  }
+
+  return state.activityTypes;
+}
+
 async function loadDetail(id) {
   state.loading = true;
   state.error = null;
   try {
     const detail = await api(`/api/engagements/${encodeURIComponent(id)}?` + qs());
     state.detail = detail;
+    await ensureActivityTypes();
     if (!state.tab) state.tab = defaultTab(detail);
     if (state.tab === 'scope') await loadScope();
     if (state.tab === 'cred') await loadCredentials();
-    if (state.tab === 'mail') await loadMailTemplates();
   } catch (error) {
     state.error = error.message;
     toast(error.message);
@@ -1773,22 +1987,6 @@ async function loadCredentials() {
   }
 }
 
-async function loadMailTemplates() {
-  state.mailTemplates = null;
-  state.mailTemplatesError = false;
-
-  if (!state.detail) return;
-  // I template non sono visibili a Cliente, PMO e Auditor.
-  if (!['Manager', 'Pentester'].includes(state.role)) return;
-
-  try {
-    state.mailTemplates = await api(
-      `/api/engagements/${engagedId()}/mail-templates?` + qs());
-  } catch {
-    state.mailTemplates = null;
-    state.mailTemplatesError = true;
-  }
-}
 
 async function loadSolicitations() {
   try {
@@ -1895,7 +2093,7 @@ function delayBadge(e) {
   return `<span class="delay delay-sm">${esc(text)}</span>`;
 }
 
-// Fase del workflow in poco spazio: barra a 6 segmenti + nome del passo.
+// Fase del workflow in poco spazio: barra a un segmento per passo + nome.
 function phaseCell(e) {
   const raw = Number(e.stepIndex) || 0;
   const index = Math.max(0, Math.min(raw, STEPS.length - 1));
@@ -2187,12 +2385,6 @@ function renderList() {
   const all = state.list;
   const data = filteredList();
   const hasFilters = state.listFilter !== 'all' || state.listQuery.trim() !== '';
-  const todo = sortEngagements(all.filter(e => (actionState(e) || {}).kind === 'action'));
-  const waiting = sortEngagements(all.filter(e => (actionState(e) || {}).kind === 'waiting'));
-  const atRisk = all.filter(e => e.preparationAlert);
-  const next = all
-    .filter(e => e.periodStart && e.periodStart >= today())
-    .sort((a, b) => a.periodStart.localeCompare(b.periodStart))[0];
   const who = state.clientId
     ? `Engagement di ${esc(clientLabel(state.clientId))}`
     : (isClient() ? 'Il tuo cliente' : 'Tutti i clienti');
@@ -2200,42 +2392,6 @@ function renderList() {
   const headActions = canCreateEngagement()
     ? '<button class="btn pri" data-act="new-engagement">+ Nuovo engagement</button>'
     : '';
-
-  const tile = (key, cls, count, label) =>
-    `<button class="tile ${cls} ${state.listFilter === key ? 'on' : ''}" data-act="list-filter" data-filter="${key}" aria-pressed="${state.listFilter === key}"><b>${count}</b><span>${label}</span></button>`;
-
-  const cta = {
-    docs: 'Apri i documenti',
-    plan: 'Vai alla pianificazione',
-    scope: 'Compila lo scope',
-    cred: 'Compila le credenziali',
-    reports: 'Vai ai report'
-  };
-
-  const focus = todo.slice(0, 4).map(e => {
-    const s = actionState(e) || {};
-    return `<div class="focus-card">
-      <b>${esc(e.name)}</b>
-      <div class="fcard-meta">${esc(e.clientName)} · ${esc(e.id)} · ${esc(typeLabel(e.type))}</div>
-      <div class="fcard-action"><span>${esc(s.label || 'Da gestire')}</span>${e.preparationAlert ? delayBadge(e) : statusAge(e)}</div>
-      <div><button class="btn pri sm" data-act="open-action" data-id="${esc(e.id)}" data-tab="${esc(s.targetTab || 'docs')}">${esc(cta[s.targetTab] || 'Apri')}</button></div>
-    </div>`;
-  }).join('');
-
-  const waitingRows = waiting.slice(0, 4).map(e => {
-    const s = actionState(e) || {};
-    const label = s.label || 'In attesa';
-    const owner = statusOwner(e);
-    // Se l'azione dice già "dal cliente" / "dal Manager", non ripetere il
-    // responsabile subito dopo.
-    const showOwner = !!owner &&
-      !label.toLowerCase().includes(owner.toLowerCase());
-    return `<button class="wrow" data-act="open" data-id="${esc(e.id)}">
-      ${clientAvatar(clientFor(e))}
-      <span class="wtt"><b>${esc(e.name)}</b><span>${esc(label)}${showOwner ? ` · ${esc(owner)}` : ''}</span></span>
-      ${statusAge(e)}
-    </button>`;
-  }).join('');
 
   const rows = data.map(e => {
     const start = e.periodStart;
@@ -2251,7 +2407,7 @@ function renderList() {
   }).join('');
 
   const filterOptions = [
-    ['all', 'Tutti'], ['action', 'Da gestire'], ['waiting', 'In attesa'],
+    ['all', 'Tutti'], ['action', 'Da gestire'], ['waiting', 'In attesa di terzi'],
     ['progress', 'In corso'], ['done', 'Completati'], ['risk', 'A rischio']
   ];
   const sortOptions = [
@@ -2284,6 +2440,12 @@ function renderList() {
           <tbody>${rows || `<tr><td colspan="${isClient() ? 5 : 6}">${empty}</td></tr>`}</tbody>
         </table></div>`;
 
+  // Il titolo dell'elenco segue il filtro attivo.
+  const listTitle = {
+    action: 'Da gestire',
+    waiting: 'In attesa di terzi'
+  }[state.listFilter] || 'Tutti gli engagement';
+
   $('#app').innerHTML = `
     <div class="headrow">
       <div>
@@ -2292,23 +2454,9 @@ function renderList() {
       </div>
       <div class="head-acts">${headActions}</div>
     </div>
-    <div class="tiles" role="group" aria-label="Riepilogo e filtri">
-      ${tile('action', 'a', todo.length, 'Da gestire')}
-      ${tile('waiting', 'w', waiting.length, 'In attesa di altri')}
-      ${tile('risk', 'r', atRisk.length, 'A rischio avvio')}
-      <div class="tile n" title="${next ? esc(`${fmt(next.periodStart)} · ${next.name}`) : ''}"><b>${next ? fmt(next.periodStart).slice(0, 5) : '–'}</b><span>Prossimo avvio</span></div>
-    </div>
-    <div class="home-cols">
-      <section class="home-side">
-        <div class="card sideblock">
-          <div class="colhead"><h2 style="font-size:var(--fs-base)">In attesa di altri</h2><span class="cnt c-wait">${waiting.length}</span></div>
-          ${waitingRows || '<div class="empty" style="padding:12px 0">Nessuna attesa in corso.</div>'}
-          ${waiting.length > 4 ? `<button class="linkb" data-act="list-filter" data-filter="waiting" style="margin-top:8px">Vedi tutte (${waiting.length})</button>` : ''}
-        </div>
-      </section>
-      <section class="home-main">
+    <section class="home-main">
         <div class="colhead">
-          <h2>Tutti gli engagement <span class="cnt">${data.length}${data.length !== all.length ? ` di ${all.length}` : ''}</span></h2>
+          <h2>${esc(listTitle)} <span class="cnt">${data.length}${data.length !== all.length ? ` di ${all.length}` : ''}</span></h2>
           ${isClient() ? '' : `<button class="linkb" data-act="list-tab" data-tab="rem">Solleciti automatici · ${state.due.length}</button>`}
         </div>
         <div class="home-toolbar">
@@ -2325,43 +2473,294 @@ function renderList() {
           ${hasFilters ? `<button class="btn sec sm toolbar-reset" data-act="clear-filter" title="Rimuovi ricerca e filtro">× Azzera filtri</button>` : ''}
         </div>
         ${content}
+    </section>`;
+}
+
+/* ====== KPI E ANDAMENTO ====== */
+// Pannello di sintesi per Manager e PMO: carico per cliente, fase, ritardi e
+// rischi. Legge l'elenco engagement già filtrato dal cliente in header.
+const KPI_LATE_DAYS = 5;
+
+function kpiAge(e) {
+  const s = actionState(e);
+  if (!s || (s.kind !== 'action' && s.kind !== 'waiting')) return 0;
+  return daysSince(s.since) || 0;
+}
+
+function kpiPhaseLabel(e) {
+  if (!e || e.phase === 'Done') return 'Completato';
+  const index = Math.max(0, Math.min(Number(e.stepIndex) || 0, STEPS.length - 1));
+  return STEPS[index][0];
+}
+
+function kpiStepIndex(e) {
+  return e.phase === 'Done'
+    ? STEPS.length
+    : Math.max(0, Math.min(Number(e.stepIndex) || 0, STEPS.length - 1));
+}
+
+function kpiBar(count, max, cls) {
+  const width = max > 0 ? Math.round((count / max) * 100) : 0;
+  return `<span class="kpi-bar"><i class="${cls || ''}" style="width:${width}%"></i></span>`;
+}
+
+function kpiRow(e, extra) {
+  return `<tr data-act="open" data-id="${esc(e.id)}">
+    <td class="name"><b>${esc(e.name)}</b><span>${esc(e.id)} · ${esc(e.clientName)}</span></td>
+    ${extra}
+  </tr>`;
+}
+
+function renderKpi() {
+  const all = state.list || [];
+  const kindOf = e => (actionState(e) || {}).kind;
+  const active = all.filter(e => e.phase !== 'Done');
+  const action = all.filter(e => kindOf(e) === 'action');
+  const waiting = all.filter(e => kindOf(e) === 'waiting');
+  const atRisk = all.filter(e => e.preparationAlert);
+  const late = all.filter(e => kpiAge(e) >= KPI_LATE_DAYS);
+  const lateDays = late.reduce((sum, e) => sum + kpiAge(e), 0);
+  const done = all.filter(e => e.phase === 'Done');
+  const upcoming = active
+    .filter(e => e.periodStart && e.periodStart >= today())
+    .sort((a, b) => a.periodStart.localeCompare(b.periodStart));
+  const next = upcoming[0] || null;
+
+  // --- per cliente ---
+  const clients = new Map();
+  for (const e of all) {
+    const row = clients.get(e.clientId) || {
+      id: e.clientId, name: e.clientName,
+      total: 0, active: 0, action: 0, waiting: 0, risk: 0, done: 0, late: 0, next: null
+    };
+    row.total += 1;
+    if (e.phase === 'Done') row.done += 1; else row.active += 1;
+    if (kindOf(e) === 'action') row.action += 1;
+    if (kindOf(e) === 'waiting') row.waiting += 1;
+    if (e.preparationAlert) row.risk += 1;
+    if (kpiAge(e) >= KPI_LATE_DAYS) row.late += 1;
+    if (e.periodStart && e.periodStart >= today() && (!row.next || e.periodStart < row.next)) {
+      row.next = e.periodStart;
+    }
+    clients.set(e.clientId, row);
+  }
+  const clientRows = [...clients.values()].sort((a, b) => b.total - a.total);
+  const maxClient = Math.max(1, ...clientRows.map(c => c.total));
+
+  // --- per fase ---
+  const phases = STEPS.map((step, index) => ({
+    label: step[0],
+    count: active.filter(e => kpiStepIndex(e) === index).length
+  }));
+  phases.push({ label: 'Concluso', count: done.length });
+  const maxPhase = Math.max(1, ...phases.map(p => p.count));
+
+  // --- per responsabile ---
+  const owners = new Map();
+  for (const e of all) {
+    const key = e.owner || '—';
+    const row = owners.get(key) || { name: key, total: 0, active: 0, action: 0, late: 0 };
+    row.total += 1;
+    if (e.phase !== 'Done') row.active += 1;
+    if (kindOf(e) === 'action') row.action += 1;
+    if (kpiAge(e) >= KPI_LATE_DAYS) row.late += 1;
+    owners.set(key, row);
+  }
+  const ownerRows = [...owners.values()].sort((a, b) => b.active - a.active || a.name.localeCompare(b.name));
+
+  const longest = [...action, ...waiting]
+    .sort((a, b) => kpiAge(b) - kpiAge(a))
+    .slice(0, 6);
+
+  const lateClient = state.clientId ? ` · cliente ${esc(clientLabel(state.clientId))}` : '';
+
+  $('#app').innerHTML = `
+    <div class="headrow">
+      <div>
+        <h1>KPI e andamento</h1>
+        <p class="sub" style="margin-bottom:0">Pannello Manager e PMO${lateClient} · aggiornato al ${fmt(today())} · ${all.length} engagement</p>
+      </div>
+      <div class="head-acts">
+        <button class="btn sec" data-act="nav" data-view="list">Vai alla lista</button>
+        <button class="btn sec" data-act="nav" data-view="solicitations">Solleciti · ${state.due.length}</button>
+      </div>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card"><b>${active.length}</b><span>Engagement attivi</span>
+        <small>${all.length} in totale · ${done.length} conclusi</small></div>
+      <div class="kpi-card a"><b>${action.length}</b><span>Da gestire</span>
+        <small>${action.filter(e => kpiAge(e) >= KPI_LATE_DAYS).length} fermi da ${KPI_LATE_DAYS}+ giorni</small></div>
+      <div class="kpi-card w"><b>${waiting.length}</b><span>In attesa di terzi</span>
+        <small>${waiting.filter(e => kpiAge(e) >= KPI_LATE_DAYS).length} oltre la soglia</small></div>
+      <div class="kpi-card r"><b>${late.length}</b><span>In ritardo</span>
+        <small>${lateDays} giorni cumulati</small></div>
+      <div class="kpi-card r"><b>${atRisk.length}</b><span>A rischio avvio</span>
+        <small>scope o credenziali mancanti</small></div>
+      <div class="kpi-card n"><b>${next ? fmt(next.periodStart).slice(0, 5) : '–'}</b><span>Prossimo avvio</span>
+        <small>${next ? `${esc(next.name)} · ${esc(next.clientName)}` : 'nessuna data pianificata'}</small></div>
+    </div>
+
+    <div class="kpi-cols">
+      <section class="kpi-panel">
+        <h2>Engagement per cliente</h2>
+        <table class="kpi-table">
+          <caption class="sr-only">Engagement, attivi, attese e ritardi per cliente</caption>
+          <thead><tr><th>Cliente</th><th>Engagement</th><th>Attivi</th><th>Da gestire</th><th>In attesa</th><th>Ritardi</th><th>Prossimo avvio</th></tr></thead>
+          <tbody>
+            ${clientRows.map(row => `<tr data-act="kpi-client" data-client="${esc(row.id)}">
+              <td class="name"><b>${esc(row.name)}</b><span>${row.done} conclusi</span></td>
+              <td><span class="kpi-num">${row.total}</span>${kpiBar(row.total, maxClient)}</td>
+              <td><span class="kpi-num">${row.active}</span></td>
+              <td>${row.action ? `<span class="pill p-action">${row.action}</span>` : '–'}</td>
+              <td>${row.waiting ? `<span class="pill p-wait">${row.waiting}</span>` : '–'}</td>
+              <td>${row.late ? `<span class="pill p-negative">${row.late}</span>` : '–'}</td>
+              <td>${row.next ? fmt(row.next) : '<span style="color:var(--muted)">–</span>'}</td>
+            </tr>`).join('') || '<tr><td colspan="7"><div class="empty">Nessun engagement.</div></td></tr>'}
+          </tbody>
+        </table>
       </section>
-    </div>`;
+
+      <section class="kpi-panel">
+        <h2>Per fase del workflow</h2>
+        <div class="kpi-phases">
+          ${phases.map(phase => `<div class="kpi-phase">
+            <span class="kpi-phase-lbl">${esc(phase.label)}</span>
+            <span class="kpi-num">${phase.count}</span>
+            ${kpiBar(phase.count, maxPhase, 'b')}
+          </div>`).join('')}
+        </div>
+        <h2 style="margin-top:18px">Carico per responsabile</h2>
+        <table class="kpi-table">
+          <thead><tr><th>Responsabile</th><th>Engagement</th><th>Attivi</th><th>Da gestire</th><th>Ritardi</th></tr></thead>
+          <tbody>
+            ${ownerRows.map(row => `<tr>
+              <td class="name"><b>${esc(row.name)}</b></td>
+              <td><span class="kpi-num">${row.total}</span></td>
+              <td>${row.active}</td>
+              <td>${row.action ? `<span class="pill p-action">${row.action}</span>` : '–'}</td>
+              <td>${row.late ? `<span class="pill p-negative">${row.late}</span>` : '–'}</td>
+            </tr>`).join('') || '<tr><td colspan="5"><div class="empty">Nessun dato.</div></td></tr>'}
+          </tbody>
+        </table>
+      </section>
+    </div>
+
+    <div class="kpi-cols">
+      <section class="kpi-panel">
+        <h2>Fermi da più tempo</h2>
+        <p class="hint">Azioni e attese aperte da almeno ${KPI_LATE_DAYS} giorni, dalla più vecchia.</p>
+        <table class="kpi-table">
+          <thead><tr><th>Engagement</th><th>Stato</th><th>Da</th><th>Giorni</th></tr></thead>
+          <tbody>
+            ${longest.map(e => {
+              const s = actionState(e) || {};
+              const owner = statusOwner(e);
+              return kpiRow(e, `<td>${pill(statusPill(e))}${owner ? `<span class="status-owner">${esc(owner)}</span>` : ''}</td>
+                <td>${esc(s.label || '—')}</td>
+                <td><span class="pill ${kpiAge(e) >= KPI_LATE_DAYS ? 'p-negative' : 'p-neutral'}">${kpiAge(e)} gg</span></td>`);
+            }).join('') || '<tr><td colspan="4"><div class="empty">Nessuna attesa aperta.</div></td></tr>'}
+          </tbody>
+        </table>
+      </section>
+
+      <section class="kpi-panel">
+        <h2>A rischio avvio</h2>
+        <p class="hint">Preparazione incompleta a ridosso della data di avvio.</p>
+        <table class="kpi-table">
+          <thead><tr><th>Engagement</th><th>Avvio</th><th>Manca</th><th>Giorni</th></tr></thead>
+          <tbody>
+            ${atRisk.sort((a, b) => (a.preparationAlert.daysToStart || 0) - (b.preparationAlert.daysToStart || 0))
+              .map(e => {
+                const alert = e.preparationAlert;
+                const days = Number(alert.daysToStart) || 0;
+                const missing = (alert.missing || []).map(m => m === 'scope' ? 'Scope' : 'Credenziali').join(' e ');
+                return kpiRow(e, `<td>${fmt(e.periodStart)}</td>
+                  <td>${esc(missing || '—')}</td>
+                  <td><span class="pill ${days <= 3 ? 'p-negative' : 'p-wait'}">${days > 0 ? `${days} gg` : days === 0 ? 'oggi' : 'avvio superato'}</span></td>`);
+              }).join('') || '<tr><td colspan="4"><div class="empty">Nessun avvio a rischio.</div></td></tr>'}
+          </tbody>
+        </table>
+      </section>
+    </div>
+
+    <section class="kpi-panel">
+      <h2>Prossimi avvii</h2>
+      <p class="hint">Dai prossimi ${upcoming.length} engagement con data pianificata.</p>
+      <table class="kpi-table">
+        <thead><tr><th>Engagement</th><th>Cliente</th><th>Periodo</th><th>Preparazione</th></tr></thead>
+        <tbody>
+          ${upcoming.slice(0, 8).map(e => `<tr data-act="open" data-id="${esc(e.id)}">
+            <td class="name"><b>${esc(e.name)}</b><span>${esc(e.id)}</span></td>
+            <td>${esc(e.clientName)}</td>
+            <td><span class="period">${fmt(e.periodStart)} – ${fmt(e.periodEnd)}</span></td>
+            <td>${e.preparationAlert ? delayBadge(e) : pill(['Pronto', 'ok'])}</td>
+          </tr>`).join('') || '<tr><td colspan="4"><div class="empty">Nessuna data pianificata.</div></td></tr>'}
+        </tbody>
+      </table>
+    </section>`;
+}
+
+async function loadKpi() {
+  await loadList();
+  if (state.view === 'kpi') renderKpi();
 }
 
 /* ====== SOLLECITI ====== */
+// Le regole sono fisse: cambiano solo l'accensione e il testo, che vive nei
+// template (Amministrazione › Template mail) ed è bilingue.
+function solicitationDetail(item) {
+  if (item.daysToStart !== null && item.daysToStart !== undefined) {
+    const days = item.daysToStart;
+    return days > 0
+      ? `avvio tra ${days} giorni`
+      : days === 0
+        ? 'avvio oggi'
+        : `avvio superato di ${-days} giorni`;
+  }
+  return item.ruleKey === 'rep'
+    ? `${item.days} giorni lavorativi di ritardo`
+    : `${item.days} giorni in revisione`;
+}
+
 function renderSolicitations() {
   const editable = state.role === 'PMO';
-  const rules = state.rules.map(rule => `
+  const rules = (state.rules || []).map(rule => `
     <div class="mailc">
-      <div class="t"><b>${esc(rule.label)}</b><span>${esc(rule.description)}</span></div>
+      <div class="t">
+        <b>${esc(rule.label)}</b>
+        <span>${esc(rule.when)}</span>
+        <span>Destinatario: <b>${esc(rule.recipient)}</b> · soglia ${rule.thresholdDays}${rule.countBusinessDays ? ' giorni lavorativi' : ' giorni'}</span>
+        <span class="hint">Testo modificabile e bilingue in <b>Amministrazione › Template mail</b>.</span>
+      </div>
       <div class="ctl">
         ${editable
-          ? `<label class="sw"><input type="checkbox" id="on_${esc(rule.key)}" data-change="rule" data-key="${esc(rule.key)}" ${rule.enabled ? 'checked' : ''}><i></i><span>${rule.enabled ? 'Attivo' : 'Disattivo'}</span></label>
-             <label style="font-weight:500;margin:0">Soglia
-               <input type="number" min="1" max="60" id="rule_${esc(rule.key)}" value="${rule.thresholdDays}" style="width:64px;padding:6px" data-change="rule" data-key="${esc(rule.key)}"> giorni</label>`
-          : `<span style="color:var(--muted);font-size:var(--fs-md)">${rule.enabled ? 'Attivo' : 'Disattivo'} · soglia <b>${rule.thresholdDays}</b> giorni</span>`}
+          ? `<label class="sw"><input type="checkbox" id="on_${esc(rule.key)}" data-change="rule" data-key="${esc(rule.key)}" ${rule.enabled ? 'checked' : ''}><i></i><span>${rule.enabled ? 'Attiva' : 'Disattivata'}</span></label>`
+          : `<span style="color:var(--muted);font-size:var(--fs-md)">${rule.enabled ? 'Attiva' : 'Disattivata'}</span>`}
       </div>
     </div>`).join('');
 
   const due = state.due.length ? `
-    <table><thead><tr><th>Engagement</th><th>Regola</th><th>Dettaglio</th><th>Stato</th><th></th></tr></thead><tbody>
+    <table><thead><tr><th>Engagement</th><th>Regola</th><th>Dettaglio</th><th>Destinatario</th><th>Stato</th><th></th></tr></thead><tbody>
       ${state.due.map(item => `<tr>
         <td class="name"><b>${esc(item.engagementId)}</b><span>${esc(item.clientName)}</span></td>
         <td>${esc(item.label)}</td>
-        <td>${item.days} giorni (soglia ${item.thresholdDays})</td>
-        <td>${pill(editable ? ['Da inviare', 'action'] : ['Da inviare', 'wait'])}</td>
+        <td>${esc(solicitationDetail(item))}</td>
+        <td>${esc(item.recipient)}</td>
+        <td>${item.sentToday
+          ? pill(['Inviato oggi', 'done'])
+          : pill([editable ? 'Da inviare' : 'In attesa del PMO', editable ? 'action' : 'wait'])}</td>
         <td style="text-align:right">${editable
-          ? `<button class="btn sec sm" data-act="send-solicitation" data-key="${esc(item.key)}">Invia ora</button>`
+          ? `<button class="btn sec sm" data-act="send-solicitation" data-key="${esc(item.key)}" ${item.canSend ? '' : 'disabled title="' + esc(item.sentToday ? 'Sollecito già inviato oggi' : 'Non disponibile') + '"'}>Invia ora</button>`
           : ''}</td>
       </tr>`).join('')}
-    </tbody></table>` : '<div class="empty">Nessuna situazione in ritardo.</div>';
+    </tbody></table>` : '<div class="empty">Nessuna situazione da sollecitare.</div>';
 
   $('#app').innerHTML = `
     <h1>Solleciti automatici</h1>
     <p class="sub">${editable
-      ? 'Pannello PMO: attiva le regole e imposta le soglie.'
-      : 'Sola lettura: le regole sono gestite da PMO.'} Data di riferimento: ${fmt(today())}</p>
+      ? 'Pannello PMO: accendi le regole e invia i solleciti dovuti.'
+      : 'Sola lettura: i solleciti sono inviati dal PMO.'} Data di riferimento: ${fmt(today())} · massimo <b>un sollecito al giorno per task</b>.</p>
     ${listTabs()}
     <div class="card"><h2>Regole</h2>${rules || '<div class="empty">Nessuna regola.</div>'}</div>
     <div class="card" style="margin-top:16px"><h2>Situazioni che richiedono un sollecito</h2>${due}</div>`;
@@ -2397,6 +2796,7 @@ function nextAction(d) {
       <div class="note-head"><span class="note-ico">${icons[s.kind] || '·'}</span>${esc(head)}</div>
       ${s.label && s.label !== head ? `<div>${esc(s.label)}${button}</div>` : ''}
       ${statusAge(d)}
+      ${solicitButton(d)}
     </div>`;
   }
 
@@ -2447,7 +2847,29 @@ function nextAction(d) {
     message += ` Richiesta di riprogrammazione ${fmt(pending.startDate)} → ${fmt(pending.endDate)} in attesa dell'approvazione del Manager.`;
   }
   const readOnly = state.role === 'Auditor' ? '<b>Profilo Auditor</b>: sola lettura. ' : '';
-  return `<div class="note blocked">${readOnly}${esc(message)}</div>`;
+  return `<div class="note blocked">${readOnly}${esc(message)}${solicitButton(d)}</div>`;
+}
+
+// Sollecito manuale: si può sollecitare solo chi ha l'azione in carico, una
+// volta al giorno. Il testo è il template "Sollecito su richiesta".
+function solicitButton(d) {
+  const s = d.solicitation;
+  if (!s) return '';
+
+  if (s.sentToday) {
+    return `<div class="solicit-line"><span class="pill p-ok">Sollecito inviato oggi a ${esc(s.recipient)}</span></div>`;
+  }
+
+  if (!s.canSend) {
+    return s.blockedReason
+      ? `<div class="solicit-line"><span class="hint">${esc(s.blockedReason)}</span></div>`
+      : '';
+  }
+
+  return `<div class="solicit-line">
+    <button class="btn pri sm" data-act="solicit-engagement">Sollecita ${esc(s.recipient)}</button>
+    <span class="hint">${esc(s.label)}${s.sentDate ? ` · ultimo sollecito ${esc(s.sentDate)}` : ''}</span>
+  </div>`;
 }
 
 const DETAIL_PANELS = {
@@ -2620,7 +3042,7 @@ function renderDetail() {
         <header class="work-panel-head">
           <span class="wp-num">${activeMeta.n || '•'}</span>
           <div class="wp-t">
-            <span class="wp-kicker">${esc(activeMeta.group)}${activeMeta.n ? ` · Passo ${activeMeta.n} di 6` : ''}</span>
+            <span class="wp-kicker">${esc(activeMeta.group)}${activeMeta.n ? ` · Passo ${activeMeta.n} di ${STEPS.length}` : ''}</span>
             <h2>${esc(activeMeta.title)}</h2>
             <p>${esc(activeMeta.desc)}</p>
           </div>
@@ -3084,12 +3506,9 @@ function tabSetup(d) {
   const selected = e.deliverableTypes || [];
   const done = !!e.setupDone;
 
-  const types = [
-    ['Executive', 'Executive', 'Sintesi per il management'],
-    ['Technical', 'Technical', 'Dettaglio tecnico ed evidenze'],
-    ['Activity', 'Activity', 'Log delle attività svolte'],
-    ['Custom', 'Custom', 'Deliverable personalizzato concordato']
-  ];
+  const types = DELIVERABLE_KINDS;
+
+  const definition = (state.activityTypes || []).find(item => item.key === e.type) || null;
 
   const team = (d.teamEffective || []).length;
   const notifications = (d.distributionEffective || []).length;
@@ -3117,11 +3536,23 @@ function tabSetup(d) {
         </div>
         <p class="hint">Il Pentester dovrà caricare almeno una versione per ogni tipologia selezionata.</p>
       </div>
+      <div class="full">
+        <label class="actcheck">
+          <input type="checkbox" id="setup_retest" ${e.retestPlanned ? 'checked' : ''} ${canEdit && (d.retest ? d.retest.canEditFlag : true) ? '' : 'disabled'}>
+          <span>Recheck previsto (retest a fine attività)</span>
+        </label>
+        <p class="hint" style="margin:5px 0 0">${definition
+          ? `Default di <b>${esc(definition.label)}</b>: ${definition.retestPlanned ? 'retest previsto' : 'senza retest'}.`
+          : ''} Resta modificabile fino alla richiesta di retest del cliente${d.retest?.requested ? ': ora è bloccato perché il retest è già stato richiesto' : ''}.</p>
+      </div>
     </div>
     <div class="inline-actions" style="margin-top:12px">
       ${canEdit
         ? '<button class="btn pri" data-act="save-setup">Salva setup</button>'
         : '<span class="hint">Sola lettura per il tuo profilo.</span>'}
+      ${canEdit && definition
+        ? `<button class="btn sec" data-act="apply-type-defaults">Applica i default di ${esc(definition.label)}</button>`
+        : ''}
       ${!done
         ? '<span class="hint">Completa il setup per sbloccare i passi successivi.</span>'
         : ''}
@@ -3266,7 +3697,92 @@ function tabReports(d) {
     </div>`;
   }
 
-  return html;
+  return retestPanel(d) + html;
+}
+
+/* ====== RETEST (scheda Report) ====== */
+// Due passi in coda all'esecuzione: retest e invio del report di retest. La
+// richiesta arriva dal cliente a fix completati; l'invio non ha revisione.
+function retestPanel(d) {
+  const r = d.retest;
+  if (!r) return '';
+
+  const status = r.sentDate
+    ? pill(['Report di retest inviato', 'ok'])
+    : r.report
+      ? pill(['Report caricato, da inviare', 'wait'])
+      : r.accepted
+        ? pill([`Retest pianificato dal ${fmt(r.accepted.startDate)}`, 'progress'])
+        : r.requested
+          ? pill(['Retest richiesto: mancano le date', 'wait'])
+          : r.planned
+            ? pill(['Recheck previsto: in attesa della richiesta', 'neutral'])
+            : pill(['Senza recheck', 'neutral']);
+
+  const rows = [];
+  rows.push(`<div class="kvline"><span>Recheck previsto</span><b>${r.planned ? 'Sì' : 'No'}</b></div>`);
+  if (r.decidedBy) {
+    rows.push(`<div class="kvline"><span>Deciso nel Setup da</span><b>${esc(r.decidedBy)}${r.decidedDate ? ` · ${fmt(r.decidedDate)}` : ''}</b></div>`);
+  }
+  if (r.requested) {
+    rows.push(`<div class="kvline"><span>Richiesta dal cliente</span><b>${esc(r.requestedBy || '')} · ${fmt(r.requestedDate)}</b></div>`);
+  }
+  if (r.accepted) {
+    rows.push(`<div class="kvline"><span>Date del retest</span><b>${fmt(r.accepted.startDate)} – ${fmt(r.accepted.endDate)}</b></div>`);
+  }
+  if (r.completedDate) {
+    rows.push(`<div class="kvline"><span>Retest eseguito il</span><b>${fmt(r.completedDate)}</b></div>`);
+  }
+  if (r.report) {
+    rows.push(`<div class="kvline"><span>Report di retest</span><b>${esc(r.report.name)}${r.sentDate ? ` · inviato il ${fmt(r.sentDate)}` : ' · da inviare'}</b></div>`);
+  }
+
+  const pending = (r.proposals || []).find(p => p.status === 'Pending');
+
+  let actions = '';
+
+  if (r.canRequest) {
+    actions += `<div class="note waiting" style="margin:10px 0 0"><b>Puoi richiedere il retest.</b> Fallo quando i fix sono completati: si può chiedere una sola volta.</div>
+      <div class="inline-actions" style="margin-top:10px"><button class="btn pri" data-act="retest-request">Richiedi il retest</button></div>`;
+  }
+
+  if (r.canDecide && pending) {
+    actions += `<div class="note waiting" style="margin:10px 0 0"><b>Date del retest proposte:</b> ${fmt(pending.startDate)} – ${fmt(pending.endDate)} da ${esc(pending.by)}.</div>
+      <div class="inline-actions" style="margin-top:10px">
+        <button class="btn pri" data-act="retest-decide" data-approve="1">Approva le date</button>
+        <button class="btn sec" data-act="retest-decide" data-approve="0">Rifiuta</button>
+      </div>`;
+  }
+
+  if (r.canPropose && !pending) {
+    actions += `<div class="fgrid" style="margin-top:12px">
+        <div><label for="retest_start">Avvio del retest</label><input type="date" id="retest_start" value="${esc(r.accepted?.startDate || '')}"></div>
+        <div><label for="retest_end">Fine del retest</label><input type="date" id="retest_end" value="${esc(r.accepted?.endDate || '')}"></div>
+      </div>
+      <div class="inline-actions" style="margin-top:10px"><button class="btn pri" data-act="retest-propose">Proponi le date del retest</button></div>`;
+  }
+
+  if (r.canLoadReport) {
+    actions += `<div class="fgrid" style="margin-top:12px">
+        <div class="full"><label for="retest_report">Descrizione del report di retest*</label>
+          <input type="text" id="retest_report" placeholder="Esito del retest dopo i fix"></div>
+      </div>
+      <div class="inline-actions" style="margin-top:10px"><button class="btn pri" data-act="retest-report">Concludi il retest e carica il report</button></div>`;
+  }
+
+  if (r.canSend) {
+    actions += `<div class="note done" style="margin:10px 0 0"><b>Report pronto.</b> L'invio al cliente <b>non richiede approvazione</b>.</div>
+      <div class="inline-actions" style="margin-top:10px"><button class="btn pri" data-act="retest-send">Invia il report al cliente</button></div>`;
+  }
+
+  return `<div class="card" style="margin-bottom:16px"><h2>Retest ${status}</h2>
+    <p class="sub">Verifiche dopo i fix. Il retest si schedula una sola volta ed è il cliente a richiederlo; il report di retest va al cliente senza passare dalla revisione.</p>
+    <div class="kv">${rows.join('')}</div>
+    ${(!r.planned && !r.requested)
+      ? '<p class="hint" style="margin-top:10px">Recheck non previsto per questa attività: i due passi di retest non fanno parte del workflow. Si può cambiare nel Setup finché il cliente non ha richiesto il retest.</p>'
+      : ''}
+    ${actions}
+  </div>`;
 }
 
 function orgPill(org) {
@@ -3448,114 +3964,7 @@ function tabMail(d) {
         ? `<ul class="tl">${[...log].reverse().map(m => `<li>${esc(m.subject || mailSubject(m.type))}
             <span>${fmtTime(m.date)} · ${esc(m.recipients)} · ${m.auto ? 'invio automatico' : 'invio manuale'}${m.templateSource ? ` · template ${esc(m.templateSource)}` : ''}${m.visibility === 'ProviderOnly' ? ' · interna' : ''}</span></li>`).join('')}</ul>`
         : '<div class="empty" style="padding:10px">Nessuna email ancora inviata.</div>'}
-    </div>
-    ${mailTemplatesSection(d)}`;
-}
-
-const TEMPLATE_SCOPES = {
-  standard: 'Standard (globale)',
-  client: 'Cliente',
-  engagement: 'Engagement'
-};
-
-const TEMPLATE_SOURCE_LABEL = {
-  standard: 'standard',
-  client: 'cliente',
-  engagement: 'engagement'
-};
-
-function templateScopeLabel(scope) {
-  return TEMPLATE_SCOPES[scope] || scope;
-}
-
-function mailTemplatesSection(d) {
-  const c = d.capabilities || {};
-
-  // I template non sono visibili a Cliente, PMO e Auditor.
-  if (!c.canManageMailTemplates) return '';
-
-  const info = state.mailTemplates;
-
-  if (!info) {
-    return `<div class="card" style="margin-top:16px"><h2>Template email</h2>
-      <p class="sub">${state.mailTemplatesError
-        ? 'Impossibile caricare i template. Riprova più tardi.'
-        : 'Caricamento…'}</p></div>`;
-  }
-
-  const allowed = ['standard', 'client', 'engagement'].filter(scope =>
-    scope === 'engagement' ? info.canEditEngagement
-      : scope === 'client' ? info.canEditClient
-        : info.canEditStandard);
-
-  const cards = info.templates.map(t => {
-    let scope = state.mailTemplateScope[t.type];
-
-    if (!allowed.includes(scope)) {
-      scope = t.engagement && allowed.includes('engagement')
-        ? 'engagement'
-        : t.client && allowed.includes('client')
-          ? 'client'
-          : allowed[0] || 'standard';
-      state.mailTemplateScope[t.type] = scope;
-    }
-
-    const raw = scope === 'standard'
-      ? t.standard
-      : scope === 'client'
-        ? (t.client || t.standard)
-        : (t.engagement || t.client || t.standard);
-
-    const meta = MAIL_META[t.type] || { t: t.type };
-    const options = ['standard', 'client', 'engagement'].map(option => {
-      const custom = option === 'standard' ? t.standardCustom
-        : option === 'client' ? !!t.client
-          : !!t.engagement;
-      return `<option value="${option}" ${scope === option ? 'selected' : ''} ${allowed.includes(option) ? '' : 'disabled'}>${esc(templateScopeLabel(option))}${custom ? ' · personalizzato' : ''}</option>`;
-    }).join('');
-
-    return `<div class="tpl-card">
-      <div class="tpl-head"><b>${esc(meta.t)}</b>
-        ${pill([TEMPLATE_SOURCE_LABEL[t.effective.source] || t.effective.source, 'info'])}</div>
-      <div class="tpl-scope">
-        <label for="tpl_scope_${t.type}">Ambito</label>
-        <select class="f" id="tpl_scope_${t.type}" data-change="mail-template-scope" data-key="${t.type}" ${allowed.length === 1 ? 'disabled' : ''}>${options}</select>
-      </div>
-      <div class="tpl-langs">
-        <div class="tpl-lang">
-          <h5>Italiano</h5>
-          <label for="tpl_subject_${t.type}">Oggetto</label>
-          <input type="text" id="tpl_subject_${t.type}" value="${esc(raw.subject || '')}">
-          <label for="tpl_body_${t.type}">Corpo</label>
-          <textarea id="tpl_body_${t.type}" rows="3">${esc(raw.body || '')}</textarea>
-        </div>
-        <div class="tpl-lang">
-          <h5>English</h5>
-          <label for="tpl_subject_en_${t.type}">Subject</label>
-          <input type="text" id="tpl_subject_en_${t.type}" value="${esc(raw.subjectEn || '')}">
-          <label for="tpl_body_en_${t.type}">Body</label>
-          <textarea id="tpl_body_en_${t.type}" rows="3">${esc(raw.bodyEn || '')}</textarea>
-        </div>
-      </div>
-      <div class="tpl-actions">
-        <button class="btn pri sm" data-act="save-mail-template" data-key="${t.type}">Salva</button>
-        <button class="btn sec sm" data-act="reset-mail-template" data-key="${t.type}">Ripristina</button>
-        <span class="hint">Salva su: <b>${esc(templateScopeLabel(scope))}</b></span>
-      </div>
-      <details class="tpl-preview">
-        <summary>Anteprima IT / EN con i dati di questo engagement</summary>
-        <div class="tpl-previews">
-          <div><b>IT</b><div class="tpl-mail"><b>${esc(t.effective.subject || '')}</b><pre>${esc(t.effective.body || '')}</pre></div></div>
-          <div><b>EN</b><div class="tpl-mail"><b>${esc(t.effective.subjectEn || '')}</b><pre>${esc(t.effective.bodyEn || '')}</pre></div></div>
-        </div>
-      </details>
     </div>`;
-  }).join('');
-
-  return `<div class="card" style="margin-top:16px"><h2>Template email</h2>
-    <p class="sub">Il template standard è globale, quello cliente vale per tutti gli engagement del cliente, quello engagement solo per questa attività. Variabili: ${esc(info.placeholders.join(', '))}.</p>
-    ${cards}
-  </div>`;
 }
 
 function tabLog(d) {
@@ -3590,6 +3999,7 @@ async function loadUsers() {
   try {
     state.users = await api('/api/users?' + qs());
     state.userEngagements = await api('/api/engagements?' + qs({ client: '' }));
+    state.usersRev = (state.usersRev || 0) + 1;
     if (!state.users.some(user => user.id === state.selectedUserId)) {
       const current = state.users.find(user => user.id === state.userId);
       state.selectedUserId = current?.id || state.users[0]?.id || '';
@@ -3600,6 +4010,8 @@ async function loadUsers() {
   }
   if (state.view === 'users') renderUsers();
   else if (state.view === 'admin' && state.adminTab === 'users') renderAdmin();
+  // La scheda in popup resta aperta e si aggiorna con i dati appena letti.
+  renderUserModal();
 }
 
 function renderUsers() {
@@ -3607,32 +4019,6 @@ function renderUsers() {
     $('#app').innerHTML = `<div class="note lockbox"><b>Accesso riservato.</b> La sezione Utenti è gestita da Manager e PMO.</div>`;
     return;
   }
-
-  const query = normText(state.userQuery);
-  const filtered = state.users.filter(user =>
-    !query || normText([
-      user.name, user.email, user.role,
-      ...(user.clients || []).map(client => client.name)
-    ].join(' ')).includes(query));
-  const selected = state.users.find(user =>
-    user.id === state.selectedUserId) || filtered[0] || null;
-
-  if (selected) state.selectedUserId = selected.id;
-
-  const roleBadge = role => `<span class="badge ${role === 'Manager' ? 'mgr' : role === 'Cliente' ? 'ext' : 'int'}">${esc(ROLE_LABEL[role] || role)}</span>`;
-
-  const list = filtered.length
-    ? filtered.map(user => `
-      <button class="user-row ${selected?.id === user.id ? 'on' : ''}" data-act="select-user" data-id="${esc(user.id)}">
-        <span class="avatar">${esc(initialsOf(user.name))}</span>
-        <span class="who"><span class="nm">${esc(user.name)}</span><span class="em">${esc(user.email)}</span></span>
-        <span class="end">${roleBadge(user.role)}<span class="cnt" title="clienti">${user.isManager ? 'Tutti' : user.effectiveClientIds.length}</span><span class="cnt" title="engagement">${user.effectiveEngagementIds.length}</span></span>
-      </button>`).join('')
-    : '<div class="empty">Nessun utente corrisponde alla ricerca.</div>';
-
-  const detail = selected
-    ? renderUserDetail(selected)
-    : '<div class="empty">Seleziona un utente.</div>';
 
   $('#app').innerHTML = `
     <button class="crumb" data-act="list">← Tutti gli engagement</button>
@@ -3642,64 +4028,234 @@ function renderUsers() {
       <div class="head-acts">${state.role === 'Manager' ? '<button class="btn sec" data-act="new-user">+ Utente interno</button>' : ''}</div>
     </div>
     ${state.usersError ? `<div class="errorbox"><span>${esc(state.usersError)}</span><button class="btn sec sm" data-act="users">Riprova</button></div>` : ''}
-    <div class="users-split">
-      <section class="card users-list">
-        <div class="users-list-head"><h2>Utenti <span class="cnt">${filtered.length}</span></h2></div>
-        <div class="search" style="margin-bottom:10px"><svg class="search-ico" aria-hidden="true"><use href="#i-search"></use></svg>
-          <input type="search" id="user-search" value="${esc(state.userQuery)}" placeholder="Cerca nome, email, ruolo o cliente…" aria-label="Cerca utenti">
-        </div>
-        <div class="users-rows">${list}</div>
-      </section>
-      <section class="card users-detail">${detail}</section>
-    </div>`;
+    ${usersTableHTML()}`;
 }
 
-function renderUserDetail(user) {
+// Elenco utenti condiviso da Amministrazione e dalla vista Utenti: il click su
+// una riga apre la scheda in un popup, non cambia schermata.
+function usersTableHTML() {
+  const query = normText(state.userQuery);
+  const filtered = state.users.filter(user =>
+    !query || normText([
+      user.name, user.email, user.role,
+      ...(user.clients || []).map(client => client.name)
+    ].join(' ')).includes(query));
+
+  const roleBadge = role => `<span class="badge ${role === 'Manager' ? 'mgr' : role === 'Cliente' ? 'ext' : 'int'}">${esc(ROLE_LABEL[role] || role)}</span>`;
+
+  const rows = filtered.length
+    ? filtered.map(user => `
+      <tr class="hover admin-row ${state.userModal === user.id ? 'on' : ''}" data-act="open-user" data-id="${esc(user.id)}" tabindex="0">
+        <td><div class="user"><span class="avatar">${esc(initialsOf(user.name))}</span><span><span class="nm">${esc(user.name)}</span><span class="em">${esc(user.email)}</span></span></div></td>
+        <td>${roleBadge(user.role)}${user.active === false ? ' ' + pill(['Disattivo', 'mute']) : ''}</td>
+        <td>${user.isManager
+          ? 'Tutti <span class="cntpill">' + user.effectiveClientIds.length + '</span>'
+          : user.effectiveClientIds.length
+            ? esc((user.clients || []).map(client => client.name).join(', ')) + ' <span class="cntpill">' + user.effectiveClientIds.length + '</span>'
+            : '— <span class="cntpill">0</span>'}</td>
+        <td style="text-align:right;white-space:nowrap"><button class="btn ghost sm" data-act="open-user" data-id="${esc(user.id)}">Scheda</button></td>
+      </tr>`).join('')
+    : '<tr><td colspan="4" class="empty">Nessun utente corrisponde alla ricerca.</td></tr>';
+
+  return `<section class="card admin-tablecard">
+    <div class="sec-head"><h3>Utenti <span class="cnt">${filtered.length}</span></h3><span class="tiny">Clicca una riga per aprire la scheda</span></div>
+    <div class="search" style="margin-bottom:10px"><svg class="search-ico" aria-hidden="true"><use href="#i-search"></use></svg>
+      <input type="search" id="user-search" value="${esc(state.userQuery)}" placeholder="Cerca nome, email, ruolo o cliente…" aria-label="Cerca utenti">
+    </div>
+    <div class="tablewrap"><table class="admin-table admin-users-table"><thead><tr><th>Utente</th><th>Ruolo</th><th>Clienti</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>
+  </section>`;
+}
+
+/* ====== SCHEDA UTENTE · POPUP ====== */
+let userModalSig = '';
+
+function userPermissionsOf(user) {
+  const internal = isInternalRole();
+  return {
+    // Anagrafica e ruolo: solo il Manager, e non sulle utenze cliente
+    // (che appartengono al cliente e si gestiscono in Clienti e utenze).
+    profile: state.role === 'Manager' && !user.isClient,
+    // Assegnazioni: le stesse regole dell'API (Manager e PMO), mai sul Manager.
+    assignments: internal && !user.isManager && !user.isClient
+  };
+}
+
+function modalUser() {
+  return state.users.find(user => user.id === state.userModal) || null;
+}
+
+function userModalHTML(user) {
+  const perms = userPermissionsOf(user);
   const roleBadge = `<span class="badge ${user.role === 'Manager' ? 'mgr' : user.role === 'Cliente' ? 'ext' : 'int'}">${esc(ROLE_LABEL[user.role] || user.role)}</span>`;
-  const head = `<div class="udetail-head">
+
+  const head = `<div class="umodal-head">
     <span class="avatar lg">${esc(initialsOf(user.name))}</span>
-    <div class="t"><h2>${esc(user.name)}</h2><p class="sub">${esc(user.email)} · ${esc(ROLE_LABEL[user.role] || user.role)}</p></div>
-    ${roleBadge}${user.active ? pill(['Attivo', 'ok']) : pill(['Disattivo', 'mute'])}
+    <div class="t">
+      <h2>${esc(user.name)}</h2>
+      <p class="sub">${esc(user.email)} · ${esc(ROLE_LABEL[user.role] || user.role)}${user.createdDate ? ` · creato il ${fmt(user.createdDate)}` : ''}</p>
+    </div>
+    <div class="tags">${roleBadge}${user.active === false ? pill(['Disattivo', 'mute']) : pill(['Attivo', 'ok'])}</div>
+    <button class="umodal-x" data-act="close-user" aria-label="Chiudi la scheda">&times;</button>
   </div>`;
 
-  if (user.isManager) {
-    return `${head}
-      <div class="user-global"><b>Accesso globale</b><span>Il Manager vede tutti i clienti e tutti gli engagement. Non servono assegnazioni.</span></div>
-      <div class="user-kpis">
-        <div><b>${user.effectiveClientIds.length}</b><span>clienti visibili</span></div>
-        <div><b>${user.effectiveEngagementIds.length}</b><span>engagement visibili</span></div>
-      </div>
-      ${userPermissions(user)}`;
+  const profileBlock = perms.profile
+    ? `<section class="umodal-sec">
+        <h3>Anagrafica e accesso</h3>
+        <p class="hint">Le modifiche valgono da subito per l'utente.</p>
+        <div class="fgrid">
+          <div><label for="um_name">Nome e cognome</label><input type="text" id="um_name" value="${esc(user.name)}"></div>
+          <div><label for="um_email">Email</label><input type="email" id="um_email" value="${esc(user.email)}"></div>
+          <div><label for="um_role">Ruolo</label><select class="f" id="um_role">
+            ${['Manager', 'PMO', 'Pentester', 'Auditor'].map(role => `<option value="${role}" ${user.role === role ? 'selected' : ''}>${esc(ROLE_LABEL[role] || role)}</option>`).join('')}
+          </select></div>
+          <div><label for="um_active">Stato accesso</label><select class="f" id="um_active">
+            <option value="1" ${user.active !== false ? 'selected' : ''}>Attivo</option>
+            <option value="0" ${user.active === false ? 'selected' : ''}>Disattivato</option>
+          </select></div>
+        </div>
+        <p class="hint" style="margin-top:9px">Disattivare l'utente gli toglie l'accesso al portale: resta in elenco con le assegnazioni intatte.</p>
+      </section>`
+    : `<section class="umodal-sec">
+        <h3>Anagrafica e accesso</h3>
+        <div class="ureadonly">${user.isClient
+          ? 'Utenza cliente: i dati si modificano in <b>Clienti</b>, sulla scheda del cliente.'
+          : 'Solo il profilo <b>Manager</b> può modificare anagrafica e ruolo.'}</div>
+        <dl class="user-perms" style="margin-top:10px">
+          <dt>Nome e cognome</dt><dd>${esc(user.name)}</dd>
+          <dt>Email</dt><dd>${esc(user.email)}</dd>
+          <dt>Ruolo</dt><dd>${esc(ROLE_LABEL[user.role] || user.role)}</dd>
+          <dt>Stato</dt><dd>${user.active === false ? 'Disattivato' : 'Attivo'}</dd>
+        </dl>
+      </section>`;
+
+  const assignmentBlock = user.isManager
+    ? `<section class="umodal-sec">
+        <h3>Assegnazioni</h3>
+        <div class="user-global"><b>Accesso globale</b><span>Il Manager vede tutti i clienti e tutti gli engagement: non servono assegnazioni.</span></div>
+        <div class="user-kpis" style="margin:10px 0 0">
+          <div><b>${user.effectiveClientIds.length}</b><span>clienti visibili</span></div>
+          <div><b>${user.effectiveEngagementIds.length}</b><span>engagement visibili</span></div>
+        </div>
+      </section>`
+    : user.isClient
+      ? `<section class="umodal-sec">
+          <h3>Cliente e engagement <span class="cnt">${(user.engagements || []).length}</span></h3>
+          <p class="hint">L'utente cliente vede tutti gli engagement del proprio cliente. Clicca per aprire.</p>
+          <div class="user-chips">${(user.clients || []).map(client => `<span class="user-chip"><button class="user-chip-main" data-act="open-client" data-client="${esc(client.id)}" title="Apri ${esc(client.name)}">${esc(client.name)}</button></span>`).join('') || '<span class="tiny">Nessun cliente.</span>'}</div>
+          <div class="user-chips" style="margin-top:8px">${(user.engagements || []).map(engagement => `<span class="user-chip"><button class="user-chip-main" data-act="open" data-id="${esc(engagement.id)}" title="Apri ${esc(engagement.name)}">${esc(engagement.id)} · ${esc(engagement.name)}</button></span>`).join('') || '<span class="tiny">Nessun engagement.</span>'}</div>
+        </section>`
+      : userAssignmentsHTML(user, perms);
+
+  const body = `<div class="umodal-body">
+    <div class="umodal-col">
+      ${profileBlock}
+      ${userPermissions(user)}
+    </div>
+    <div class="umodal-col">
+      ${assignmentBlock}
+    </div>
+  </div>`;
+
+  const foot = `<div class="umodal-foot">
+    <div class="left">${user.isClient ? 'Utenza cliente' : `${user.effectiveClientIds.length} clienti · ${user.effectiveEngagementIds.length} engagement visibili`}</div>
+    <div class="right">
+      <button class="btn sec" data-act="close-user">Chiudi</button>
+      ${perms.profile ? '<button class="btn pri" data-act="save-user">Salva modifiche</button>' : ''}
+    </div>
+  </div>`;
+
+  return `<div class="mbox mbox-lg" role="dialog" aria-modal="true" aria-label="Scheda utente ${esc(user.name)}">
+    ${head}
+    ${state.userModalError ? `<p class="umodal-err">${esc(state.userModalError)}</p>` : ''}
+    ${body}
+    ${foot}
+  </div>`;
+}
+
+function renderUserModal(force = false) {
+  const node = $('#modal');
+  if (!node) return;
+  const user = state.userModal ? modalUser() : null;
+  if (!user) {
+    state.userModal = '';
+    userModalSig = '';
+    node.classList.remove('show');
+    node.innerHTML = '';
+    node.onclick = null;
+    return;
+  }
+  // Un render di sfondo non deve cancellare quello che si sta scrivendo nel
+  // popup: si ridisegna solo se i dati o l'utente sono davvero cambiati.
+  const sig = `${user.id}|${state.usersRev || 0}|${state.userModalError || ''}`;
+  if (!force && node.classList.contains('show') && sig === userModalSig) return;
+  userModalSig = sig;
+  node.innerHTML = userModalHTML(user);
+  node.onclick = event => {
+    if (event.target === node) closeUserModal();
+  };
+  node.classList.add('show');
+}
+
+function openUserModal(id) {
+  const user = state.users.find(item => item.id === id);
+  if (!user) return;
+  state.selectedUserId = user.id;
+  state.userModal = user.id;
+  state.userModalError = null;
+  renderUserModal();
+  const box = $('#modal .mbox-lg');
+  if (box) box.scrollTop = 0;
+  setTimeout(() => {
+    const first = $('#modal [data-act="close-user"]');
+    if (first) first.focus();
+  }, 30);
+}
+
+function closeUserModal() {
+  state.userModal = '';
+  state.userModalError = null;
+  renderUserModal();
+}
+
+async function saveUserFromModal() {
+  const user = modalUser();
+  if (!user) return;
+
+  const name = ($('#um_name')?.value || '').trim();
+  const email = ($('#um_email')?.value || '').trim();
+  const role = $('#um_role')?.value || user.role;
+  const active = ($('#um_active')?.value || '1') === '1';
+
+  if (!name || !email.includes('@')) {
+    state.userModalError = 'Nome ed email valida sono obbligatori.';
+    renderUserModal();
+    return;
   }
 
-  if (user.isClient) {
-    const clientChip = (user.clients || []).map(client => `
-      <span class="user-chip">
-        <button class="user-chip-main" data-act="open-client" data-client="${esc(client.id)}" title="Apri ${esc(client.name)}">${esc(client.name)}</button>
-      </span>`).join('');
-    const engagementChips = (user.engagements || []).map(engagement => `
-      <span class="user-chip">
-        <button class="user-chip-main" data-act="open" data-id="${esc(engagement.id)}" title="Apri ${esc(engagement.name)}">${esc(engagement.id)} · ${esc(engagement.name)}</button>
-      </span>`).join('');
-    return `${head}
-      <div class="user-block">
-        <h3>Cliente</h3>
-        <p class="hint">L'utente cliente è collegato al proprio cliente; gli accessi si gestiscono in Clienti e utenze.</p>
-        <div class="user-chips">${clientChip}</div>
-      </div>
-      <div class="user-block">
-        <h3>Engagement visibili <span class="cnt">${(user.engagements || []).length}</span></h3>
-        <p class="hint">Il cliente vede tutti gli engagement del proprio cliente. Clicca per aprire.</p>
-        <div class="user-chips">${engagementChips || '<span class="tiny">Nessun engagement.</span>'}</div>
-      </div>
-      <div class="user-visibility"><b>Visibilità effettiva:</b> 1 cliente, ${(user.engagements || []).length} engagement.</div>
-      ${userPermissions(user)}`;
+  try {
+    await api(`/api/users/${encodeURIComponent(user.id)}?` + qs(), {
+      method: 'PUT',
+      body: JSON.stringify({ name, email, role, active })
+    });
+    state.userModalError = null;
+    toast('Utente aggiornato');
+    await loadDemoUsers();
+    await loadUsers();
+    renderUserModal();
+  } catch (error) {
+    state.userModalError = error.message;
+    renderUserModal();
   }
+}
+
+// Assegnazioni: clienti espliciti, engagement espliciti e ciò che ne deriva.
+function userAssignmentsHTML(user, perms) {
+  const editable = perms.assignments;
 
   const clients = (user.clientIds || []).map(id => `
     <span class="user-chip">
       <button class="user-chip-main" data-act="open-client" data-client="${esc(id)}" title="Apri gli engagement di ${esc(clientName(id))}">${esc(clientName(id))}</button>
-      <button class="user-chip-x" data-act="user-remove-client" data-id="${esc(user.id)}" data-client="${esc(id)}" title="Rimuovi ${esc(clientName(id))}">×</button>
+      ${editable ? `<button class="user-chip-x" data-act="user-remove-client" data-id="${esc(user.id)}" data-client="${esc(id)}" title="Rimuovi ${esc(clientName(id))}">×</button>` : ''}
     </span>`).join('');
 
   const engagementIds = user.engagementIds || [];
@@ -3707,63 +4263,59 @@ function renderUserDetail(user) {
     const item = (user.engagements || []).find(engagement => engagement.id === id);
     return `<span class="user-chip">
       <button class="user-chip-main" data-act="open" data-id="${esc(id)}" title="Apri ${esc(item?.name || id)}">${esc(id)}${item ? ` · ${esc(item.name)}` : ''}</button>
-      <button class="user-chip-x" data-act="user-remove-engagement" data-id="${esc(user.id)}" data-engagement="${esc(id)}" title="Rimuovi ${esc(id)}">×</button>
+      ${editable ? `<button class="user-chip-x" data-act="user-remove-engagement" data-id="${esc(user.id)}" data-engagement="${esc(id)}" title="Rimuovi ${esc(id)}">×</button>` : ''}
     </span>`;
   }).join('');
 
+  const assignedClients = new Set(user.clientIds || []);
   const availableClients = state.clients
     .filter(client => client.canAssign !== false)
-    .filter(client => !(user.clientIds || []).includes(client.id));
-  const assignedClients = new Set(user.clientIds || []);
+    .filter(client => !assignedClients.has(client.id));
   const availableEngagements = state.userEngagements
     .filter(engagement => !assignedClients.has(engagement.clientId) &&
       !engagementIds.includes(engagement.id));
+
   const visibleEngagements = (user.engagements || []).map(engagement => `
     <span class="user-chip">
       <button class="user-chip-main" data-act="open" data-id="${esc(engagement.id)}" title="Apri ${esc(engagement.name)}">${esc(engagement.id)} · ${esc(engagement.name)}</button>
     </span>`).join('');
   const derivedClients = (user.clients || []).filter(client =>
-    !(user.clientIds || []).includes(client.id));
-  const derivedClientsHtml = derivedClients.map(client => `
-    <span class="user-chip">
-      <button class="user-chip-main" data-act="open-client" data-client="${esc(client.id)}" title="Apri ${esc(client.name)}">${esc(client.name)}</button>
-    </span>`).join('');
+    !assignedClients.has(client.id));
 
-  return `${head}
-    <div class="user-block">
-      <h3>Clienti assegnati <span class="cnt">${clients ? (user.clientIds || []).length : 0}</span></h3>
-      <p class="hint">Cliente assegnato = tutti i suoi engagement. Clicca il nome per aprire il cliente; × per rimuovere.</p>
+  return `
+    <section class="umodal-sec">
+      <h3>Clienti assegnati <span class="cnt">${(user.clientIds || []).length}</span></h3>
+      <p class="hint">Cliente assegnato = tutti i suoi engagement. Clicca il nome per aprirlo; × per rimuovere.</p>
       <div class="user-chips">${clients || '<span class="tiny">Nessun cliente assegnato.</span>'}</div>
-      ${availableClients.length ? `<div class="user-addline">
+      ${editable && availableClients.length ? `<div class="user-addline">
         <select id="user-client-select" aria-label="Aggiungi cliente">${availableClients.map(client => `<option value="${esc(client.id)}">${esc(client.name)}</option>`).join('')}</select>
         <button class="btn sec sm" data-act="user-add-client" data-id="${esc(user.id)}">Aggiungi cliente</button>
       </div>` : ''}
-    </div>
-    <div class="user-block">
+    </section>
+    <section class="umodal-sec">
       <h3>Engagement specifici <span class="cnt">${engagementIds.length}</span></h3>
       <p class="hint">Aggiunge un solo engagement, oltre ai clienti assegnati. Clicca per aprirlo; × per rimuovere.</p>
       <div class="user-chips">${engagements || '<span class="tiny">Nessun engagement specifico.</span>'}</div>
-      ${availableEngagements.length ? `<div class="user-addline">
+      ${editable && availableEngagements.length ? `<div class="user-addline">
         <select id="user-engagement-select" aria-label="Aggiungi engagement">${availableEngagements.map(engagement => `<option value="${esc(engagement.id)}">${esc(engagement.id)} · ${esc(engagement.name)}</option>`).join('')}</select>
         <button class="btn sec sm" data-act="user-add-engagement" data-id="${esc(user.id)}">Aggiungi engagement</button>
       </div>` : ''}
-    </div>
+    </section>
     <div class="user-visibility"><b>Visibilità effettiva:</b> ${user.effectiveClientIds.length} clienti, ${user.effectiveEngagementIds.length} engagement.<br>
       ${user.role === 'PMO' ? 'Dati e operazioni sui clienti/engagement assegnati; costi e margine sì.' :
         user.role === 'Pentester' ? 'Scope, credenziali e report degli engagement assegnati; costi e margine no.' :
         'Sola lettura sugli engagement assegnati.'}
     </div>
-    <div class="user-block">
+    <section class="umodal-sec" style="margin-top:10px">
       <h3>Engagement visibili <span class="cnt">${(user.engagements || []).length}</span></h3>
       <p class="hint">Tutti gli engagement visibili per effetto delle assegnazioni. Clicca per aprire.</p>
       <div class="user-chips">${visibleEngagements || '<span class="tiny">Nessun engagement visibile.</span>'}</div>
-    </div>
-    ${derivedClients.length ? `<div class="user-block">
+    </section>
+    ${derivedClients.length ? `<section class="umodal-sec">
       <h3>Clienti visibili <span class="cnt">${derivedClients.length}</span></h3>
       <p class="hint">Clienti visibili per effetto degli engagement assegnati. Clicca per aprire.</p>
-      <div class="user-chips">${derivedClientsHtml}</div>
-    </div>` : ''}
-    ${userPermissions(user)}`;
+      <div class="user-chips">${derivedClients.map(client => `<span class="user-chip"><button class="user-chip-main" data-act="open-client" data-client="${esc(client.id)}" title="Apri ${esc(client.name)}">${esc(client.name)}</button></span>`).join('')}</div>
+    </section>` : ''}`;
 }
 
 function userPermissions(user) {
@@ -3789,18 +4341,28 @@ const ADMIN_TABS = [
 ];
 
 async function loadAdmin() {
-  if (state.role !== 'Manager' && state.role !== 'PMO') return;
+  if (!canUseAdminTab(state.adminTab)) return;
 
   state.adminError = null;
 
   try {
-    if (!state.clients.length) await loadClients();
-    if (!state.users.length) await loadUsers();
+    // Anagrafiche complete solo dove servono: il Pentester non può leggerle.
+    if (state.adminTab === 'users' || state.adminTab === 'clients') {
+      if (!state.clients.length) await loadClients();
+      if (!state.users.length) await loadUsers();
+    }
+
+    if (state.adminTab === 'activities') {
+      state.activityTypes = await api('/api/activity-types?' + qs());
+    }
 
     if (state.adminTab === 'mailing') {
       state.adminMailing = await api('/api/admin/mailing-lists?' + qs());
       if (!state.adminMailing.some(item => item.id === state.adminMailingId))
         state.adminMailingId = state.adminMailing[0]?.id || '';
+      // Il testo delle email dell'engagement si modifica qui: serve la
+      // versione corrente del livello engagement.
+      await loadMailingTemplates(true);
     }
 
     if (state.adminTab === 'templates') {
@@ -3813,13 +4375,93 @@ async function loadAdmin() {
   renderAdmin();
 }
 
+// Carica il livello engagement dei template, solo per liste di tipo engagement.
+async function loadMailingTemplates(force) {
+  const list = state.adminMailing.find(item => item.id === state.adminMailingId);
+
+  if (!list || list.scope !== 'engagement') {
+    state.adminMailingTemplates = null;
+    state.adminMailingTemplateType = '';
+    return;
+  }
+
+  if (!force && state.adminMailingTemplates?.id === list.ownerId) return;
+
+  try {
+    state.adminMailingTemplates = await api(
+      `/api/admin/mail-templates/engagement/${encodeURIComponent(list.ownerId)}?` + qs());
+  } catch {
+    state.adminMailingTemplates = null;
+  }
+}
+
+/* ====== TIPI DI ATTIVITÀ ====== */
+// Catalogo dei tipi di attività con i loro default: retest previsto e
+// deliverable. I default sono proposti nel Setup dell'engagement.
+function adminActivitiesHTML() {
+  const canManage = canUseAdminTab('activities');
+  const list = state.activityTypes || [];
+
+  if (!list.length) return '<div class="empty">Caricamento dei tipi di attività…</div>';
+
+  const cards = list.map(item => {
+    const retest = !!item.retestPlanned;
+    return `<section class="card actcard">
+      <div class="acthead">
+        <span class="actbadge">${esc(item.short)}</span>
+        <div class="t">
+          <h3>${esc(item.label)}</h3>
+          <p class="hint" style="margin:0">${esc(item.description)}</p>
+        </div>
+        ${retest ? pill(['Retest previsto', 'ok']) : pill(['Senza retest', 'neutral'])}
+      </div>
+      <div class="fgrid">
+        <div><label>Etichetta</label>
+          <input type="text" data-f="label" value="${esc(item.label)}" ${canManage ? '' : 'readonly'}></div>
+        <div><label>Sigla</label>
+          <input type="text" data-f="short" value="${esc(item.short)}" maxlength="4" ${canManage ? '' : 'readonly'}></div>
+        <div class="full"><label>Descrizione</label>
+          <input type="text" data-f="desc" value="${esc(item.description)}" ${canManage ? '' : 'readonly'}></div>
+        <div class="full">
+          <label>Deliverable previsti</label>
+          <div class="setup-types">
+            ${DELIVERABLE_KINDS.map(([value, label, description]) => `
+              <label class="setup-type">
+                <input type="checkbox" data-f="kind" value="${value}"
+                  ${(item.deliverableTypes || []).includes(value) ? 'checked' : ''}
+                  ${canManage ? '' : 'disabled'}>
+                <span><b>${label}</b><span>${description}</span></span>
+              </label>`).join('')}
+          </div>
+        </div>
+        <div class="full">
+          <label class="actcheck">
+            <input type="checkbox" data-f="retest" ${retest ? 'checked' : ''} ${canManage ? '' : 'disabled'}>
+            <span>Recheck previsto di default per questo tipo</span>
+          </label>
+          <p class="hint" style="margin:5px 0 0">Nel Setup dell'engagement il valore è proposto da qui e resta modificabile fino alla richiesta di retest del cliente.</p>
+        </div>
+      </div>
+      <div class="inline-actions">
+        ${canManage
+          ? `<button class="btn pri sm" data-act="admin-save-activity" data-key="${esc(item.key)}">Salva</button>
+             <button class="btn ghost sm" data-act="admin-reset-activity" data-key="${esc(item.key)}">Ripristina default</button>`
+          : pill(['Sola lettura', 'blocked'])}
+      </div>
+    </section>`;
+  }).join('');
+
+  return `<p class="hint" style="margin-bottom:10px">Le chiavi dei tipi sono fisse: si modificano etichetta, sigla, descrizione, deliverable previsti e se il tipo prevede il retest di default.</p>${cards}`;
+}
+
 function renderAdmin() {
-  if (state.role !== 'Manager' && state.role !== 'PMO') {
-    $('#app').innerHTML = `<div class="note lockbox"><b>Amministrazione riservata a Manager e PMO.</b></div>`;
+  if (!canUseAdminTab(state.adminTab)) {
+    $('#app').innerHTML = `<div class="note lockbox"><b>Amministrazione riservata a Manager e PMO</b>; i Pentester entrano solo per il testo delle email dei propri engagement.</div>`;
     return;
   }
 
   const content = {
+    activities: adminActivitiesHTML,
     users: adminUsersHTML,
     clients: adminClientsHTML,
     mailing: adminMailingHTML,
@@ -3834,6 +4476,7 @@ function renderAdmin() {
       : '';
 
   const title = {
+    activities: 'Tipi di attività',
     users: 'Utenti e accessi',
     clients: 'Clienti',
     mailing: 'Mailing list',
@@ -3842,16 +4485,17 @@ function renderAdmin() {
   }[state.adminTab] || 'Utenti e accessi';
 
   const subtitle = {
+    activities: 'Default per tipo: retest previsto e deliverable',
     users: 'Persone interne e cliente · visibilità per assegnazione',
     clients: 'Anagrafiche, utenze, team e mailing list base',
     mailing: 'Liste notifiche e deliverables · base cliente e engagement',
     templates: 'Template standard, per cliente e per engagement',
-    settings: 'Retention, solleciti e sicurezza'
+    settings: 'Sicurezza, visibilità e accessi'
   }[state.adminTab] || '';
 
   $('#app').innerHTML = `
     <div class="admin-head">
-      <div><p class="side-kicker">Amministrazione</p><h1>${esc(title)}</h1><p class="sub">${esc(subtitle)}</p></div>
+      <div><h1>${esc(title)}</h1><p class="sub">${esc(subtitle)}</p></div>
       <div class="head-acts">${headAction}</div>
     </div>
     ${state.adminError ? `<div class="errorbox"><span>${esc(state.adminError)}</span><button class="btn sec sm" data-act="admin-tab" data-tab="${esc(state.adminTab)}">Riprova</button></div>` : ''}
@@ -3859,44 +4503,7 @@ function renderAdmin() {
 }
 
 function adminUsersHTML() {
-  const query = normText(state.userQuery);
-  const filtered = state.users.filter(user =>
-    !query || normText([
-      user.name, user.email, user.role,
-      ...(user.clients || []).map(client => client.name)
-    ].join(' ')).includes(query));
-  const selected = state.users.find(user =>
-    user.id === state.selectedUserId) || filtered[0] || null;
-
-  if (selected) state.selectedUserId = selected.id;
-
-  const roleBadge = role => `<span class="badge ${role === 'Manager' ? 'mgr' : role === 'Cliente' ? 'ext' : 'int'}">${esc(ROLE_LABEL[role] || role)}</span>`;
-
-  const rows = filtered.length
-    ? filtered.map(user => `
-      <tr class="hover admin-row ${selected?.id === user.id ? 'on' : ''}" data-act="select-user" data-id="${esc(user.id)}">
-        <td><div class="user"><span class="avatar">${esc(initialsOf(user.name))}</span><span><span class="nm">${esc(user.name)}</span><span class="em">${esc(user.email)}</span></span></div></td>
-        <td>${roleBadge(user.role)}</td>
-        <td>${user.isManager
-          ? 'Tutti <span class="cntpill">' + user.effectiveClientIds.length + '</span>'
-          : user.effectiveClientIds.length
-            ? esc((user.clients || []).map(client => client.name).join(', ')) + ' <span class="cntpill">' + user.effectiveClientIds.length + '</span>'
-            : '— <span class="cntpill">0</span>'}</td>
-      </tr>`).join('')
-    : '<tr><td colspan="3" class="empty">Nessun utente corrisponde alla ricerca.</td></tr>';
-
-  const detail = selected ? renderUserDetail(selected) : '<div class="empty">Seleziona un utente.</div>';
-
-  return `<div class="admin-split admin-users-split">
-    <section class="card admin-tablecard">
-      <div class="sec-head"><h3>Utenti <span class="cnt">${filtered.length}</span></h3><span class="tiny">Engagement e azioni nel dettaglio</span></div>
-      <div class="search" style="margin-bottom:10px"><svg class="search-ico" aria-hidden="true"><use href="#i-search"></use></svg>
-        <input type="search" id="user-search" value="${esc(state.userQuery)}" placeholder="Cerca nome, email, ruolo o cliente…" aria-label="Cerca utenti">
-      </div>
-      <div class="tablewrap"><table class="admin-table admin-users-table"><thead><tr><th>Utente</th><th>Ruolo</th><th>Clienti</th></tr></thead><tbody>${rows}</tbody></table></div>
-    </section>
-    <aside class="card users-detail admin-panel">${detail}</aside>
-  </div>`;
+  return usersTableHTML();
 }
 
 function adminClientsHTML() {
@@ -3920,52 +4527,215 @@ function adminClientsHTML() {
     </tbody></table></div></div>`;
 }
 
+/* ====== MAILING LIST ====== */
+// Filtri in alto (ricerca su cliente, partecipanti, tipo e engagement), elenco
+// scorribile e dettaglio modificabile sotto la lista.
+const MAILING_KIND_LABEL = { notifications: 'Notifiche', deliverables: 'Deliverables' };
+// Quali template vengono inviati a ciascuna lista: gli altri restano in
+// Amministrazione › Template mail.
+const MAILING_TEMPLATE_TYPES = {
+  notifications: ['start', 'end', 'solrep', 'solrev', 'solcred3', 'solcred2', 'solmanual'],
+  deliverables: ['deliver', 'retestreport']
+};
+
+function mailingSearchText(item) {
+  return normText([
+    item.clientName,
+    item.engagementId,
+    item.engagementName,
+    item.ownerName,
+    item.kindLabel,
+    MAILING_KIND_LABEL[item.kind],
+    item.scope === 'client' ? 'base cliente' : 'engagement',
+    ...(item.recipients || []).flatMap(entry => [entry.name, entry.email, entry.organization]),
+    ...(item.base || []).flatMap(entry => [entry.name, entry.email, entry.organization])
+  ].join(' '));
+}
+
+function mailingInitials(item) {
+  const source = item.scope === 'client' ? item.clientName : (item.engagementId || item.ownerName);
+  return initialsOf(source);
+}
+
+function mailingRecipientPreview(item) {
+  const all = [...(item.base || []), ...(item.recipients || [])];
+  const names = all.slice(0, 3).map(entry => entry.name).join(', ');
+  return names + (all.length > 3 ? ` +${all.length - 3}` : '');
+}
+
 function adminMailingHTML() {
   const query = normText(state.adminMailingQuery);
+  const kindFilter = state.adminMailingKind || 'all';
+  const scopeFilter = state.adminMailingScope || 'all';
+
   const lists = state.adminMailing.filter(item =>
-    !query || normText(`${item.ownerName} ${item.kindLabel} ${item.scope}`).includes(query));
+    (!query || mailingSearchText(item).includes(query)) &&
+    (kindFilter === 'all' || item.kind === kindFilter) &&
+    (scopeFilter === 'all' || item.scope === scopeFilter));
+
   const selected = state.adminMailing.find(item => item.id === state.adminMailingId) || lists[0] || null;
 
   if (selected) state.adminMailingId = selected.id;
 
   const rows = lists.length
-    ? lists.map(item => `<tr class="hover admin-row ${selected?.id === item.id ? 'on' : ''}" data-act="admin-select-list" data-id="${esc(item.id)}">
-        <td><div class="user"><span class="avatar">${esc(item.scope === 'client' ? 'CL' : 'EN')}</span><span><span class="nm">${esc(item.ownerName)}</span><span class="em">${esc(item.kindLabel)}</span></span></div></td>
-        <td><span class="badge ${item.scope === 'client' ? 'ext' : 'int'}">${item.scope === 'client' ? 'Cliente' : 'Engagement'}</span></td>
-        <td><span class="cntpill">${(item.recipients || []).length}</span></td>
-      </tr>`).join('')
-    : '<tr><td colspan="3" class="empty">Nessuna mailing list.</td></tr>';
+    ? lists.map(item => `<button class="ml-item ${selected?.id === item.id ? 'on' : ''}" data-act="admin-select-list" data-id="${esc(item.id)}">
+        <span class="ml-av ${item.scope === 'engagement' ? 'eng' : ''}">${esc(mailingInitials(item))}</span>
+        <span class="ml-who">
+          <b>${esc(item.scope === 'client' ? item.clientName : item.ownerName)}</b>
+          <small>${item.scope === 'client'
+            ? `Base cliente · ${esc(mailingRecipientPreview(item))}`
+            : `${esc(item.engagementId)} · cliente ${esc(item.clientName)} · ${esc(mailingRecipientPreview(item))}`}</small>
+        </span>
+        <span class="ml-end">
+          <span class="badge ${item.kind === 'notifications' ? 'int' : 'ext'}">${esc(item.kindLabel)}</span>
+          <span class="cntpill" title="${(item.effective || []).length} indirizzi effettivi">${(item.effective || []).length}</span>
+        </span>
+      </button>`).join('')
+    : '<div class="empty">Nessuna mailing list con questi filtri.</div>';
 
-  let detail = '<div class="empty">Seleziona una lista.</div>';
-  if (selected) {
-    const recipients = selected.recipients || [];
-    const chips = recipients.length
-      ? recipients.map(entry => `<span class="user-chip">
-          <span class="user-chip-main">${esc(entry.name)} · ${esc(entry.email)} <span style="opacity:.65">(${esc(entry.organization)})</span></span>
-          <button class="user-chip-x" data-act="admin-remove-recipient" data-entry="${esc(entry.id)}">×</button>
-        </span>`).join('')
-      : '<span class="tiny">Nessun destinatario specifico.</span>';
-
-    detail = `<div class="udetail-head"><span class="avatar lg">${selected.scope === 'client' ? 'CL' : 'EN'}</span><div class="t"><h2>${esc(selected.ownerName)}</h2><p class="sub">${esc(selected.kindLabel)} · ${selected.scope === 'client' ? 'base cliente' : 'engagement'} · ${recipients.length} destinatari specifici</p></div></div>
-      <div class="user-block"><h3>Destinatari</h3><p class="hint">Base cliente + engagement sono uniti nella lista effettiva; qui modifichi questa lista.</p><div class="user-chips">${chips}</div>
-      <div class="fgrid" style="margin-top:12px">
-        <div class="full"><label for="admin_dl_n">Nome e cognome</label><input type="text" id="admin_dl_n" placeholder="Nuovo destinatario"></div>
-        <div class="full"><label for="admin_dl_e">Email</label><input type="text" id="admin_dl_e" placeholder="nome@dominio.it"></div>
-        <div class="full"><label for="admin_dl_o">Organizzazione</label><select class="f" id="admin_dl_o"><option>Cliente</option><option>Provider PMO</option><option>Provider Pentester</option></select></div>
+  return `<div class="admin-mm">
+    <div class="ml-filters">
+      <div class="search">
+        <svg class="search-ico" aria-hidden="true"><use href="#i-search"></use></svg>
+        <input type="search" id="admin-mail-search" value="${esc(state.adminMailingQuery)}"
+          placeholder="Cerca cliente, partecipante, tipo di mail o engagement…"
+          aria-label="Cerca per cliente, partecipante, tipo di mail o engagement">
       </div>
-      <div class="inline-actions"><button class="btn sec sm" data-act="admin-add-recipient">+ Aggiungi destinatario</button></div></div>
-      <div class="user-visibility"><b>Lista effettiva:</b> ${(selected.effective || []).length} indirizzi, base inclusa.
-        ${(selected.base || []).length ? `<br><span class="tiny">Base cliente: ${selected.base.map(entry => esc(entry.email)).join('; ')}</span>` : ''}</div>`;
+      <div class="ml-group" role="group" aria-label="Tipo di mail">
+        <span class="ml-lbl">Tipo</span>
+        ${[['all', 'Tutti'], ['notifications', 'Notifiche'], ['deliverables', 'Deliverables']]
+          .map(([value, label]) => `<button class="chip" data-act="mailing-kind" data-kind="${value}" aria-pressed="${kindFilter === value}">${label}</button>`).join('')}
+      </div>
+      <div class="ml-group" role="group" aria-label="Ambito">
+        <span class="ml-lbl">Ambito</span>
+        ${[['all', 'Tutti'], ['client', 'Cliente'], ['engagement', 'Engagement']]
+          .map(([value, label]) => `<button class="chip" data-act="mailing-scope" data-scope="${value}" aria-pressed="${scopeFilter === value}">${label}</button>`).join('')}
+      </div>
+      <span class="ml-count">${lists.length} ${lists.length === 1 ? 'lista' : 'liste'}</span>
+    </div>
+    <div class="ml-list" role="list">${rows}</div>
+    ${mailingDetailHTML(selected)}
+  </div>`;
+}
+
+function mailingPeopleEditor(entries, editable) {
+  if (!entries.length) {
+    return `<p class="hint" style="margin:0">${editable ? 'Nessun destinatario specifico: la lista usa solo la base cliente.' : 'Nessun destinatario base.'}</p>`;
   }
 
-  return `<div class="admin-split">
-    <section class="card admin-tablecard">
-      <div class="sec-head"><h3>Liste <span class="cnt">${lists.length}</span></h3><span class="tiny">Notifiche e deliverables</span></div>
-      <div class="search" style="margin-bottom:10px"><svg class="search-ico" aria-hidden="true"><use href="#i-search"></use></svg><input type="search" id="admin-mail-search" value="${esc(state.adminMailingQuery)}" placeholder="Cerca cliente, engagement o tipo…" aria-label="Cerca mailing list"></div>
-      <div class="tablewrap"><table class="admin-table"><thead><tr><th>Lista</th><th>Ambito</th><th>Dest.</th></tr></thead><tbody>${rows}</tbody></table></div>
-    </section>
-    <aside class="card users-detail admin-panel">${detail}</aside>
-  </div>`;
+  return `<div class="ml-people">${entries.map(entry => `<div class="ml-person">
+    <input type="text" value="${esc(entry.name)}" aria-label="Nome" ${editable ? '' : 'readonly'}>
+    <input type="email" value="${esc(entry.email)}" aria-label="Email" ${editable ? '' : 'readonly'}>
+    <select aria-label="Organizzazione" ${editable ? '' : 'disabled'}>
+      ${['Cliente', 'Partner', 'Provider PMO', 'Provider Pentester', 'Manager']
+        .map(org => `<option ${org === entry.organization ? 'selected' : ''}>${org}</option>`).join('')}
+    </select>
+    ${editable
+      ? `<button class="ml-x" data-act="admin-remove-recipient" data-entry="${esc(entry.id)}" title="Rimuovi ${esc(entry.name)}" aria-label="Rimuovi ${esc(entry.name)}">×</button>`
+      : '<span class="ml-x-ph" title="Destinatario della base cliente">·</span>'}
+  </div>`).join('')}</div>`;
+}
+
+function mailingTemplateHTML(list) {
+  if (list.scope !== 'engagement') {
+    return `<section class="ml-block ml-base">
+      <h4>Testo delle email</h4>
+      <p class="hint" style="margin:0">Questa è una base cliente: il testo si modifica in <b>Amministrazione › Template mail</b> sui livelli standard e cliente.</p>
+    </section>`;
+  }
+
+  const info = state.adminMailingTemplates;
+  const allowed = MAILING_TEMPLATE_TYPES[list.kind] || ['start'];
+
+  if (!info || info.id !== list.ownerId) {
+    return `<section class="ml-block"><h4>Testo delle email di ${esc(list.engagementId)}</h4>
+      <p class="hint" style="margin:0">Caricamento…</p></section>`;
+  }
+
+  const types = (info.templates || []).filter(item => allowed.includes(item.type));
+  const active = types.find(item => item.type === state.adminMailingTemplateType) || types[0];
+  if (!active) return '';
+
+  const metaOf = type => (info.types || []).find(item => item.key === type) || { label: type };
+  const meta = metaOf(active.type);
+  const canManage = canEditEngagementTemplate();
+  const inherited = active.inherited || {};
+  const sourceLabel = { standard: 'standard', client: 'cliente', engagement: 'engagement' }[inherited.source] || '';
+
+  return `<section class="ml-block">
+    <h4>Testo delle email di ${esc(list.engagementId)}</h4>
+    <p class="hint">Solo per questa attività: i campi vuoti ereditano il testo ${esc(sourceLabel ? `dal livello ${sourceLabel}` : 'del cliente')}. Si invia la versione della lingua del Setup (${esc(info.language === 'en' ? 'inglese' : 'italiano')}).</p>
+    <label class="ml-mini" for="ml_tpl_type">Template</label>
+    <select class="f" id="ml_tpl_type" data-change="mailing-template-type">
+      ${types.map(item => `<option value="${esc(item.type)}" ${item.type === active.type ? 'selected' : ''}>${esc(metaOf(item.type).label || item.type)}</option>`).join('')}
+    </select>
+    <p class="hint" style="margin:8px 0 0">${esc(meta.when || '')}${meta.recipient ? ` · destinatario: <b>${esc(meta.recipient)}</b>` : ''}</p>
+    <label class="ml-mini" for="ml_it_s">Oggetto IT</label>
+    <input type="text" id="ml_it_s" class="ml-subject" value="${esc(active.subject)}" placeholder="${esc(inherited.subject || '')}" ${canManage ? '' : 'readonly'}>
+    <label class="ml-mini" for="ml_it_b">Corpo IT</label>
+    <textarea id="ml_it_b" class="ml-subject-body" placeholder="${esc(inherited.body || '')}" ${canManage ? '' : 'readonly'}>${esc(active.body)}</textarea>
+    <label class="ml-mini" for="ml_en_s">Subject EN</label>
+    <input type="text" id="ml_en_s" class="ml-subject" value="${esc(active.subjectEn)}" ${canManage ? '' : 'readonly'}>
+    <label class="ml-mini" for="ml_en_b">Body EN</label>
+    <textarea id="ml_en_b" class="ml-subject-body" ${canManage ? '' : 'readonly'}>${esc(active.bodyEn)}</textarea>
+    <div class="ml-blockacts">
+      ${canManage ? `<button class="btn sec sm" data-act="mailing-save-template" data-type="${esc(active.type)}">Salva testo</button>` : pill(['Sola lettura', 'blocked'])}
+      ${canManage ? `<button class="btn ghost sm" data-act="mailing-reset-template" data-type="${esc(active.type)}">Ripristina</button>` : ''}
+      ${pill([`Ambito: ${esc(list.engagementId)}`, 'info'])}
+    </div>
+  </section>`;
+}
+
+function mailingDetailHTML(list) {
+  if (!list) return '<div class="empty">Seleziona una mailing list.</div>';
+
+  const own = list.recipients || [];
+  const effective = (list.effective || []).length;
+  const isBase = list.scope === 'client';
+
+  return `<section class="ml-detail">
+    <div class="ml-dhead">
+      <span class="ml-av ${isBase ? '' : 'eng'}" style="width:40px;height:40px">${esc(mailingInitials(list))}</span>
+      <div class="t">
+        <h3>${esc(isBase ? list.clientName : list.ownerName)}</h3>
+        <p>${esc(list.kindLabel)} · ${isBase ? 'base cliente' : `engagement · cliente ${esc(list.clientName)}`} · <b>${effective}</b> destinatari effettivi</p>
+      </div>
+      <span class="badge ${isBase ? 'ext' : 'int'}">${isBase ? 'Base cliente' : esc(list.engagementId)}</span>
+      <span class="badge ${list.kind === 'notifications' ? 'int' : 'ext'}">${esc(list.kindLabel)}</span>
+    </div>
+
+    <div class="ml-cols">
+      <div>
+        <section class="ml-block">
+          <h4>Destinatari propri di questa lista <span class="cnt">${own.length}</span></h4>
+          <p class="hint">Si aggiungono a quelli base${isBase ? ' del cliente stesso' : ' del cliente'}.</p>
+          ${mailingPeopleEditor(own, canEditDistribution())}
+          ${canEditDistribution() ? `<div class="fgrid" style="margin-top:12px">
+            <div><label for="admin_dl_n">Nome e cognome</label><input type="text" id="admin_dl_n" placeholder="Nuovo destinatario"></div>
+            <div><label for="admin_dl_e">Email</label><input type="email" id="admin_dl_e" placeholder="nome@dominio.it"></div>
+            <div class="full"><label for="admin_dl_o">Organizzazione</label>
+              <select class="f" id="admin_dl_o">
+                <option>Cliente</option><option>Partner</option><option>Provider PMO</option><option>Provider Pentester</option><option>Manager</option>
+              </select></div>
+          </div>
+          <div class="ml-blockacts"><button class="btn pri sm" data-act="admin-add-recipient">+ Aggiungi destinatario</button></div>`
+            : '<div class="ml-blockacts">' + pill(['Destinatari in sola lettura', 'blocked']) + '</div>'}
+        </section>
+        <section class="ml-block ml-base">
+          <h4>Lista effettiva</h4>
+          <p class="hint" style="margin:0">Base cliente + destinatari propri, senza duplicati: <b>${effective} indirizzi</b>. È questa lista che riceve le email.</p>
+        </section>
+      </div>
+      <div>
+        ${isBase ? '' : `<section class="ml-block ml-base">
+          <h4>Base cliente <span class="cnt">${(list.base || []).length}</span></h4>
+          <p class="hint">Comune a tutte le attività del cliente: si modifica in <b>Clienti e utenze</b>.</p>
+          ${mailingPeopleEditor(list.base || [], false)}
+        </section>`}
+        ${mailingTemplateHTML(list)}
+      </div>
+    </div>
+  </section>`;
 }
 
 function adminTemplatesHTML() {
@@ -3984,17 +4754,23 @@ function adminTemplatesHTML() {
   const stdFor = type => standard.find(item => item.type === type) || {};
   const forType = type => templates.find(item => item.type === type) || {};
   const scopeValue = isClientScope ? `client|${target.clientId}` : 'standard';
-  const types = ['start', 'end', 'deliver'];
-  const shortDesc = {
-    start: 'Notifica l’avvio',
-    end: 'Notifica la conclusione',
-    deliver: 'Invia i report pubblicati'
-  };
+  const types = (data.types || []).map(item => item.key);
+  const metaOf = type => (data.types || []).find(item => item.key === type) || MAIL_META[type] || { label: type };
 
-  const rows = types.map(type => {
+  // Le righe sono raggruppate per famiglia (notifiche, poi solleciti): il
+  // gruppo di appartenenza arriva dal server insieme ai tipi.
+  const groups = [];
+  types.forEach(type => {
+    const group = metaOf(type).group || 'Notifiche';
+    const last = groups[groups.length - 1];
+    if (last && last.name === group) last.types.push(type);
+    else groups.push({ name: group, types: [type] });
+  });
+
+  const rowFor = type => {
     const t = forType(type);
     const std = stdFor(type);
-    const meta = MAIL_META[type];
+    const meta = metaOf(type);
     const empty = !(t.subject || t.body || t.subjectEn || t.bodyEn);
     const custom = isClientScope
       ? !empty
@@ -4002,29 +4778,36 @@ function adminTemplatesHTML() {
 
     return `<div class="tplx-row">
       <div class="tplx-meta">
-        <b>${esc(meta.t)}</b>
-        <span>${esc(shortDesc[type] || meta.desc)}</span>
+        <div class="tplx-meta-head">
+          <span class="tplx-ico" aria-hidden="true"><svg><use href="#${MAIL_ICON[type] || 'i-doc'}"></use></svg></span>
+          <b>${esc(meta.label)}</b>
+        </div>
+        <span>${esc(meta.when || '')}${meta.when && meta.recipient ? ' · ' : ''}${esc(meta.recipient || '')}</span>
         <div class="tplx-meta-tags">
           ${custom ? pill(['Personalizzato', 'info']) : (isClientScope ? pill(['Eredita', 'neutral']) : pill(['Standard', 'neutral']))}
           ${canManage
-            ? `<button class="tplx-reset" data-act="admin-reset-template" data-type="${type}" title="Ripristina" aria-label="Ripristina">↺</button>`
+            ? `<button class="tplx-reset" data-act="admin-reset-template" data-type="${type}" title="Ripristina il template" aria-label="Ripristina il template ${esc(meta.label)}"><svg aria-hidden="true"><use href="#i-undo"></use></svg></button>`
             : ''}
         </div>
       </div>
       <div class="tplx-cell">
         <label for="tplx_${type}_it_s">Oggetto IT</label>
-        <input id="tplx_${type}_it_s" type="text" value="${esc(t.subject || '')}" placeholder="${esc(std.subject || '')}" ${canManage ? '' : 'readonly'}>
+        <textarea class="tplx-subject" id="tplx_${type}_it_s" rows="2" placeholder="${esc(std.subject || '')}" ${canManage ? '' : 'readonly'}>${esc(t.subject || '')}</textarea>
         <label for="tplx_${type}_it_b">Corpo IT</label>
-        <textarea id="tplx_${type}_it_b" rows="2" placeholder="${esc(std.body || '')}" ${canManage ? '' : 'readonly'}>${esc(t.body || '')}</textarea>
+        <textarea id="tplx_${type}_it_b" rows="4" placeholder="${esc(std.body || '')}" ${canManage ? '' : 'readonly'}>${esc(t.body || '')}</textarea>
       </div>
       <div class="tplx-cell">
         <label for="tplx_${type}_en_s">Subject EN</label>
-        <input id="tplx_${type}_en_s" type="text" value="${esc(t.subjectEn || '')}" placeholder="${esc(std.subjectEn || '')}" ${canManage ? '' : 'readonly'}>
+        <textarea class="tplx-subject" id="tplx_${type}_en_s" rows="2" placeholder="${esc(std.subjectEn || '')}" ${canManage ? '' : 'readonly'}>${esc(t.subjectEn || '')}</textarea>
         <label for="tplx_${type}_en_b">Body EN</label>
-        <textarea id="tplx_${type}_en_b" rows="2" placeholder="${esc(std.bodyEn || '')}" ${canManage ? '' : 'readonly'}>${esc(t.bodyEn || '')}</textarea>
+        <textarea id="tplx_${type}_en_b" rows="4" placeholder="${esc(std.bodyEn || '')}" ${canManage ? '' : 'readonly'}>${esc(t.bodyEn || '')}</textarea>
       </div>
     </div>`;
-  }).join('');
+  };
+
+  const rows = groups.map(group => `
+    <div class="tplx-group">${esc(group.name)}</div>
+    ${group.types.map(rowFor).join('')}`).join('');
 
   const options = [
     '<option value="standard">Standard (globale)</option>',
@@ -4035,7 +4818,7 @@ function adminTemplatesHTML() {
   return `<div class="card admin-tpl-card">
     <div class="tplx-top">
       <div class="tplx-scope">
-        <label for="admin_tpl_target">Ambito</label>
+        <label for="admin_tpl_target"><svg aria-hidden="true"><use href="#i-layers"></use></svg>Ambito</label>
         <select id="admin_tpl_target" data-change="admin-template-target" aria-label="Ambito template">${options.join('')}</select>
       </div>
       <div class="tplx-top-right">
@@ -4052,8 +4835,8 @@ function adminTemplatesHTML() {
     <div class="tplx">
       <div class="tplx-head">
         <div>Template</div>
-        <div>Italiano</div>
-        <div>English</div>
+        <div><svg aria-hidden="true"><use href="#i-globe"></use></svg>Italiano</div>
+        <div><svg aria-hidden="true"><use href="#i-globe"></use></svg>English</div>
       </div>
       ${rows}
     </div>
@@ -4061,19 +4844,11 @@ function adminTemplatesHTML() {
 }
 
 function adminSettingsHTML() {
-  return `<div class="card"><h2>Retention deliverables</h2>
-    <p class="sub">Policy informativa: i deliverables vengono cancellati automaticamente dopo <b>1 anno</b> dalla pubblicazione. Il valore è configurabile in produzione.</p>
-    <div class="note waiting" style="margin-top:12px"><b>Nota:</b> il job di cancellazione non è ancora attivo in questa alpha.</div>
-  </div>
-  <div class="card" style="margin-top:14px"><h2>Sicurezza e accessi</h2>
+  return `<div class="card"><h2>Sicurezza e accessi</h2>
     <div class="detail-table" style="display:grid;gap:9px">
       <div><b>2FA download report</b><br><span class="hint">Placeholder demo: qualsiasi codice di 6 cifre. In produzione va collegato all'authenticator.</span></div>
       <div><b>Visibilità</b><br><span class="hint">Manager vede tutto; PMO e altri solo il perimetro assegnato.</span></div>
     </div>
-  </div>
-  <div class="card" style="margin-top:14px"><h2>Solleciti automatici</h2>
-    <p class="sub">Regole, soglie e invio dei solleciti.</p>
-    <button class="btn sec" data-act="list-tab" data-tab="rem">Apri solleciti</button>
   </div>`;
 }
 
@@ -4085,7 +4860,7 @@ function adminTemplatePath(type) {
 }
 
 async function saveAdminTemplates() {
-  const types = ['start', 'end', 'deliver'];
+  const types = (state.adminTemplates?.types || []).map(item => item.key);
 
   try {
     for (const type of types) {
@@ -4243,6 +5018,122 @@ function renderCalendarMonth(month, events, todayKey) {
   </section>`;
 }
 
+/* ====== CALENDARIO · TIMELINE ====== */
+const CAL_TIMELINE_MONTHS = ['gen', 'feb', 'mar', 'apr', 'mag', 'giu', 'lug', 'ago', 'set', 'ott', 'nov', 'dic'];
+
+function calTimelineRange() {
+  const now = new Date();
+  const start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const end = new Date(now.getFullYear(), now.getMonth() + 2, 0);
+  const days = Math.round((end - start) / 86400000) + 1;
+  return { start, end, startKey: calYmd(start), endKey: calYmd(end), days };
+}
+
+function calDayIndex(range, key) {
+  return Math.round((calDate(key) - range.start) / 86400000);
+}
+
+function calEventKey(ev) {
+  return `${ev.id}|${ev.kind}|${ev.start}`;
+}
+
+function renderCalendarTimeline(events, todayKey, counts) {
+  const range = calTimelineRange();
+  const n = range.days;
+  const filter = state.calendarFilter || 'all';
+
+  const visible = events.filter(ev => ev.start <= range.endKey && ev.end >= todayKey);
+  const rows = visible
+    .filter(ev => filter === 'all' || ev.kind === filter)
+    .sort((a, b) => a.start.localeCompare(b.start) || String(a.name).localeCompare(String(b.name)));
+
+  const selected = rows.find(ev => calEventKey(ev) === state.calendarSel) || null;
+
+  // Intestazione mesi: ogni mese occupa le sue colonne-giorno.
+  const months = [];
+  const firstMonthDays = new Date(range.start.getFullYear(), range.start.getMonth() + 1, 0).getDate()
+    - range.start.getDate() + 1;
+  for (let cursor = new Date(range.start.getFullYear(), range.start.getMonth(), 1); cursor <= range.end; cursor = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1)) {
+    const year = cursor.getFullYear();
+    const month = cursor.getMonth();
+    const full = new Date(year, month + 1, 0).getDate();
+    const span = Math.min(
+      n - months.reduce((sum, m) => sum + m.span, 0),
+      month === range.start.getMonth() && year === range.start.getFullYear() ? firstMonthDays : full
+    );
+    months.push({ label: `${CAL_TIMELINE_MONTHS[month]} ${String(year).slice(2)}`, span });
+  }
+
+  const dayCells = [];
+  for (let i = 0; i < n; i += 1) {
+    const date = new Date(range.start.getFullYear(), range.start.getMonth(), range.start.getDate() + i);
+    const key = calYmd(date);
+    const cls = [
+      'tl-day',
+      date.getDay() === 1 ? 'mon' : '',
+      key === todayKey ? 'today' : ''
+    ].filter(Boolean).join(' ');
+    dayCells.push(`<div class="${cls}" title="${esc(fmt(key))}">${date.getDate()}</div>`);
+  }
+
+  const rowHtml = rows.map(ev => {
+    const from = Math.max(0, calDayIndex(range, ev.start));
+    const to = Math.min(n - 1, calDayIndex(range, ev.end));
+    const span = Math.max(1, to - from + 1);
+    const kindLabel = ev.kind === 'planned' ? 'Pianificato' : 'Proposto';
+    const key = calEventKey(ev);
+    const sel = selected === ev ? ' sel' : '';
+    const progress = ev.kind === 'planned' && ev.start < todayKey ? ' inprogress' : '';
+
+    return `<div class="tl-row">
+      <button class="tl-label" data-act="cal-select" data-key="${esc(key)}" title="${esc(ev.name)} · ${esc(ev.client)}">
+        <b>${esc(ev.name)}</b>
+        <small><span class="tl-kind ${ev.kind}"><i></i>${kindLabel}</span> · ${esc(ev.client || '')}</small>
+      </button>
+      <div class="tl-track" style="--n:${n}">
+        <button class="tl-bar ${ev.kind}${sel}${progress}" data-act="cal-select" data-key="${esc(key)}"
+          style="grid-column:${from + 1}/span ${span}"
+          title="${esc(ev.name)} · ${esc(ev.client)} · ${kindLabel} · ${fmt(ev.start)} – ${fmt(ev.end)}">${esc(ev.name)}</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  const detail = selected
+    ? `<div class="tl-detail">
+        <div class="tl-info">
+          <b>${esc(selected.name)}</b> · ${esc(selected.client || '')}<br>
+          <span class="tl-meta">${selected.kind === 'planned' ? 'Pianificato' : 'Proposto'}${selected.from ? ` da ${esc(selected.from)}` : ''} · ${fmt(selected.start)} – ${fmt(selected.end)}</span>
+        </div>
+        <div class="tl-actions">
+          <button class="btn pri sm" data-act="open-action" data-id="${esc(selected.id)}" data-tab="${selected.kind === 'proposed' ? 'plan' : ''}">Apri engagement</button>
+          <button class="btn sec sm" data-act="cal-select" data-key="">Chiudi</button>
+        </div>
+      </div>`
+    : '<div class="tl-detail"><span class="tl-hint">Clicca una barra o un nome per vedere i dettagli dell\'engagement.</span></div>';
+
+  return `<div class="tl-card">
+    <div class="tl-toolbar">
+      <span class="tl-range"><b>${fmt(range.startKey)}</b> – <b>${fmt(range.endKey)}</b></span>
+      <div class="tl-filters" role="group" aria-label="Filtra gli eventi">
+        ${[['all', 'Tutti'], ['planned', 'Pianificati'], ['proposed', 'Proposti']]
+          .map(([value, label]) => `<button class="tl-filter" data-act="cal-filter" data-filter="${value}" aria-pressed="${filter === value}">${label} <b>${counts[value]}</b></button>`)
+          .join('')}
+      </div>
+    </div>
+    <div class="tl-scroll" style="--n:${n}">
+      <div class="tl-axis">
+        <div class="tl-axis-label">Engagement</div>
+        <div class="tl-axis-track">
+          <div class="tl-months">${months.map(m => `<div class="tl-month" style="grid-column:span ${m.span}">${m.label}</div>`).join('')}</div>
+          <div class="tl-days">${dayCells.join('')}</div>
+        </div>
+      </div>
+      ${rows.length ? rowHtml : '<div class="tl-empty">Nessun evento con questo filtro nel periodo.</div>'}
+    </div>
+    ${detail}
+  </div>`;
+}
+
 function renderCalendar() {
   const now = new Date();
   const todayKey = calYmd(now);
@@ -4261,6 +5152,8 @@ function renderCalendar() {
     new Date(now.getFullYear(), now.getMonth() + 1, 1)
   ];
 
+  const view = state.calendarView === 'month' ? 'month' : 'timeline';
+
   $('#app').innerHTML = `
     <div class="cal-head">
       <div>
@@ -4269,19 +5162,26 @@ function renderCalendar() {
         <p class="sub">Da oggi a ${esc(calLongDate(endDate))} · ${state.clientId ? `cliente ${esc(clientLabel(state.clientId))}` : 'engagement visibili per il tuo profilo'}</p>
       </div>
       <div class="head-acts">
+        <div class="cal-switch" role="group" aria-label="Vista del calendario">
+          <button data-act="cal-view" data-view="timeline" aria-pressed="${view === 'timeline'}">Timeline</button>
+          <button data-act="cal-view" data-view="month" aria-pressed="${view === 'month'}">Mese</button>
+        </div>
         <button class="btn sec" data-act="nav" data-view="list">Vai alla lista</button>
       </div>
     </div>
     ${state.error ? `<div class="errorbox"><span>${esc(state.error)}</span><button class="btn sec sm" data-act="nav" data-view="calendar">Riprova</button></div>` : ''}
-    <div class="cal-legend">
-      <span class="lg planned"><i></i>Pianificati <b>${planned}</b></span>
-      <span class="lg proposed"><i></i>Proposti <b>${proposed}</b></span>
-      <span class="hint">Clicca un evento per aprire l'engagement</span>
-    </div>
     ${!visible.length ? '<div class="cal-empty">Nessun engagement proposto o pianificato nel periodo.</div>' : ''}
-    <div class="cal-grid">
-      ${months.map(month => renderCalendarMonth(month, visible, todayKey)).join('')}
-    </div>`;
+    ${view === 'month'
+      ? `<div class="cal-legend">
+          <span class="lg planned"><i></i>Pianificati <b>${planned}</b></span>
+          <span class="lg proposed"><i></i>Proposti <b>${proposed}</b></span>
+          <span class="hint">Clicca un evento per aprire l'engagement</span>
+        </div>
+        <div class="cal-grid">
+          ${months.map(month => renderCalendarMonth(month, visible, todayKey)).join('')}
+        </div>`
+      : renderCalendarTimeline(unique, todayKey, { all: visible.length, planned, proposed })}
+  `;
 }
 
 function renderClients() {
@@ -4373,16 +5273,208 @@ function renderClients() {
       : '<div class="empty">Nessun cliente disponibile.</div>'}`;
 }
 
+/* ====== ROUTING (hash) ====== */
+// Ogni sezione ha una URL propria: un refresh o un link diretto riapre la
+// stessa schermata e i tasti indietro/avanti del browser seguono la storia.
+const BASE_ROUTES = {
+  list: '#/engagements',
+  clients: '#/clients',
+  calendar: '#/calendar',
+  solicitations: '#/solicitations',
+  kpi: '#/kpi',
+  users: '#/users'
+};
+const DETAIL_TABS = ['setup', 'docs', 'scope', 'plan', 'cred', 'run', 'reports', 'mail'];
+const ROUTE_ADMIN_TABS = ADMIN_TABS.map(([id]) => id);
+const LIST_FILTERS = ['action', 'waiting', 'progress', 'done', 'risk'];
+
+let routeReady = false;
+let routeBusy = false;
+let lastRoute = '';
+
+function currentRoute() {
+  if (state.view === 'detail' && state.detail) {
+    const id = encodeURIComponent(state.detail.engagement.id);
+    const tab = DETAIL_TABS.includes(state.tab) ? '/' + state.tab : '';
+    return `#/engagements/${id}${tab}`;
+  }
+  if (state.view === 'admin') {
+    const tab = canUseAdminTab(state.adminTab) ? state.adminTab : (adminTabsForRole()[0] || 'users');
+    return `#/admin/${tab}`;
+  }
+  if (state.view === 'list' && LIST_FILTERS.includes(state.listFilter))
+    return `#/engagements?filter=${state.listFilter}`;
+  return BASE_ROUTES[state.view] || BASE_ROUTES.list;
+}
+
+// Aggiorna la URL senza ricaricare: push per la navigazione, replace per la
+// prima scrittura (così il tasto indietro non esce dall'app).
+function syncRoute() {
+  if (!routeReady || routeBusy) return;
+  const hash = currentRoute();
+  if (hash === lastRoute) return;
+  const first = !lastRoute;
+  lastRoute = hash;
+  if (first) history.replaceState(null, '', hash);
+  else history.pushState(null, '', hash);
+}
+
+function parseRoute(hash) {
+  const raw = String(hash || '').replace(/^#\/?/, '');
+  if (!raw) return null;
+
+  const [pathPart, queryPart] = raw.split('?');
+  const parts = pathPart.split('/').filter(Boolean).map(part => {
+    try { return decodeURIComponent(part); } catch { return part; }
+  });
+  const params = new URLSearchParams(queryPart || '');
+
+  switch (parts[0]) {
+    case 'engagements':
+    case 'engagement': {
+      const filterParam = params.get('filter');
+      if (filterParam && LIST_FILTERS.includes(filterParam)) return { view: 'list', filter: filterParam };
+      if (parts[1] === 'da-gestire') return { view: 'list', filter: 'action' };
+      if (parts[1] === 'in-attesa') return { view: 'list', filter: 'waiting' };
+      if (parts[1]) return { view: 'detail', id: parts[1], tab: parts[2] || '' };
+      return { view: 'list' };
+    }
+
+    case 'clients': return { view: 'clients' };
+    case 'calendar': return { view: 'calendar' };
+    case 'solicitations': return { view: 'solicitations' };
+    case 'kpi': return { view: 'kpi' };
+    case 'admin': return { view: 'admin', tab: parts[1] || 'users' };
+    case 'users': return { view: 'users' };
+    default: return null;
+  }
+}
+
+async function applyRoute(target) {
+  const route = target || { view: 'list' };
+  const isAdmin = adminTabsForRole().length > 0;
+  const filter = LIST_FILTERS.includes(route.filter) ? route.filter : 'all';
+
+  if (route.view === 'admin' && !isAdmin) return applyRoute({ view: 'list' });
+
+  if (route.view === 'detail') {
+    const tab = DETAIL_TABS.includes(route.tab) ? route.tab : '';
+    if (state.view === 'detail' && state.detail && state.detail.engagement.id === route.id) {
+      if (tab && tab !== state.tab) await setTab(tab);
+      return;
+    }
+    await openEngagement(route.id);
+    if (tab && state.view === 'detail' && state.detail &&
+        state.detail.engagement.id === route.id && tab !== state.tab) {
+      await setTab(tab);
+    }
+    return;
+  }
+
+  if (state.view === 'detail') {
+    state.detail = null;
+    state.scope = null;
+    state.credentials = null;
+  }
+
+  if (route.view === 'admin') {
+    state.view = 'admin';
+    state.adminTab = canUseAdminTab(route.tab) ? route.tab : (adminTabsForRole()[0] || 'users');
+    state.adminError = null;
+    updateHeader();
+    await loadAdmin();
+    return;
+  }
+
+  if (route.view === 'users') {
+    state.view = 'users';
+    updateHeader();
+    await loadUsers();
+    return;
+  }
+
+  if (route.view === 'clients') {
+    state.view = 'clients';
+    state.listFilter = filter;
+    updateHeader();
+    await loadClients();
+    render();
+    return;
+  }
+
+  if (route.view === 'calendar') {
+    state.view = 'calendar';
+    state.listFilter = filter;
+    updateHeader();
+    await loadCalendar();
+    if (state.view === 'calendar') renderCalendar();
+    return;
+  }
+
+  if (route.view === 'solicitations') {
+    state.view = 'solicitations';
+    state.listFilter = filter;
+    updateHeader();
+    await loadSolicitations();
+    render();
+    return;
+  }
+
+  if (route.view === 'kpi') {
+    if (!canUseAdminTab('users')) return applyRoute({ view: 'list' });
+    state.view = 'kpi';
+    state.listFilter = filter;
+    updateHeader();
+    await loadKpi();
+    return;
+  }
+
+  state.view = 'list';
+  state.listTab = 'eng';
+  state.listFilter = filter;
+  if (state.list.length && currentRoute() === location.hash) {
+    render();
+    return;
+  }
+  await loadList();
+}
+
+// Applica l'URL corrente (refresh, indietro/avanti, link diretto).
+async function handleRoute() {
+  if (routeBusy) return;
+  if (location.hash === currentRoute()) return;
+
+  routeBusy = true;
+  try {
+    await applyRoute(parseRoute(location.hash));
+  } finally {
+    routeBusy = false;
+    const canonical = currentRoute();
+    lastRoute = canonical;
+    if (location.hash !== canonical) history.replaceState(null, '', canonical);
+  }
+}
+
 /* ====== RENDER ====== */
 function render() {
   updateHeader();
+  // La scheda utente vive solo nell'elenco utenti: altrove si chiude da sola.
+  if (state.userModal &&
+      state.view !== 'users' &&
+      !(state.view === 'admin' && state.adminTab === 'users')) {
+    state.userModal = '';
+    state.userModalError = null;
+  }
   if (state.view === 'clients') renderClients();
   else if (state.view === 'users') renderUsers();
   else if (state.view === 'admin') renderAdmin();
   else if (state.view === 'calendar') renderCalendar();
   else if (state.view === 'solicitations') renderSolicitations();
+  else if (state.view === 'kpi') renderKpi();
   else if (state.view === 'detail' && state.detail) renderDetail();
   else renderList();
+  renderUserModal();
+  syncRoute();
 }
 
 /* ====== AZIONI ====== */
@@ -4398,10 +5490,10 @@ const actions = {
 
     if (view === 'admin') {
       state.view = 'admin';
-      state.adminTab = el.dataset.tab || 'users';
+      state.adminTab = canUseAdminTab(el.dataset.tab) ? el.dataset.tab : (adminTabsForRole()[0] || 'users');
       state.adminError = null;
       updateHeader();
-      loadAdmin();
+      loadAdmin().then(syncRoute);
       return;
     }
 
@@ -4414,6 +5506,12 @@ const actions = {
     if (view === 'calendar') {
       state.view = 'calendar';
       loadCalendar();
+      return;
+    }
+
+    if (view === 'kpi') {
+      state.view = 'kpi';
+      loadKpi();
       return;
     }
 
@@ -4497,14 +5595,114 @@ const actions = {
     loadAdmin();
   },
   'admin-tab': el => {
-    state.adminTab = el.dataset.tab || 'users';
+    state.adminTab = canUseAdminTab(el.dataset.tab) ? el.dataset.tab : (adminTabsForRole()[0] || 'users');
     state.adminError = null;
     updateHeader();
-    loadAdmin();
+    loadAdmin().then(syncRoute);
   },
-  'admin-select-list': el => {
+  'admin-select-list': async el => {
     state.adminMailingId = el.dataset.id || '';
+    state.adminMailingTemplateType = '';
+    await loadMailingTemplates(true);
     renderAdmin();
+  },
+  'admin-save-activity': async el => {
+    const card = el.closest('.actcard');
+    if (!card) return;
+
+    const body = {
+      label: card.querySelector('[data-f="label"]')?.value || '',
+      short: card.querySelector('[data-f="short"]')?.value || '',
+      description: card.querySelector('[data-f="desc"]')?.value || '',
+      retestPlanned: !!card.querySelector('[data-f="retest"]')?.checked,
+      deliverableTypes: [...card.querySelectorAll('[data-f="kind"]:checked')].map(box => box.value)
+    };
+
+    try {
+      await api(`/api/activity-types/${encodeURIComponent(el.dataset.key)}?` + qs(), {
+        method: 'PUT', body: JSON.stringify(body)
+      });
+      toast('Tipo di attività salvato');
+      state.activityTypes = await api('/api/activity-types?' + qs());
+      renderAdmin();
+    } catch (error) { toast(error.message); }
+  },
+
+  'admin-reset-activity': async el => {
+    try {
+      await api(`/api/activity-types/${encodeURIComponent(el.dataset.key)}?` + qs(), {
+        method: 'PUT', body: JSON.stringify({ reset: true })
+      });
+      toast('Default del tipo ripristinati');
+      state.activityTypes = await api('/api/activity-types?' + qs());
+      renderAdmin();
+    } catch (error) { toast(error.message); }
+  },
+
+  'apply-type-defaults': () => {
+    const e = state.detail?.engagement;
+    const definition = (state.activityTypes || []).find(item => item.key === e?.type);
+    if (!definition) { toast('Tipo di attività non riconosciuto'); return; }
+
+    document.querySelectorAll('input[name="setup_type"]').forEach(box => {
+      box.checked = (definition.deliverableTypes || []).includes(box.value);
+    });
+
+    const retest = $('#setup_retest');
+    if (retest) retest.checked = !!definition.retestPlanned;
+
+    toast(`Default di ${definition.label} applicati`);
+  },
+
+  'kpi-client': el => {
+    // Drill-down: il pannello KPI segue il cliente scelto in header.
+    state.clientId = el.dataset.client || '';
+    localStorage.setItem('cep.client', state.clientId);
+    state.view = 'kpi';
+    fillClientSelect();
+    updateHeader();
+    loadKpi();
+  },
+  'mailing-kind': el => {
+    state.adminMailingKind = el.dataset.kind || 'all';
+    renderAdmin();
+  },
+  'mailing-scope': el => {
+    state.adminMailingScope = el.dataset.scope || 'all';
+    renderAdmin();
+  },
+  'mailing-save-template': async el => {
+    const list = state.adminMailing.find(item => item.id === state.adminMailingId);
+    if (!list || list.scope !== 'engagement') return;
+
+    const subject = $('#ml_it_s')?.value || '';
+    const body = $('#ml_it_b')?.value || '';
+    const subjectEn = $('#ml_en_s')?.value || '';
+    const bodyEn = $('#ml_en_b')?.value || '';
+
+    try {
+      await api(`/api/admin/mail-templates/engagement/${encodeURIComponent(list.ownerId)}/${encodeURIComponent(el.dataset.type)}?` + qs(), {
+        method: 'PUT',
+        body: JSON.stringify({ subject, body, subjectEn, bodyEn })
+      });
+      toast('Testo dell\'engagement salvato');
+      await loadMailingTemplates(true);
+      renderAdmin();
+    } catch (error) { toast(error.message); }
+  },
+  'mailing-reset-template': async el => {
+    const list = state.adminMailing.find(item => item.id === state.adminMailingId);
+    if (!list || list.scope !== 'engagement') return;
+
+    try {
+      await api(`/api/admin/mail-templates/engagement/${encodeURIComponent(list.ownerId)}/${encodeURIComponent(el.dataset.type)}?` + qs(), {
+        method: 'PUT',
+        body: JSON.stringify({ reset: true })
+      });
+      toast('Testo ripristinato: eredita dal cliente');
+      await loadMailingTemplates(true);
+      renderAdmin();
+    } catch (error) { toast(error.message); }
   },
   'admin-add-recipient': async () => {
     const list = state.adminMailing.find(item => item.id === state.adminMailingId);
@@ -4544,11 +5742,11 @@ const actions = {
   },
   'admin-save-templates': () => saveAdminTemplates(),
   'admin-reset-template': el => resetAdminTemplate(el.dataset.type),
-  'select-user': el => {
-    state.selectedUserId = el.dataset.id;
-    if (state.view === 'admin' && state.adminTab === 'users') renderAdmin();
-    else renderUsers();
-  },
+  'select-user': el => openUserModal(el.dataset.id),
+  'open-user': el => openUserModal(el.dataset.id),
+  'close-user': () => closeUserModal(),
+  'save-user': () => saveUserFromModal(),
+  users: () => loadUsers(),
   'user-add-client': async el => {
     const select = $('#user-client-select');
     if (!select || !select.value) return;
@@ -4843,6 +6041,20 @@ const actions = {
       render();
     }
   },
+  'cal-view': el => {
+    state.calendarView = el.dataset.view === 'month' ? 'month' : 'timeline';
+    localStorage.setItem('cep.calendarView', state.calendarView);
+    renderCalendar();
+  },
+  'cal-filter': el => {
+    state.calendarFilter = el.dataset.filter || 'all';
+    renderCalendar();
+  },
+  'cal-select': el => {
+    const key = el.dataset.key || '';
+    state.calendarSel = key && state.calendarSel !== key ? key : '';
+    renderCalendar();
+  },
 
   'start-edit': el => {
     state.editing[el.dataset.key] = true;
@@ -4879,23 +6091,37 @@ const actions = {
 
   'save-rule': input => {
     const key = input.dataset.key;
-    const threshold = Number($('#rule_' + key)?.value) || 1;
     const enabled = !!$('#on_' + key)?.checked;
     return api(`/api/solicitations/rules/${encodeURIComponent(key)}?` + qs(), {
-      method: 'PUT', body: JSON.stringify({ enabled, thresholdDays: threshold })
+      method: 'PUT', body: JSON.stringify({ enabled })
     }).then(async () => {
-      toast('Regola aggiornata');
+      toast(enabled ? 'Regola attivata' : 'Regola disattivata');
       await loadSolicitations();
       render();
     }).catch(error => toast(error.message));
   },
 
-  'send-solicitation': el => api(`/api/solicitations/${encodeURIComponent(el.dataset.key)}/send?` + qs(), { method: 'POST' })
-    .then(async () => {
+  'send-solicitation': async el => {
+    try {
+      await api(`/api/solicitations/${encodeURIComponent(el.dataset.key)}/send?` + qs(), { method: 'POST' });
       toast('Sollecito inviato');
-      await loadSolicitations();
-      render();
-    }).catch(error => toast(error.message)),
+    } catch (error) {
+      toast(error.message);
+    }
+    await loadSolicitations();
+    render();
+  },
+
+  'solicit-engagement': async () => {
+    if (!state.detail) return;
+    try {
+      await api(`/api/engagements/${engagedId()}/solicitations?` + qs(), { method: 'POST' });
+      toast('Sollecito inviato');
+    } catch (error) {
+      toast(error.message);
+    }
+    await loadDetail(state.detail.engagement.id);
+  },
 
   'upload-manleva': async () => {
     const name = await pickFile('.pdf,.p7m');
@@ -5148,6 +6374,60 @@ const actions = {
     } catch (error) { toast(error.message); }
   },
 
+  'retest-request': async () => {
+    try {
+      await api(`/api/engagements/${engagedId()}/retest/request?` + qs(), { method: 'POST' });
+      toast('Retest richiesto');
+      await refreshDetail();
+    } catch (error) { toast(error.message); }
+  },
+
+  'retest-propose': async () => {
+    const startDate = $('#retest_start')?.value || '';
+    const endDate = $('#retest_end')?.value || '';
+
+    if (!startDate || !endDate) { toast('Indica avvio e fine del retest'); return; }
+
+    try {
+      await api(`/api/engagements/${engagedId()}/retest/propose?` + qs(), {
+        method: 'POST', body: JSON.stringify({ startDate, endDate })
+      });
+      toast('Date del retest proposte');
+      await refreshDetail();
+    } catch (error) { toast(error.message); }
+  },
+
+  'retest-decide': async el => {
+    try {
+      await api(`/api/engagements/${engagedId()}/retest/decide?` + qs(), {
+        method: 'POST', body: JSON.stringify({ approve: el.dataset.approve === '1' })
+      });
+      toast(el.dataset.approve === '1' ? 'Date del retest approvate' : 'Date del retest rifiutate');
+      await refreshDetail();
+    } catch (error) { toast(error.message); }
+  },
+
+  'retest-report': async () => {
+    const description = $('#retest_report')?.value || '';
+    if (!description.trim()) { toast('Serve una descrizione del report di retest'); return; }
+
+    try {
+      await api(`/api/engagements/${engagedId()}/retest/report?` + qs(), {
+        method: 'POST', body: JSON.stringify({ description })
+      });
+      toast('Retest concluso e report caricato');
+      await refreshDetail();
+    } catch (error) { toast(error.message); }
+  },
+
+  'retest-send': async () => {
+    try {
+      await api(`/api/engagements/${engagedId()}/retest/send?` + qs(), { method: 'POST' });
+      toast('Report di retest inviato al cliente');
+      await refreshDetail();
+    } catch (error) { toast(error.message); }
+  },
+
   'save-setup': async () => {
     const language = $('#setup_lang')?.value || 'it';
     const deliverableTypes = [...document.querySelectorAll('input[name="setup_type"]:checked')]
@@ -5159,7 +6439,11 @@ const actions = {
     try {
       await api(`/api/engagements/${engagedId()}/setup?` + qs(), {
         method: 'PUT',
-        body: JSON.stringify({ language, deliverableTypes })
+        body: JSON.stringify({
+          language,
+          deliverableTypes,
+          retestPlanned: !!$('#setup_retest')?.checked
+        })
       });
       toast('Setup salvato');
       await refreshDetail();
@@ -5353,39 +6637,7 @@ const actions = {
     } catch (error) { toast(error.message); }
   },
 
-  'save-mail-template': async el => {
-    const key = el.dataset.key;
-    const scope = state.mailTemplateScope[key] || 'engagement';
-    const subject = $('#tpl_subject_' + key)?.value || '';
-    const body = $('#tpl_body_' + key)?.value || '';
-    const subjectEn = $('#tpl_subject_en_' + key)?.value || '';
-    const bodyEn = $('#tpl_body_en_' + key)?.value || '';
 
-    try {
-      await api(`/api/engagements/${engagedId()}/mail-templates/${key}?` + qs(), {
-        method: 'PUT',
-        body: JSON.stringify({ scope, subject, body, subjectEn, bodyEn })
-      });
-      toast(`Template ${templateScopeLabel(scope)} aggiornato`);
-      await loadMailTemplates();
-      render();
-    } catch (error) { toast(error.message); }
-  },
-
-  'reset-mail-template': async el => {
-    const key = el.dataset.key;
-    const scope = state.mailTemplateScope[key] || 'engagement';
-
-    try {
-      await api(`/api/engagements/${engagedId()}/mail-templates/${key}?` + qs(), {
-        method: 'PUT',
-        body: JSON.stringify({ scope, reset: true })
-      });
-      toast('Template ripristinato');
-      await loadMailTemplates();
-      render();
-    } catch (error) { toast(error.message); }
-  },
 
   'export-log': async () => {
     try {
@@ -5406,7 +6658,7 @@ const busyActions = new Set([
   'decide', 'save-scope', 'save-credentials', 'save-setup', 'upload-report',
   'download-report', 'create-download-link', 'submit-review', 'review-decide', 'publish', 'add-dl',
   'remove-dl', 'invite-team', 'remove-team', 'toggle-mail', 'send-mail', 'export-log', 'retry-list',
-  'save-mail-template', 'reset-mail-template', 'admin-save-templates'
+  'admin-save-templates'
 ]);
 
 document.addEventListener('click', event => {
@@ -5490,10 +6742,6 @@ document.addEventListener('change', event => {
     }
     renderList();
   }
-  if (kind === 'mail-template-scope') {
-    state.mailTemplateScope[el.dataset.key] = el.value;
-    render();
-  }
   if (kind === 'admin-template-target') {
     const [scope, clientId] = String(el.value || 'standard').split('|');
     state.adminTemplateTarget = {
@@ -5507,8 +6755,34 @@ document.addEventListener('change', event => {
 
 /* ====== SHELL: SCORCIATOIE ====== */
 document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && state.userModal) {
+    closeUserModal();
+    return;
+  }
+
   if (event.key === 'Escape' && document.body.classList.contains('side-open')) {
     closeSideOnMobile();
+    return;
+  }
+
+  // Invio su una riga utente apre la scheda (le celle sono focusabili).
+  if (event.key === 'Enter' && !state.userModal) {
+    const row = event.target.closest?.('[data-act="open-user"]');
+    if (row && row.tagName === 'TR') {
+      event.preventDefault();
+      openUserModal(row.dataset.id);
+      return;
+    }
+  }
+
+  // Invio in un campo della scheda salva, come il pulsante.
+  if (event.key === 'Enter' && state.userModal) {
+    const tag = (event.target.tagName || '').toLowerCase();
+    const save = document.querySelector('[data-act="save-user"]');
+    if (save && (tag === 'input' || tag === 'select')) {
+      event.preventDefault();
+      saveUserFromModal();
+    }
     return;
   }
 
@@ -5520,6 +6794,8 @@ document.addEventListener('keydown', event => {
 });
 
 window.addEventListener('resize', applyShell);
+window.addEventListener('hashchange', handleRoute);
+window.addEventListener('popstate', handleRoute);
 
 /* ====== INIT ====== */
 function init() {
@@ -5553,6 +6829,16 @@ function init() {
       }
       updateHeader();
       await loadList();
+      routeReady = true;
+      const bootRoute = parseRoute(location.hash);
+      if (!bootRoute) {
+        syncRoute();
+        lastRoute = currentRoute();
+        if (location.hash !== lastRoute) history.replaceState(null, '', lastRoute);
+        return;
+      }
+      await handleRoute();
+      if (!lastRoute) lastRoute = currentRoute();
     });
   });
 }

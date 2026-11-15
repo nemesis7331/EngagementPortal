@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calendario · 5 proposte</title>
+<style>
+:root{
+  --navy:#08243f;--navy-2:#0b3050;--ink:#0c1c2c;--muted:#5c7183;--muted-2:#8194a6;
+  --line:#e2e9f0;--line-soft:#eef3f7;--bg:#eef2f6;--card:#fff;--surface:#f7f9fb;
+  --blue:#0b5fa5;--blue-600:#0a5493;--blue-100:#e3eef9;--teal:#0e9fb5;--teal-100:#d8f3f7;
+  --amber:#8a5b00;--amber-bg:#fff5d6;--amber-line:#ead48a;--amber-dot:#d9a514;
+  --green:#0a7d4f;--green-bg:#e2f6ec;--green-line:#a9e3c4;
+  --red:#b42318;--red-bg:#fde8e6;--red-line:#f5b5ae;
+  --r:12px;--shadow:0 1px 2px rgba(8,36,63,.06),0 8px 24px rgba(8,36,63,.08);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+button{font:inherit;cursor:pointer;color:inherit}
+h1,h2,h3,h4,p{margin:0}
+.site{display:flex;align-items:center;gap:12px;padding:11px 22px;background:var(--navy);color:#fff;position:sticky;top:0;z-index:50}
+.site .lg{width:30px;height:30px;border-radius:9px;background:var(--teal);color:var(--navy);display:grid;place-items:center;font-weight:800;font-size:12px}
+.site b{font-size:13.5px}.site small{display:block;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#9db8ce}
+.site .meta{margin-left:auto;font-size:11.5px;color:#9db8ce}
+.wrap{max-width:1320px;margin:0 auto;padding:26px 18px 90px}
+.intro{max-width:1000px}
+h1{font-size:32px;line-height:1.12;letter-spacing:-.025em;color:var(--navy);margin:0 0 8px}
+.lede{font-size:16px;color:var(--muted);max-width:920px}
+.rule{display:flex;align-items:flex-start;gap:11px;background:#fff;border:1px solid var(--line);border-left:3px solid var(--teal);border-radius:10px;padding:12px 14px;margin:18px 0 8px}
+.rule .i{width:26px;height:26px;border-radius:50%;background:var(--teal-100);color:var(--navy);display:grid;place-items:center;font-weight:800;flex:none}
+.rule b{display:block;font-size:13px;color:var(--navy)}
+.rule span{font-size:12.5px;color:var(--muted)}
+.switcher{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 12px}
+.switcher button{display:flex;align-items:center;gap:9px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:9px 13px;color:var(--muted);font-weight:650;font-size:12.5px}
+.switcher button:hover{border-color:#b9cbdd}
+.switcher button.on{border-color:var(--blue);color:var(--navy);box-shadow:0 0 0 3px var(--blue-100)}
+.switcher .k{width:23px;height:23px;border-radius:7px;background:var(--surface);border:1px solid var(--line);display:grid;place-items:center;font-size:11px;font-weight:800;color:var(--muted)}
+.switcher button.on .k{background:var(--blue);border-color:var(--blue);color:#fff}
+.switcher .hint{font-size:10.5px;color:var(--muted-2);font-weight:500}
+.proposal{display:none;padding-top:14px}.proposal.active{display:block}
+.p-head{display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-bottom:4px}
+.p-tag{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);border:1px solid var(--teal-100);background:#fff;border-radius:999px;padding:4px 10px;margin-top:4px}
+.p-head h2{font-size:24px;letter-spacing:-.02em;color:var(--navy)}
+.p-desc{max-width:940px;color:var(--muted);margin:6px 0 12px}
+.p-metrics{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.p-metrics span{background:#fff;border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-size:11.5px;color:var(--muted)}
+.p-metrics b{color:var(--navy)}
+/* mock */
+.mock{position:relative;height:700px;background:var(--surface);border:1px solid #cfdae5;border-radius:16px;overflow:hidden;box-shadow:var(--shadow);font-size:12.5px}
+.mock *::-webkit-scrollbar{width:10px;height:10px}
+.mock *::-webkit-scrollbar-thumb{background:#cfdae5;border-radius:8px;border:3px solid transparent;background-clip:content-box}
+.m-top{display:flex;align-items:center;gap:12px;height:48px;padding:0 14px;background:#fff;border-bottom:1px solid var(--line);flex:none}
+.m-brand{display:flex;align-items:center;gap:9px;font-weight:750;color:var(--navy);font-size:13px;white-space:nowrap}
+.m-brand i{width:26px;height:26px;border-radius:8px;background:var(--navy);color:#fff;display:grid;place-items:center;font-style:normal;font-size:10px;font-weight:800}
+.m-crumb{color:var(--muted-2);font-size:12px;display:flex;gap:7px;align-items:center;white-space:nowrap}
+.m-crumb b{color:var(--ink);font-weight:650}
+.m-legend{margin-left:auto;display:flex;align-items:center;gap:12px;font-size:11px;color:var(--muted)}
+.m-legend span{display:inline-flex;align-items:center;gap:5px}
+.m-legend i{width:8px;height:8px;border-radius:3px;display:inline-block}
+.m-legend .p i{background:var(--blue)}.m-legend .r i{background:var(--amber-dot)}
+.btn{border:1px solid transparent;border-radius:7px;padding:6px 11px;font-weight:650;font-size:12px;display:inline-flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;white-space:nowrap}
+.btn.pri{background:var(--blue);color:#fff}.btn.pri:hover{background:var(--blue-600)}
+.btn.sec{background:#fff;border-color:var(--line);color:var(--navy)}.btn.sec:hover{background:var(--surface)}
+.btn.sm{padding:4px 9px;font-size:11px}
+.iconbtn{width:28px;height:28px;border:1px solid var(--line);background:#fff;border-radius:6px;display:grid;place-items:center;color:var(--muted)}
+.iconbtn:hover{color:var(--navy);background:var(--surface)}
+.iconbtn:disabled{opacity:.35;cursor:default}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:750;padding:2px 7px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--muted);white-space:nowrap}
+.pill::before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor}
+.pill.blue{background:var(--blue-100);border-color:#cfe2f4;color:#155a92}
+.pill.amber{background:var(--amber-bg);border-color:var(--amber-line);color:var(--amber)}
+.pill.ok{background:var(--green-bg);border-color:var(--green-line);color:var(--green)}
+/* calendar primitives */
+.cal7{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.dow{text-align:center;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted-2);font-weight:800;padding:2px 0 4px}
+.day{min-height:56px;border:1px solid var(--line-soft);border-radius:7px;padding:4px 5px;background:#fff;display:flex;flex-direction:column;gap:3px;min-width:0;cursor:pointer}
+.day:hover{border-color:#c9d9e8}
+.day.out{background:var(--surface-3);border-color:transparent;cursor:default}
+.day.past{background:var(--surface-3);opacity:.55}
+.day.today{border-color:var(--blue);box-shadow:0 0 0 2px var(--blue-100)}
+.day.sel{background:var(--blue-100);border-color:var(--blue);box-shadow:0 0 0 2px #cfe2f4}
+.day .n{font-size:10.5px;font-weight:750;color:var(--muted);line-height:1}
+.day.today .n,.day.sel .n{color:var(--blue)}
+.day .dots{display:flex;gap:2px;flex-wrap:wrap;margin-top:2px}
+.day .dot{width:5px;height:5px;border-radius:50%;display:block}
+.dot.p{background:var(--blue)}.dot.r{background:var(--amber-dot)}
+.day .cnt{font-size:8.5px;color:var(--muted-2);font-weight:700}
+.month-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.month-head h3{font-size:15px;color:var(--navy);text-transform:capitalize}
+.month-head .sub{font-size:10.5px;color:var(--muted-2)}
+.month-head .nav{margin-left:auto;display:flex;gap:4px}
+/* A */
+.a-shell{display:grid;grid-template-columns:minmax(0,1fr) 330px;height:calc(100% - 48px);min-height:0}
+.a-main{padding:12px 14px;overflow:auto;min-width:0}
+.a-side{border-left:1px solid var(--line);background:#fbfdff;padding:14px;overflow:auto}
+.a-day-h{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:10px}
+.a-day-h h3{font-size:15px;color:var(--navy);text-transform:capitalize;line-height:1.2}
+.a-day-h p{font-size:10.5px;color:var(--muted-2);margin-top:2px}
+.a-ev{border:1px solid var(--line);border-left:3px solid var(--blue);border-radius:8px;padding:8px 9px;background:#fff;margin-bottom:7px;cursor:pointer}
+.a-ev:hover{border-color:#c9d9e8;box-shadow:var(--shadow)}
+.a-ev.r{border-left-color:var(--amber-dot)}
+.a-ev b{display:block;font-size:12px;color:var(--navy);line-height:1.25}
+.a-ev span{display:block;font-size:10.5px;color:var(--muted);margin-top:2px}
+.a-ev .row{display:flex;align-items:center;gap:6px;margin-top:6px;flex-wrap:wrap}
+.a-empty{padding:18px 10px;text-align:center;color:var(--muted-2);font-size:11.5px;border:1px dashed var(--line);border-radius:8px}
+/* B */
+.b-wrap{padding:12px 14px;height:calc(100% - 48px);overflow:auto}
+.b-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.b-head h3{font-size:14px;color:var(--navy)}
+.b-chips{margin-left:auto;display:flex;gap:4px}
+.b-chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:3px 9px;font-size:10.5px;font-weight:650;color:var(--muted)}
+.b-chip.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.b-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start}
+.b-day{border:1px solid var(--line);border-radius:9px;background:#fff;margin-bottom:9px;overflow:hidden}
+.b-day-h{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-bottom:1px solid var(--line-soft)}
+.b-day-h b{font-size:11.5px;color:var(--navy);text-transform:capitalize}
+.b-day-h span{margin-left:auto;font-size:9.5px;color:var(--muted-2)}
+.b-day.today .b-day-h{background:var(--blue-100);border-bottom-color:#cfe2f4}
+.b-ev{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border-bottom:1px solid var(--line-soft);cursor:pointer}
+.b-ev:last-child{border-bottom:0}
+.b-ev:hover{background:var(--surface)}
+.b-ev .dot{width:7px;height:7px;border-radius:2px;margin-top:4px;flex:none}
+.b-ev b{display:block;font-size:11.5px;color:var(--navy);line-height:1.3}
+.b-ev span{display:block;font-size:10px;color:var(--muted)}
+/* C */
+.c-wrap{padding:12px 14px;height:calc(100% - 48px);overflow:auto}
+.c-hero{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.c-hero h3{font-size:14px;color:var(--navy)}
+.c-hero .hint{font-size:10.5px;color:var(--muted-2)}
+.c-scroll{overflow:auto;border:1px solid var(--line);border-radius:9px;background:#fff}
+.c-axis{display:grid;grid-template-columns:210px minmax(0,1fr);position:sticky;top:0;z-index:2;background:#fff;border-bottom:1px solid var(--line)}
+.c-axis .lab{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted-2);font-weight:800;padding:7px 9px}
+.c-axis-days{display:grid;min-width:0;border-left:1px solid var(--line-soft)}
+.c-tick{border-left:1px solid var(--line-soft);height:26px;font-size:8px;color:var(--muted-2);display:flex;align-items:center;justify-content:center}
+.c-tick.mon{border-left-color:#cbd9e6;color:var(--navy);font-weight:800}
+.c-row{display:grid;grid-template-columns:210px minmax(0,1fr);align-items:center;border-top:1px solid var(--line-soft);min-height:38px}
+.c-row:first-of-type{border-top:0}
+.c-label{padding:5px 9px;min-width:0;border-right:1px solid var(--line-soft)}
+.c-label b{display:block;font-size:10.5px;color:var(--navy);line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.c-label span{display:block;font-size:9px;color:var(--muted-2)}
+.c-track{display:grid;height:38px;align-items:center;min-width:0;background-image:linear-gradient(to right,rgba(226,233,240,.55) 1px,transparent 1px);background-size:calc(100% / 47) 100%}
+.c-bar{grid-row:1;height:19px;border-radius:5px;padding:0 5px;font-size:8.5px;font-weight:700;line-height:19px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;border:1px solid transparent;align-self:center}
+.c-bar.p{background:var(--blue-100);border-color:#cfe2f4;color:#155a92}
+.c-bar.r{background:var(--amber-bg);border-color:var(--amber-line);color:var(--amber)}
+.c-bar.sel{outline:2px solid var(--blue);outline-offset:1px}
+.c-bar:hover{filter:brightness(.97)}
+.c-detail{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px;padding:8px 10px;border:1px solid var(--line);border-left:3px solid var(--blue);border-radius:8px;background:#fff;font-size:11px;min-height:38px}
+.c-detail b{color:var(--navy)}.c-detail .muted{color:var(--muted)}
+/* D */
+.d-wrap{padding:12px 14px;height:calc(100% - 48px);overflow:auto}
+.d-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.d-head h3{font-size:14px;color:var(--navy)}
+.d-head .hint{font-size:10.5px;color:var(--muted-2)}
+.d-head .nav{margin-left:auto;display:flex;gap:4px}
+.d-week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin-bottom:6px}
+.d-day{border:1px solid var(--line);border-radius:8px;background:#fff;padding:5px;min-height:228px;display:flex;flex-direction:column;gap:3px;min-width:0}
+.d-day.today{border-color:var(--blue);box-shadow:0 0 0 2px var(--blue-100)}
+.d-day-h{display:flex;align-items:baseline;gap:4px;padding:1px 2px 3px;border-bottom:1px solid var(--line-soft)}
+.d-day-h b{font-size:10.5px;color:var(--navy);text-transform:uppercase}
+.d-day-h span{font-size:9.5px;color:var(--muted-2)}
+.d-day-h i{margin-left:auto;font-style:normal;font-size:8.5px;color:var(--muted-2)}
+.d-ev{border-left:3px solid var(--blue);background:var(--blue-100);border-radius:4px;padding:3px 4px;cursor:pointer;line-height:1.2}
+.d-ev.r{border-left-color:var(--amber-dot);background:var(--amber-bg)}
+.d-ev b{display:block;font-size:8.5px;color:var(--navy);white-space:normal;overflow-wrap:anywhere}
+.d-ev span{display:block;font-size:7.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.d-more{font-size:8px;color:var(--muted-2);font-weight:650}
+/* E */
+.e-wrap{padding:10px 14px 12px;height:calc(100% - 48px);overflow:auto;display:flex;flex-direction:column;gap:8px}
+.e-months{display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:none}
+.e-month{border:1px solid var(--line);border-radius:9px;background:#fff;padding:8px}
+.e-month .mh{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.e-month .mh b{font-size:12px;color:var(--navy);text-transform:capitalize}
+.e-month .mh span{margin-left:auto;font-size:9px;color:var(--muted-2)}
+.e-month .cal7{gap:3px}
+.e-day{min-height:31px;border:1px solid var(--line-soft);border-radius:5px;padding:2px 3px;background:#fff;display:flex;flex-direction:column;gap:2px;cursor:pointer;min-width:0}
+.e-day:hover{border-color:#c9d9e8}
+.e-day.out{background:var(--surface-3);border-color:transparent;cursor:default}
+.e-day.past{background:var(--surface-3);opacity:.55}
+.e-day.today{border-color:var(--blue);box-shadow:0 0 0 1px var(--blue-100)}
+.e-day.sel{background:var(--blue-100);border-color:var(--blue)}
+.e-day .n{font-size:8.5px;font-weight:750;color:var(--muted);line-height:1}
+.e-day .dots{display:flex;gap:1px;flex-wrap:wrap}
+.e-day .dot{width:4px;height:4px;border-radius:50%;display:block}
+.e-day .cnt{font-size:7px;color:var(--muted-2);font-weight:700}
+.e-filter{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:4px}
+.e-filter h3{font-size:13px;color:var(--navy)}
+.e-filter .hint{font-size:10px;color:var(--muted-2)}
+.e-filter .btn{margin-left:auto}
+.e-tablewrap{border:1px solid var(--line);border-radius:9px;background:#fff;overflow:auto;min-height:0;flex:1}
+.e-table{width:100%;border-collapse:separate;border-spacing:0;font-size:10.5px}
+.e-table th{position:sticky;top:0;background:var(--surface);text-align:left;font-size:8.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted-2);font-weight:800;padding:6px 8px;border-bottom:1px solid var(--line)}
+.e-table td{padding:6px 8px;border-bottom:1px solid var(--line-soft);vertical-align:middle;white-space:nowrap}
+.e-table tr:last-child td{border-bottom:0}
+.e-table tr:hover td{background:var(--surface)}
+.e-table td b{color:var(--navy);font-weight:650}
+.e-table .muted{color:var(--muted-2)}
+/* pros/cons */
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.pc>div{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.pc h5{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted-2);font-weight:800;margin:0 0 6px}
+.pc ul{margin:0;padding-left:17px;font-size:12.5px;color:var(--muted)}.pc li{margin-bottom:3px}
+.pc .good ul{color:#15603f}.pc .bad ul{color:#845200}
+.verdict{display:flex;gap:10px;align-items:flex-start;background:linear-gradient(135deg,#0b3050,#0a4a6b);color:#d9e8f3;border-radius:12px;padding:12px 14px;margin-top:12px;font-size:12.5px;line-height:1.5}
+.verdict b{color:#fff}.verdict .i{color:#7fe3ef;font-weight:800}
+.cmp{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;margin-top:34px;box-shadow:var(--shadow)}
+.cmp h2{font-size:20px;color:var(--navy);margin-bottom:4px}
+.cmp p{font-size:12.5px;color:var(--muted);margin-bottom:12px}
+.cmp table{width:100%;border-collapse:collapse;font-size:12px}
+.cmp th,.cmp td{text-align:left;padding:8px 9px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+.cmp th{font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted-2)}
+.cmp td:first-child{font-weight:650;color:var(--navy)}
+.cmp tr:last-child td{border-bottom:0}
+.reco{margin-top:14px;background:#f3f9fd;border:1px solid #cfe2f4;border-radius:10px;padding:13px 15px;font-size:13px;color:#155a92;line-height:1.55}
+.reco b{color:#0b4775}
+.toast{position:fixed;right:22px;bottom:22px;background:var(--navy);color:#fff;padding:10px 15px;border-radius:9px;font-size:12.5px;box-shadow:0 12px 34px rgba(8,36,63,.3);opacity:0;transform:translateY(8px);transition:.18s;pointer-events:none;z-index:200}
+.toast.show{opacity:1;transform:translateY(0)}
+@media(max-width:1100px){
+  .a-shell{grid-template-columns:minmax(0,1fr) 300px}
+  .b-cols{grid-template-columns:1fr}
+}
+@media(max-width:900px){
+  .wrap{padding:20px 12px 70px}
+  .a-shell{grid-template-columns:1fr;height:auto}
+  .a-side{border-left:0;border-top:1px solid var(--line)}
+  .e-months{grid-template-columns:1fr}
+  .d-week{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .d-day{min-height:180px}
+  .pc{grid-template-columns:1fr}
+  .switcher button .hint{display:none}
+  .mock{height:auto;min-height:700px}
+}
+</style>
+</head>
+<body>
+<header class="site">
+  <div class="lg">CE</div>
+  <div><b>Cyber Engagement Portal</b><small>Calendario · 5 proposte</small></div>
+  <div class="meta">Da oggi a fine mese successivo · dati demo</div>
+</header>
+
+<main class="wrap">
+  <section class="intro">
+    <h1>Il calendario, ma leggibile</h1>
+    <p class="lede">
+      Oggi i nomi finiscono in celle larghe ~140 px e si troncano subito. Le cinque proposte sotto
+      cambiano il modo di mostrare gli stessi eventi: mappa + agenda, agenda pura, timeline,
+      due settimane a colonne, oppure mappa + tabella. Tutte filtrano gli eventi visibili all’utente.
+    </p>
+    <div class="rule">
+      <span class="i">i</span>
+      <div><b>Dati demo</b><span>Stessi engagement del portale: periodi pianificati in blu, proposte in ambra. Oggi è domenica 15 novembre 2026.</span></div>
+    </div>
+    <div class="switcher" role="tablist" aria-label="Proposte calendario">
+      <button class="on" data-v="a" role="tab" aria-selected="true"><span class="k">A</span>Mese + agenda <span class="hint">· giorno selezionato</span></button>
+      <button data-v="b" role="tab" aria-selected="false"><span class="k">B</span>Agenda <span class="hint">· zero griglia</span></button>
+      <button data-v="c" role="tab" aria-selected="false"><span class="k">C</span>Timeline <span class="hint">· Gantt</span></button>
+      <button data-v="d" role="tab" aria-selected="false"><span class="k">D</span>Due settimane <span class="hint">· colonne</span></button>
+      <button data-v="e" role="tab" aria-selected="false"><span class="k">E</span>Mappa + tabella <span class="hint">· tutto leggibile</span></button>
+    </div>
+  </section>
+
+  <!-- A -->
+  <section class="proposal active" id="p-a">
+    <div class="p-head"><span class="p-tag">Proposta A</span><h2>Mese + agenda del giorno</h2></div>
+    <p class="p-desc">La griglia del mese resta compatta: solo numero e puntini colorati. I nomi interi, il cliente e le date stanno nel pannello a destra, aggiornato cliccando un giorno. Il calendario non perde la visione d’insieme e gli eventi diventano leggibili.</p>
+    <div class="p-metrics"><span><b>Mappa mese</b> sempre visibile</span><span><b>Nomi interi</b> nel pannello</span><span><b>1 click</b> su un giorno</span><span><b>2 mesi</b> con frecce</span></div>
+    <div class="mock" id="mock-a">
+      <div class="m-top"><div class="m-brand"><i>CE</i>Calendario</div><div class="m-crumb">Portale <span>/</span> <b>Calendario</b></div><div class="m-legend"><span class="p"><i></i>Pianificato</span><span class="r"><i></i>Proposto</span></div></div>
+      <div class="a-shell">
+        <div class="a-main">
+          <div class="month-head"><h3 id="a-month-title"></h3><span class="sub" id="a-month-sub"></span><div class="nav"><button class="iconbtn" data-a-nav="-1" aria-label="Mese precedente">‹</button><button class="iconbtn" data-a-nav="1" aria-label="Mese successivo">›</button></div></div>
+          <div class="cal7" id="a-dow"></div>
+          <div class="cal7" id="a-days" style="margin-top:4px"></div>
+        </div>
+        <aside class="a-side" id="a-side"></aside>
+      </div>
+    </div>
+    <div class="pc">
+      <div class="good"><h5>Perché funziona</h5><ul><li>Nomi, cliente e stato sempre interi nel pannello.</li><li>La mappa del mese resta consultabile a colpo d’occhio.</li><li>Il click su un giorno è un gesto naturale.</li><li>Scala bene con molti eventi: la griglia non si riempie di testo.</li></ul></div>
+      <div class="bad"><h5>Da valutare</h5><ul><li>Per vedere un evento di un altro giorno serve un click.</li><li>Il pannello laterale toglie ~330 px alla griglia.</li><li>Meno adatto al confronto di più settimane.</li></ul></div>
+    </div>
+    <div class="verdict"><span class="i">✓</span><div><b>Ideale se</b> vuoi un calendario classico ma leggibile, con il dettaglio del giorno sempre a portata di mano.</div></div>
+  </section>
+
+  <!-- B -->
+  <section class="proposal" id="p-b">
+    <div class="p-head"><span class="p-tag">Proposta B</span><h2>Agenda per giorni</h2></div>
+    <p class="p-desc">Niente griglia: solo i giorni con eventi, in ordine cronologico, su due colonne. Ogni evento occupa una riga con nome completo, cliente, periodo e stato. È la soluzione più leggibile quando gli eventi sono pochi o medi.</p>
+    <div class="p-metrics"><span><b>0 griglie</b></span><span><b>Nomi interi</b> sempre</span><span><b>Ordine</b> cronologico</span><span><b>Filtro</b> pianificati/proposti</span></div>
+    <div class="mock" id="mock-b">
+      <div class="m-top"><div class="m-brand"><i>CE</i>Calendario</div><div class="m-crumb">Portale <span>/</span> <b>Calendario</b></div><div class="m-legend"><span class="p"><i></i>Pianificato</span><span class="r"><i></i>Proposto</span></div></div>
+      <div class="b-wrap">
+        <div class="b-head"><h3>Da oggi a fine dicembre</h3><div class="b-chips"><button class="b-chip on" data-b-filter="all">Tutti</button><button class="b-chip" data-b-filter="planned">Pianificati</button><button class="b-chip" data-b-filter="proposed">Proposti</button></div></div>
+        <div class="b-cols" id="b-cols"></div>
+      </div>
+    </div>
+    <div class="pc">
+      <div class="good"><h5>Perché funziona</h5><ul><li>Leggibilità massima: nessuna troncatura.</li><li>Si vede subito “cosa succede e quando”.</li><li>Ottima su mobile e per l’uso quotidiano.</li><li>Filtri semplici per piano/proposte.</li></ul></div>
+      <div class="bad"><h5>Da valutare</h5><ul><li>Nessuna visione d’insieme del mese.</li><li>Con molte settimane diventa una lista lunga.</li><li>Meno adatta a confrontare periodi.</li></ul></div>
+    </div>
+    <div class="verdict"><span class="i">✓</span><div><b>Ideale se</b> l’uso principale è “cosa devo fare oggi / questa settimana” e vuoi la massima leggibilità.</div></div>
+  </section>
+
+  <!-- C -->
+  <section class="proposal" id="p-c">
+    <div class="p-head"><span class="p-tag">Proposta C</span><h2>Timeline degli engagement</h2></div>
+    <p class="p-desc">Una riga per engagement, l’asse del tempo da oggi a fine dicembre. Le barre blu sono i periodi pianificati, quelle ambra le proposte: si vede subito sovrapposizione, durata e continuità. I nomi restano nella colonna di sinistra, sempre interi.</p>
+    <div class="p-metrics"><span><b>Nomi interi</b> a sinistra</span><span><b>Barre</b> multi-giorno</span><span><b>Sovrapposizioni</b> visibili</span><span><b>Click</b> per dettaglio</span></div>
+    <div class="mock" id="mock-c">
+      <div class="m-top"><div class="m-brand"><i>CE</i>Calendario</div><div class="m-crumb">Portale <span>/</span> <b>Calendario · timeline</b></div><div class="m-legend"><span class="p"><i></i>Pianificato</span><span class="r"><i></i>Proposto</span></div></div>
+      <div class="c-wrap">
+        <div class="c-hero"><h3>Da oggi a fine dicembre</h3><span class="hint">Barre = periodi · click per il dettaglio</span></div>
+        <div class="c-scroll"><div id="c-timeline"></div></div>
+        <div class="c-detail" id="c-detail"><span class="muted">Clicca una barra per vedere i dettagli dell’engagement.</span></div>
+      </div>
+    </div>
+    <div class="pc">
+      <div class="good"><h5>Perché funziona</h5><ul><li>I nomi non si troncano: stanno a sinistra.</li><li>Periodi lunghi e sovrapposizioni si leggono subito.</li><li>Perfetta per pianificare e spostare date.</li><li>Il click sulla barra mostra periodo e stato.</li></ul></div>
+      <div class="bad"><h5>Da valutare</h5><ul><li>Non è un calendario “da parete”: niente celle giorno.</li><li>Con 30+ engagement serve scroll verticale.</li><li>Meno intuitiva per chi cerca “il 22 novembre”.</li></ul></div>
+    </div>
+    <div class="verdict"><span class="i">✓</span><div><b>Ideale se</b> il calendario serve soprattutto a pianificare e vedere i periodi degli engagement, non a leggere le ricorrenze giorno per giorno.</div></div>
+  </section>
+
+  <!-- D -->
+  <section class="proposal" id="p-d">
+    <div class="p-head"><span class="p-tag">Proposta D</span><h2>Due settimane a colonne</h2></div>
+    <p class="p-desc">Un calendario tradizionale ma con celle molto più larghe: 7 colonne per due settimane, eventi impilati con nome completo su due righe. Le frecce fanno scorrere di 14 giorni alla volta, fino a fine dicembre.</p>
+    <div class="p-metrics"><span><b>Celle ~140 px</b></span><span><b>Nomi</b> su 2 righe</span><span><b>14 giorni</b> per volta</span><span><b>Oggi</b> evidenziato</span></div>
+    <div class="mock" id="mock-d">
+      <div class="m-top"><div class="m-brand"><i>CE</i>Calendario</div><div class="m-crumb">Portale <span>/</span> <b>Calendario · 2 settimane</b></div><div class="m-legend"><span class="p"><i></i>Pianificato</span><span class="r"><i></i>Proposto</span></div></div>
+      <div class="d-wrap">
+        <div class="d-head"><h3 id="d-range"></h3><span class="hint">Eventi per giorno</span><div class="nav"><button class="iconbtn" id="d-prev" aria-label="14 giorni prima">‹</button><button class="iconbtn" id="d-next" aria-label="14 giorni dopo">›</button></div></div>
+        <div id="d-board"></div>
+      </div>
+    </div>
+    <div class="pc">
+      <div class="good"><h5>Perché funziona</h5><ul><li>È il formato calendario che tutti conoscono.</li><li>Le celle larghe permettono nomi su due righe.</li><li>Si vede il carico giorno per giorno.</li><li>Funziona bene anche su tablet.</li></ul></div>
+      <div class="bad"><h5>Da valutare</h5><ul><li>Solo 14 giorni per volta: il mese richiede 3 schermate.</li><li>Con 4+ eventi al giorno le celle si riempiono.</li><li>Meno adatta ai periodi lunghi.</li></ul></div>
+    </div>
+    <div class="verdict"><span class="i">✓</span><div><b>Ideale se</b> vuoi restare nel formato calendario classico, ma con abbastanza spazio per leggere i nomi.</div></div>
+  </section>
+
+  <!-- E -->
+  <section class="proposal" id="p-e">
+    <div class="p-head"><span class="p-tag">Proposta E</span><h2>Mappa due mesi + tabella eventi</h2></div>
+    <p class="p-desc">In alto una mappa compatta di novembre e dicembre, con puntini e conteggi: serve a orientarsi. Sotto, la tabella di tutti gli eventi del periodo con periodo, engagement, cliente e stato. Cliccando un giorno la tabella si filtra; “Tutti” la ripristina.</p>
+    <div class="p-metrics"><span><b>2 mesi</b> in una vista</span><span><b>Tabella</b> sempre leggibile</span><span><b>Click giorno</b> = filtro</span><span><b>Tutti gli eventi</b> visibili</span></div>
+    <div class="mock" id="mock-e">
+      <div class="m-top"><div class="m-brand"><i>CE</i>Calendario</div><div class="m-crumb">Portale <span>/</span> <b>Calendario · eventi</b></div><div class="m-legend"><span class="p"><i></i>Pianificato</span><span class="r"><i></i>Proposto</span></div></div>
+      <div class="e-wrap">
+        <div class="e-months" id="e-months"></div>
+        <div class="e-filter"><h3 id="e-title">Tutti gli eventi</h3><span class="hint" id="e-hint"></span><button class="btn sec sm" id="e-reset">Tutti</button></div>
+        <div class="e-tablewrap"><table class="e-table"><thead><tr><th>Periodo</th><th>Engagement</th><th>Cliente</th><th>Stato</th></tr></thead><tbody id="e-rows"></tbody></table></div>
+      </div>
+    </div>
+    <div class="pc">
+      <div class="good"><h5>Perché funziona</h5><ul><li>La tabella è la fonte di verità: niente nomi troncati.</li><li>La mappa dà il contesto dei due mesi.</li><li>Il filtro per giorno collega mappa e tabella.</li><li>Copre tutto il periodo senza cambiare pagina.</li></ul></div>
+      <div class="bad"><h5>Da valutare</h5><ul><li>Meno “calendario” e più “registro eventi”.</li><li>La mappa compatta non mostra i nomi (solo puntini).</li><li>Con molti eventi la tabella richiede scroll.</li></ul></div>
+    </div>
+    <div class="verdict"><span class="i">✓</span><div><b>Ideale se</b> vuoi leggere tutti gli eventi senza click e avere comunque una mappa dei due mesi. È la mia prima raccomandazione per la leggibilità.</div></div>
+  </section>
+
+  <section class="cmp">
+    <h2>Confronto rapido</h2>
+    <p>Le proposte non sono tutte equivalenti: cambiano il modo di leggere lo stesso periodo.</p>
+    <table>
+      <thead><tr><th></th><th>A · Mese + agenda</th><th>B · Agenda</th><th>C · Timeline</th><th>D · 2 settimane</th><th>E · Mappa + tabella</th></tr></thead>
+      <tbody>
+        <tr><td>Nomi leggibili</td><td>Nel pannello</td><td>Sempre</td><td>Sempre a sinistra</td><td>Su 2 righe</td><td>Sempre in tabella</td></tr>
+        <tr><td>Visione mese</td><td>Sì, 1 mese</td><td>No</td><td>No, ma periodo continuo</td><td>14 giorni</td><td>Sì, 2 mesi</td></tr>
+        <tr><td>Multi-giorno</td><td>Puntini + agenda</td><td>Riga con periodo</td><td>Barra continua</td><td>Celle multiple</td><td>Riga con periodo</td></tr>
+        <tr><td>Sovrapposizioni</td><td>Poco visibili</td><td>Non evidenti</td><td>Molto evidenti</td><td>Visibili</td><td>Non evidenti</td></tr>
+        <tr><td>Click per leggere</td><td>1 (giorno)</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>Migliore per</td><td>Uso calendario</td><td>Agenda quotidiana</td><td>Pianificazione</td><td>Settimana</td><td>Leggere tutto</td></tr>
+      </tbody>
+    </table>
+    <div class="reco"><b>La mia raccomandazione:</b> <b>E</b> come vista principale del Calendario (mappa due mesi + tabella leggibile), con <b>C</b> come seconda vista “Timeline” per la pianificazione e <b>A</b> se vuoi mantenere il dettaglio del giorno. <b>B</b> è ottima per l’uso quotidiano, <b>D</b> per chi ragiona a settimane.</div>
+  </section>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const TODAY = new Date(2026, 10, 15);
+const RANGE_END = new Date(2026, 11, 31);
+const MONTHS = ['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
+const DOW = ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
+
+const EVENTS = [
+  { id:'ENG-2026-003', name:'Web Application Retest', client:'Contoso', start:'2026-11-05', end:'2026-11-10', kind:'planned' },
+  { id:'ENG-2026-004', name:'Internal Red Team', client:'Nova Bank', start:'2026-11-12', end:'2026-11-19', kind:'planned' },
+  { id:'ENG-2026-009', name:'Third-Party Risk Assessment', client:'Nova Bank', start:'2026-11-18', end:'2026-11-21', kind:'proposed' },
+  { id:'ENG-2026-001', name:'External Penetration Test', client:'Contoso', start:'2026-11-22', end:'2026-11-27', kind:'proposed' },
+  { id:'ENG-2026-007', name:'Cloud Security Review', client:'Fabrikam', start:'2026-11-24', end:'2026-12-04', kind:'planned' },
+  { id:'ENG-2026-013', name:'Cloud Configuration Review', client:'Fabrikam', start:'2026-11-29', end:'2026-12-09', kind:'planned' },
+  { id:'ENG-2026-008', name:'Payment API Security Review', client:'Nova Bank', start:'2026-12-01', end:'2026-12-09', kind:'planned' },
+  { id:'ENG-2026-012', name:'Mobile App Assessment', client:'Orion Energia', start:'2026-12-01', end:'2026-12-05', kind:'proposed' },
+  { id:'ENG-2026-010', name:'SAP S/4HANA Security Review', client:'Northwind Traders', start:'2026-12-06', end:'2026-12-15', kind:'planned' },
+  { id:'ENG-2026-006', name:'Supply Chain Security Review', client:'Fabrikam', start:'2026-12-06', end:'2026-12-15', kind:'planned' },
+  { id:'ENG-2026-014', name:'Network Segmentation Review', client:'Tailspin Toys', start:'2026-12-10', end:'2026-12-18', kind:'planned' }
+];
+
+const $ = s => document.querySelector(s);
+const pad = n => String(n).padStart(2, '0');
+const key = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const parse = k => { const [y, m, d] = String(k).split('-').map(Number); return new Date(y, m - 1, d); };
+const add = (d, n) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
+const fmt = d => parse(d).toLocaleDateString('it-IT', { day: '2-digit', month: 'short' });
+const longDate = d => d.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' });
+const monthTitle = d => `${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+const active = (ev, k) => k >= ev.start && k <= ev.end;
+const kindLabel = k => k === 'planned' ? 'Pianificato' : 'Proposto';
+const kindPill = k => `<span class="pill ${k === 'planned' ? 'blue' : 'amber'}">${kindLabel(k)}</span>`;
+const todayKey = key(TODAY);
+const fmtRange = ev => ev.start === ev.end ? fmt(ev.start) : `${fmt(ev.start)} – ${fmt(ev.end)}`;
+
+function toast(msg) {
+  const t = $('#toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+/* ===== A ===== */
+const A = { month: new Date(2026, 10, 1), selected: todayKey };
+
+function renderA() {
+  const first = new Date(A.month.getFullYear(), A.month.getMonth(), 1);
+  const start = add(first, -((first.getDay() + 6) % 7));
+  $('#a-month-title').textContent = monthTitle(A.month);
+  const monthEvents = EVENTS.filter(ev => {
+    const s = parse(ev.start), e = parse(ev.end);
+    return e >= first && s <= new Date(A.month.getFullYear(), A.month.getMonth() + 1, 0);
+  });
+  $('#a-month-sub').textContent = `${monthEvents.length} engagement`;
+  $('#a-dow').innerHTML = DOW.map(d => `<div class="dow">${d}</div>`).join('');
+  const cells = [];
+  for (let i = 0; i < 42; i++) {
+    const d = add(start, i);
+    const k = key(d);
+    const inMonth = d.getMonth() === A.month.getMonth();
+    const evs = EVENTS.filter(ev => active(ev, k));
+    const dots = evs.slice(0, 3).map(ev => `<span class="dot ${ev.kind === 'planned' ? 'p' : 'r'}"></span>`).join('');
+    const count = evs.length > 3 ? `<span class="cnt">+${evs.length - 3}</span>` : '';
+    cells.push(`<div class="day${inMonth ? '' : ' out'}${k < todayKey ? ' past' : ''}${k === todayKey ? ' today' : ''}${k === A.selected ? ' sel' : ''}" ${inMonth ? `data-a-day="${k}"` : ''} role="button" tabindex="${inMonth ? 0 : -1}" title="${longDate(d)}${evs.length ? ` · ${evs.length} eventi` : ''}">
+      <span class="n">${d.getDate()}</span><div class="dots">${dots}${count}</div>
+    </div>`);
+  }
+  $('#a-days').innerHTML = cells.join('');
+
+  const sel = parse(A.selected);
+  const dayEvents = EVENTS.filter(ev => active(ev, A.selected));
+  $('#a-side').innerHTML = `<div class="a-day-h"><div><h3>${longDate(sel)}</h3><p>${dayEvents.length ? `${dayEvents.length} engagement attivi` : 'Nessun engagement'}</p></div>${kindPill('planned')}</div>
+    ${dayEvents.length ? dayEvents.map(ev => `<div class="a-ev ${ev.kind === 'proposed' ? 'r' : ''}" data-open="${ev.id}" role="button" tabindex="0">
+      <b>${ev.name}</b><span>${ev.client} · ${fmtRange(ev)}</span>
+      <div class="row">${kindPill(ev.kind)}<span class="pill">${ev.id}</span></div>
+    </div>`).join('') : '<div class="a-empty">Nessun evento in questo giorno.<br>Clicca un giorno con i puntini.</div>'}
+    <p style="font-size:10px;color:var(--muted-2);margin-top:10px">Clicca un giorno per aggiornare l’agenda.</p>`;
+}
+
+/* ===== B ===== */
+const B = { filter: 'all' };
+
+function renderB() {
+  const events = EVENTS.filter(ev => B.filter === 'all' || ev.kind === B.filter);
+  const dayMap = new Map();
+  for (const ev of events) {
+    const startKey = ev.start < todayKey ? todayKey : ev.start;
+    if (!dayMap.has(startKey)) dayMap.set(startKey, []);
+    dayMap.get(startKey).push(ev);
+  }
+  const days = [...dayMap.entries()]
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([k, evs]) => ({ d: parse(k), k, evs }));
+  const groups = days.map(({ d, k, evs }) => `<div class="b-day${k === todayKey ? ' today' : ''}">
+    <div class="b-day-h"><b>${longDate(d)}</b><span>${evs.length} eventi</span></div>
+    ${evs.map(ev => `<div class="b-ev" data-open="${ev.id}" role="button" tabindex="0">
+      <span class="dot" style="background:${ev.kind === 'planned' ? 'var(--blue)' : 'var(--amber-dot)'}"></span>
+      <div style="min-width:0"><b>${ev.name}</b><span>${ev.client} · ${fmtRange(ev)} · ${kindLabel(ev.kind)}</span></div>
+    </div>`).join('')}
+  </div>`);
+  const mid = Math.ceil(groups.length / 2);
+  const left = groups.slice(0, mid).join('');
+  const right = groups.slice(mid).join('');
+  $('#b-cols').innerHTML = `<div>${left || '<div class="a-empty">Nessun evento.</div>'}</div><div>${right}</div>`;
+  document.querySelectorAll('[data-b-filter]').forEach(btn => btn.classList.toggle('on', btn.dataset.bFilter === B.filter));
+}
+
+/* ===== C ===== */
+const C = { selected: null };
+const DAYS = Math.round((RANGE_END - TODAY) / 86400000) + 1;
+
+function renderC() {
+  const days = Array.from({ length: DAYS }, (_, i) => add(TODAY, i));
+  const ticks = days.map(d => `<div class="c-tick${d.getDay() === 1 ? ' mon' : ''}">${d.getDay() === 1 ? d.getDate() : ''}</div>`).join('');
+  const rows = [...EVENTS].sort((a, b) => a.start.localeCompare(b.start)).map(ev => {
+    const start = Math.max(0, Math.round((parse(ev.start) - TODAY) / 86400000));
+    const end = Math.min(DAYS - 1, Math.round((parse(ev.end) - TODAY) / 86400000));
+    const span = end - start + 1;
+    const label = span >= 4 ? ev.name : '';
+    const sel = C.selected === ev.id ? ' sel' : '';
+    return `<div class="c-row">
+      <div class="c-label" title="${ev.name} · ${ev.client}"><b>${ev.name}</b><span>${ev.client}</span></div>
+      <div class="c-track" style="grid-template-columns:repeat(${DAYS},minmax(0,1fr))">
+        <div class="c-bar ${ev.kind === 'planned' ? 'p' : 'r'}${sel}" style="grid-column:${start + 1} / ${end + 2}" data-c-bar="${ev.id}" role="button" tabindex="0" title="${ev.name} · ${fmtRange(ev)}">${label}</div>
+      </div>
+    </div>`;
+  }).join('');
+  $('#c-timeline').innerHTML = `<div class="c-axis"><div class="lab">Engagement</div><div class="c-axis-days" style="grid-template-columns:repeat(${DAYS},minmax(0,1fr))">${ticks}</div></div>${rows}`;
+  const ev = EVENTS.find(x => x.id === C.selected);
+  $('#c-detail').innerHTML = ev
+    ? `<b>${ev.name}</b><span class="muted">${ev.client} · ${fmtRange(ev)} · ${ev.id}</span>${kindPill(ev.kind)}<button class="btn sec sm" data-open="${ev.id}" style="margin-left:auto">Apri engagement</button>`
+    : '<span class="muted">Clicca una barra per vedere i dettagli dell’engagement.</span>';
+}
+
+/* ===== D ===== */
+const D = { start: new Date(TODAY) };
+
+function renderD() {
+  const end = add(D.start, 13);
+  $('#d-range').textContent = `${D.start.toLocaleDateString('it-IT', { day: 'numeric', month: 'short' })} – ${end.toLocaleDateString('it-IT', { day: 'numeric', month: 'short', year: 'numeric' })}`;
+  const weeks = [0, 1].map(w => {
+    const days = Array.from({ length: 7 }, (_, i) => add(D.start, w * 7 + i));
+    return `<div class="d-week">${days.map(d => {
+      const k = key(d);
+      const evs = EVENTS.filter(ev => active(ev, k));
+      return `<div class="d-day${k === todayKey ? ' today' : ''}">
+        <div class="d-day-h"><b>${d.toLocaleDateString('it-IT', { weekday: 'short' })}</b><span>${d.getDate()} ${MONTHS[d.getMonth()].slice(0, 3)}</span><i>${evs.length || ''}</i></div>
+        ${evs.slice(0, 4).map(ev => `<div class="d-ev ${ev.kind === 'proposed' ? 'r' : ''}" data-open="${ev.id}" role="button" tabindex="0" title="${ev.name} · ${ev.client} · ${fmtRange(ev)}">
+          <b>${ev.name}</b><span>${ev.client}</span>
+        </div>`).join('')}
+        ${evs.length > 4 ? `<span class="d-more">+${evs.length - 4} altri</span>` : ''}
+      </div>`;
+    }).join('')}</div>`;
+  }).join('');
+  $('#d-board').innerHTML = weeks;
+  $('#d-prev').disabled = D.start <= TODAY;
+  $('#d-next').disabled = add(D.start, 14) > RANGE_END;
+}
+
+/* ===== E ===== */
+const E = { selected: null };
+
+function renderE() {
+  const months = [new Date(2026, 10, 1), new Date(2026, 11, 1)];
+  $('#e-months').innerHTML = months.map(m => {
+    const first = new Date(m.getFullYear(), m.getMonth(), 1);
+    const start = add(first, -((first.getDay() + 6) % 7));
+    const cells = [];
+    for (let i = 0; i < 42; i++) {
+      const d = add(start, i);
+      const k = key(d);
+      const inMonth = d.getMonth() === m.getMonth();
+      const evs = EVENTS.filter(ev => active(ev, k));
+      const dots = evs.slice(0, 3).map(ev => `<span class="dot ${ev.kind === 'planned' ? 'p' : 'r'}"></span>`).join('');
+      cells.push(`<div class="e-day${inMonth ? '' : ' out'}${k < todayKey ? ' past' : ''}${k === todayKey ? ' today' : ''}${E.selected === k ? ' sel' : ''}" ${inMonth ? `data-e-day="${k}"` : ''} role="button" tabindex="${inMonth ? 0 : -1}" title="${longDate(d)}${evs.length ? ` · ${evs.length} eventi` : ''}">
+        <span class="n">${d.getDate()}</span><div class="dots">${dots}${evs.length > 3 ? `<span class="cnt">+${evs.length - 3}</span>` : ''}</div>
+      </div>`);
+    }
+    return `<div class="e-month"><div class="mh"><b>${monthTitle(m)}</b><span>${EVENTS.filter(ev => active(ev, key(new Date(m.getFullYear(), m.getMonth(), 1))) || (parse(ev.start) <= new Date(m.getFullYear(), m.getMonth() + 1, 0) && parse(ev.end) >= first)).length} eventi</span></div>
+      <div class="cal7">${DOW.map(d => `<div class="dow">${d}</div>`).join('')}</div>
+      <div class="cal7">${cells.join('')}</div></div>`;
+  }).join('');
+
+  const evs = EVENTS
+    .filter(ev => !E.selected || active(ev, E.selected))
+    .sort((a, b) => a.start.localeCompare(b.start));
+  $('#e-title').textContent = E.selected ? `Eventi del ${parse(E.selected).toLocaleDateString('it-IT', { day: 'numeric', month: 'long' })}` : 'Tutti gli eventi';
+  $('#e-hint').textContent = E.selected ? 'Filtro attivo dalla mappa' : 'Da oggi a fine dicembre';
+  $('#e-rows').innerHTML = evs.length ? evs.map(ev => `<tr data-open="${ev.id}">
+    <td>${fmtRange(ev)}</td><td><b>${ev.name}</b></td><td>${ev.client}</td><td>${kindPill(ev.kind)}</td>
+  </tr>`).join('') : '<tr><td colspan="4" style="padding:18px;text-align:center;color:var(--muted)">Nessun evento in questo giorno.</td></tr>';
+}
+
+/* ===== events ===== */
+document.querySelectorAll('.switcher button').forEach(btn => btn.addEventListener('click', () => {
+  document.querySelectorAll('.switcher button').forEach(b => { const on = b === btn; b.classList.toggle('on', on); b.setAttribute('aria-selected', String(on)); });
+  document.querySelectorAll('.proposal').forEach(p => p.classList.toggle('active', p.id === 'p-' + btn.dataset.v));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}));
+
+document.addEventListener('click', e => {
+  const aNav = e.target.closest('[data-a-nav]');
+  if (aNav) { A.month = new Date(A.month.getFullYear(), A.month.getMonth() + Number(aNav.dataset.aNav), 1); renderA(); return; }
+  const aDay = e.target.closest('[data-a-day]');
+  if (aDay) { A.selected = aDay.dataset.aDay; renderA(); return; }
+  const bf = e.target.closest('[data-b-filter]');
+  if (bf) { B.filter = bf.dataset.bFilter; renderB(); return; }
+  const cbar = e.target.closest('[data-c-bar]');
+  if (cbar) { C.selected = cbar.dataset.cBar; renderC(); return; }
+  const eDay = e.target.closest('[data-e-day]');
+  if (eDay) { E.selected = E.selected === eDay.dataset.eDay ? null : eDay.dataset.eDay; renderE(); return; }
+  if (e.target.closest('#e-reset')) { E.selected = null; renderE(); return; }
+  if (e.target.closest('#d-prev')) { D.start = add(D.start, -14); renderD(); return; }
+  if (e.target.closest('#d-next')) { D.start = add(D.start, 14); renderD(); return; }
+  const open = e.target.closest('[data-open]');
+  if (open) { toast(`Apri engagement ${open.dataset.open} (demo)`); }
+});
+
+renderA(); renderB(); renderC(); renderD(); renderE();
+</script>
+</body>
+</html>

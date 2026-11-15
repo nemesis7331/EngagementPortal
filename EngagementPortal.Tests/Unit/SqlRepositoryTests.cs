@@ -38,8 +38,8 @@ public sealed class SqlRepositoryTests
     private static Engagement NewEngagement() => new()
     {
         Id = "ENG-2026-001",
-        ClientId = "contoso",
-        ClientName = "Contoso",
+        ClientId = "anthropic",
+        ClientName = "Anthropic",
         Name = "External Penetration Test",
         Type = EngagementType.PenetrationTest,
         Owner = "Provider Pentester",
@@ -50,15 +50,15 @@ public sealed class SqlRepositoryTests
         FinancialsApproved = true,
         Scope = new ScopeData
         {
-            Host = "app.contoso.example",
-            Contact = "security@contoso.example",
+            Host = "app.anthropic.example",
+            Contact = "security@anthropic.example",
             Done = true,
             By = "Client",
             Date = DateTimeOffset.UtcNow
         },
         Credentials = new CredentialData
         {
-            Vpn = "vpn.contoso.example",
+            Vpn = "vpn.anthropic.example",
             Done = true,
             By = "Client"
         }
@@ -108,13 +108,13 @@ public sealed class SqlRepositoryTests
 
         Assert.NotNull(loaded);
         Assert.Equal("External Penetration Test", loaded.Name);
-        Assert.Equal("app.contoso.example", loaded.Scope.Host);
-        Assert.Equal("vpn.contoso.example", loaded.Credentials.Vpn);
+        Assert.Equal("app.anthropic.example", loaded.Scope.Host);
+        Assert.Equal("vpn.anthropic.example", loaded.Credentials.Vpn);
         Assert.Single(loaded.Proposals);
         Assert.Equal(ProposalStatus.Accepted, loaded.Proposals[0].Status);
         Assert.Single(loaded.Reports);
 
-        Assert.Single(secondRepository.List("contoso", false));
+        Assert.Single(secondRepository.List("anthropic", false));
         Assert.Empty(secondRepository.List("other", false));
         Assert.Single(secondRepository.List("other", true));
     }

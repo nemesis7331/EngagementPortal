@@ -1,8 +1,9 @@
 # Cyber Engagement Portal
 
 Portale per la gestione degli engagement di cybersecurity: clienti e utenze,
-workflow in sei passi (ordine, manleva e costi; scope; pianificazione;
-credenziali; esecuzione; report), revisione, distribuzione ed email.
+workflow in nove passi (ordine, manleva e costi; scope; pianificazione;
+credenziali; esecuzione; report; retest; report di retest), revisione,
+distribuzione ed email.
 
 Applicazione ASP.NET Core (`EngagementPortal.Web`) con deploy automatico su Azure
 App Service a ogni push su `main`.
@@ -22,29 +23,60 @@ App Service a ogni push su `main`.
   Auditor e utenti Cliente vedono solo ciò che è assegnato (filtro lato API).
   Il PMO può assegnare utenti solo entro i propri clienti.
 - **Navigazione unica**: sidebar globale collassabile (228 → 64 px) per tutto
-  il portale — Engagement, Clienti, Calendario, Solleciti, Amministrazione.
+  il portale - Engagement, Clienti, Calendario, Solleciti, KPI e andamento,
+  Amministrazione.
   Lo stato del menu resta memorizzato; su mobile diventa un drawer.
 - **Calendario**: vista da oggi a fine mese successivo con gli engagement
   **pianificati** (blu) e **proposti** (ambra), filtrati per visibilità utente.
   Clic su un evento: apre l'engagement; per le proposte porta alla pianificazione.
 - **Setup iniziale**: primo passo del workflow, dove si definiscono **team**,
-  **distribution list**, **lingua** (Italiano/Inglese) e **tipologie di
-  deliverable** (Executive, Technical, Activity, Custom). Finché non è
-  completato, i passi successivi restano bloccati; team e liste si possono
-  aggiornare anche dopo.
+  **distribution list**, **lingua** (Italiano/Inglese), **tipologie di
+  deliverable** (Executive, Technical, Activity, Custom) e se l'attività
+  **prevede il recheck**. Finché non è completato, i passi successivi restano
+  bloccati; team e liste si possono aggiornare anche dopo. Il valore del recheck
+  è proposto dal **tipo di attività** e resta modificabile fino alla richiesta
+  di retest del cliente.
+- **Tipi di attività**: catalogo in **Amministrazione › Tipi di attività** con
+  i default di ogni tipo (Penetration Test, Vulnerability Assessment, Red Team,
+  Code Review, Cloud Security): etichetta, sigla, descrizione, **deliverable
+  previsti** e **recheck previsto**. Il Red Team, per esempio, di default non
+  prevede il retest. Nel Setup il pulsante *Applica i default del tipo*
+  precompila il form.
+- **Retest e report di retest**: due passi in coda all'esecuzione, presenti solo
+  se il recheck è previsto. Il **cliente** richiede il retest **a fix
+  completati** e **una sola volta**; le date seguono lo stesso giro del
+  planning (proposta di PMO/cliente, approvazione del Manager); il Pentester
+  conclude il retest, carica il report e lo **invia al cliente senza
+  approvazione**. Un solo invio del report: il secondo viene rifiutato.
 - **Report versionati**: il Pentester carica una versione per **ogni tipologia**
   definita nel setup. Una nuova versione diventa l'ultima e le precedenti
   restano nello storico; revisione e pubblicazione richiedono tutte le tipologie.
 - **Template mail bilingui**: ogni template ha versione **IT ed EN** (oggetto e
-  corpo) per standard, cliente ed engagement. L'editor Amministrazione mostra
-  tutte le tipologie e le due lingue in un'unica schermata; la lingua del Setup
-  decide quale versione viene inviata.
-- **Amministrazione**: sezioni **Utenti**, **Clienti**, **Mailing list**
-  (notifiche e deliverables per cliente ed engagement, con editor destinatari),
-  **Template mail** (standard e override per cliente) e **Impostazioni**
-  (retention, 2FA, solleciti), raggiungibili dalla sidebar globale.
-- **Retention deliverables**: i report vengono cancellati automaticamente
-  **1 anno** dopo la pubblicazione (valore demo, configurabile).
+  corpo). Sono nove, in due gruppi: **notifiche** (inizio, fine, consegna
+  deliverables e invio del report di retest) e **solleciti** (report al
+  Pentester, revisione al Manager, credenziali a 3 e 2 settimane, sollecito su
+  richiesta). I due livelli **standard** e **cliente** si modificano in
+  **Amministrazione › Template mail**; il terzo livello, **solo per un
+  engagement**, si modifica dalla **Mailing list** dell'engagement (Manager, PMO
+  e Pentester), così il testo sta accanto a chi lo riceve. La lingua del Setup
+  decide quale versione inviare, e i campi vuoti ereditano il livello superiore
+  con anteprima del testo effettivo. Il tab Comunicazioni dell'engagement resta
+  informativo (invio automatico e registro invii).
+- **Amministrazione**: sezioni **Tipi di attività**, **Utenti**, **Clienti**,
+  **Mailing list** (filtri per cliente, partecipante, tipo di mail ed engagement;
+  elenco scorribile e dettaglio modificabile sotto, con l'override del testo
+  email dell'engagement), **Template mail** (standard e override per cliente) e
+  **Impostazioni** (2FA sul download dei report e visibilità), raggiungibili
+  dalla sidebar globale.
+- **Retention deliverables**: policy informativa mostrata nel tab Report
+  dell'engagement — i report vengono cancellati automaticamente **1 anno** dopo
+  la pubblicazione (valore demo, configurabile).
+- **KPI e andamento** (solo Manager e PMO): sei numeri di sintesi (engagement
+  attivi, da gestire, in attesa di terzi, in ritardo con giorni cumulati, a
+  rischio avvio, prossimo avvio), **engagement per cliente** con barre, carico
+  per fase del workflow e per responsabile, elenco dei **fermi da più tempo**,
+  degli avvii a rischio e dei prossimi avvii. Segue il cliente scelto in header
+  e, cliccando una riga cliente, filtra tutto il pannello su quel cliente.
 - **Team**: partecipanti esterni per cliente (base comune) e per engagement.
   Gli inviti sono aperti a tutti i profili tranne l'Auditor; rimuovono il
   Manager (tutti) e il Cliente (solo organizzazione `Cliente`).
@@ -70,16 +102,22 @@ App Service a ogni push su `main`.
 - **Comunicazioni**: **due distribution list** per engagement, ciascuna con una
   **base comune del cliente**: *notifiche* (inizio/fine attività, solleciti) e
   *deliverables* (invio dei report). Email automatiche di inizio, fine e
-  consegna deliverables (per ora simulate nel registro, senza invio SMTP reale);
-  **template** standard, per cliente e per engagement, con anteprima e
-  placeholder.
-- **Solleciti**: regole con soglia in giorni, elenco dei solleciti dovuti e
-  invio, gestiti dal PMO.
+  consegna deliverables (per ora simulate nel registro, senza invio SMTP reale).
+  I **template** (standard, per cliente, per engagement) si modificano solo in
+  Amministrazione; qui si vede solo cosa verrà inviato e il registro.
+- **Solleciti**: quattro regole fisse — *caricamento report* al Pentester dopo
+  **3 giorni lavorativi** dalla fine pianificata, *revisione deliverable* al
+  Manager dopo **1 giorno** dall'invio in revisione, *credenziali* al cliente
+  **3 e 2 settimane** prima dell'avvio (si usa la data accettata, o la prima
+  proposta in attesa). Elenco dei solleciti dovuti e invio dal PMO; il testo è
+  un template bilingue e si modifica in Amministrazione. **Un solo sollecito al
+  giorno per task**: l'invio è bloccato se ne è già partito uno oggi.
+  Dall'engagement si può anche **sollecitare a mano** l'attesa in corso, se è in
+  carico a un altro profilo.
 - **Registro audit**: visibilità differenziata per profilo, esportazione CSV.
 - **Dashboard**: endpoint `/api/dashboard/todo` con la prossima azione per ogni
   engagement e profilo.
-- **Homepage**: quattro tessere che sono anche filtri (da gestire, in attesa di
-  altri, a rischio avvio, prossimo avvio), colonna **Da gestire ora** con CTA
+- **Homepage**: colonna **Da gestire ora** con CTA
   diretta, attese in evidenza e tabella compatta con la **fase del workflow**
   (barra a 6 passi + nome), ricerca su tutti i campi, filtro azzerabile con
   **× Azzera filtri** e **colonne ordinabili** (click sull'intestazione, con
@@ -118,8 +156,7 @@ riporta esattamente i controlli applicati dalle API.
 | Proporre date o richiedere riprogrammazione | R | A/R | I | I | I |
 | Approvare o rifiutare una proposta di date | I | I | I | A/R | I |
 | Compilare scope e credenziali | R | A/R | I | R (solo credenziali) | — |
-| Gestire template email standard e per cliente | — | — | I (sola lettura) | A/R | — |
-| Gestire template email dell'engagement | — | — | A/R | A/R | — |
+| Gestire template email standard, per cliente ed engagement | — | — | I (sola lettura) | A/R | — |
 | Gestire le distribution list base del cliente (notifiche e deliverables) | I | I | I | A/R | — |
 | Invitare partecipanti esterni (cliente o engagement) | R | R | R | R | — |
 | Rimuovere partecipanti esterni | R (solo organizzazione Cliente) | — | — | A/R (tutti) | — |
@@ -149,15 +186,13 @@ riporta esattamente i controlli applicati dalle API.
   ma non li rimuove. Non vede i template email.
 - **Pentester**: consulta gli engagement e le informazioni, carica i report, li
   invia in revisione al Manager e li pubblica al cliente dopo l'approvazione.
-  Vede e personalizza il template email dell'engagement; invita partecipanti
-  esterni al team ma non li rimuove; non crea engagement e non gestisce email o
-  solleciti.
+  Invita partecipanti esterni al team ma non li rimuove; non crea engagement,
+  non gestisce email o solleciti e non vede i template.
 - **Manager**: crea e gestisce clienti e utenze, crea engagement, inserisce e
   approva costi e margine, rivede e approva i report del Pentester. Vede e
-  modifica le credenziali; gestisce i template email standard e per cliente (e
-  quelli per engagement insieme al Pentester); invita e rimuove qualsiasi
-  partecipante esterno del team. Non gestisce scope, planning, email o
-  solleciti.
+  modifica le credenziali; gestisce i template email in Amministrazione; invita
+  e rimuove qualsiasi partecipante esterno del team. Non gestisce scope,
+  planning, email o solleciti.
 - **Auditor**: vede tutto in sola lettura, tranne credenziali e template email;
   non invita partecipanti al team.
 
@@ -166,6 +201,9 @@ riporta esattamente i controlli applicati dalle API.
 - Creazione engagement: `POST /api/engagements` consente PMO e Manager.
 - Clienti e utenze: `POST/PUT /api/clients...` riservati al Manager; `GET
   /api/clients` filtra il Cliente sul proprio cliente.
+- Utenti: `POST /api/users` e `PUT /api/users/{id}` riservati al Manager (nome,
+  email, ruolo, attivo); il Manager non può declassarsi né disattivare il proprio
+  accesso. `POST/DELETE /api/users/{id}/assignments` consente Manager e PMO.
 - Manleva: `POST /api/engagements/{id}/manleva` consente Cliente e PMO.
 - Documento di ingaggio e ordine: solo PMO.
 - Costi e margine: `PUT /api/engagements/{id}/financials` consente PMO e Manager
@@ -187,10 +225,13 @@ riporta esattamente i controlli applicati dalle API.
 - Credenziali: `CanEditCredentials` consente Cliente e PMO come sopra e il
   Manager fino alla fase di Reporting (non a engagement concluso). Visibili a
   Client, PMO, Pentester e Manager; non all'Auditor.
-- Template email: `GET/PUT /api/engagements/{id}/mail-templates` è riservato a
-  Manager e Pentester. Il Manager modifica standard, cliente ed engagement; il
-  Pentester solo l'engagement. Cliente, PMO e Auditor ricevono 403 e non vedono
-  la sezione.
+- Template email: i livelli **standard** e **cliente** si modificano da
+  **Amministrazione › Template mail** (`PUT /api/admin/mail-templates/standard/{type}`
+  e `/client/{clientId}/{type}`, solo Manager). Il terzo livello, **per
+  engagement**, si modifica dalla **Mailing list** dell'engagement
+  (`GET/PUT /api/admin/mail-templates/engagement/{id}[/{type}]`), consentito a
+  Manager, PMO e Pentester; i Pentester vedono solo le liste degli engagement
+  assegnati e non modificano i destinatari.
 - Distribution list: due liste separate (notifiche e deliverables), ognuna con
   una base comune per cliente gestita dal Manager
   (`/api/clients/{id}/distribution-list?kind=notifications|deliverables`);
@@ -215,8 +256,16 @@ riporta esattamente i controlli applicati dalle API.
   gestire solo i destinatari con organizzazione `Cliente`. La base comune del
   cliente è gestita dal Manager.
 - Email: toggle e invio solo PMO.
-- Solleciti: lettura per i profili interni, scrittura e invio solo PMO; il
-  Cliente non ha accesso alle regole.
+- Solleciti automatici: lettura per i profili interni, invio e accensione delle
+  regole solo PMO; il Cliente non ha accesso. Il **sollecito manuale**
+  dall'engagement è riservato ai profili interni (non l'Auditor) e solo quando
+  l'attesa è in carico a un altro profilo.
+- Retest: il **Cliente** richiede il retest (una sola volta, a fix completati);
+  **PMO e Cliente** propongono le date, il **Manager** le approva; il
+  **Pentester** conclude il retest, carica il report e lo invia al cliente
+  **senza revisione**.
+- Catalogo tipi di attività: lettura per i profili interni, modifica dei default
+  a **Manager e PMO**.
 
 ## Dati e persistenza
 
@@ -268,8 +317,7 @@ tabelle, va aggiunta una migration EF Core.
 ### Dataset demo
 
 Il seed (`EngagementPortal.Web/Services/SeedData.cs`) crea **15 engagement** su
-**6 clienti** (Contoso, Fabrikam, Nova Bank, Orion Energia, Tailspin Toys,
-Northwind Traders) e copre tutti i passi del workflow:
+**2 clienti** (Anthropic e Nvidia) e copre tutti i passi del workflow:
 
 | Caso | Engagement | Cosa mostra |
 | --- | --- | --- |
@@ -281,7 +329,8 @@ Northwind Traders) e copre tutti i passi del workflow:
 | Pianificato | ENG-2026-005 / 010 / 014 | avvio futuro, anche su rete OT e SAP |
 | In corso | ENG-2026-004 / 013 | red team |
 | Reporting | ENG-2026-003 / 011 | revisione Manager in attesa / modifiche richieste |
-| Concluso | ENG-2026-006 / 015 | deliverable pubblicato al cliente (015 è di Contoso, così il profilo Cliente vede un report scaricabile) |
+| Retest | ENG-2026-015 | report pubblicato e recheck previsto: il cliente può **richiedere il retest** (è di Anthropic, così il profilo Cliente vede un report scaricabile e il task del retest) |
+| Concluso | ENG-2026-006 | retest completo: richiesta del cliente, date approvate, report di retest inviato. Gli engagement di Red Team (004, 013) sono **senza recheck** |
 
 Costi e margine (margine al **46%**) sono valorizzati e approvati per tutti gli
 engagement tranne quelli usati per mostrare il primo passo e l'attesa di
@@ -356,7 +405,8 @@ il Manager vede tutti i clienti/engagement, gli altri solo quelli assegnati.
 La sezione **Utenti e accessi** è gestita da **Manager e PMO** (il PMO solo
 entro i propri clienti); clienti ed engagement visibili sono cliccabili. L'area
 **Amministrazione** raccoglie le stesse persone con clienti, mailing list,
-template mail e impostazioni in un'unica schermata. Gli
+template mail e impostazioni in un'unica schermata; il **Pentester** vi entra
+solo dalla **Mailing list**, per il testo email dei propri engagement. Gli
 utenti interni hanno **un solo ruolo**, le assegnazioni **non scadono** e il
 Cliente **non vede** nomi/ruoli dei pentester assegnati.
 
@@ -372,7 +422,7 @@ Le API sono esposte sotto `/api` e documentate in `documentazione.txt`
 | Metodo | Endpoint |
 | --- | --- |
 | GET | `/api/me` |
-| GET/POST | `/api/users` · `/api/users/{id}` |
+| GET/POST/PUT | `/api/users` · `/api/users/{id}` |
 | GET | `/api/demo/users` (solo demo) |
 | POST/DELETE | `/api/users/{id}/assignments` · `/{type}/{targetId}` |
 | GET/POST | `/api/engagements` |
@@ -384,7 +434,7 @@ Le API sono esposte sotto `/api` e documentate in `documentazione.txt`
 | POST | `/api/engagements/{id}/manleva` · `/documento-ingaggio` · `/order` |
 | PUT | `/api/engagements/{id}/financials` |
 | POST | `/api/engagements/{id}/financials/approve` |
-| GET/PUT | `/api/engagements/{id}/mail-templates` |
+| GET/PUT | `/api/admin/mail-templates/engagement/{id}` · `/{id}/{type}` |
 | POST/DELETE | `/api/clients/{id}/distribution-list` · `/{entryId}` (`?kind=notifications\|deliverables`) |
 | POST/DELETE | `/api/engagements/{id}/team` · `/{memberId}` |
 | POST/DELETE | `/api/clients/{id}/team` · `/{memberId}` |
@@ -397,13 +447,18 @@ Le API sono esposte sotto `/api` e documentate in `documentazione.txt`
 | POST | `/api/engagements/{id}/reports/{rid}/links` (link monouso, 5 giorni) |
 | GET | `/api/downloads/{token}` (pubblico, monouso) |
 | POST | `/api/engagements/{id}/review/submit` · `/review/decide` · `/reports/publish` |
+| POST | `/api/engagements/{id}/retest/request` (solo cliente, una volta) |
+| POST | `/api/engagements/{id}/retest/propose` · `/retest/decide` |
+| POST | `/api/engagements/{id}/retest/report` · `/retest/send` (senza revisione) |
+| GET/PUT | `/api/activity-types` · `/activity-types/{key}` (default dei tipi) |
 | GET/POST/DELETE | `/api/engagements/{id}/distribution-list` (`?kind=notifications\|deliverables`) |
 | GET | `/api/engagements/{id}/mails` |
 | POST | `/api/engagements/{id}/mails/{type}/toggle` · `/send` |
 | GET | `/api/engagements/{id}/log` · `/log/export` |
-| GET/PUT | `/api/solicitations/rules` · `/rules/{key}` |
+| GET/PUT | `/api/solicitations/rules` · `/rules/{key}` (solo accensione) |
 | GET | `/api/solicitations/due` |
-| POST | `/api/solicitations/{key}/send` |
+| POST | `/api/solicitations/{key}/send` (max 1 al giorno per task) |
+| POST | `/api/engagements/{id}/solicitations` (sollecito manuale sull'attesa) |
 | GET | `/health` · `/health/ready` |
 
 ## Sviluppo locale

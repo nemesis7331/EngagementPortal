@@ -27,7 +27,7 @@ public class WorkflowTests
     {
         Id = "ENG-2026-001",
         ClientId = "client",
-        ClientName = "Nova Bank",
+        ClientName = "Acme",
         Name = "External Penetration Test",
         Type = EngagementType.PenetrationTest,
         Owner = "Provider Pentester",
@@ -431,7 +431,7 @@ public class WorkflowTests
         {
             Id = "ENG-NOTICE",
             ClientId = "client",
-            ClientName = "Contoso",
+            ClientName = "Anthropic",
             Name = "Avviso pianificazione",
             Type = EngagementType.PenetrationTest,
             Owner = "Sara Conti",
@@ -463,7 +463,9 @@ public class WorkflowTests
         Assert.Equal(4, EngagementWorkflow.StepIndex(EngagementPhase.Credentials));
         Assert.Equal(5, EngagementWorkflow.StepIndex(EngagementPhase.Running));
         Assert.Equal(6, EngagementWorkflow.StepIndex(EngagementPhase.Reporting));
-        Assert.Equal(7, EngagementWorkflow.StepIndex(EngagementPhase.Done));
+        Assert.Equal(7, EngagementWorkflow.StepIndex(EngagementPhase.Retest));
+        Assert.Equal(8, EngagementWorkflow.StepIndex(EngagementPhase.RetestReporting));
+        Assert.Equal(9, EngagementWorkflow.StepIndex(EngagementPhase.Done));
     }
 
     [Fact]
@@ -518,6 +520,128 @@ public class WorkflowTests
 
         Assert.True(engagement.ReportsComplete);
         Assert.Empty(engagement.MissingReportTypes);
+    }
+
+    [Fact]
+    public void Retest_NotPlanned_ClosesWithThePublishedReport()
+    {
+        var engagement = PublishedEngagement();
+        engagement.RetestPlanned = false;
+
+        Assert.Equal(EngagementPhase.Done, Workflow().Resolve(engagement));
+    }
+
+    [Fact]
+    public void Retest_Planned_WaitsForTheClientRequest()
+    {
+        var engagement = PublishedEngagement();
+        engagement.RetestPlanned = true;
+        var workflow = Workflow();
+        var todos = new TodoResolver(workflow);
+
+        Assert.Equal(EngagementPhase.Retest, workflow.Resolve(engagement));
+        Assert.Equal(
+            "Richiedi il retest a fix completati",
+            todos.Resolve(engagement, Roles.Client)?.Action);
+        // Solo il cliente può chiedere il retest.
+        Assert.Null(todos.Resolve(engagement, Roles.PMO));
+        Assert.Equal(
+            "In attesa della richiesta di retest dal cliente",
+            todos.ResolveAction(engagement, Roles.Manager).Label);
+    }
+
+    [Fact]
+    public void RetestProposal_WaitsForTheManagerDecision()
+    {
+        var engagement = PublishedEngagement();
+        engagement.RetestPlanned = true;
+        engagement.RetestRequestedDate =
+            new DateTimeOffset(Today.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero);
+        engagement.RetestProposals.Add(new Proposal
+        {
+            Id = "RE-01",
+            By = "PMO",
+            StartDate = Today.AddDays(5),
+            EndDate = Today.AddDays(7),
+            Date = Today,
+            Status = ProposalStatus.Pending
+        });
+
+        var workflow = Workflow();
+        var todos = new TodoResolver(workflow);
+
+        Assert.Equal(EngagementPhase.Retest, workflow.Resolve(engagement));
+        Assert.Equal(
+            "Date del retest: approva o rifiuta.",
+            todos.Resolve(engagement, Roles.Manager)?.Action);
+    }
+
+    [Fact]
+    public void RetestReport_SentWithoutReview_ClosesTheEngagement()
+    {
+        var engagement = PublishedEngagement();
+        engagement.RetestPlanned = true;
+        engagement.RetestRequestedDate =
+            new DateTimeOffset(Today.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero);
+        engagement.AcceptedRetestProposal = new Proposal
+        {
+            Id = "RE-01",
+            By = "PMO",
+            StartDate = Today.AddDays(-2),
+            EndDate = Today,
+            Status = ProposalStatus.Accepted
+        };
+
+        var workflow = Workflow();
+        var todos = new TodoResolver(workflow);
+
+        // Con le date approvate il Pentester conclude il retest.
+        Assert.Equal(EngagementPhase.Retest, workflow.Resolve(engagement));
+        Assert.Equal(
+            "Concludi il retest e carica il report",
+            todos.Resolve(engagement, Roles.Pentester)?.Action);
+
+        engagement.RetestCompletedDate =
+            new DateTimeOffset(Today.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero);
+        engagement.RetestReport = new ReportFile(
+            "RF-1",
+            "retest.pdf",
+            "PDF",
+            10,
+            new DateTimeOffset(Today.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero),
+            false,
+            "Retest");
+
+        Assert.Equal(
+            EngagementPhase.RetestReporting,
+            workflow.Resolve(engagement));
+
+        // L'invio al cliente non passa dalla revisione del Manager.
+        Assert.Equal(
+            "Invia il report di retest al cliente (senza revisione)",
+            todos.Resolve(engagement, Roles.Pentester)?.Action);
+        Assert.Null(todos.Resolve(engagement, Roles.Manager));
+
+        engagement.RetestReportSentDate =
+            new DateTimeOffset(Today.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero);
+
+        Assert.Equal(EngagementPhase.Done, workflow.Resolve(engagement));
+    }
+
+    private static Engagement PublishedEngagement()
+    {
+        var engagement = NewEngagement();
+        engagement.DeliverableTypes.Clear();
+        engagement.DeliverableTypes.Add(DeliverableKinds.Technical);
+        engagement.Reports.Add(new ReportFile(
+            "R-1",
+            "technical.pdf",
+            "PDF",
+            10,
+            new DateTimeOffset(2026, 6, 15, 0, 0, 0, TimeSpan.Zero),
+            true,
+            DeliverableKinds.Technical));
+        return engagement;
     }
 
     [Fact]

@@ -8,8 +8,8 @@ public sealed class TeamTests
     private static Engagement NewEngagement() => new()
     {
         Id = "ENG-2026-001",
-        ClientId = "contoso",
-        ClientName = "Contoso",
+        ClientId = "anthropic",
+        ClientName = "Anthropic",
         Name = "External Penetration Test",
         Type = EngagementType.PenetrationTest,
         Owner = "Sara Conti",

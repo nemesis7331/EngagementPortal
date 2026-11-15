@@ -27,8 +27,8 @@ public sealed class MailAutomationTests
         var engagement = new Engagement
         {
             Id = "ENG-AUTO-001",
-            ClientId = "contoso",
-            ClientName = "Contoso",
+            ClientId = "anthropic",
+            ClientName = "Anthropic",
             Name = "Automazione email",
             Type = EngagementType.PenetrationTest,
             Owner = "Sara Conti",
@@ -70,7 +70,7 @@ public sealed class MailAutomationTests
         service.ProcessDue();
         service.ProcessDue();
 
-        var stored = engagements.Get("ENG-AUTO-001", "contoso", false);
+        var stored = engagements.Get("ENG-AUTO-001", "anthropic", false);
         Assert.NotNull(stored);
         Assert.Single(stored.MailLog, entry => entry.Type == "start");
         Assert.Contains(
@@ -91,8 +91,8 @@ public sealed class MailAutomationTests
         var engagement = new Engagement
         {
             Id = "ENG-AUTO-DOCS",
-            ClientId = "contoso",
-            ClientName = "Contoso",
+            ClientId = "anthropic",
+            ClientName = "Anthropic",
             Name = "Senza costi",
             Type = EngagementType.PenetrationTest,
             Owner = "Sara Conti",
@@ -130,7 +130,7 @@ public sealed class MailAutomationTests
 
         service.ProcessDue();
 
-        var stored = engagements.Get("ENG-AUTO-DOCS", "contoso", false);
+        var stored = engagements.Get("ENG-AUTO-DOCS", "anthropic", false);
         Assert.NotNull(stored);
         Assert.DoesNotContain(stored.MailLog, entry => entry.Type == "start");
     }

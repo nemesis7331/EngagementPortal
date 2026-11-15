@@ -167,48 +167,20 @@ public sealed class InMemoryClientRepository : IClientRepository
     public static List<ClientAccount> CreateSeed() =>
     [
         NewClient(
-            "contoso",
-            "Contoso",
-            "https://contoso.com",
-            "Security Team Contoso",
-            "security@contoso.example",
-            ("Marta Rinaldi", "marta.rinaldi@contoso.example"),
-            ("Anna Rossi", "anna.rossi@contoso.example")),
+            "anthropic",
+            "Anthropic",
+            "https://www.anthropic.com",
+            "Security Team Anthropic",
+            "security@anthropic.example",
+            ("Marta Rinaldi", "marta.rinaldi@anthropic.example"),
+            ("Anna Rossi", "anna.rossi@anthropic.example")),
         NewClient(
-            "fabrikam",
-            "Fabrikam",
-            "https://fabrikam.com",
-            "Security Team Fabrikam",
-            "security@fabrikam.example",
-            ("Paolo Bassi", "paolo.bassi@fabrikam.example")),
-        NewClient(
-            "novabank",
-            "Nova Bank",
-            null,
-            "AppSec Nova Bank",
-            "appsec@novabank.example",
-            ("Giulia Sala", "giulia.sala@novabank.example")),
-        NewClient(
-            "orion",
-            "Orion Energia",
-            "https://orionenergia.com",
-            "Cloud Security Orion",
-            "cloud-security@orion.example",
-            ("Andrea Conti", "andrea.conti@orion.example")),
-        NewClient(
-            "tailspin",
-            "Tailspin Toys",
-            "https://tailspintoys.com",
-            "Security Team Tailspin",
-            "security@tailspin.example",
-            ("Laura Bianchi", "laura.bianchi@tailspin.example")),
-        NewClient(
-            "northwind",
-            "Northwind Traders",
-            "https://northwindtraders.com",
-            "SAP Security Northwind",
-            "sap-security@northwind.example",
-            ("Davide Greco", "davide.greco@northwind.example"))
+            "nvidia",
+            "Nvidia",
+            "https://www.nvidia.com",
+            "NVIDIA Security",
+            "security@nvidia.example",
+            ("Giulia Sala", "giulia.sala@nvidia.example"))
     ];
 
     private static ClientAccount NewClient(

@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<title>Mailing list · 4 proposte di layout</title>
+<style>
+:root{
+  --brand-950:#061d36;--brand-900:#0a2a4d;--brand-700:#0f4275;--brand-600:#0b5fa5;--brand-500:#2a86d8;
+  --brand-100:#e1eefa;--brand-50:#f1f7fc;--accent:#0e9fb5;--ink:#0a1b2e;--muted:#566a80;--muted-2:#7b8a9b;
+  --line:#dfe7ef;--line-soft:#eef2f7;--bg:#f4f7fa;--surface-2:#eceff6;--surface-3:#f8fafc;
+  --st-wait:#7a5b00;--st-wait-bg:#fff8c5;--st-wait-border:#eac54f;
+  --st-done:#067647;--st-done-bg:#dcfae6;--st-done-border:#a9efc5;
+  --st-action:#b42318;--st-action-bg:#fee4e2;--st-action-border:#fda29b;
+  --st-progress:#175cd3;--st-progress-bg:#d1e9ff;--st-progress-border:#b2ddff;
+  --font-sans:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;
+  --radius-md:10px;--radius-lg:12px;--radius-xl:14px;--radius-pill:999px;
+  --shadow:0 1px 2px rgba(6,29,54,.06),0 6px 20px rgba(6,29,54,.06);
+  --shadow-lg:0 20px 60px rgba(6,29,54,.35);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--font-sans);background:var(--bg);color:var(--ink);font-size:14.5px;line-height:1.5;-webkit-font-smoothing:antialiased}
+header.top{background:linear-gradient(100deg,var(--brand-950),var(--brand-900) 60%,var(--brand-700));color:#fff;padding:14px 22px;display:flex;align-items:center;gap:12px}
+header.top .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px}
+header.top .logo i{width:30px;height:30px;border-radius:10px;background:var(--accent);color:var(--brand-950);display:grid;place-items:center;font-style:normal;font-weight:800}
+header.top small{display:block;font-weight:400;font-size:11.5px;opacity:.7;letter-spacing:.06em;text-transform:uppercase}
+main{max-width:1300px;margin:0 auto;padding:22px 22px 70px}
+.lead{color:var(--muted);max-width:100ch}
+.lead b{color:var(--brand-900)}
+nav.toc{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 26px}
+nav.toc a{text-decoration:none;border:1px solid var(--line);background:#fff;border-radius:var(--radius-pill);padding:6px 13px;font-size:12.5px;font-weight:600;color:var(--brand-900)}
+nav.toc a:hover{border-color:var(--brand-500)}
+.wrap{margin-bottom:34px}
+.wrap > h2{margin:0 0 4px;font-size:19px}
+.wrap > p.sub{margin:0 0 12px;color:var(--muted);font-size:13px;max-width:100ch}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius-xl);box-shadow:var(--shadow);padding:14px}
+.tag{display:inline-flex;align-items:center;gap:6px;border-radius:var(--radius-pill);border:1px solid var(--line);background:var(--surface-3);color:var(--muted);padding:3px 10px;font-size:11.5px;font-weight:700}
+.tag.rec{border-color:var(--brand-100);background:var(--brand-50);color:var(--brand-700)}
+input,select,textarea{font:inherit;color:inherit}
+.search{position:relative;flex:1;min-width:220px}
+.search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:15px;height:15px;fill:var(--muted-2)}
+.search input{width:100%;padding:10px 12px 10px 36px;border:1px solid var(--line);border-radius:var(--radius-pill);background:#fff}
+input[type=search]:focus,.chip:focus-visible,select.f:focus,button:focus-visible{outline:2px solid var(--brand-500);outline-offset:1px}
+select.f{appearance:none;-webkit-appearance:none;padding:9px 32px 9px 12px;border:1px solid var(--line);border-radius:var(--radius-pill);background:#fff url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23566a80'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E") no-repeat right 11px center;background-size:11px;font-size:12.5px;font-weight:600;color:var(--brand-900);cursor:pointer}
+.chip{border:1px solid var(--line);background:#fff;border-radius:var(--radius-pill);padding:5px 11px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer}
+.chip:hover{border-color:var(--brand-500);color:var(--brand-900)}
+.chip[aria-pressed="true"]{border-color:var(--brand-500);background:var(--brand-50);color:var(--brand-700)}
+.chip b{font-weight:800}
+.filters{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+.filters .group{display:inline-flex;gap:5px;flex-wrap:wrap;align-items:center}
+.filters .group > span.lbl{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted-2);font-weight:800}
+.rowfilters{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+@media(max-width:900px){.rowfilters{grid-template-columns:1fr 1fr}}
+.count{font-size:12px;color:var(--muted);font-weight:600}
+.list{overflow:auto;border:1px solid var(--line);border-radius:var(--radius-lg);margin-top:12px;background:#fff}
+.list.tall{max-height:430px}
+.list.short{max-height:330px}
+.item{display:flex;align-items:center;gap:11px;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line-soft);background:#fff;padding:10px 12px;cursor:pointer;color:inherit;font:inherit}
+.list .item:last-child{border-bottom:0}
+.item:hover{background:var(--surface-3)}
+.item.on{background:var(--brand-50);box-shadow:inset 3px 0 0 var(--brand-600)}
+.item .who{flex:1;min-width:0}
+.item .who b{display:block;font-size:13.5px;color:var(--brand-900);line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item .who small{display:block;font-size:11.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item .end{display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:flex-end}
+.av{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-size:10.5px;font-weight:800;flex:none;background:var(--brand-50);border:1px solid var(--brand-100);color:var(--brand-700)}
+.av.en{background:var(--st-progress-bg);border-color:var(--st-progress-border);color:var(--st-progress)}
+.badge{border-radius:var(--radius-pill);padding:2px 9px;font-size:11px;font-weight:700;border:1px solid;white-space:nowrap}
+.b-ntf{background:var(--st-progress-bg);color:var(--st-progress);border-color:var(--st-progress-border)}
+.b-dlv{background:var(--st-done-bg);color:var(--st-done);border-color:var(--st-done-border)}
+.b-cli{background:var(--surface-2);color:var(--muted);border-color:var(--line)}
+.b-eng{background:var(--brand-50);color:var(--brand-700);border-color:var(--brand-100)}
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:var(--radius-pill);padding:3px 10px;font-size:11.5px;font-weight:700;border:1px solid}
+.p-ok{background:var(--st-done-bg);color:var(--st-done);border-color:var(--st-done-border)}
+.p-wait{background:var(--st-wait-bg);color:var(--st-wait);border-color:var(--st-wait-border)}
+.p-neutral{background:var(--surface-2);color:var(--muted);border-color:var(--line)}
+.detail{margin-top:12px;border:1px solid var(--line);border-radius:var(--radius-xl);background:#fff;box-shadow:var(--shadow);padding:16px}
+.detail .dhead{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line-soft);padding-bottom:12px;margin-bottom:14px}
+.detail .dhead .t{flex:1;min-width:200px}
+.detail h3{margin:0;font-size:17px}
+.detail .dhead p{margin:2px 0 0;font-size:12.5px;color:var(--muted)}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
+@media(max-width:900px){.cols{grid-template-columns:1fr}}
+.block{border:1px solid var(--line);border-radius:var(--radius-md);padding:11px 12px;background:#fff;margin-bottom:10px}
+.block h4{margin:0 0 8px;font-size:13px;display:flex;align-items:center;gap:8px}
+.block .hint{margin:0 0 8px;font-size:12px;color:var(--muted)}
+.people{display:grid;gap:7px}
+.person{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr) 132px 30px;gap:7px;align-items:center}
+@media(max-width:1100px){.person{grid-template-columns:1fr 1fr;}}
+.person input,.person select{width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#fff;font-size:12.5px}
+.person .x{border:1px solid var(--line);background:#fff;border-radius:8px;width:30px;height:30px;color:var(--muted);cursor:pointer;padding:0}
+.person .x:hover{border-color:var(--st-action-border);color:var(--st-action);background:var(--st-action-bg)}
+.base{border-style:dashed;background:var(--surface-3)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.uchip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--brand-100);background:var(--brand-50);color:var(--brand-700);border-radius:var(--radius-pill);padding:3px 9px;font-size:11.5px;font-weight:600}
+.uchip button{border:0;background:none;color:inherit;cursor:pointer;font:inherit;opacity:.6;padding:0}
+.fake-sub{width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;font-size:12.5px;font-weight:600;color:var(--brand-900)}
+.fake-body{width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;font-size:12.5px;line-height:1.45;resize:vertical;min-height:78px;color:var(--ink)}
+.btn{border:1px solid var(--line);background:#fff;border-radius:var(--radius-md);padding:8px 13px;font:inherit;font-size:12.5px;font-weight:600;color:var(--brand-900);cursor:pointer}
+.btn.pri{background:var(--brand-600);border-color:var(--brand-600);color:#fff}
+.btn.sm{padding:6px 11px;font-size:12px}
+.acts{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px;border-top:1px solid var(--line-soft);padding-top:12px}
+.kv{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 14px;font-size:12.5px;margin:0}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;text-align:right;color:var(--brand-900);font-weight:600}
+table.t{width:100%;border-collapse:collapse;font-size:12.5px}
+table.t th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted-2);font-weight:800;padding:9px 11px;background:var(--surface-2);border-bottom:1px solid var(--line)}
+table.t td{padding:10px 11px;border-bottom:1px solid var(--line-soft);vertical-align:middle}
+table.t tr.row{cursor:pointer}
+table.t tr.row:hover td{background:var(--surface-3)}
+table.t tr.row.on td{background:var(--brand-50)}
+table.t th button{all:unset;cursor:pointer;font:inherit}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.tabs button{border:1px solid var(--line);background:#fff;border-radius:var(--radius-pill);padding:6px 13px;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer}
+.tabs button.on{background:var(--brand-900);border-color:var(--brand-900);color:#fff}
+details.pane{border:1px solid var(--line);border-radius:var(--radius-md);margin-bottom:9px;background:#fff}
+details.pane summary{cursor:pointer;padding:10px 12px;font-weight:600;font-size:13px;list-style:none;display:flex;align-items:center;gap:8px}
+details.pane summary::-webkit-details-marker{display:none}
+details.pane summary::before{content:"▸";color:var(--brand-600)}
+details.pane[open] summary::before{content:"▾"}
+details.pane .pbody{padding:0 12px 12px}
+.empty{text-align:center;color:var(--muted);padding:26px;font-size:13px}
+.note{margin-top:22px;border:1px solid var(--brand-100);background:var(--brand-50);color:var(--brand-700);border-radius:var(--radius-md);padding:12px 14px;font-size:12.5px}
+.note b{color:var(--brand-900)}
+.cmp{margin-top:26px}
+.cmp table{width:100%;border-collapse:collapse;font-size:12.5px;background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);overflow:hidden}
+.cmp th,.cmp td{padding:10px 12px;border-bottom:1px solid var(--line-soft);text-align:left;vertical-align:top}
+.cmp th{background:var(--surface-2);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted-2)}
+.cmp tr:last-child td{border-bottom:0}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:11px;background:var(--surface-3);border:1px solid var(--line);border-radius:5px;padding:1px 5px;color:var(--muted)}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="logo"><i>CE</i><div>Cyber Engagement Portal<small>Anteprima · Mailing list</small></div></div>
+</header>
+
+<main>
+  <h1 style="font-size:24px;margin:0 0 6px">Mailing list · 4 proposte di layout</h1>
+  <p class="lead">Tutte e quattro hanno: <b>filtri in alto</b> (una ricerca che guarda cliente, partecipanti, tipo di mail ed engagement), <b>lista scorribile</b> subito sotto, <b>dettaglio modificabile sotto la lista</b>. Cambia il modo di filtrare e di leggere i dati. Sono interattive: scrivi nella ricerca e clicca una riga.</p>
+  <nav class="toc">
+    <a href="#p1">1 · Barra unica + chip</a>
+    <a href="#p2">2 · Select con contatori</a>
+    <a href="#p3">3 · A schede con pill</a>
+    <a href="#p4">4 · Tabella filtrabile</a>
+    <a href="#confronto">Confronto</a>
+  </nav>
+
+  <!-- ============ 1 ============ -->
+  <section class="wrap card" id="p1">
+    <span class="tag">Proposta 1</span>
+    <h2 style="margin-top:10px">Barra unica + chip di filtro</h2>
+    <p class="sub">Una sola ricerca in alto che pesca in tutti i campi, affiancata da chip immediati per tipo e ambito. La lista è una sequenza di righe compatte; il dettaglio si apre sotto.</p>
+
+    <div class="filters">
+      <div class="search">
+        <svg viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1M12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/></svg>
+        <input type="search" data-p1-search placeholder="Cerca cliente, partecipante, tipo di mail o engagement…">
+      </div>
+      <div class="group" role="group" aria-label="Tipo di mail">
+        <span class="lbl">Tipo</span>
+        <button class="chip" aria-pressed="true" data-p1-kind="all">Tutti</button>
+        <button class="chip" aria-pressed="false" data-p1-kind="notifications">Notifiche</button>
+        <button class="chip" aria-pressed="false" data-p1-kind="deliverables">Deliverables</button>
+      </div>
+      <div class="group" role="group" aria-label="Ambito">
+        <span class="lbl">Ambito</span>
+        <button class="chip" aria-pressed="true" data-p1-scope="all">Tutti</button>
+        <button class="chip" aria-pressed="false" data-p1-scope="client">Cliente</button>
+        <button class="chip" aria-pressed="false" data-p1-scope="engagement">Engagement</button>
+      </div>
+      <span class="count" data-p1-count></span>
+    </div>
+
+    <div class="list tall" data-p1-list></div>
+    <div data-p1-detail></div>
+  </section>
+
+  <!-- ============ 2 ============ -->
+  <section class="wrap card" id="p2">
+    <span class="tag">Proposta 2</span>
+    <h2 style="margin-top:10px">Select con contatori</h2>
+    <p class="sub">Ricerca libera più tre select (cliente, tipo, engagement) che mostrano quanti elementi hanno. Filtri più leggibili quando le mailing list saranno tante; la lista resta compatta con i destinatari in anteprima.</p>
+
+    <div class="filters" style="margin-bottom:9px">
+      <div class="search">
+        <svg viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1M12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/></svg>
+        <input type="search" data-p2-search placeholder="Cerca cliente, partecipante, tipo di mail o engagement…">
+      </div>
+      <span class="count" data-p2-count></span>
+      <button class="btn sm" data-p2-reset>Azzera filtri</button>
+    </div>
+    <div class="rowfilters">
+      <select class="f" data-p2-client><option value="">Tutti i clienti</option></select>
+      <select class="f" data-p2-kind>
+        <option value="">Tutte le tipologie</option>
+        <option value="notifications">Notifiche</option>
+        <option value="deliverables">Deliverables</option>
+      </select>
+      <select class="f" data-p2-engagement><option value="">Tutti gli engagement</option></select>
+      <select class="f" data-p2-size>
+        <option value="">Qualsiasi dimensione</option>
+        <option value="small">Fino a 3 destinatari</option>
+        <option value="big">4 o più destinatari</option>
+      </select>
+    </div>
+
+    <div class="list tall" data-p2-list></div>
+    <div data-p2-detail></div>
+  </section>
+
+  <!-- ============ 3 ============ -->
+  <section class="wrap card" id="p3">
+    <span class="tag">Proposta 3</span>
+    <h2 style="margin-top:10px">Lista a schede, dettaglio ad accordion</h2>
+    <p class="sub">Filtro con pill raggruppate per cliente e tipologia (utile se i clienti sono pochi e stabili) e lista a schede con i destinatari già visibili in anteprima. Il dettaglio è un accordion: apri solo la parte che ti serve.</p>
+
+    <div class="filters" style="margin-bottom:9px">
+      <div class="search">
+        <svg viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1M12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/></svg>
+        <input type="search" data-p3-search placeholder="Cerca cliente, partecipante, tipo di mail o engagement…">
+      </div>
+      <span class="count" data-p3-count></span>
+    </div>
+    <div class="filters" style="margin-bottom:2px">
+      <div class="group"><span class="lbl">Cliente</span><span data-p3-clients></span></div>
+      <div class="group"><span class="lbl">Tipo</span><span data-p3-kinds></span></div>
+    </div>
+
+    <div class="list short" data-p3-list></div>
+    <div data-p3-detail></div>
+  </section>
+
+  <!-- ============ 4 ============ -->
+  <section class="wrap card" id="p4">
+    <span class="tag">Proposta 4</span>
+    <h2 style="margin-top:10px">Tabella filtrabile + pannello a tutta larghezza</h2>
+    <p class="sub">La lista diventa una tabella con ordinamento per colonna e filtri nelle intestazioni; il dettaglio è un pannello a tutta larghezza con i destinatari modificabili in riga, come un foglio di calcolo.</p>
+
+    <div class="filters" style="margin-bottom:9px">
+      <div class="search">
+        <svg viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1M12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/></svg>
+        <input type="search" data-p4-search placeholder="Cerca cliente, partecipante, tipo di mail o engagement…">
+      </div>
+      <div class="group" role="group" aria-label="Ambito">
+        <span class="lbl">Ambito</span>
+        <button class="chip" aria-pressed="true" data-p4-scope="all">Tutti</button>
+        <button class="chip" aria-pressed="false" data-p4-scope="client">Cliente</button>
+        <button class="chip" aria-pressed="false" data-p4-scope="engagement">Engagement</button>
+      </div>
+      <span class="count" data-p4-count></span>
+    </div>
+
+    <div class="list tall" style="padding:0">
+      <table class="t">
+        <thead><tr>
+          <th><button data-p4-sort="owner">Cliente / Engagement</button></th>
+          <th><button data-p4-sort="kind">Tipo</button></th>
+          <th><button data-p4-sort="count">Destinatari</button></th>
+          <th><button data-p4-sort="effective">Effettivi</button></th>
+          <th style="text-align:right">Azioni</th>
+        </tr></thead>
+        <tbody data-p4-rows></tbody>
+      </table>
+    </div>
+    <div data-p4-detail></div>
+  </section>
+
+  <section class="cmp" id="confronto">
+    <h2 style="font-size:19px;margin:0 0 10px">Confronto rapido</h2>
+    <table>
+      <tr><th></th><th>1 · Barra + chip</th><th>2 · Select contatori</th><th>3 · Schede + accordion</th><th>4 · Tabella</th></tr>
+      <tr><td><b>Filtro tipo</b></td><td>Chip, un clic</td><td>Select</td><td>Pill</td><td>Chip</td></tr>
+      <tr><td><b>Filtro cliente</b></td><td>Solo ricerca</td><td>Select con conteggi</td><td>Pill dedicate</td><td>Solo ricerca</td></tr>
+      <tr><td><b>Filtro engagement</b></td><td>Solo ricerca</td><td>Select dedicata</td><td>Solo ricerca</td><td>Solo ricerca</td></tr>
+      <tr><td><b>Lista</b></td><td>Righe compatte</td><td>Righe con anteprima destinatari</td><td>Schede con chip destinatari</td><td>Tabella ordinabile</td></tr>
+      <tr><td><b>Dettaglio</b></td><td>Due colonne, tutto visibile</td><td>Colonna destra + tab</td><td>Accordion a strati</td><td>Riga per riga, edit in linea</td></tr>
+      <tr><td><b>Meglio quando…</b></td><td>Le liste sono poche e si vuole tutto sotto controllo</td><td>Le liste crescono e serve filtrare per cliente</td><td>Si lavora spesso su una sola lista per volta</td><td>Si modificano molti destinatari di fila</td></tr>
+    </table>
+  </section>
+
+  <p class="note"><b>Il terzo livello dei template.</b> In tutte le proposte, quando la mailing list selezionata è di tipo <b>engagement</b>, nel dettaglio compare anche il blocco <b>“Testo delle email di questo engagement”</b> (oggetto e corpo IT/EN). È lì che vive l'override per singola attività, mentre in Amministrazione › Template mail restano i due livelli <b>standard</b> e <b>cliente</b>. I segnaposto disponibili: <span class="mono">{{engagement}}</span> <span class="mono">{{code}}</span> <span class="mono">{{client}}</span> <span class="mono">{{owner}}</span> <span class="mono">{{start}}</span> <span class="mono">{{end}}</span> <span class="mono">{{reports}}</span> <span class="mono">{{date}}</span>.</p>
+</main>
+
+<script>
+/* ===================== DATI ===================== */
+const LISTS = [
+  {
+    id: 'client:contoso:notifications', scope: 'client', kind: 'notifications',
+    ownerName: 'Contoso', initials: 'CO', client: 'Contoso', engagement: '',
+    engagementName: '', base: [
+      { name: 'Marta Rinaldi', email: 'marta.rinaldi@contoso.example', organization: 'Cliente' },
+      { name: 'Anna Rossi', email: 'anna.rossi@contoso.example', organization: 'Cliente' },
+      { name: 'Luca Ferri', email: 'luca.ferri@provider.example', organization: 'Provider PMO' }
+    ], specific: [], effective: 3
+  },
+  {
+    id: 'client:contoso:deliverables', scope: 'client', kind: 'deliverables',
+    ownerName: 'Contoso', initials: 'CO', client: 'Contoso', engagement: '',
+    engagementName: '', base: [
+      { name: 'Marta Rinaldi', email: 'marta.rinaldi@contoso.example', organization: 'Cliente' },
+      { name: 'Anna Rossi', email: 'anna.rossi@contoso.example', organization: 'Cliente' }
+    ], specific: [], effective: 2
+  },
+  {
+    id: 'client:fabrikam:notifications', scope: 'client', kind: 'notifications',
+    ownerName: 'Fabrikam', initials: 'FA', client: 'Fabrikam', engagement: '',
+    engagementName: '', base: [
+      { name: 'Paolo Bassi', email: 'paolo.bassi@fabrikam.example', organization: 'Cliente' },
+      { name: 'Elena Fabbri', email: 'elena.fabbri@provider.example', organization: 'Provider PMO' }
+    ], specific: [], effective: 2
+  },
+  {
+    id: 'client:novabank:notifications', scope: 'client', kind: 'notifications',
+    ownerName: 'Nova Bank', initials: 'NB', client: 'Nova Bank', engagement: '',
+    engagementName: '', base: [
+      { name: 'Giulia Sala', email: 'giulia.sala@novabank.example', organization: 'Cliente' },
+      { name: 'Marco Verdi', email: 'marco.verdi@studioverdi.example', organization: 'Partner' },
+      { name: 'Sara Conti', email: 'sara.conti@provider.example', organization: 'Provider Pentester' }
+    ], specific: [], effective: 3
+  },
+  {
+    id: 'client:orion:deliverables', scope: 'client', kind: 'deliverables',
+    ownerName: 'Orion Energia', initials: 'OR', client: 'Orion Energia', engagement: '',
+    engagementName: '', base: [
+      { name: 'Andrea Conti', email: 'andrea.conti@orion.example', organization: 'Cliente' },
+      { name: 'Giorgio Marino', email: 'giorgio.marino@provider.example', organization: 'Manager' }
+    ], specific: [], effective: 2
+  },
+  {
+    id: 'eng:ENG-2026-003:notifications', scope: 'engagement', kind: 'notifications',
+    ownerName: 'ENG-2026-003 · Web Application Retest', initials: 'E3', client: 'Contoso',
+    engagement: 'ENG-2026-003', engagementName: 'Web Application Retest',
+    base: [
+      { name: 'Marta Rinaldi', email: 'marta.rinaldi@contoso.example', organization: 'Cliente' },
+      { name: 'Anna Rossi', email: 'anna.rossi@contoso.example', organization: 'Cliente' },
+      { name: 'Luca Ferri', email: 'luca.ferri@provider.example', organization: 'Provider PMO' }
+    ], specific: [
+      { name: 'Sara Conti', email: 'sara.conti@provider.example', organization: 'Provider Pentester' },
+      { name: 'Marco Verdi', email: 'marco.verdi@studioverdi.example', organization: 'Partner' }
+    ], effective: 4
+  },
+  {
+    id: 'eng:ENG-2026-011:notifications', scope: 'engagement', kind: 'notifications',
+    ownerName: 'ENG-2026-011 · Third-Party Risk Assessment', initials: 'E1', client: 'Nova Bank',
+    engagement: 'ENG-2026-011', engagementName: 'Third-Party Risk Assessment',
+    base: [
+      { name: 'Giulia Sala', email: 'giulia.sala@novabank.example', organization: 'Cliente' },
+      { name: 'Marco Verdi', email: 'marco.verdi@studioverdi.example', organization: 'Partner' },
+      { name: 'Sara Conti', email: 'sara.conti@provider.example', organization: 'Provider Pentester' }
+    ], specific: [
+      { name: 'Chiara Neri', email: 'chiara.neri@studioverdi.example', organization: 'Partner' }
+    ], effective: 3
+  },
+  {
+    id: 'eng:ENG-2026-001:deliverables', scope: 'engagement', kind: 'deliverables',
+    ownerName: 'ENG-2026-001 · External Penetration Test', initials: 'E0', client: 'Contoso',
+    engagement: 'ENG-2026-001', engagementName: 'External Penetration Test',
+    base: [
+      { name: 'Marta Rinaldi', email: 'marta.rinaldi@contoso.example', organization: 'Cliente' },
+      { name: 'Anna Rossi', email: 'anna.rossi@contoso.example', organization: 'Cliente' }
+    ], specific: [
+      { name: 'Giorgio Marino', email: 'giorgio.marino@provider.example', organization: 'Manager' }
+    ], effective: 3
+  },
+  {
+    id: 'eng:ENG-2026-004:deliverables', scope: 'engagement', kind: 'deliverables',
+    ownerName: 'ENG-2026-004 · Internal Red Team', initials: 'E4', client: 'Nova Bank',
+    engagement: 'ENG-2026-004', engagementName: 'Internal Red Team',
+    base: [
+      { name: 'Giulia Sala', email: 'giulia.sala@novabank.example', organization: 'Cliente' },
+      { name: 'Marco Verdi', email: 'marco.verdi@studioverdi.example', organization: 'Partner' }
+    ], specific: [], effective: 2
+  },
+  {
+    id: 'eng:ENG-2026-006:notifications', scope: 'engagement', kind: 'notifications',
+    ownerName: 'ENG-2026-006 · Web Application Penetration Test', initials: 'E6', client: 'Contoso',
+    engagement: 'ENG-2026-006', engagementName: 'Web Application Penetration Test',
+    base: [
+      { name: 'Marta Rinaldi', email: 'marta.rinaldi@contoso.example', organization: 'Cliente' },
+      { name: 'Anna Rossi', email: 'anna.rossi@contoso.example', organization: 'Cliente' },
+      { name: 'Luca Ferri', email: 'luca.ferri@provider.example', organization: 'Provider PMO' }
+    ], specific: [
+      { name: 'Elena Fabbri', email: 'elena.fabbri@provider.example', organization: 'Provider Pentester' }
+    ], effective: 4
+  }
+];
+
+const KIND_LABEL = { notifications: 'Notifiche', deliverables: 'Deliverables' };
+const ORGS = ['Cliente', 'Partner', 'Provider PMO', 'Provider Pentester', 'Manager'];
+const CLIENT_NAMES = [...new Set(LISTS.map(l => l.client))];
+
+let selected = LISTS[5].id;
+
+/* Ogni voce è cercabile per cliente, partecipanti, tipo di mail ed engagement. */
+function matches(list, query) {
+  if (!query) return true;
+  const haystack = [
+    list.client,
+    list.engagement,
+    list.engagementName,
+    list.ownerName,
+    KIND_LABEL[list.kind],
+    list.kind,
+    list.scope === 'client' ? 'cliente base' : 'engagement',
+    ...list.base.flatMap(p => [p.name, p.email, p.organization]),
+    ...list.specific.flatMap(p => [p.name, p.email, p.organization])
+  ].join(' ').toLowerCase();
+  return query.toLowerCase().split(/\s+/).filter(Boolean).every(term => haystack.includes(term));
+}
+
+function esc(value) {
+  return String(value == null ? '' : value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+/* ===================== PEZZI COMUNI ===================== */
+function kindBadge(list) {
+  return `<span class="badge ${list.kind === 'notifications' ? 'b-ntf' : 'b-dlv'}">${KIND_LABEL[list.kind]}</span>`;
+}
+function scopeBadge(list) {
+  return list.scope === 'client'
+    ? '<span class="badge b-cli">Base cliente</span>'
+    : `<span class="badge b-eng">${esc(list.engagement)}</span>`;
+}
+function recipientLine(list) {
+  const all = [...list.base, ...list.specific];
+  return all.slice(0, 3).map(p => esc(p.name)).join(', ') + (all.length > 3 ? ` +${all.length - 3}` : '');
+}
+function peopleEditor(entries, editable, base) {
+  if (!entries.length) return '<p class="hint" style="margin:0">Nessun destinatario.</p>';
+  return entries.map(p => `<div class="person">
+    <input value="${esc(p.name)}" aria-label="Nome" ${editable ? '' : 'readonly'}>
+    <input value="${esc(p.email)}" aria-label="Email" ${editable ? '' : 'readonly'}>
+    <select aria-label="Organizzazione" ${editable ? '' : 'disabled'}>${ORGS.map(o => `<option ${o === p.organization ? 'selected' : ''}>${o}</option>`).join('')}</select>
+    <button class="x" title="Rimuovi" aria-label="Rimuovi" ${editable ? '' : 'disabled'}>×</button>
+  </div>`).join('');
+}
+function templateBlock(list) {
+  if (list.scope !== 'engagement') {
+    return `<div class="block base">
+      <h4>Testo delle email</h4>
+      <p class="hint" style="margin:0">Questa è una base cliente: il testo si modifica in <b>Amministrazione › Template mail</b> (livelli standard e cliente).</p>
+    </div>`;
+  }
+  return `<div class="block">
+    <h4>Testo delle email di ${esc(list.engagement)}</h4>
+    <p class="hint">Solo per questa attività: se lasci vuoto, eredita il testo del cliente. Si invia la versione della lingua del Setup.</p>
+    <label style="display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted-2);margin-bottom:4px">Oggetto IT</label>
+    <input class="fake-sub" value="Avvio attività – ${esc(list.engagementName)}">
+    <label style="display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted-2);margin:8px 0 4px">Corpo IT</label>
+    <textarea class="fake-body">Gentile distribution list,
+
+l'attività ${esc(list.engagementName)} ({{code}}) per {{client}} è iniziata.
+Periodo previsto: {{start}} – {{end}}.</textarea>
+    <label style="display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted-2);margin:10px 0 4px">Subject EN</label>
+    <input class="fake-sub" value="Activity start – ${esc(list.engagementName)}">
+  </div>`;
+}
+function effectiveNote(list) {
+  const total = [...list.base, ...list.specific].length;
+  return `<div class="block base"><h4>Lista effettiva</h4>
+    <p class="hint" style="margin:0">Base cliente + destinatari dell'engagement, senza duplicati: <b>${total} indirizzi</b>. È questa lista che riceve le email.</p></div>`;
+}
+
+/* ===================== PROPOSTA 1 ===================== */
+const p1 = { query: '', kind: 'all', scope: 'all' };
+function p1Render() {
+  const rows = LISTS.filter(l =>
+    matches(l, p1.query) &&
+    (p1.kind === 'all' || l.kind === p1.kind) &&
+    (p1.scope === 'all' || l.scope === p1.scope));
+
+  document.querySelector('[data-p1-count]').textContent = `${rows.length} mailing list`;
+  document.querySelector('[data-p1-list]').innerHTML = rows.length ? rows.map(l => `
+    <button class="item ${l.id === selected ? 'on' : ''}" data-p1-id="${l.id}">
+      <span class="av ${l.scope === 'engagement' ? 'en' : ''}">${l.initials}</span>
+      <span class="who"><b>${esc(l.ownerName)}</b><small>${l.scope === 'client' ? 'Base cliente' : `Engagement · cliente ${esc(l.client)}`} · ${recipientLine(l)}</small></span>
+      <span class="end">${kindBadge(l)}<span class="pill p-neutral">${l.effective}</span></span>
+    </button>`).join('') : '<div class="empty">Nessuna mailing list con questi filtri.</div>';
+
+  const list = LISTS.find(l => l.id === selected);
+  document.querySelector('[data-p1-detail]').innerHTML = !list ? '' : `<div class="detail">
+    <div class="dhead">
+      <span class="av ${list.scope === 'engagement' ? 'en' : ''}" style="width:40px;height:40px">${list.initials}</span>
+      <div class="t"><h3>${esc(list.ownerName)}</h3><p>${esc(list.client)}${list.engagement ? ` · ${esc(list.engagementName)}` : ''} · ${KIND_LABEL[list.kind]} · ${list.effective} destinatari effettivi</p></div>
+      ${scopeBadge(list)}${kindBadge(list)}
+    </div>
+    <div class="cols">
+      <div>
+        <div class="block"><h4>Destinatari propri</h4>
+          <p class="hint">Aggiunti a questa lista, oltre alla base.</p>
+          <div class="people">${peopleEditor(list.specific, true)}</div>
+          <div class="acts" style="margin-top:9px;border:0;padding:0"><button class="btn sec sm">+ Aggiungi destinatario</button></div>
+        </div>
+        ${effectiveNote(list)}
+      </div>
+      <div>
+        <div class="block base"><h4>Base ${list.scope === 'client' ? 'del cliente' : `del cliente ${esc(list.client)}`}</h4>
+          <p class="hint">Comune a tutte le attività del cliente: si modifica in <b>Clienti</b>.</p>
+          <div class="people">${peopleEditor(list.base, false, true)}</div>
+        </div>
+        ${templateBlock(list)}
+      </div>
+    </div>
+    <div class="acts"><button class="btn pri">Salva modifiche</button><button class="btn">Annulla</button>
+      <span class="hint" style="margin-left:auto">Ultima modifica 12/11/2026 · Luca Ferri</span></div>
+  </div>`;
+
+  document.querySelectorAll('[data-p1-id]').forEach(el => el.onclick = () => { selected = el.dataset.p1Id; p1Render(); });
+}
+document.querySelector('[data-p1-search]').addEventListener('input', e => { p1.query = e.target.value; p1Render(); });
+document.querySelectorAll('[data-p1-kind]').forEach(el => el.onclick = () => { p1.kind = el.dataset.p1Kind; p1Render(); });
+document.querySelectorAll('[data-p1-scope]').forEach(el => el.onclick = () => { p1.scope = el.dataset.p1Scope; p1Render(); });
+
+/* ===================== PROPOSTA 2 ===================== */
+const p2 = { query: '', client: '', kind: '', engagement: '', size: '' };
+function p2Options() {
+  const clientSel = document.querySelector('[data-p2-client]');
+  clientSel.innerHTML = '<option value="">Tutti i clienti</option>' + CLIENT_NAMES
+    .map(c => `<option value="${esc(c)}">${esc(c)} (${LISTS.filter(l => l.client === c).length})</option>`).join('');
+  const engSel = document.querySelector('[data-p2-engagement]');
+  engSel.innerHTML = '<option value="">Tutti gli engagement</option>' + LISTS
+    .filter(l => l.engagement)
+    .map(l => `<option value="${l.engagement}">${l.engagement} · ${esc(l.engagementName)}</option>`).join('');
+}
+function p2Render() {
+  const rows = LISTS.filter(l =>
+    matches(l, p2.query) &&
+    (!p2.client || l.client === p2.client) &&
+    (!p2.kind || l.kind === p2.kind) &&
+    (!p2.engagement || l.engagement === p2.engagement) &&
+    (!p2.size ||
+      (p2.size === 'small' && l.effective <= 3) ||
+      (p2.size === 'big' && l.effective >= 4)));
+
+  document.querySelector('[data-p2-count]').textContent = `${rows.length} mailing list`;
+  document.querySelector('[data-p2-list]').innerHTML = rows.length ? rows.map(l => `
+    <button class="item ${l.id === selected ? 'on' : ''}" data-p2-id="${l.id}">
+      <span class="av ${l.scope === 'engagement' ? 'en' : ''}">${l.initials}</span>
+      <span class="who"><b>${esc(l.ownerName)}</b>
+        <small>${kindBadge(l)} ${scopeBadge(l)} ${esc(l.client)} · ${recipientLine(l)}</small></span>
+      <span class="end"><span class="pill p-wait">${l.specific.length} propri</span><span class="pill p-neutral">${l.effective} effettivi</span></span>
+    </button>`).join('') : '<div class="empty">Nessuna mailing list con questi filtri.</div>';
+
+  const list = LISTS.find(l => l.id === selected);
+  document.querySelector('[data-p2-detail]').innerHTML = !list ? '' : `<div class="detail">
+    <div class="dhead">
+      <span class="av ${list.scope === 'engagement' ? 'en' : ''}" style="width:40px;height:40px">${list.initials}</span>
+      <div class="t"><h3>${esc(list.ownerName)}</h3><p>${KIND_LABEL[list.kind]} · ${list.scope === 'client' ? 'base cliente' : 'engagement'} · ${list.effective} destinatari effettivi</p></div>
+      ${kindBadge(list)}<button class="btn sm">Esporta CSV</button>
+    </div>
+    <div class="cols">
+      <div>
+        <div class="tabs"><button class="on">Destinatari</button><button>Template</button><button>Impostazioni</button></div>
+        <div class="block"><h4>Propri di questa lista <span class="pill p-wait">${list.specific.length}</span></h4>
+          <div class="people">${peopleEditor(list.specific, true)}</div>
+          <p class="hint" style="margin:9px 0 0">Vuoto = ricevono solo la base cliente.</p>
+        </div>
+        <div class="block base"><h4>Base cliente <span class="pill p-neutral">${list.base.length}</span></h4>
+          <div class="people">${peopleEditor(list.base, false, true)}</div>
+        </div>
+      </div>
+      <div>
+        <div class="block"><h4>Riepilogo</h4>
+          <dl class="kv">
+            <dt>Cliente</dt><dd>${esc(list.client)}</dd>
+            <dt>Ambito</dt><dd>${list.scope === 'client' ? 'Base cliente' : esc(list.engagement)}</dd>
+            <dt>Tipologia</dt><dd>${KIND_LABEL[list.kind]}</dd>
+            <dt>Propri</dt><dd>${list.specific.length}</dd>
+            <dt>Base cliente</dt><dd>${list.base.length}</dd>
+            <dt>Effettivi</dt><dd>${list.effective}</dd>
+          </dl></div>
+        ${templateBlock(list)}
+        ${effectiveNote(list)}
+      </div>
+    </div>
+    <div class="acts"><button class="btn pri">Salva modifiche</button><button class="btn">Annulla</button></div>
+  </div>`;
+
+  document.querySelectorAll('[data-p2-id]').forEach(el => el.onclick = () => { selected = el.dataset.p2Id; p2Render(); });
+}
+p2Options();
+document.querySelector('[data-p2-search]').addEventListener('input', e => { p2.query = e.target.value; p2Render(); });
+['client', 'kind', 'engagement', 'size'].forEach(k => {
+  const el = document.querySelector(`[data-p2-${k}]`);
+  el.addEventListener('change', () => { p2[k] = el.value; p2Render(); });
+});
+document.querySelector('[data-p2-reset]').onclick = () => {
+  p2.query = ''; p2.client = ''; p2.kind = ''; p2.engagement = ''; p2.size = '';
+  document.querySelector('[data-p2-search]').value = '';
+  ['client', 'kind', 'engagement', 'size'].forEach(k => { document.querySelector(`[data-p2-${k}]`).value = ''; });
+  p2Render();
+};
+
+/* ===================== PROPOSTA 3 ===================== */
+const p3 = { query: '', client: '', kind: '' };
+function p3Filters() {
+  document.querySelector('[data-p3-clients]').innerHTML =
+    `<button class="chip" aria-pressed="${!p3.client}" data-p3-client="">Tutti</button>` +
+    CLIENT_NAMES.map(c => `<button class="chip" aria-pressed="${p3.client === c}" data-p3-client="${esc(c)}">${esc(c)}</button>`).join('');
+  document.querySelector('[data-p3-kinds]').innerHTML =
+    `<button class="chip" aria-pressed="${!p3.kind}" data-p3-kind="">Tutte</button>` +
+    Object.entries(KIND_LABEL).map(([k, label]) =>
+      `<button class="chip" aria-pressed="${p3.kind === k}" data-p3-kind="${k}">${label}</button>`).join('');
+  document.querySelectorAll('[data-p3-client]').forEach(el => el.onclick = () => { p3.client = el.dataset.p3Client; p3Render(); });
+  document.querySelectorAll('[data-p3-kind]').forEach(el => el.onclick = () => { p3.kind = el.dataset.p3Kind; p3Render(); });
+}
+function p3Render() {
+  const rows = LISTS.filter(l =>
+    matches(l, p3.query) &&
+    (!p3.client || l.client === p3.client) &&
+    (!p3.kind || l.kind === p3.kind));
+
+  document.querySelector('[data-p3-count]').textContent = `${rows.length} mailing list`;
+  document.querySelector('[data-p3-list]').innerHTML = rows.length ? rows.map(l => {
+    const chips = [...l.base, ...l.specific].slice(0, 3)
+      .map(p => `<span class="uchip">${esc(p.name)}</span>`).join('');
+    const more = [...l.base, ...l.specific].length > 3
+      ? `<span class="uchip">+${[...l.base, ...l.specific].length - 3}</span>` : '';
+    return `<button class="item ${l.id === selected ? 'on' : ''}" data-p3-id="${l.id}" style="align-items:flex-start">
+      <span class="av ${l.scope === 'engagement' ? 'en' : ''}">${l.initials}</span>
+      <span class="who"><b>${esc(l.ownerName)}</b>
+        <small>${esc(l.client)}${l.engagement ? ` · ${esc(l.engagementName)}` : ''}</small>
+        <span class="chips" style="margin-top:6px">${kindBadge(l)}${chips}${more}</span></span>
+      <span class="end"><span class="pill p-neutral">${l.effective}</span></span>
+    </button>`;
+  }).join('') : '<div class="empty">Nessuna mailing list con questi filtri.</div>';
+
+  const list = LISTS.find(l => l.id === selected);
+  document.querySelector('[data-p3-detail]').innerHTML = !list ? '' : `<div class="detail">
+    <div class="dhead">
+      <span class="av ${list.scope === 'engagement' ? 'en' : ''}" style="width:40px;height:40px">${list.initials}</span>
+      <div class="t"><h3>${esc(list.ownerName)}</h3><p>${esc(list.client)} · ${KIND_LABEL[list.kind]} · ${list.effective} destinatari effettivi</p></div>
+      ${scopeBadge(list)}${kindBadge(list)}
+    </div>
+    <details class="pane" open>
+      <summary>Destinatari propri di questa lista <span class="pill p-wait">${list.specific.length}</span></summary>
+      <div class="pbody">
+        <div class="people">${peopleEditor(list.specific, true)}</div>
+        <div class="acts" style="margin-top:9px;border:0;padding:0"><button class="btn sec sm">+ Aggiungi destinatario</button></div>
+      </div>
+    </details>
+    <details class="pane">
+      <summary>Base cliente <span class="pill p-neutral">${list.base.length}</span></summary>
+      <div class="pbody"><div class="people">${peopleEditor(list.base, false, true)}</div></div>
+    </details>
+    <details class="pane" ${list.scope === 'engagement' ? 'open' : ''}>
+      <summary>Testo delle email${list.scope === 'engagement' ? ' di questa attività' : ''}</summary>
+      <div class="pbody">${templateBlock(list)}</div>
+    </details>
+    <div class="acts"><button class="btn pri">Salva modifiche</button><button class="btn">Annulla</button>
+      <span class="hint" style="margin-left:auto">Base + propri = <b>${list.effective}</b> indirizzi effettivi</span></div>
+  </div>`;
+
+  document.querySelectorAll('[data-p3-id]').forEach(el => el.onclick = () => { selected = el.dataset.p3Id; p3Render(); });
+}
+document.querySelector('[data-p3-search]').addEventListener('input', e => { p3.query = e.target.value; p3Render(); });
+
+/* ===================== PROPOSTA 4 ===================== */
+const p4 = { query: '', scope: 'all', sort: 'owner', dir: 'asc' };
+function p4Render() {
+  const rows = LISTS.filter(l =>
+    matches(l, p4.query) && (p4.scope === 'all' || l.scope === p4.scope));
+
+  const value = l => ({ owner: l.ownerName, kind: KIND_LABEL[l.kind], count: l.specific.length, effective: l.effective }[p4.sort]);
+  rows.sort((a, b) => {
+    const va = value(a), vb = value(b);
+    const cmp = typeof va === 'number' ? va - vb : String(va).localeCompare(String(vb));
+    return p4.dir === 'asc' ? cmp : -cmp;
+  });
+
+  document.querySelector('[data-p4-count]').textContent = `${rows.length} mailing list`;
+  document.querySelector('[data-p4-rows]').innerHTML = rows.length ? rows.map(l => `
+    <tr class="row ${l.id === selected ? 'on' : ''}" data-p4-id="${l.id}">
+      <td><div style="display:flex;align-items:center;gap:9px"><span class="av ${l.scope === 'engagement' ? 'en' : ''}">${l.initials}</span>
+        <span><b style="color:var(--brand-900)">${esc(l.ownerName)}</b><br><small style="color:var(--muted)">${esc(l.client)}${l.engagement ? ` · ${esc(l.engagementName)}` : ''}</small></span></div></td>
+      <td>${kindBadge(l)} ${scopeBadge(l)}</td>
+      <td><span class="pill p-wait">${l.specific.length}</span></td>
+      <td><span class="pill p-neutral">${l.effective}</span></td>
+      <td style="text-align:right"><button class="btn sm">Modifica</button></td>
+    </tr>`).join('') : '<tr><td colspan="5"><div class="empty">Nessuna mailing list con questi filtri.</div></td></tr>';
+
+  const list = LISTS.find(l => l.id === selected);
+  document.querySelector('[data-p4-detail]').innerHTML = !list ? '' : `<div class="detail">
+    <div class="dhead">
+      <span class="av ${list.scope === 'engagement' ? 'en' : ''}" style="width:40px;height:40px">${list.initials}</span>
+      <div class="t"><h3>${esc(list.ownerName)}</h3><p>${KIND_LABEL[list.kind]} · ${list.scope === 'client' ? 'base cliente' : 'engagement'} · ${esc(list.client)}</p></div>
+      ${kindBadge(list)}<button class="btn sm">Copia lista</button>
+    </div>
+    <table class="t" style="border:1px solid var(--line);border-radius:10px;overflow:hidden">
+      <thead><tr><th>Nome</th><th>Email</th><th>Organizzazione</th><th>Origine</th><th style="text-align:right">Rimuovi</th></tr></thead>
+      <tbody>
+        ${list.specific.map(p => `<tr>
+          <td><input class="fake-sub" style="font-weight:400" value="${esc(p.name)}"></td>
+          <td><input class="fake-sub" style="font-weight:400" value="${esc(p.email)}"></td>
+          <td><select class="f" style="width:100%">${ORGS.map(o => `<option ${o === p.organization ? 'selected' : ''}>${o}</option>`).join('')}</select></td>
+          <td><span class="pill p-wait">Proprio</span></td>
+          <td style="text-align:right"><button class="x">×</button></td>
+        </tr>`).join('')}
+        ${list.base.map(p => `<tr style="background:var(--surface-3)">
+          <td>${esc(p.name)}</td>
+          <td>${esc(p.email)}</td>
+          <td>${esc(p.organization)}</td>
+          <td><span class="pill p-neutral">Base cliente</span></td>
+          <td style="text-align:right"><span class="hint">ereditato</span></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+    <div class="acts"><button class="btn sec sm">+ Aggiungi riga</button>
+      <span class="hint">Le righe grigie arrivano dal cliente e non si modificano qui.</span></div>
+    ${templateBlock(list)}
+    <div class="acts"><button class="btn pri">Salva modifiche</button><button class="btn">Annulla</button></div>
+  </div>`;
+
+  document.querySelectorAll('[data-p4-id]').forEach(el => el.onclick = () => { selected = el.dataset.p4Id; p4Render(); });
+  document.querySelectorAll('[data-p4-sort]').forEach(el => el.onclick = () => {
+    const key = el.dataset.p4Sort;
+    p4.dir = p4.sort === key && p4.dir === 'asc' ? 'desc' : 'asc';
+    p4.sort = key;
+    p4Render();
+  });
+}
+document.querySelector('[data-p4-search]').addEventListener('input', e => { p4.query = e.target.value; p4Render(); });
+document.querySelectorAll('[data-p4-scope]').forEach(el => el.onclick = () => { p4.scope = el.dataset.p4Scope; p4Render(); });
+
+/* ===================== AVVIO ===================== */
+p1Render();
+p2Render();
+p3Filters();
+p3Render();
+p4Render();
+</script>
+</body>
+</html>

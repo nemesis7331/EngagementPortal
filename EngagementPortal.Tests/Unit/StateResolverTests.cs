@@ -24,7 +24,7 @@ public sealed class StateResolverTests
     {
         Id = "ENG-2026-001",
         ClientId = "client",
-        ClientName = "Nova Bank",
+        ClientName = "Acme",
         Name = "External Penetration Test",
         Type = EngagementType.PenetrationTest,
         Owner = "Provider Pentester",

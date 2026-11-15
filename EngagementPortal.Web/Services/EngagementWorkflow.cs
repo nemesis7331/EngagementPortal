@@ -17,7 +17,8 @@ public sealed class EngagementWorkflow(IDateProvider clock)
         EngagementPhase phase,
         DateOnly today)
     {
-        if (phase is EngagementPhase.Setup or EngagementPhase.Done)
+        if (phase is EngagementPhase.Setup or EngagementPhase.Done or
+            EngagementPhase.Retest or EngagementPhase.RetestReporting)
             return null;
 
         var start = engagement.AcceptedProposal?.StartDate;
@@ -58,10 +59,10 @@ public sealed class EngagementWorkflow(IDateProvider clock)
 
         var proposal = engagement.AcceptedProposal;
 
-        // Precedenza allineata alla demo: un deliverable pubblicato chiude
-        // l'engagement anche se le date non sono ancora trascorse.
+        // Precedenza allineata alla demo: un deliverable pubblicato chiude la
+        // parte principale; se il recheck è previsto si passa al retest.
         if (engagement.Reports.Any(report => report.Published))
-            return EngagementPhase.Done;
+            return RetestPhase(engagement);
 
         // Oltre la data di fine si passa a reporting anche se la
         // preparazione non è completa.
@@ -85,6 +86,29 @@ public sealed class EngagementWorkflow(IDateProvider clock)
         return EngagementPhase.Running;
     }
 
+    /// <summary>
+    /// Dopo la pubblicazione del report: se il recheck è previsto si passa al
+    /// retest (richiesta del cliente, date, esecuzione) e all'invio del report
+    /// di retest, senza passare dalla revisione del Manager. Altrimenti
+    /// l'attività è conclusa.
+    /// </summary>
+    private static EngagementPhase RetestPhase(Engagement engagement)
+    {
+        if (engagement.RetestReportSentDate is not null)
+            return EngagementPhase.Done;
+
+        // Report caricato (o retest eseguito): resta solo da inviarlo.
+        if (engagement.RetestReport is not null ||
+            engagement.RetestCompletedDate is not null)
+            return EngagementPhase.RetestReporting;
+
+        return engagement.RetestPlanned ||
+            engagement.RetestRequestedDate is not null ||
+            engagement.AcceptedRetestProposal is not null
+            ? EngagementPhase.Retest
+            : EngagementPhase.Done;
+    }
+
     public static int StepIndex(EngagementPhase phase) => phase switch
     {
         EngagementPhase.Setup => 0,
@@ -94,7 +118,9 @@ public sealed class EngagementWorkflow(IDateProvider clock)
         EngagementPhase.Credentials => 4,
         EngagementPhase.Scheduled or EngagementPhase.Running => 5,
         EngagementPhase.Reporting => 6,
-        EngagementPhase.Done => 7,
+        EngagementPhase.Retest => 7,
+        EngagementPhase.RetestReporting => 8,
+        EngagementPhase.Done => 9,
         _ => 0
     };
 
@@ -232,6 +258,64 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
             return null;
 
         var phase = workflow.Resolve(engagement, currentDate);
+        var today = currentDate ?? workflow.Today;
+
+        // Retest e report di retest valgono per tutti i profili: il cliente
+        // chiede, il Manager approva le date, il Pentester esegue e invia.
+        if (phase == EngagementPhase.Retest)
+        {
+            if (engagement.RetestRequestedDate is null)
+            {
+                return role == Roles.Client
+                    ? new TodoItem(
+                        "Richiedi il retest a fix completati",
+                        "reports")
+                    : null;
+            }
+
+            var pendingRetest = engagement.RetestProposals
+                .FirstOrDefault(p => p.Status == ProposalStatus.Pending);
+
+            if (pendingRetest is not null)
+            {
+                return role == Roles.Manager
+                    ? new TodoItem(
+                        "Date del retest: approva o rifiuta.",
+                        "reports")
+                    : null;
+            }
+
+            if (engagement.AcceptedRetestProposal is null)
+            {
+                return role is Roles.PMO or Roles.Client
+                    ? new TodoItem("Proponi le date del retest", "reports")
+                    : null;
+            }
+
+            if (today < engagement.AcceptedRetestProposal.StartDate)
+                return null;
+
+            return role == Roles.Pentester
+                ? new TodoItem(
+                    "Concludi il retest e carica il report",
+                    "reports")
+                : null;
+        }
+
+        if (phase == EngagementPhase.RetestReporting)
+        {
+            if (role != Roles.Pentester)
+                return null;
+
+            if (engagement.RetestReport is null)
+                return new TodoItem("Carica il report di retest", "reports");
+
+            return engagement.RetestReportSentDate is null
+                ? new TodoItem(
+                    "Invia il report di retest al cliente (senza revisione)",
+                    "reports")
+                : null;
+        }
 
         var pending = engagement.Proposals
             .FirstOrDefault(p => p.Status == ProposalStatus.Pending);
@@ -352,7 +436,7 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
             return new ActionState("done", null, null, "Completato", null, null);
 
         if (role == Roles.Auditor)
-            return Waiting(engagement, phase, role);
+            return Waiting(engagement, phase, role, today);
 
         var todo = Resolve(engagement, role, today);
 
@@ -367,7 +451,7 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
                 Since(engagement, phase));
         }
 
-        return Waiting(engagement, phase, role);
+        return Waiting(engagement, phase, role, today);
     }
 
     /// <summary>
@@ -469,6 +553,14 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
         {
             tabs["reports"] = new TabState("todo", todo.Action);
         }
+        else if (phase is EngagementPhase.Retest or EngagementPhase.RetestReporting)
+        {
+            // La parte principale è pubblicata: la scheda Report segue il retest.
+            var state = ResolveAction(engagement, role, workflow.Today);
+            tabs["reports"] = new TabState(
+                state.Kind == "waiting" ? "wait" : "progress",
+                state.Label);
+        }
         else if (engagement.Reports.Any(report => report.Published))
         {
             tabs["reports"] = new TabState("ok", null);
@@ -501,7 +593,8 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
     private ActionState Waiting(
         Engagement engagement,
         EngagementPhase phase,
-        string role)
+        string role,
+        DateOnly today)
     {
         // Una riprogrammazione in attesa di approvazione riguarda il Manager
         // anche quando l'attività è già pianificata o in corso.
@@ -618,6 +711,18 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
             case EngagementPhase.Reporting:
                 return ReportingWaiting(engagement);
 
+            case EngagementPhase.Retest:
+                return RetestWaiting(engagement, today);
+
+            case EngagementPhase.RetestReporting:
+                return Wait(
+                    Roles.Pentester,
+                    OwnerLabel(Roles.Pentester),
+                    engagement.RetestReport is null
+                        ? "In attesa del report di retest dal Pentester"
+                        : "In attesa dell'invio del report di retest al cliente",
+                    SinceRetestReport(engagement));
+
             default:
                 return new ActionState(
                     "neutral",
@@ -679,6 +784,65 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
             null);
     }
 
+    /// <summary>Attese del retest: richiesta del cliente, date, esecuzione.</summary>
+    private static ActionState RetestWaiting(
+        Engagement engagement,
+        DateOnly today)
+    {
+        if (engagement.RetestRequestedDate is null)
+        {
+            return Wait(
+                Roles.Client,
+                OwnerLabel(Roles.Client),
+                "In attesa della richiesta di retest dal cliente",
+                SinceRetest(engagement));
+        }
+
+        var pending = engagement.RetestProposals
+            .FirstOrDefault(proposal => proposal.Status == ProposalStatus.Pending);
+
+        if (pending is not null)
+        {
+            return Wait(
+                Roles.Manager,
+                OwnerLabel(Roles.Manager),
+                "In attesa dell'approvazione delle date del retest",
+                pending.Date);
+        }
+
+        if (engagement.AcceptedRetestProposal is not { } accepted)
+        {
+            return Wait(
+                "Client/PMO",
+                "Cliente o PMO",
+                "In attesa delle date del retest",
+                SinceRetest(engagement));
+        }
+
+        // Il Pentester ha l'azione "concludi il retest" dal giorno di avvio;
+        // qui restano gli altri profili, che vedono solo l'avanzamento.
+        if (today < accepted.StartDate)
+        {
+            return new ActionState(
+                "progress",
+                null,
+                null,
+                $"Retest pianificato dal {accepted.StartDate:dd/MM/yyyy}",
+                null,
+                null);
+        }
+
+        return new ActionState(
+            "progress",
+            null,
+            null,
+            today > accepted.EndDate
+                ? "Retest da concludere"
+                : "Retest in corso",
+            null,
+            null);
+    }
+
     private static ActionState Wait(
         string owner,
         string ownerLabel,
@@ -699,8 +863,20 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
         EngagementPhase.Scope or EngagementPhase.Credentials =>
             SincePreparation(engagement),
         EngagementPhase.Reporting => LatestReportDate(engagement),
+        EngagementPhase.Retest => SinceRetest(engagement),
+        EngagementPhase.RetestReporting => SinceRetestReport(engagement),
         _ => null
     };
+
+    private static DateOnly SinceRetest(Engagement engagement) =>
+        engagement.RetestRequestedDate is { } requested
+            ? DateOnly.FromDateTime(requested.UtcDateTime)
+            : engagement.AcceptedRetestProposal?.Date ?? SinceDocs(engagement);
+
+    private static DateOnly SinceRetestReport(Engagement engagement) =>
+        engagement.RetestCompletedDate is { } completed
+            ? DateOnly.FromDateTime(completed.UtcDateTime)
+            : SinceRetest(engagement);
 
     private static DateOnly SinceDocs(Engagement engagement) =>
         DateOnly.FromDateTime(engagement.CreatedDate.UtcDateTime);

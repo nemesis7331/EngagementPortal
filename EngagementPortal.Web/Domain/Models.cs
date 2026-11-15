@@ -19,6 +19,8 @@ public enum EngagementPhase
     Scheduled,   // 5. Esecuzione (prima dell'avvio)
     Running,     // 5. Esecuzione (in corso)
     Reporting,   // 6. Report
+    Retest,          // 7. Retest: richiesta del cliente, date ed esecuzione
+    RetestReporting, // 8. Report del retest: invio al cliente senza revisione
     Done
 }
 
@@ -151,12 +153,26 @@ public sealed class MailTemplateSet
     public MailTemplate? Start { get; set; }
     public MailTemplate? End { get; set; }
     public MailTemplate? Deliver { get; set; }
+    public MailTemplate? RetestReport { get; set; }
+
+    // Solleciti (vedi MailTemplates.Types per chiavi, etichette e destinatari).
+    public MailTemplate? SolReportUpload { get; set; }
+    public MailTemplate? SolReview { get; set; }
+    public MailTemplate? SolCredentialsEarly { get; set; }
+    public MailTemplate? SolCredentialsLate { get; set; }
+    public MailTemplate? SolManual { get; set; }
 
     public MailTemplate? For(string type) => type switch
     {
         "start" => Start,
         "end" => End,
         "deliver" => Deliver,
+        "retestreport" => RetestReport,
+        "solrep" => SolReportUpload,
+        "solrev" => SolReview,
+        "solcred3" => SolCredentialsEarly,
+        "solcred2" => SolCredentialsLate,
+        "solmanual" => SolManual,
         _ => null
     };
 
@@ -172,6 +188,24 @@ public sealed class MailTemplateSet
                 break;
             case "deliver":
                 Deliver = template;
+                break;
+            case "retestreport":
+                RetestReport = template;
+                break;
+            case "solrep":
+                SolReportUpload = template;
+                break;
+            case "solrev":
+                SolReview = template;
+                break;
+            case "solcred3":
+                SolCredentialsEarly = template;
+                break;
+            case "solcred2":
+                SolCredentialsLate = template;
+                break;
+            case "solmanual":
+                SolManual = template;
                 break;
         }
     }
@@ -219,6 +253,32 @@ public sealed class Engagement
     public List<string> DeliverableTypes { get; init; } =
         [DeliverableKinds.Technical];
 
+    /// <summary>
+    /// Recheck previsto: si decide nel Setup (default dal tipo di attività) e
+    /// resta modificabile fino alla richiesta di retest del cliente. Se è
+    /// spento, i due passi di retest non esistono per questa attività.
+    /// </summary>
+    public bool RetestPlanned { get; set; }
+
+    /// <summary>Chi e quando ha deciso se il recheck è previsto.</summary>
+    public string? RetestDecidedByName { get; set; }
+    public DateTimeOffset? RetestDecidedDate { get; set; }
+
+    /// <summary>Richiesta di retest dal cliente: si può fare una sola volta.</summary>
+    public DateTimeOffset? RetestRequestedDate { get; set; }
+    public string? RetestRequestedByName { get; set; }
+
+    /// <summary>Date del retest: stessa logica di proposta/accettazione del planning.</summary>
+    public List<Proposal> RetestProposals { get; init; } = [];
+    public Proposal? AcceptedRetestProposal { get; set; }
+
+    /// <summary>Quando il retest è stato eseguito (report caricato).</summary>
+    public DateTimeOffset? RetestCompletedDate { get; set; }
+
+    /// <summary>Report del retest: inviato al cliente senza revisione.</summary>
+    public ReportFile? RetestReport { get; set; }
+    public DateTimeOffset? RetestReportSentDate { get; set; }
+
     public bool ReportsComplete => DeliverableTypes.All(type =>
         Reports.Any(report => report.IsLatest &&
             string.Equals(report.Kind, type, StringComparison.OrdinalIgnoreCase)));
@@ -259,6 +319,10 @@ public sealed class Engagement
     public List<ReportFile> Reports { get; init; } = [];
     public List<ReportDownloadLink> ReportLinks { get; init; } = [];
     public ReviewStatus ReviewStatus { get; set; }
+
+    /// <summary>Quando i deliverable sono stati inviati in revisione.</summary>
+    public DateTimeOffset? ReviewRequestedDate { get; set; }
+
     public List<AuditEntry> AuditLog { get; init; } = [];
 
     public Proposal? AcceptedProposal =>
@@ -361,7 +425,8 @@ public sealed record AddReportRequest(
 
 public sealed record SetupRequest(
     string Language,
-    List<string>? DeliverableTypes);
+    List<string>? DeliverableTypes,
+    bool? RetestPlanned = null);
 
 public sealed record ReviewDecisionRequest(
     bool Approve,
@@ -394,14 +459,6 @@ public sealed record TeamMemberRequest(
     string Email,
     string Organization,
     string? Role);
-
-public sealed record MailTemplateUpdateRequest(
-    string Scope,
-    string? Subject,
-    string? Body,
-    bool Reset = false,
-    string? SubjectEn = null,
-    string? BodyEn = null);
 
 public sealed record AdminTemplateRequest(
     string? Subject,
@@ -440,6 +497,12 @@ public sealed record CreateUserRequest(
     string Email,
     string Role);
 
+public sealed record UpdateUserRequest(
+    string Name,
+    string Email,
+    string Role,
+    bool? Active);
+
 public sealed record UserAssignmentRequest(
     string Type,
     string TargetId);
@@ -454,9 +517,27 @@ public sealed record FinancialsRequest(decimal? Cost, decimal? Margin);
 
 public sealed record AddClientUserRequest(string Name, string Email);
 
-public sealed record SolicitationRuleRequest(
-    bool Enabled,
-    int ThresholdDays);
+public sealed record SolicitationRuleRequest(bool Enabled);
+
+/// <summary>Modifica di un tipo di attività dal catalogo.</summary>
+public sealed record ActivityTypeRequest(
+    string? Label,
+    string? Short,
+    string? Description,
+    bool RetestPlanned,
+    List<string>? DeliverableTypes,
+    bool Reset = false);
+
+/// <summary>Date proposte per il retest (PMO) e accettazione (Manager).</summary>
+public sealed record RetestProposalRequest(
+    string? StartDate,
+    string? EndDate);
+
+public sealed record RetestDecisionRequest(bool Approve);
+
+/// <summary>Report del retest caricato dal Pentester.</summary>
+public sealed record RetestReportRequest(
+    string Description);
 
 public sealed record CreateEngagementRequest(
     string Name,

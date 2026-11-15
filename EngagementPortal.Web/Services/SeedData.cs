@@ -55,15 +55,15 @@ public static class SeedData
             // 12. Costi inseriti dal PMO, in attesa di approvazione Manager.
             PendingFinancialsCase(),
 
-            // 13. Esecuzione: nuovo cliente Tailspin Toys.
-            TailspinRunningCase(),
+            // 13. Esecuzione: nuovo cliente Anthropic.
+            AnthropicRunningCase(),
 
-            // 14. Pianificato: nuovo cliente Northwind Traders.
-            NorthwindScheduledCase(),
+            // 14. Pianificato: nuovo cliente Nvidia.
+            NvidiaScheduledCase(),
 
-            // 15. Concluso per Contoso: il profilo Cliente vede un report
+            // 15. Concluso per Anthropic: il profilo Cliente vede un report
             //     pubblicato e scaricabile.
-            DoneContosoCase()
+            DoneAnthropicCase()
         };
 
         return engagements;
@@ -72,7 +72,7 @@ public static class SeedData
     private static Engagement ScopeCase()
     {
         var engagement = New(
-            "ENG-2026-001", "contoso", "Contoso",
+            "ENG-2026-001", "anthropic", "Anthropic",
             "External Penetration Test", EngagementType.PenetrationTest, 6);
 
         Docs(engagement, "PO-2026-0142");
@@ -88,7 +88,7 @@ public static class SeedData
     private static Engagement DocumentsCase()
     {
         var engagement = New(
-            "ENG-2026-002", "fabrikam", "Fabrikam",
+            "ENG-2026-002", "nvidia", "Nvidia",
             "Cloud Security Review", EngagementType.CloudSecurity, 9);
 
         engagement.DocumentoIngaggioFile =
@@ -101,17 +101,17 @@ public static class SeedData
     private static Engagement ReportingPendingCase()
     {
         var engagement = New(
-            "ENG-2026-003", "contoso", "Contoso",
+            "ENG-2026-003", "anthropic", "Anthropic",
             "Web Application Retest", EngagementType.PenetrationTest, 25);
 
         Docs(engagement, "PO-2026-0107");
         Financials(engagement, 9000m, 46m);
         Scope(engagement,
-            "app.contoso.example", "10.20.30.0/24",
+            "app.anthropic.example", "10.20.30.0/24",
             "Ambienti di produzione", "Lun-Ven 20:00-06:00",
-            "security@contoso.example", "Retest dopo remediation", 12);
+            "security@anthropic.example", "Retest dopo remediation", 12);
         Credentials(engagement,
-            "VPN-CONTOSO-01", "2 utenze di test",
+            "VPN-ANTHROPIC-01", "2 utenze di test",
             "Azure Key Vault", "Nessuna password condivisa", 12);
         Distribution(engagement);
         Mail(engagement, "start", 10);
@@ -146,15 +146,15 @@ public static class SeedData
     private static Engagement RunningCase()
     {
         var engagement = New(
-            "ENG-2026-004", "novabank", "Nova Bank",
+            "ENG-2026-004", "nvidia", "Nvidia",
             "Internal Red Team", EngagementType.RedTeam, 12);
 
         Docs(engagement, "PO-2026-0188");
         Financials(engagement, 18000m, 46m);
         Scope(engagement,
-            "redteam.novabank.example", "10.40.0.0/16",
+            "redteam.nvidia.example", "10.40.0.0/16",
             "Sistemi di pagamento", "Sempre attivo",
-            "soc@novabank.example", "Esercitazione con regole concordate", 7);
+            "soc@nvidia.example", "Esercitazione con regole concordate", 7);
         Credentials(engagement,
             "VPN-NOVA-02", "4 utenze dedicate",
             "Portale sicuro", "Credenziali consegnate su canale cifrato", 7);
@@ -169,15 +169,15 @@ public static class SeedData
     private static Engagement ScheduledCase()
     {
         var engagement = New(
-            "ENG-2026-005", "orion", "Orion Energia",
+            "ENG-2026-005", "anthropic", "Anthropic",
             "Cloud Security Assessment", EngagementType.CloudSecurity, 4);
 
         Docs(engagement, "PO-2026-0201");
         Financials(engagement, 15000m, 46m);
         Scope(engagement,
-            "cloud.orion.example", "Sottoscrizioni Azure",
+            "cloud.anthropic.example", "Sottoscrizioni Azure",
             "Ambiente di produzione", "Lun-Ven 09:00-18:00",
-            "cloud-security@orion.example",
+            "cloud-security@anthropic.example",
             "Assessment su ambiente di pre-produzione", 2);
         Credentials(engagement,
             "Non richiesta", "Service principal di sola lettura",
@@ -193,16 +193,16 @@ public static class SeedData
     private static Engagement DoneCase()
     {
         var engagement = New(
-            "ENG-2026-006", "novabank", "Nova Bank",
+            "ENG-2026-006", "nvidia", "Nvidia",
             "Web Application Penetration Test",
             EngagementType.PenetrationTest, 40);
 
         Docs(engagement, "PO-2026-0091");
         Financials(engagement, 20000m, 46m);
         Scope(engagement,
-            "portal.novabank.example", "10.50.10.0/24",
+            "portal.nvidia.example", "10.50.10.0/24",
             "App mobile", "Lun-Ven 20:00-06:00",
-            "appsec@novabank.example", "Test completato", 35);
+            "appsec@nvidia.example", "Test completato", 35);
         Credentials(engagement,
             "VPN-NOVA-01", "3 utenze di test",
             "Azure Key Vault", "Credenziali revocate a fine test", 35);
@@ -217,24 +217,54 @@ public static class SeedData
         engagement.ReviewStatus = ReviewStatus.Approved;
         Audit(engagement, "Sara Conti", Roles.Pentester,
             "Deliverable pubblicati");
+
+        // Retest concluso: richiesto dal cliente, date approvate, report
+        // inviato senza revisione. Caso demo del percorso completo.
+        engagement.RetestRequestedDate = DaysAgo(18);
+        engagement.RetestRequestedByName = "Giulia Sala";
+        engagement.RetestProposals.Add(new Proposal
+        {
+            Id = "RE-01",
+            By = "Luca Ferri",
+            Kind = "retest",
+            StartDate = Today.AddDays(-15),
+            EndDate = Today.AddDays(-13),
+            Date = Today.AddDays(-16),
+            Status = ProposalStatus.Accepted,
+            Note = "Retest dopo i fix"
+        });
+        engagement.AcceptedRetestProposal = engagement.RetestProposals[0];
+        engagement.RetestCompletedDate = DaysAgo(12);
+        engagement.RetestReport = new ReportFile(
+            "R-006-RT",
+            "Report_ENG-2026-006_retest.txt",
+            "PDF",
+            0,
+            DaysAgo(12),
+            true,
+            "Retest");
+        engagement.RetestReportSentDate = DaysAgo(11);
+        Mail(engagement, "retestreport", 11);
+        Audit(engagement, "Sara Conti", Roles.Pentester,
+            "Report di retest inviato al cliente (senza revisione)");
         return engagement;
     }
 
-    private static Engagement DoneContosoCase()
+    private static Engagement DoneAnthropicCase()
     {
         var engagement = New(
-            "ENG-2026-015", "contoso", "Contoso",
+            "ENG-2026-015", "anthropic", "Anthropic",
             "Internal Vulnerability Assessment",
             EngagementType.VulnerabilityAssessment, 45);
 
         Docs(engagement, "PO-2026-0088");
         Financials(engagement, 7000m, 46m);
         Scope(engagement,
-            "intranet.contoso.example", "10.20.50.0/24",
+            "intranet.anthropic.example", "10.20.50.0/24",
             "Sistemi di produzione", "Lun-Ven 20:00-06:00",
-            "security@contoso.example", "Assessment concluso", 40);
+            "security@anthropic.example", "Assessment concluso", 40);
         Credentials(engagement,
-            "VPN-CONTOSO-02", "2 utenze di test",
+            "VPN-ANTHROPIC-02", "2 utenze di test",
             "Azure Key Vault", "Credenziali revocate a fine test", 40);
         Distribution(engagement);
         Mail(engagement, "start", 35);
@@ -266,7 +296,7 @@ public static class SeedData
     private static Engagement AtRiskCase()
     {
         var engagement = New(
-            "ENG-2026-007", "fabrikam", "Fabrikam",
+            "ENG-2026-007", "anthropic", "Anthropic",
             "Cloud Configuration Review", EngagementType.CloudSecurity, 5);
 
         Docs(engagement, "PO-2026-0197");
@@ -282,15 +312,15 @@ public static class SeedData
     private static Engagement CredentialsCase()
     {
         var engagement = New(
-            "ENG-2026-008", "contoso", "Contoso",
+            "ENG-2026-008", "nvidia", "Nvidia",
             "Payment API Security Review", EngagementType.CodeReview, 8);
 
         Docs(engagement, "PO-2026-0164");
         Financials(engagement, 14000m, 46m);
         Scope(engagement,
-            "pay-api.contoso.example", "10.20.40.0/24",
+            "pay-api.nvidia.example", "10.20.40.0/24",
             "Produzione", "Lun-Ven 21:00-06:00",
-            "appsec@contoso.example",
+            "appsec@nvidia.example",
             "Revisione dei servizi di pagamento", 6);
         Distribution(engagement);
         Proposal(engagement, "P-008", Today.AddDays(14), Today.AddDays(24),
@@ -303,16 +333,16 @@ public static class SeedData
     private static Engagement PlanningCase()
     {
         var engagement = New(
-            "ENG-2026-009", "fabrikam", "Fabrikam",
+            "ENG-2026-009", "anthropic", "Anthropic",
             "Mobile App Penetration Test",
             EngagementType.PenetrationTest, 3);
 
         Docs(engagement, "PO-2026-0210");
         Financials(engagement, 16000m, 46m);
         Scope(engagement,
-            "mobile.fabrikam.example", "10.30.0.0/16",
+            "mobile.anthropic.example", "10.30.0.0/16",
             "Backend core", "Sempre attivo",
-            "security@fabrikam.example",
+            "security@anthropic.example",
             "Test su build di pre-produzione", 2);
         Distribution(engagement);
         Audit(engagement, "Luca Ferri", Roles.PMO,
@@ -323,19 +353,19 @@ public static class SeedData
     private static Engagement OtScheduledCase()
     {
         var engagement = New(
-            "ENG-2026-010", "orion", "Orion Energia",
+            "ENG-2026-010", "nvidia", "Nvidia",
             "OT Network Segmentation Review",
             EngagementType.VulnerabilityAssessment, 15);
 
         Docs(engagement, "PO-2026-0177");
         Financials(engagement, 24000m, 46m);
         Scope(engagement,
-            "scada.orion.example", "10.60.0.0/16",
+            "scada.nvidia.example", "10.60.0.0/16",
             "Sistemi di controllo", "Notturno 22:00-06:00",
-            "ot-security@orion.example",
+            "ot-security@nvidia.example",
             "Verifica della segmentazione rete OT", 12);
         Credentials(engagement,
-            "VPN-ORION-OT", "4 utenze dedicate",
+            "VPN-NVIDIA-OT", "4 utenze dedicate",
             "Vault aziendale",
             "Accesso limitato alla finestra notturna", 12);
         Distribution(engagement);
@@ -349,16 +379,16 @@ public static class SeedData
     private static Engagement ReportingChangesCase()
     {
         var engagement = New(
-            "ENG-2026-011", "novabank", "Nova Bank",
+            "ENG-2026-011", "anthropic", "Anthropic",
             "Third-Party Risk Assessment",
             EngagementType.VulnerabilityAssessment, 20);
 
         Docs(engagement, "PO-2026-0129");
         Financials(engagement, 13000m, 46m);
         Scope(engagement,
-            "thirdparty.novabank.example", "10.50.20.0/24",
+            "thirdparty.anthropic.example", "10.50.20.0/24",
             "Dati di produzione", "Lun-Ven 09:00-18:00",
-            "vendorrisk@novabank.example",
+            "vendorrisk@anthropic.example",
             "Assessment del fornitore critico", 16);
         Credentials(engagement,
             "VPN-NOVA-03", "2 utenze fornitore",
@@ -383,7 +413,7 @@ public static class SeedData
     private static Engagement PendingFinancialsCase()
     {
         var engagement = New(
-            "ENG-2026-012", "fabrikam", "Fabrikam",
+            "ENG-2026-012", "nvidia", "Nvidia",
             "Supply Chain Security Review",
             EngagementType.CloudSecurity, 2);
 
@@ -398,21 +428,21 @@ public static class SeedData
         return engagement;
     }
 
-    private static Engagement TailspinRunningCase()
+    private static Engagement AnthropicRunningCase()
     {
         var engagement = New(
-            "ENG-2026-013", "tailspin", "Tailspin Toys",
+            "ENG-2026-013", "anthropic", "Anthropic",
             "E-commerce Red Team", EngagementType.RedTeam, 10);
 
         Docs(engagement, "PO-2026-0194");
         Financials(engagement, 30000m, 46m);
         Scope(engagement,
-            "shop.tailspin.example", "10.90.0.0/16",
+            "shop.anthropic.example", "10.90.0.0/16",
             "Pagamenti", "Lun-Ven 22:00-06:00",
-            "security@tailspin.example",
+            "security@anthropic.example",
             "Red team sull'e-commerce", 7);
         Credentials(engagement,
-            "VPN-TAILSPIN-01", "5 utenze di test",
+            "VPN-ANTHROPIC-01", "5 utenze di test",
             "Azure Key Vault", "Credenziali temporanee", 7);
         Distribution(engagement);
         Mail(engagement, "start", 4);
@@ -422,22 +452,22 @@ public static class SeedData
         return engagement;
     }
 
-    private static Engagement NorthwindScheduledCase()
+    private static Engagement NvidiaScheduledCase()
     {
         var engagement = New(
-            "ENG-2026-014", "northwind", "Northwind Traders",
+            "ENG-2026-014", "nvidia", "Nvidia",
             "SAP S/4HANA Security Assessment",
             EngagementType.VulnerabilityAssessment, 18);
 
         Docs(engagement, "PO-2026-0151");
         Financials(engagement, 28000m, 46m);
         Scope(engagement,
-            "sap.northwind.example", "10.80.0.0/16",
+            "sap.nvidia.example", "10.80.0.0/16",
             "Sistemi finanziari", "Lun-Ven 20:00-06:00",
-            "sap-security@northwind.example",
+            "sap-security@nvidia.example",
             "Assessment SAP S/4HANA", 14);
         Credentials(engagement,
-            "VPN-NORTHWIND-01", "3 utenze di test",
+            "VPN-NVIDIA-01", "3 utenze di test",
             "Vault aziendale", "Accesso al mandante", 14);
         Distribution(engagement);
         Proposal(engagement, "P-014", Today.AddDays(12), Today.AddDays(22),
@@ -453,7 +483,8 @@ public static class SeedData
         string clientName,
         string name,
         EngagementType type,
-        int createdDaysAgo) => new()
+        int createdDaysAgo,
+        bool? retestPlanned = null) => new()
         {
             Id = id,
             ClientId = clientId,
@@ -461,7 +492,11 @@ public static class SeedData
             Name = name,
             Type = type,
             Owner = "Sara Conti",
-            CreatedDate = DaysAgo(createdDaysAgo)
+            CreatedDate = DaysAgo(createdDaysAgo),
+            // Default del catalogo tipi: il Red Team non prevede il retest.
+            RetestPlanned = retestPlanned ?? type != EngagementType.RedTeam,
+            RetestDecidedByName = "Luca Ferri",
+            RetestDecidedDate = DaysAgo(createdDaysAgo)
         };
 
     private static void Docs(Engagement engagement, string orderRef)
@@ -597,7 +632,7 @@ public static class SeedData
 
     private static void Mail(Engagement engagement, string type, int daysAgo)
     {
-        var isDeliver = type == "deliver";
+        var isDeliver = type is "deliver" or "retestreport";
         var list = isDeliver
             ? engagement.DeliverablesDistributionList
             : engagement.DistributionList;
@@ -624,26 +659,18 @@ public static class SeedData
     private static string[] NotificationContacts(string clientId) =>
         clientId switch
         {
-            "contoso" => [
-                "marta.rinaldi@contoso.example",
-                "anna.rossi@contoso.example"],
-            "fabrikam" => ["paolo.bassi@fabrikam.example"],
-            "novabank" => ["giulia.sala@novabank.example"],
-            "orion" => ["andrea.conti@orion.example"],
-            "tailspin" => ["laura.bianchi@tailspin.example"],
-            "northwind" => ["davide.greco@northwind.example"],
+            "anthropic" => [
+                "marta.rinaldi@anthropic.example",
+                "anna.rossi@anthropic.example"],
+            "nvidia" => ["giulia.sala@nvidia.example"],
             _ => []
         };
 
     private static string[] DeliverablesContacts(string clientId) =>
         clientId switch
         {
-            "contoso" => ["security@contoso.example"],
-            "fabrikam" => ["security@fabrikam.example"],
-            "novabank" => ["appsec@novabank.example"],
-            "orion" => ["cloud-security@orion.example"],
-            "tailspin" => ["security@tailspin.example"],
-            "northwind" => ["sap-security@northwind.example"],
+            "anthropic" => ["security@anthropic.example"],
+            "nvidia" => ["security@nvidia.example"],
             _ => []
         };
 

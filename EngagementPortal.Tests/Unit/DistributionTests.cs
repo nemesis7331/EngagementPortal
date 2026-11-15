@@ -24,21 +24,21 @@ public sealed class DistributionTests
         engagement.DistributionList.Add(new DistributionEntry(
             "DL-N-1", "Luca Ferri", "luca@provider.example", "Provider PMO"));
         engagement.DeliverablesDistributionList.Add(new DistributionEntry(
-            "DL-D-1", "Security Cliente", "security@contoso.example", "Cliente"));
+            "DL-D-1", "Security Cliente", "security@anthropic.example", "Cliente"));
 
         var notifications = Distribution.Effective(
             engagement,
-            [new DistributionEntry("DL-B-1", "Marta", "marta@contoso.example", "Cliente")]);
+            [new DistributionEntry("DL-B-1", "Marta", "marta@anthropic.example", "Cliente")]);
         var deliverables = Distribution.EffectiveDeliverables(
             engagement,
             [],
             []);
 
         Assert.Equal(
-            ["marta@contoso.example", "luca@provider.example"],
+            ["marta@anthropic.example", "luca@provider.example"],
             notifications.Select(entry => entry.Email));
         Assert.Equal(
-            ["security@contoso.example"],
+            ["security@anthropic.example"],
             deliverables.Select(entry => entry.Email));
     }
 
@@ -47,22 +47,22 @@ public sealed class DistributionTests
     {
         var engagement = NewEngagement();
         engagement.DeliverablesDistributionList.Add(new DistributionEntry(
-            "DL-D-1", "Security Cliente", "security@contoso.example", "Cliente"));
+            "DL-D-1", "Security Cliente", "security@anthropic.example", "Cliente"));
         engagement.DeliverablesDistributionList.Add(new DistributionEntry(
-            "DL-D-2", "Referente tecnico", "tech@contoso.example", "Cliente"));
+            "DL-D-2", "Referente tecnico", "tech@anthropic.example", "Cliente"));
 
         var effective = Distribution.EffectiveDeliverables(
             engagement,
             [
                 new DistributionEntry(
-                    "DL-D-B1", "Security", "SECURITY@contoso.example", "Cliente"),
+                    "DL-D-B1", "Security", "SECURITY@anthropic.example", "Cliente"),
                 new DistributionEntry(
-                    "DL-D-B2", "Marta", "marta@contoso.example", "Cliente")
+                    "DL-D-B2", "Marta", "marta@anthropic.example", "Cliente")
             ],
             []);
 
         Assert.Equal(
-            ["SECURITY@contoso.example", "marta@contoso.example", "tech@contoso.example"],
+            ["SECURITY@anthropic.example", "marta@anthropic.example", "tech@anthropic.example"],
             effective.Select(entry => entry.Email));
     }
 
@@ -75,11 +75,11 @@ public sealed class DistributionTests
 
         var notifications = Distribution.Effective(
             engagement,
-            [new DistributionEntry("DL-B-1", "Marta", "marta@contoso.example", "Cliente")]);
+            [new DistributionEntry("DL-B-1", "Marta", "marta@anthropic.example", "Cliente")]);
         var deliverables = Distribution.EffectiveDeliverables(
             engagement,
             [],
-            [new DistributionEntry("DL-B-1", "Marta", "marta@contoso.example", "Cliente")]);
+            [new DistributionEntry("DL-B-1", "Marta", "marta@anthropic.example", "Cliente")]);
 
         Assert.Equal(
             notifications.Select(entry => entry.Email),
@@ -98,9 +98,9 @@ public sealed class DistributionTests
         engagement.Mail.Start = false;
         engagement.Mail.End = false;
         engagement.DistributionList.Add(new DistributionEntry(
-            "DL-N-1", "Notifiche", "notifications@contoso.example", "Cliente"));
+            "DL-N-1", "Notifiche", "notifications@anthropic.example", "Cliente"));
         engagement.DeliverablesDistributionList.Add(new DistributionEntry(
-            "DL-D-1", "Deliverables", "deliverables@contoso.example", "Cliente"));
+            "DL-D-1", "Deliverables", "deliverables@anthropic.example", "Cliente"));
         engagement.Reports.Add(new ReportFile(
             "R-1", "Report.txt", "TXT", 100, DateTimeOffset.UtcNow, true));
 
@@ -122,15 +122,15 @@ public sealed class DistributionTests
 
         service.ProcessDue();
 
-        var stored = engagements.Get(engagement.Id, "contoso", false);
+        var stored = engagements.Get(engagement.Id, "anthropic", false);
         Assert.NotNull(stored);
 
         var deliver = Assert.Single(
             stored.MailLog,
             entry => entry.Type == "deliver");
 
-        Assert.Contains("deliverables@contoso.example", deliver.Recipients);
-        Assert.DoesNotContain("notifications@contoso.example", deliver.Recipients);
+        Assert.Contains("deliverables@anthropic.example", deliver.Recipients);
+        Assert.DoesNotContain("notifications@anthropic.example", deliver.Recipients);
         Assert.DoesNotContain(
             "luca.ferri@provider.example",
             deliver.Recipients);
@@ -139,8 +139,8 @@ public sealed class DistributionTests
     private static Engagement NewEngagement() => new()
     {
         Id = "ENG-DL-001",
-        ClientId = "contoso",
-        ClientName = "Contoso",
+        ClientId = "anthropic",
+        ClientName = "Anthropic",
         Name = "Distribution list",
         Type = EngagementType.PenetrationTest,
         Owner = "Sara Conti",

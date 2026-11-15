@@ -8,8 +8,8 @@ public sealed class AccessTests
     private static Engagement NewEngagement(string id = "ENG-1") => new()
     {
         Id = id,
-        ClientId = "contoso",
-        ClientName = "Contoso",
+        ClientId = "anthropic",
+        ClientName = "Anthropic",
         Name = "External Penetration Test",
         Type = EngagementType.PenetrationTest,
         Owner = "Sara Conti"
@@ -25,7 +25,7 @@ public sealed class AccessTests
             "USR-001");
 
         Assert.True(Access.CanAccess(user, NewEngagement()));
-        Assert.True(Access.CanAccessClient(user, "novabank"));
+        Assert.True(Access.CanAccessClient(user, "acme"));
     }
 
     [Fact]
@@ -36,13 +36,13 @@ public sealed class AccessTests
             null,
             Roles.PMO,
             "USR-002",
-            ["contoso", "fabrikam"],
+            ["anthropic", "nvidia"],
             [],
             Scoped: true);
 
         Assert.True(Access.CanAccess(user, NewEngagement()));
-        Assert.True(Access.CanAccessClient(user, "fabrikam"));
-        Assert.False(Access.CanAccessClient(user, "novabank"));
+        Assert.True(Access.CanAccessClient(user, "nvidia"));
+        Assert.False(Access.CanAccessClient(user, "acme"));
     }
 
     [Fact]
@@ -59,7 +59,7 @@ public sealed class AccessTests
 
         Assert.True(Access.CanAccess(user, NewEngagement("ENG-1")));
         Assert.False(Access.CanAccess(user, NewEngagement("ENG-2")));
-        Assert.False(Access.CanAccessClient(user, "contoso"));
+        Assert.False(Access.CanAccessClient(user, "anthropic"));
     }
 
     [Fact]
@@ -82,13 +82,13 @@ public sealed class AccessTests
     {
         var user = new UserContext(
             "Marta Rinaldi",
-            "contoso",
+            "anthropic",
             Roles.Client,
-            "CU-contoso-1");
+            "CU-anthropic-1");
 
         Assert.True(Access.CanAccess(user, NewEngagement()));
-        Assert.True(Access.CanAccessClient(user, "contoso"));
-        Assert.False(Access.CanAccessClient(user, "fabrikam"));
+        Assert.True(Access.CanAccessClient(user, "anthropic"));
+        Assert.False(Access.CanAccessClient(user, "nvidia"));
     }
 
     [Fact]
@@ -97,6 +97,6 @@ public sealed class AccessTests
         var user = new UserContext("Demo User", null, Roles.PMO);
 
         Assert.True(Access.CanAccess(user, NewEngagement()));
-        Assert.True(Access.CanAccessClient(user, "novabank"));
+        Assert.True(Access.CanAccessClient(user, "acme"));
     }
 }

@@ -62,6 +62,7 @@ else
 builder.Services.AddSingleton<EngagementWorkflow>();
 builder.Services.AddSingleton<TodoResolver>();
 builder.Services.AddSingleton<SolicitationService>();
+builder.Services.AddScoped<ActivityTypes>();
 builder.Services.AddHostedService<MailAutomationService>();
 
 var app = builder.Build();
@@ -269,6 +270,73 @@ api.MapPost("/users", (
     return Results.Ok(created);
 });
 
+api.MapPut("/users/{id}", (
+    string id,
+    UpdateUserRequest request,
+    HttpContext context,
+    IUserRepository users) =>
+{
+    var current = GetUser(context);
+
+    if (current.Role != Roles.Manager)
+        return Forbidden();
+
+    var account = users.Get(id);
+
+    if (account is null)
+        return Results.NotFound();
+
+    var name = request.Name?.Trim();
+    var email = request.Email?.Trim();
+    var role = request.Role?.Trim();
+
+    if (string.IsNullOrWhiteSpace(name) ||
+        string.IsNullOrWhiteSpace(email) ||
+        !email.Contains('@'))
+    {
+        return Results.BadRequest("Nome ed email valida sono obbligatori.");
+    }
+
+    if (role is not (
+        Roles.Manager or
+        Roles.PMO or
+        Roles.Pentester or
+        Roles.Auditor))
+    {
+        return Results.BadRequest("Ruolo interno non valido.");
+    }
+
+    if (users.List().Any(user =>
+        user.Id != id &&
+        string.Equals(user.Email, email, StringComparison.OrdinalIgnoreCase)))
+        return Results.Conflict("Esiste già un utente con questa email.");
+
+    // Nessuno si toglie da solo l'accesso o si declassa.
+    if (current.UserId == account.Id &&
+        (role != Roles.Manager || request.Active == false))
+    {
+        return Results.BadRequest(
+            "Non puoi cambiare il tuo ruolo né disattivare il tuo accesso.");
+    }
+
+    account.Name = name;
+    account.Email = email;
+    account.Role = role;
+
+    if (request.Active.HasValue)
+        account.Active = request.Active.Value;
+
+    // Il Manager vede tutto: le assegnazioni esplicite sono ridondanti.
+    if (role == Roles.Manager)
+    {
+        account.ClientIds.Clear();
+        account.EngagementIds.Clear();
+    }
+
+    users.Save(account);
+    return Results.Ok(new { status = "ok" });
+});
+
 api.MapPost("/users/{id}/assignments", (
     string id,
     UserAssignmentRequest request,
@@ -384,6 +452,51 @@ api.MapDelete("/users/{id}/assignments/{type}/{targetId}", (
     return Results.NoContent();
 });
 
+api.MapGet("/activity-types", (
+    HttpContext context,
+    ActivityTypes activities) =>
+{
+    var current = GetUser(context);
+
+    return current.Role == Roles.Client
+        ? Forbidden()
+        : Results.Ok(activities.All());
+});
+
+api.MapPut("/activity-types/{key}", (
+    string key,
+    ActivityTypeRequest request,
+    HttpContext context,
+    ActivityTypes activities) =>
+{
+    var current = GetUser(context);
+
+    if (current.Role is not (Roles.Manager or Roles.PMO))
+        return Forbidden();
+
+    if (request.Reset)
+        return activities.Reset(key)
+            ? Results.Ok(new { status = "ok", reset = true })
+            : Results.NotFound();
+
+    if (!activities.Save(
+        new ActivityTypeDefinition(
+            key,
+            request.Label ?? string.Empty,
+            request.Short ?? string.Empty,
+            request.Description ?? string.Empty,
+            request.RetestPlanned,
+            request.DeliverableTypes ?? []),
+        out var error))
+    {
+        return error == "Tipo di attività non previsto."
+            ? Results.NotFound()
+            : Results.BadRequest(error);
+    }
+
+    return Results.Ok(new { status = "ok", reset = false });
+});
+
 api.MapGet("/admin/mailing-lists", (
     HttpContext context,
     IClientRepository clients,
@@ -391,13 +504,16 @@ api.MapGet("/admin/mailing-lists", (
 {
     var current = GetUser(context);
 
-    if (current.Role is not (Roles.Manager or Roles.PMO))
+    // Il Pentester entra solo per il testo delle email dell'engagement: vede
+    // gli engagement assegnati, non le liste base dei clienti.
+    if (current.Role is not (Roles.Manager or Roles.PMO or Roles.Pentester))
         return Forbidden();
 
     var result = new List<object>();
+    var includeClients = current.Role is Roles.Manager or Roles.PMO;
 
     foreach (var client in clients.List().Where(client =>
-        Access.CanAccessClient(current, client.Id)))
+        includeClients && Access.CanAccessClient(current, client.Id)))
     {
         result.Add(new
         {
@@ -405,6 +521,10 @@ api.MapGet("/admin/mailing-lists", (
             Scope = "client",
             OwnerId = client.Id,
             OwnerName = client.Name,
+            ClientId = client.Id,
+            ClientName = client.Name,
+            EngagementId = (string?)null,
+            EngagementName = (string?)null,
             Kind = "notifications",
             KindLabel = "Notifiche",
             Recipients = client.DistributionList,
@@ -417,6 +537,10 @@ api.MapGet("/admin/mailing-lists", (
             Scope = "client",
             OwnerId = client.Id,
             OwnerName = client.Name,
+            ClientId = client.Id,
+            ClientName = client.Name,
+            EngagementId = (string?)null,
+            EngagementName = (string?)null,
             Kind = "deliverables",
             KindLabel = "Deliverables",
             Recipients = client.DeliverablesDistributionList,
@@ -440,6 +564,10 @@ api.MapGet("/admin/mailing-lists", (
             Scope = "engagement",
             OwnerId = engagement.Id,
             OwnerName = $"{engagement.Id} · {engagement.Name}",
+            ClientId = engagement.ClientId,
+            ClientName = engagement.ClientName,
+            EngagementId = engagement.Id,
+            EngagementName = engagement.Name,
             Kind = "notifications",
             KindLabel = "Notifiche",
             Recipients = engagement.DistributionList,
@@ -454,6 +582,10 @@ api.MapGet("/admin/mailing-lists", (
             Scope = "engagement",
             OwnerId = engagement.Id,
             OwnerName = $"{engagement.Id} · {engagement.Name}",
+            ClientId = engagement.ClientId,
+            ClientName = engagement.ClientName,
+            EngagementId = engagement.Id,
+            EngagementName = engagement.Name,
             Kind = "deliverables",
             KindLabel = "Deliverables",
             Recipients = engagement.DeliverablesDistributionList,
@@ -482,11 +614,19 @@ api.MapGet("/admin/mail-templates", (
         settings.Get<MailTemplateSet>(MailTemplates.StandardKey) ??
         new MailTemplateSet();
     var standard = MailTemplates.Standard(standardOverrides);
-    var types = new[] { "start", "end", "deliver" };
+    var types = MailTemplates.Types.Select(item => item.Key).ToList();
 
     return Results.Ok(new
     {
         Placeholders = MailTemplates.Placeholders,
+        Types = MailTemplates.Types.Select(item => new
+        {
+            item.Key,
+            item.Label,
+            item.Group,
+            item.Recipient,
+            item.When
+        }),
         standard = types.Select(type => new
         {
             Type = type,
@@ -496,6 +636,15 @@ api.MapGet("/admin/mail-templates", (
             BodyEn = standard.For(type)?.BodyEn ?? string.Empty,
             StandardCustom = standardOverrides.For(type) is { IsBlank: false }
         }),
+        engagements = Access.VisibleEngagements(
+                context.RequestServices.GetRequiredService<IEngagementRepository>(),
+                current)
+            .Select(engagement => new
+            {
+                engagement.Id,
+                engagement.Name,
+                engagement.ClientName
+            }),
         clients = clients.List()
             .Where(client =>
                 current.Role == Roles.Manager ||
@@ -521,6 +670,124 @@ api.MapGet("/admin/mail-templates", (
     });
 });
 
+api.MapGet("/admin/mail-templates/engagement/{engagementId}", (
+    string engagementId,
+    HttpContext context,
+    IEngagementRepository repository,
+    IClientRepository clients,
+    IAppSettingsRepository settings,
+    IDateProvider clock) =>
+{
+    var current = GetUser(context);
+
+    if (current.Role is not (Roles.Manager or Roles.PMO or Roles.Pentester))
+        return Forbidden();
+
+    var engagement = Find(repository, engagementId, current);
+
+    if (engagement is null)
+        return Results.NotFound();
+
+    var client = clients.Get(engagement.ClientId);
+    var standard = MailTemplates.Standard(
+        settings.Get<MailTemplateSet>(MailTemplates.StandardKey));
+
+    return Results.Ok(new
+    {
+        engagement.Id,
+        engagement.Name,
+        engagement.Language,
+        Types = MailTemplates.Types.Select(item => new
+        {
+            item.Key,
+            item.Label,
+            item.Group,
+            item.Recipient,
+            item.When
+        }),
+        Templates = MailTemplates.Types.Select(item =>
+        {
+            // Testo che verrebbe inviato senza questo override: serve a far
+            // vedere cosa si eredita quando i campi sono vuoti.
+            var inherited = MailTemplates.ResolveInherited(
+                item.Key,
+                engagement,
+                standard,
+                client?.MailTemplates,
+                clock.Today);
+
+            return new
+            {
+                Type = item.Key,
+                Subject = engagement.MailTemplates.For(item.Key)?.Subject
+                    ?? string.Empty,
+                Body = engagement.MailTemplates.For(item.Key)?.Body
+                    ?? string.Empty,
+                SubjectEn = engagement.MailTemplates.For(item.Key)?.SubjectEn
+                    ?? string.Empty,
+                BodyEn = engagement.MailTemplates.For(item.Key)?.BodyEn
+                    ?? string.Empty,
+                Inherited = new
+                {
+                    inherited.Subject,
+                    inherited.Body,
+                    inherited.Source
+                }
+            };
+        })
+    });
+});
+
+api.MapPut("/admin/mail-templates/engagement/{engagementId}/{type}", (
+    string engagementId,
+    string type,
+    AdminTemplateRequest request,
+    HttpContext context,
+    IEngagementRepository repository) =>
+{
+    var current = GetUser(context);
+
+    // Il terzo livello si modifica dalla mailing list dell'engagement, dove
+    // lavorano PMO e Pentester: qui non si toccano standard e cliente.
+    if (current.Role is not (Roles.Manager or Roles.PMO or Roles.Pentester))
+        return Forbidden();
+
+    if (!MailTemplates.IsValidType(type))
+        return Results.BadRequest("Tipo template non valido.");
+
+    var engagement = Find(repository, engagementId, current);
+
+    if (engagement is null)
+        return Results.NotFound();
+
+    var write = MailTemplates.Write(
+        engagement.MailTemplates,
+        type,
+        request.Subject,
+        request.Body,
+        request.SubjectEn,
+        request.BodyEn,
+        request.Reset);
+
+    engagement.MailTemplates = write.Set;
+
+    engagement.AddAudit(
+        current.Name,
+        current.Role,
+        $"Template email '{type}' aggiornato (engagement {engagement.Id})",
+        AuditVisibility.ProviderOnly,
+        "Template email aggiornato");
+
+    repository.Save(engagement);
+
+    return Results.Ok(new
+    {
+        status = "ok",
+        scope = "engagement",
+        reset = write.Reset
+    });
+});
+
 api.MapPut("/admin/mail-templates/standard/{type}", (
     string type,
     AdminTemplateRequest request,
@@ -532,32 +799,23 @@ api.MapPut("/admin/mail-templates/standard/{type}", (
     if (current.Role != Roles.Manager)
         return Forbidden();
 
-    if (type is not ("start" or "end" or "deliver"))
+    if (!MailTemplates.IsValidType(type))
         return Results.BadRequest("Tipo template non valido.");
 
     var overrides = settings.Get<MailTemplateSet>(
         MailTemplates.StandardKey) ?? new MailTemplateSet();
 
-    var subject = request.Subject?.Trim() ?? string.Empty;
-    var body = request.Body?.Trim() ?? string.Empty;
-    var subjectEn = request.SubjectEn?.Trim() ?? string.Empty;
-    var bodyEn = request.BodyEn?.Trim() ?? string.Empty;
-    var clear = request.Reset ||
-        (subject.Length == 0 && body.Length == 0 &&
-            subjectEn.Length == 0 && bodyEn.Length == 0);
+    var write = MailTemplates.Write(
+        overrides,
+        type,
+        request.Subject,
+        request.Body,
+        request.SubjectEn,
+        request.BodyEn,
+        request.Reset);
 
-    overrides.Set(type, clear
-        ? null
-        : new MailTemplate
-        {
-            Subject = subject,
-            Body = body,
-            SubjectEn = subjectEn,
-            BodyEn = bodyEn
-        });
-
-    settings.Save(MailTemplates.StandardKey, overrides);
-    return Results.Ok(new { status = "ok" });
+    settings.Save(MailTemplates.StandardKey, write.Set);
+    return Results.Ok(new { status = "ok", reset = write.Reset });
 });
 
 api.MapPut("/admin/mail-templates/client/{clientId}/{type}", (
@@ -572,7 +830,7 @@ api.MapPut("/admin/mail-templates/client/{clientId}/{type}", (
     if (current.Role != Roles.Manager)
         return Forbidden();
 
-    if (type is not ("start" or "end" or "deliver"))
+    if (!MailTemplates.IsValidType(type))
         return Results.BadRequest("Tipo template non valido.");
 
     var client = clients.Get(clientId);
@@ -580,26 +838,17 @@ api.MapPut("/admin/mail-templates/client/{clientId}/{type}", (
     if (client is null)
         return Results.NotFound();
 
-    var subject = request.Subject?.Trim() ?? string.Empty;
-    var body = request.Body?.Trim() ?? string.Empty;
-    var subjectEn = request.SubjectEn?.Trim() ?? string.Empty;
-    var bodyEn = request.BodyEn?.Trim() ?? string.Empty;
-    var clear = request.Reset ||
-        (subject.Length == 0 && body.Length == 0 &&
-            subjectEn.Length == 0 && bodyEn.Length == 0);
-
-    client.MailTemplates.Set(type, clear
-        ? null
-        : new MailTemplate
-        {
-            Subject = subject,
-            Body = body,
-            SubjectEn = subjectEn,
-            BodyEn = bodyEn
-        });
+    var write = MailTemplates.Write(
+        client.MailTemplates,
+        type,
+        request.Subject,
+        request.Body,
+        request.SubjectEn,
+        request.BodyEn,
+        request.Reset);
 
     clients.Save(client);
-    return Results.Ok(new { status = "ok" });
+    return Results.Ok(new { status = "ok", reset = write.Reset });
 });
 
 api.MapPost("/clients", (
@@ -928,6 +1177,8 @@ api.MapPost("/engagements", (
     IUserRepository users,
     EngagementWorkflow workflow,
     TodoResolver todos,
+    ActivityTypes activities,
+    SolicitationService solicitations,
     IDateProvider clock) =>
 {
     var user = GetUser(context);
@@ -971,7 +1222,9 @@ api.MapPost("/engagements", (
         Owner = user.Name,
         CreatedDate = clock.UtcNow,
         SetupDone = false,
-        Language = "it"
+        Language = "it",
+        // Default dal tipo di attività: il Setup potrà cambiarlo.
+        RetestPlanned = activities.Get(request.Type.ToString())?.RetestPlanned ?? false
     };
     engagement.DeliverableTypes.Clear();
 
@@ -994,7 +1247,8 @@ api.MapPost("/engagements", (
             client.DistributionList,
             client.DeliverablesDistributionList,
             client.Team,
-            users.List().Select(account => account.Email).ToList()));
+            users.List().Select(account => account.Email).ToList(),
+            solicitations));
 });
 
 api.MapGet("/engagements/{id}", (
@@ -1005,6 +1259,7 @@ api.MapGet("/engagements/{id}", (
     IUserRepository users,
     EngagementWorkflow workflow,
     TodoResolver todos,
+    SolicitationService solicitations,
     IDateProvider clock) =>
 {
     var user = GetUser(context);
@@ -1024,7 +1279,8 @@ api.MapGet("/engagements/{id}", (
         client?.DistributionList ?? [],
         client?.DeliverablesDistributionList ?? [],
         client?.Team ?? [],
-        users.List().Select(account => account.Email).ToList()));
+        users.List().Select(account => account.Email).ToList(),
+        solicitations));
 });
 
 api.MapGet("/dashboard/todo", (
@@ -1505,11 +1761,28 @@ api.MapPut("/engagements/{id}/setup", (
         DeliverableKinds.All.Where(kind => canonical.Contains(kind)));
     engagement.SetupDone = true;
 
+    // Il recheck si decide qui: resta modificabile finché il cliente non ha
+    // richiesto il retest, dopo il flag è bloccato perché i passi sono in corso.
+    if (request.RetestPlanned is { } retestPlanned)
+    {
+        if (engagement.RetestRequestedDate is not null &&
+            retestPlanned != engagement.RetestPlanned)
+        {
+            return Results.BadRequest(
+                "Il retest è già stato richiesto dal cliente: il recheck non si può più cambiare.");
+        }
+
+        engagement.RetestPlanned = retestPlanned;
+        engagement.RetestDecidedByName = user.Name;
+        engagement.RetestDecidedDate = DateTimeOffset.UtcNow;
+    }
+
     engagement.AddAudit(
         user.Name,
         user.Role,
         $"Setup aggiornato · lingua {language.ToUpperInvariant()} · " +
-        string.Join(", ", engagement.DeliverableTypes),
+        $"{string.Join(", ", engagement.DeliverableTypes)} · " +
+        (engagement.RetestPlanned ? "recheck previsto" : "senza recheck"),
         AuditVisibility.ProviderOnly);
 
     repository.Save(engagement);
@@ -1912,7 +2185,8 @@ app.MapGet("/api/downloads/{token}", (
 api.MapPost("/engagements/{id}/review/submit", (
     string id,
     HttpContext context,
-    IEngagementRepository repository) =>
+    IEngagementRepository repository,
+    IDateProvider clock) =>
 {
     var user = GetUser(context);
     var engagement = Find(repository, id, user);
@@ -1933,6 +2207,7 @@ api.MapPost("/engagements/{id}/review/submit", (
         return Results.BadRequest("Nessun deliverable da inviare in revisione.");
 
     engagement.ReviewStatus = ReviewStatus.Pending;
+    engagement.ReviewRequestedDate = clock.UtcNow;
 
     engagement.AddAudit(
         user.Name,
@@ -1967,6 +2242,7 @@ api.MapPost("/engagements/{id}/review/decide", (
     engagement.ReviewStatus = request.Approve
         ? ReviewStatus.Approved
         : ReviewStatus.Changes;
+    engagement.ReviewRequestedDate = null;
 
     engagement.AddAudit(
         user.Name,
@@ -2499,7 +2775,206 @@ api.MapPost("/engagements/{id}/mails/{type}/send", (
     return Results.Ok(new { status = "ok", recipients = recipientList });
 });
 
-api.MapGet("/engagements/{id}/mail-templates", (
+/* ====== RETEST: richiesta, date, esecuzione e invio del report ====== */
+
+// Il retest nasce dal cliente, a fix completati: si richiede una sola volta.
+api.MapPost("/engagements/{id}/retest/request", (
+    string id,
+    HttpContext context,
+    IEngagementRepository repository,
+    IDateProvider clock) =>
+{
+    var user = GetUser(context);
+
+    if (user.Role != Roles.Client)
+        return Forbidden();
+
+    var engagement = Find(repository, id, user);
+
+    if (engagement is null)
+        return Results.NotFound();
+
+    if (!engagement.RetestPlanned)
+        return Results.BadRequest(
+            "Il retest non è previsto per questa attività.");
+
+    if (engagement.RetestRequestedDate is not null)
+        return Results.Conflict(
+            "Il retest si può richiedere una sola volta.");
+
+    if (!engagement.Reports.Any(report => report.Published))
+        return Results.BadRequest(
+            "Il retest si richiede a fix completati, dopo la pubblicazione del report.");
+
+    engagement.RetestRequestedDate = clock.UtcNow;
+    engagement.RetestRequestedByName = user.Name;
+
+    engagement.AddAudit(
+        user.Name,
+        user.Role,
+        "Retest richiesto dal cliente a fix completati",
+        AuditVisibility.All);
+
+    repository.Save(engagement);
+    return Results.Ok(new { status = "ok" });
+});
+
+// Date del retest: proposta dal cliente o dal PMO, approvazione del Manager.
+api.MapPost("/engagements/{id}/retest/propose", (
+    string id,
+    RetestProposalRequest request,
+    HttpContext context,
+    IEngagementRepository repository,
+    IDateProvider clock) =>
+{
+    var user = GetUser(context);
+
+    if (user.Role is not (Roles.PMO or Roles.Client))
+        return Forbidden();
+
+    var engagement = Find(repository, id, user);
+
+    if (engagement is null)
+        return Results.NotFound();
+
+    if (engagement.RetestRequestedDate is null)
+        return Results.BadRequest(
+            "Prima serve la richiesta di retest dal cliente.");
+
+    if (!DateOnly.TryParse(request.StartDate, out var start) ||
+        !DateOnly.TryParse(request.EndDate, out var end))
+    {
+        return Results.BadRequest(
+            "Formato data non valido: usa yyyy-MM-dd per avvio e fine.");
+    }
+
+    if (end < start)
+        return Results.BadRequest(
+            "La data di fine non può precedere quella di avvio.");
+
+    if (start < clock.Today)
+        return Results.BadRequest(
+            "L'avvio del retest non può essere nel passato.");
+
+    engagement.RetestProposals.RemoveAll(proposal =>
+        proposal.Status == ProposalStatus.Pending);
+
+    engagement.RetestProposals.Add(new Proposal
+    {
+        Id = $"RE-{engagement.RetestProposals.Count + 1:00}",
+        StartDate = start,
+        EndDate = end,
+        Status = ProposalStatus.Pending,
+        Date = clock.Today,
+        By = user.Name,
+        Note = "Retest"
+    });
+
+    engagement.AddAudit(
+        user.Name,
+        user.Role,
+        $"Date del retest proposte: {start:dd/MM/yyyy} – {end:dd/MM/yyyy}",
+        AuditVisibility.All);
+
+    repository.Save(engagement);
+    return Results.Ok(new { status = "ok" });
+});
+
+api.MapPost("/engagements/{id}/retest/decide", (
+    string id,
+    RetestDecisionRequest request,
+    HttpContext context,
+    IEngagementRepository repository,
+    IDateProvider clock) =>
+{
+    var user = GetUser(context);
+
+    if (user.Role != Roles.Manager)
+        return Forbidden();
+
+    var engagement = Find(repository, id, user);
+
+    if (engagement is null)
+        return Results.NotFound();
+
+    var pending = engagement.RetestProposals
+        .FirstOrDefault(proposal => proposal.Status == ProposalStatus.Pending);
+
+    if (pending is null)
+        return Results.BadRequest("Nessuna proposta di date per il retest.");
+
+    engagement.RetestProposals.Remove(pending);
+
+    pending.Status = request.Approve
+        ? ProposalStatus.Accepted
+        : ProposalStatus.Rejected;
+    pending.Reason = request.Approve
+        ? null
+        : "Date del retest rifiutate: serve una nuova proposta.";
+
+    engagement.RetestProposals.Add(pending);
+    engagement.AcceptedRetestProposal = request.Approve ? pending : null;
+
+    engagement.AddAudit(
+        user.Name,
+        user.Role,
+        request.Approve
+            ? $"Date del retest approvate: {pending.StartDate:dd/MM/yyyy} – {pending.EndDate:dd/MM/yyyy}"
+            : "Date del retest rifiutate: serve una nuova proposta",
+        AuditVisibility.All);
+
+    repository.Save(engagement);
+    return Results.Ok(new { status = "ok" });
+});
+
+// Il Pentester conclude il retest e carica il report: nessuna revisione.
+api.MapPost("/engagements/{id}/retest/report", (
+    string id,
+    RetestReportRequest request,
+    HttpContext context,
+    IEngagementRepository repository,
+    IDateProvider clock) =>
+{
+    var user = GetUser(context);
+
+    if (user.Role != Roles.Pentester)
+        return Forbidden();
+
+    var engagement = Find(repository, id, user);
+
+    if (engagement is null)
+        return Results.NotFound();
+
+    if (engagement.AcceptedRetestProposal is null)
+        return Results.BadRequest(
+            "Prima servono le date approvate del retest.");
+
+    if (string.IsNullOrWhiteSpace(request.Description))
+        return Results.BadRequest(
+            "Serve una descrizione del report di retest.");
+
+    engagement.RetestCompletedDate = clock.UtcNow;
+    engagement.RetestReport = new ReportFile(
+        $"RF-{Guid.NewGuid():N}"[..10],
+        request.Description.Trim(),
+        "PDF",
+        0,
+        clock.UtcNow,
+        false,
+        "Retest");
+
+    engagement.AddAudit(
+        user.Name,
+        user.Role,
+        $"Retest concluso e report caricato: {request.Description.Trim()}",
+        AuditVisibility.All);
+
+    repository.Save(engagement);
+    return Results.Ok(new { status = "ok" });
+});
+
+// Invio del report di retest al cliente: nessuna approvazione richiesta.
+api.MapPost("/engagements/{id}/retest/send", (
     string id,
     HttpContext context,
     IEngagementRepository repository,
@@ -2509,160 +2984,58 @@ api.MapGet("/engagements/{id}/mail-templates", (
 {
     var user = GetUser(context);
 
-    // I template non sono visibili a Cliente, PMO e Auditor.
-    if (user.Role is not (Roles.Manager or Roles.Pentester))
+    if (user.Role != Roles.Pentester)
         return Forbidden();
 
     var engagement = Find(repository, id, user);
 
     if (engagement is null)
         return Results.NotFound();
+
+    if (engagement.RetestReport is not { } report)
+        return Results.BadRequest("Carica prima il report di retest.");
+
+    if (engagement.RetestReportSentDate is not null)
+        return Results.Conflict("Il report di retest è già stato inviato.");
+
+    engagement.RetestReport = report with { Published = true };
+    engagement.RetestReportSentDate = clock.UtcNow;
 
     var client = clients.Get(engagement.ClientId);
-    var standardOverrides =
-        settings.Get<MailTemplateSet>(MailTemplates.StandardKey) ??
-        new MailTemplateSet();
-    var standard = MailTemplates.Standard(standardOverrides);
+    var recipients = Solicitation.Recipients(
+        engagement,
+        [Roles.Client],
+        client,
+        []);
 
-    var templates = new[] { "start", "end", "deliver" }.Select(type =>
-    {
-        var resolvedIt = MailTemplates.Resolve(
-            type,
-            engagement,
-            standard,
-            client?.MailTemplates,
-            clock.Today,
-            "it");
-        var resolvedEn = MailTemplates.Resolve(
-            type,
-            engagement,
-            standard,
-            client?.MailTemplates,
-            clock.Today,
-            "en");
+    var standard = MailTemplates.Standard(
+        settings.Get<MailTemplateSet>(MailTemplates.StandardKey));
+    var resolved = MailTemplates.Resolve(
+        "retestreport",
+        engagement,
+        standard,
+        client?.MailTemplates,
+        clock.Today);
 
-        return new
-        {
-            Type = type,
-            Standard = standard.For(type),
-            StandardCustom = standardOverrides.For(type) is { IsBlank: false },
-            Client = client?.MailTemplates.For(type),
-            Engagement = engagement.MailTemplates.For(type),
-            Effective = new
-            {
-                resolvedIt.Subject,
-                resolvedIt.Body,
-                SubjectEn = resolvedEn.Subject,
-                BodyEn = resolvedEn.Body,
-                resolvedIt.Source,
-                SourceEn = resolvedEn.Source
-            }
-        };
-    });
-
-    return Results.Ok(new
-    {
-        Placeholders = MailTemplates.Placeholders,
-        CanEditStandard = user.Role == Roles.Manager,
-        CanEditClient = user.Role == Roles.Manager,
-        CanEditEngagement = user.Role is Roles.Manager or Roles.Pentester,
-        Templates = templates
-    });
-});
-
-api.MapPut("/engagements/{id}/mail-templates/{type}", (
-    string id,
-    string type,
-    MailTemplateUpdateRequest request,
-    HttpContext context,
-    IEngagementRepository repository,
-    IClientRepository clients,
-    IAppSettingsRepository settings) =>
-{
-    var user = GetUser(context);
-
-    if (user.Role is not (Roles.Manager or Roles.Pentester))
-        return Forbidden();
-
-    if (type is not ("start" or "end" or "deliver"))
-        return Results.BadRequest("Tipo email non valido.");
-
-    var engagement = Find(repository, id, user);
-
-    if (engagement is null)
-        return Results.NotFound();
-
-    var scope = (request.Scope ?? "engagement")
-        .Trim()
-        .ToLowerInvariant();
-
-    if (scope is not ("standard" or "client" or "engagement"))
-        return Results.BadRequest("Ambito non valido.");
-
-    // Solo il Manager modifica template standard e di cliente; il Pentester
-    // può personalizzare esclusivamente il template dell'engagement.
-    if (scope != "engagement" && user.Role != Roles.Manager)
-        return Forbidden();
-
-    var subject = request.Subject?.Trim() ?? string.Empty;
-    var body = request.Body?.Trim() ?? string.Empty;
-    var subjectEn = request.SubjectEn?.Trim() ?? string.Empty;
-    var bodyEn = request.BodyEn?.Trim() ?? string.Empty;
-    var clear = request.Reset ||
-        (subject.Length == 0 && body.Length == 0 &&
-            subjectEn.Length == 0 && bodyEn.Length == 0);
-
-    var template = clear
-        ? null
-        : new MailTemplate
-        {
-            Subject = subject,
-            Body = body,
-            SubjectEn = subjectEn,
-            BodyEn = bodyEn
-        };
-
-    switch (scope)
-    {
-        case "standard":
-        {
-            var overrides =
-                settings.Get<MailTemplateSet>(MailTemplates.StandardKey) ??
-                new MailTemplateSet();
-            overrides.Set(type, template);
-            settings.Save(MailTemplates.StandardKey, overrides);
-            break;
-        }
-        case "client":
-        {
-            var client = clients.Get(engagement.ClientId);
-
-            if (client is null)
-                return Results.NotFound();
-
-            client.MailTemplates.Set(type, template);
-            clients.Save(client);
-            break;
-        }
-        default:
-            engagement.MailTemplates.Set(type, template);
-            break;
-    }
+    engagement.MailLog.Add(new MailLogEntry(
+        $"M-{Guid.NewGuid():N}"[..10],
+        "retestreport",
+        clock.UtcNow,
+        string.Join("; ", recipients.Select(entry => entry.Email)),
+        false,
+        "All",
+        resolved.Subject,
+        resolved.Body,
+        resolved.Source));
 
     engagement.AddAudit(
         user.Name,
         user.Role,
-        $"Template email '{type}' aggiornato ({scope})",
-        AuditVisibility.ProviderOnly,
-        "Template email aggiornato");
+        "Report di retest inviato al cliente (senza revisione)",
+        AuditVisibility.All);
 
     repository.Save(engagement);
-    return Results.Ok(new
-    {
-        status = "ok",
-        scope,
-        reset = clear
-    });
+    return Results.Ok(new { status = "ok" });
 });
 
 api.MapGet("/engagements/{id}/log", (
@@ -2721,7 +3094,19 @@ api.MapGet("/solicitations/rules", (
 
     return user.Role == Roles.Client
         ? Forbidden()
-        : Results.Ok(solicitations.Rules());
+        : Results.Ok(solicitations.All().Select(rule => new
+        {
+            rule.Key,
+            rule.TemplateType,
+            rule.TaskKey,
+            rule.Label,
+            rule.Recipient,
+            rule.When,
+            rule.ThresholdDays,
+            rule.CountBusinessDays,
+            rule.Enabled,
+            rule.Description
+        }));
 });
 
 api.MapPut("/solicitations/rules/{key}", (
@@ -2735,11 +3120,8 @@ api.MapPut("/solicitations/rules/{key}", (
     if (user.Role != Roles.PMO)
         return Forbidden();
 
-    return solicitations.Update(
-        key,
-        request.Enabled,
-        request.ThresholdDays)
-        ? Results.Ok(solicitations.Rules()
+    return solicitations.Update(key, request.Enabled)
+        ? Results.Ok(solicitations.All()
             .First(rule => rule.Key == key))
         : Results.NotFound();
 });
@@ -2761,21 +3143,33 @@ api.MapGet("/solicitations/due", (
 
     return Results.Ok(due.Select(item => new
     {
-        key = $"{item.EngagementId}:{item.Key}",
-        ruleKey = item.Key,
+        item.Key,
+        item.RuleKey,
+        item.TaskKey,
         item.Label,
         item.EngagementId,
         item.ClientName,
+        item.Recipient,
+        item.When,
+        item.ThresholdDays,
         item.Days,
-        item.ThresholdDays
+        item.DaysToStart,
+        item.SentDate,
+        item.SentOn,
+        item.SentToday,
+        canSend = user.Role == Roles.PMO && !item.SentToday
     }));
 });
 
+// Un solo sollecito al giorno per task: il registro tiene traccia dell'invio.
 api.MapPost("/solicitations/{key}/send", (
     string key,
     HttpContext context,
     IEngagementRepository repository,
     IClientRepository clients,
+    IUserRepository users,
+    IAppSettingsRepository settings,
+    SolicitationService solicitations,
     IDateProvider clock) =>
 {
     var user = GetUser(context);
@@ -2788,37 +3182,128 @@ api.MapPost("/solicitations/{key}/send", (
     if (parts.Length != 2)
         return Results.BadRequest("Chiave sollecito non valida.");
 
+    var rule = SolicitationService.Rule(parts[1]);
+
+    if (rule is null)
+        return Results.BadRequest("Regola di sollecito non valida.");
+
     var engagement = Find(repository, parts[0], user);
 
     if (engagement is null)
         return Results.NotFound();
 
-    var recipients = Distribution.Effective(
+    if (SolicitationService.LastSent(engagement, rule.TaskKey) == clock.Today)
+        return Results.Conflict(
+            "Hai già inviato questo sollecito oggi: se ne può mandare uno al giorno per task.");
+
+    var due = solicitations
+        .Due([engagement], clock.Today)
+        .FirstOrDefault(item => item.RuleKey == rule.Key);
+
+    var recipients = Solicitation.Recipients(
         engagement,
-        clients.Get(engagement.ClientId)?.DistributionList ?? []);
+        [rule.Recipient],
+        clients.Get(engagement.ClientId),
+        users.List());
 
     if (recipients.Count == 0)
-        return Results.BadRequest("Distribution list notifiche vuota.");
+        return Results.BadRequest("Nessun destinatario disponibile per questo sollecito.");
 
-    engagement.MailLog.Add(new MailLogEntry(
-        $"M-{Guid.NewGuid():N}"[..10],
-        $"solicitation:{parts[1]}",
-        clock.UtcNow,
-        string.Join(
-            "; ",
-            recipients.Select(entry => entry.Email)),
-        false,
-        "All"));
+    var standard = MailTemplates.Standard(
+        settings.Get<MailTemplateSet>(MailTemplates.StandardKey));
+    var resolved = MailTemplates.RenderSolicitation(
+        rule.TemplateType,
+        engagement,
+        standard,
+        clients.Get(engagement.ClientId)?.MailTemplates,
+        clock.Today,
+        due?.Days ?? 0);
+
+    Solicitation.Record(engagement, rule.TaskKey, resolved, recipients, clock);
 
     engagement.AddAudit(
         user.Name,
         user.Role,
-        $"Sollecito '{parts[1]}' inviato",
+        $"Sollecito '{rule.Label}' inviato a {rule.Recipient}",
         AuditVisibility.All,
         "Sollecito ricevuto");
 
     repository.Save(engagement);
     return Results.Ok(new { status = "ok" });
+});
+
+// Sollecito manuale dall'engagement: sull'attesa in corso.
+api.MapPost("/engagements/{id}/solicitations", (
+    string id,
+    HttpContext context,
+    IEngagementRepository repository,
+    IClientRepository clients,
+    IUserRepository users,
+    IAppSettingsRepository settings,
+    SolicitationService solicitations,
+    IDateProvider clock) =>
+{
+    var user = GetUser(context);
+
+    if (!Roles.IsInternal(user.Role) || user.Role == Roles.Auditor)
+        return Forbidden();
+
+    var engagement = Find(repository, id, user);
+
+    if (engagement is null)
+        return Results.NotFound();
+
+    var task = solicitations.Pending(engagement, clock.Today);
+
+    if (task is null)
+        return Results.BadRequest("Non c'è nulla in attesa su questa attività.");
+
+    // Si sollecita qualcun altro: chi deve agire, agisce.
+    if (task.OwnerRoles.Contains(user.Role))
+        return Results.BadRequest("L'azione è in carico al tuo profilo.");
+
+    if (SolicitationService.LastSent(engagement, task.Key) == clock.Today)
+        return Results.Conflict(
+            "Hai già inviato questo sollecito oggi: se ne può mandare uno al giorno per task.");
+
+    var client = clients.Get(engagement.ClientId);
+
+    var recipients = Solicitation.Recipients(
+        engagement,
+        task.OwnerRoles,
+        client,
+        users.List());
+
+    if (recipients.Count == 0)
+        return Results.BadRequest("Nessun destinatario disponibile per questo sollecito.");
+
+    var standard = MailTemplates.Standard(
+        settings.Get<MailTemplateSet>(MailTemplates.StandardKey));
+    var resolved = MailTemplates.RenderSolicitation(
+        "solmanual",
+        engagement,
+        standard,
+        client?.MailTemplates,
+        clock.Today,
+        0,
+        task.Label);
+
+    Solicitation.Record(
+        engagement,
+        task.Key,
+        resolved,
+        recipients,
+        clock);
+
+    engagement.AddAudit(
+        user.Name,
+        user.Role,
+        $"Sollecito manuale inviato: {task.Label}",
+        AuditVisibility.All,
+        "Sollecito ricevuto");
+
+    repository.Save(engagement);
+    return Results.Ok(new { status = "ok", task = task.Key });
 });
 
 app.MapFallbackToFile("index.html");
@@ -2893,7 +3378,7 @@ static UserContext GetUser(HttpContext context)
         // Demo: il cliente è un'identità fissa lato server. Il parametro
         // `client` è ignorato per un profilo Cliente, così il chiamante non
         // può scegliere a quale cliente accedere.
-        clientId = "contoso";
+        clientId = "anthropic";
     }
     else if (string.IsNullOrWhiteSpace(clientId))
     {
@@ -3064,6 +3549,114 @@ static object Summary(
     };
 }
 
+/// <summary>
+/// Blocco retest del dettaglio: dati e permessi per richiesta, date, esecuzione
+/// e invio del report (senza revisione). Null se il recheck non è previsto e
+/// non è mai stato avviato.
+/// </summary>
+static object? MapRetest(
+    Engagement engagement,
+    UserContext user,
+    EngagementPhase phase,
+    DateOnly today)
+{
+    var requested = engagement.RetestRequestedDate is not null;
+    var pending = engagement.RetestProposals
+        .FirstOrDefault(proposal => proposal.Status == ProposalStatus.Pending);
+    var accepted = engagement.AcceptedRetestProposal;
+    var sent = engagement.RetestReportSentDate is not null;
+
+    var active = engagement.RetestPlanned || requested ||
+        accepted is not null || engagement.RetestReport is not null || sent;
+
+    if (!active)
+        return null;
+
+    return new
+    {
+        Planned = engagement.RetestPlanned,
+        DecidedBy = engagement.RetestDecidedByName,
+        DecidedDate = engagement.RetestDecidedDate?.ToString("yyyy-MM-dd"),
+        Requested = requested,
+        RequestedDate = engagement.RetestRequestedDate?.ToString("yyyy-MM-dd"),
+        RequestedBy = engagement.RetestRequestedByName,
+        Proposals = engagement.RetestProposals.Select(proposal => new
+        {
+            proposal.Id,
+            StartDate = proposal.StartDate.ToString("yyyy-MM-dd"),
+            EndDate = proposal.EndDate.ToString("yyyy-MM-dd"),
+            Status = proposal.Status.ToString(),
+            Date = proposal.Date.ToString("yyyy-MM-dd"),
+            proposal.By,
+            proposal.Note,
+            proposal.Reason
+        }),
+        Accepted = accepted is null
+            ? null
+            : new
+            {
+                accepted.Id,
+                StartDate = accepted.StartDate.ToString("yyyy-MM-dd"),
+                EndDate = accepted.EndDate.ToString("yyyy-MM-dd"),
+                accepted.By
+            },
+        CompletedDate = engagement.RetestCompletedDate?.ToString("yyyy-MM-dd"),
+        Report = engagement.RetestReport is null
+            ? null
+            : new
+            {
+                engagement.RetestReport.Id,
+                engagement.RetestReport.Name,
+                published = engagement.RetestReport.Published,
+                date = engagement.RetestReport.Date.ToString("yyyy-MM-dd")
+            },
+        SentDate = engagement.RetestReportSentDate?.ToString("yyyy-MM-dd"),
+        // Il flag si decide nel Setup e resta modificabile fino alla richiesta.
+        CanEditFlag = user.Role is (Roles.Manager or Roles.PMO) && !requested,
+        CanRequest = user.Role == Roles.Client &&
+            engagement.RetestPlanned &&
+            !requested &&
+            phase == EngagementPhase.Retest,
+        CanPropose = user.Role is (Roles.PMO or Roles.Client) &&
+            requested && accepted is null,
+        CanDecide = user.Role == Roles.Manager && pending is not null,
+        CanLoadReport = user.Role == Roles.Pentester &&
+            accepted is not null &&
+            engagement.RetestReport is null,
+        CanSend = user.Role == Roles.Pentester &&
+            engagement.RetestReport is not null &&
+            !sent
+    };
+}
+
+static object? MapSolicitation(
+    SolicitationTask? task,
+    UserContext user,
+    DateOnly today,
+    bool canSend)
+{
+    if (task is null)
+        return null;
+
+    // Si sollecita qualcun altro: se l'azione è tua, non c'è niente da inviare.
+    var allowed = canSend && !task.OwnerRoles.Contains(user.Role);
+
+    return new
+    {
+        task.Key,
+        task.Label,
+        task.Recipient,
+        task.SentDate,
+        task.SentToday,
+        CanSend = allowed && !task.SentToday,
+        blockedReason = task.SentToday
+            ? "Hai già inviato questo sollecito oggi: se ne può mandare uno al giorno per task."
+            : task.OwnerRoles.Contains(user.Role)
+                ? "L'azione è in carico al tuo profilo."
+                : null
+    };
+}
+
 static object Detail(
     Engagement engagement,
     UserContext user,
@@ -3073,7 +3666,8 @@ static object Detail(
     IReadOnlyList<DistributionEntry> baseDistribution,
     IReadOnlyList<DistributionEntry> baseDeliverables,
     IReadOnlyList<TeamMember> baseTeam,
-    IReadOnlyList<string> providerEmails)
+    IReadOnlyList<string> providerEmails,
+    SolicitationService solicitations)
 {
     var phase = workflow.Resolve(engagement, clock.Today);
 
@@ -3210,6 +3804,14 @@ static object Detail(
             ? EngagementWorkflow.PlanningNotice(engagement, clock.Today)
             : null,
         TabStates = todos.ResolveTabs(engagement, user.Role, phase),
+        Solicitation = user.Role == Roles.Client
+            ? null
+            : MapSolicitation(
+                solicitations.Pending(engagement, clock.Today),
+                user,
+                clock.Today,
+                canSend: user.Role != Roles.Auditor),
+        Retest = MapRetest(engagement, user, phase, clock.Today),
         Audit = VisibleAudit(engagement, user),
         Scope = engagement.Scope,
         Credentials = CanSeeCredentials(user)

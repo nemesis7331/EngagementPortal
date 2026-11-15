@@ -10,8 +10,8 @@ public sealed class MailTemplateTests
     private static Engagement NewEngagement() => new()
     {
         Id = "ENG-2026-001",
-        ClientId = "contoso",
-        ClientName = "Contoso",
+        ClientId = "anthropic",
+        ClientName = "Anthropic",
         Name = "External Penetration Test",
         Type = EngagementType.PenetrationTest,
         Owner = "Sara Conti",
@@ -54,7 +54,7 @@ public sealed class MailTemplateTests
         var fromClient = MailTemplates.Resolve(
             "start", engagement, standard, client, Today);
         Assert.Equal("client", fromClient.Source);
-        Assert.Equal("Cliente Contoso", fromClient.Subject);
+        Assert.Equal("Cliente Anthropic", fromClient.Subject);
 
         engagement.MailTemplates.Start = new MailTemplate
         {
@@ -188,14 +188,14 @@ public sealed class MailTemplateTests
 
         var baseList = new[]
         {
-            new DistributionEntry("DL-B-1", "Marta", "marta@contoso.example", "Cliente"),
+            new DistributionEntry("DL-B-1", "Marta", "marta@anthropic.example", "Cliente"),
             new DistributionEntry("DL-B-2", "Luca", "LUCA@provider.example", "Cliente")
         };
 
         var effective = Distribution.Effective(engagement, baseList);
 
         Assert.Equal(2, effective.Count);
-        Assert.Equal("marta@contoso.example", effective[0].Email);
+        Assert.Equal("marta@anthropic.example", effective[0].Email);
         Assert.Equal("LUCA@provider.example", effective[1].Email);
     }
 }

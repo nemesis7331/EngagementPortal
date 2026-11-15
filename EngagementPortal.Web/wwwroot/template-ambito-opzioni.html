@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<title>Template mail · Ambito: due opzioni</title>
+<style>
+:root{
+  --brand-950:#061d36;--brand-900:#0a2a4d;--brand-700:#0f4275;--brand-600:#0b5fa5;--brand-500:#2a86d8;
+  --brand-100:#e1eefa;--brand-50:#f1f7fc;--accent:#0e9fb5;--ink:#0a1b2e;--muted:#566a80;--muted-2:#7b8a9b;
+  --line:#dfe7ef;--line-soft:#eef2f7;--bg:#f4f7fa;--card:#fff;--surface-2:#eceff6;--surface-3:#f8fafc;
+  --st-wait:#7a5b00;--st-wait-bg:#fff8c5;--st-wait-border:#eac54f;
+  --st-done:#067647;--st-done-bg:#dcfae6;--st-done-border:#a9efc5;
+  --font-sans:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;
+  --fs-2xs:10.5px;--fs-xs:11.5px;--fs-sm:12.5px;--fs-md:13.5px;--fs-base:14.5px;--fs-lg:17px;--fs-xl:19px;--fs-2xl:22px;
+  --radius-sm:8px;--radius-md:10px;--radius-lg:12px;--radius-xl:14px;--radius-pill:999px;
+  --shadow:0 1px 2px rgba(6,29,54,.06),0 6px 20px rgba(6,29,54,.06);
+  --shadow-lg:0 20px 60px rgba(6,29,54,.35);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--font-sans);background:var(--bg);color:var(--ink);font-size:var(--fs-base);line-height:1.5;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}
+header{background:linear-gradient(100deg,var(--brand-950),var(--brand-900) 60%,var(--brand-700));color:#fff;padding:14px 22px;display:flex;align-items:center;gap:12px}
+header .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:var(--fs-xl)}
+header .logo i{width:30px;height:30px;border-radius:var(--radius-md);background:var(--accent);color:var(--brand-950);display:grid;place-items:center;font-style:normal;font-weight:800}
+header small{display:block;font-weight:400;font-size:var(--fs-xs);opacity:.7;letter-spacing:.06em;text-transform:uppercase}
+main{max-width:1500px;margin:0 auto;padding:22px 22px 60px}
+.lead{font-size:var(--fs-base);color:var(--muted);max-width:96ch;margin:0 0 20px}
+.lead b{color:var(--brand-900)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+@media(max-width:1180px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:16px}
+.card h2{margin:0 0 4px;font-size:var(--fs-lg)}
+.card .sub{margin:0 0 14px;color:var(--muted);font-size:var(--fs-sm)}
+.tag{display:inline-flex;align-items:center;gap:6px;border-radius:var(--radius-pill);border:1px solid var(--line);background:var(--surface-3);color:var(--muted);padding:3px 10px;font-size:var(--fs-xs);font-weight:700}
+.tag.rec{border-color:var(--brand-100);background:var(--brand-50);color:var(--brand-700)}
+.tplx-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.tplx-scope{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tplx-scope label{display:inline-flex;align-items:center;gap:6px;margin:0;font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700}
+.tplx-scope label svg{width:14px;height:14px;fill:currentColor}
+select.big{appearance:none;-webkit-appearance:none;width:auto;min-width:250px;padding:8px 34px 8px 12px;border:1px solid var(--line);border-radius:var(--radius-pill);background-color:#fff;background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23566a80'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:11px;font:inherit;font-size:var(--fs-sm);font-weight:600;color:var(--brand-900);cursor:pointer}
+select.big:hover{border-color:var(--brand-500)}
+select.big[hidden]{display:none}
+select.big[disabled]{opacity:.55;cursor:default}
+.btn{border:1px solid var(--line);background:#fff;border-radius:var(--radius-md);padding:8px 13px;font:inherit;font-size:var(--fs-sm);font-weight:600;color:var(--brand-900);cursor:pointer}
+.btn.pri{background:var(--brand-600);border-color:var(--brand-600);color:#fff}
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:var(--radius-pill);padding:3px 10px;font-size:var(--fs-xs);font-weight:700;border:1px solid}
+.p-ok{background:var(--st-done-bg);color:var(--st-done);border-color:var(--st-done-border)}
+.p-wait{background:var(--st-wait-bg);color:var(--st-wait);border-color:var(--st-wait-border)}
+.p-neutral{background:var(--surface-2);color:var(--muted);border-color:var(--line)}
+.tplx{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff;margin-top:12px}
+.tplx-head,.tplx-row{display:grid;grid-template-columns:150px minmax(0,1fr) minmax(0,1fr)}
+.tplx-head{background:var(--surface-3);border-bottom:1px solid var(--line);font-size:9.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted-2);font-weight:800}
+.tplx-head>div,.tplx-row>div{padding:8px 11px;border-right:1px solid var(--line-soft);min-width:0}
+.tplx-head>div:last-child,.tplx-row>div:last-child{border-right:0}
+.tplx-row{border-bottom:1px solid var(--line-soft)}
+.tplx-row:last-child{border-bottom:0}
+.tplx-meta b{display:block;color:var(--brand-900);font-size:var(--fs-md)}
+.tplx-meta small{color:var(--muted);font-size:var(--fs-2xs)}
+.tplx-cell label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted-2);margin:0 0 3px}
+.fake{min-height:56px;border:1px solid var(--line);border-radius:var(--radius-md);padding:7px 9px;font-size:var(--fs-sm);background:#fff;color:var(--brand-900);font-weight:600}
+.fake.body{min-height:88px;font-weight:400;color:var(--ink);line-height:1.45;white-space:pre-wrap}
+.where{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px;border-top:1px solid var(--line-soft);padding-top:11px;font-size:var(--fs-sm);color:var(--muted)}
+.where b{color:var(--brand-900)}
+.pros{margin:14px 0 0;padding:0;list-style:none;display:grid;gap:7px;font-size:var(--fs-sm)}
+.pros li{display:flex;gap:8px;align-items:flex-start;color:var(--muted)}
+.pros li::before{content:"";flex:none;width:7px;height:7px;border-radius:50%;margin-top:6px;background:var(--brand-500)}
+.pros li.no::before{background:#b42318}
+.pros li b{color:var(--brand-900)}
+.note{margin:20px 0 0;border:1px solid var(--brand-100);background:var(--brand-50);color:var(--brand-700);border-radius:var(--radius-md);padding:12px 14px;font-size:var(--fs-sm)}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:11px;background:var(--surface-3);border:1px solid var(--line);border-radius:5px;padding:1px 5px;color:var(--muted)}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><i>CE</i><div>Cyber Engagement Portal<small>Anteprima · Ambito template mail</small></div></div>
+</header>
+
+<main>
+  <h1 style="font-size:var(--fs-2xl);margin:0 0 6px">Template mail · quante personalizzazioni?</h1>
+  <p class="lead">Oggi i template si modificano solo in <b>Amministrazione › Template mail</b>. Il menù <b>Ambito</b> decide <b>a chi si applica</b> il testo salvato. Queste sono le due possibilità: due livelli o tre. Le anteprime qui sotto sono interattive — prova a cambiare l'ambito.</p>
+
+  <div class="grid">
+    <!-- OPZIONE A -->
+    <section class="card">
+      <span class="tag">Opzione A · stato attuale</span>
+      <h2 style="margin-top:10px">Due livelli: standard e singolo cliente</h2>
+      <p class="sub">Il menù contiene un unico livello: o il testo standard, o l'override di un cliente. Niente personalizzazioni per singola attività.</p>
+
+      <div class="tplx-top">
+        <div class="tplx-scope">
+          <label for="scopeA"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8.235 1.559a.5.5 0 0 0-.47 0l-7.5 4a.5.5 0 0 0 0 .882L3.188 8 .264 9.559a.5.5 0 0 0 0 .882l7.5 4a.5.5 0 0 0 .47 0l7.5-4a.5.5 0 0 0 0-.882L12.813 8l2.922-1.559a.5.5 0 0 0 0-.882zm3.515 7.008L14.438 10 8 13.433 1.562 10 4.25 8.567l3.515 1.874a.5.5 0 0 0 .47 0zM8 9.433 1.562 6 8 2.567 14.438 6z"/></svg>Ambito</label>
+          <select class="big" id="scopeA">
+            <option value="standard">Standard (globale)</option>
+            <option value="client|contoso">Contoso · override</option>
+            <option value="client|fabrikam">Fabrikam · override</option>
+            <option value="client|novabank">Nova Bank · override</option>
+          </select>
+        </div>
+        <div class="tplx-top-right" style="margin-left:auto"><span class="pill p-ok">Modificabile</span><button class="btn pri">Salva tutti</button></div>
+      </div>
+
+      <div class="tplx">
+        <div class="tplx-head"><div>Template</div><div>Italiano</div><div>English</div></div>
+        <div class="tplx-row">
+          <div class="tplx-meta"><b>Inizio attività</b><br><small id="aTag">Standard</small></div>
+          <div class="tplx-cell"><label>Oggetto IT</label><div class="fake" id="aSubj">Avvio attività – {{engagement}}</div><label style="margin-top:6px">Corpo IT</label><div class="fake body">Gentile distribution list, l'attività ...</div></div>
+          <div class="tplx-cell"><label>Subject EN</label><div class="fake">Activity start – {{engagement}}</div><label style="margin-top:6px">Body EN</label><div class="fake body">Dear distribution list, the activity ...</div></div>
+        </div>
+      </div>
+
+      <div class="where">Salva su: <b id="aWhere">standard globale</b> · nessun livello per l'attività</div>
+
+      <ul class="pros">
+        <li><b>Semplice</b>: un testo per tutti, più l'eccezione del cliente. Difficile sbagliare destinazione.</li>
+        <li><b>Meno testo da mantenere</b>: ogni modifica vale per tutti gli engagement.</li>
+        <li class="no">Un engagement con esigenze sue (tono, riferimenti, firma) non è personalizzabile.</li>
+        <li class="no">Il livello "engagement" esiste già nel motore ma resta irraggiungibile.</li>
+      </ul>
+    </section>
+
+    <!-- OPZIONE B -->
+    <section class="card">
+      <span class="tag rec">Opzione B · tre livelli</span>
+      <h2 style="margin-top:10px">Tre livelli: standard, cliente, singola attività</h2>
+      <p class="sub">Il menù sceglie <b>prima il livello</b> e poi, se serve, <b>l'oggetto</b>: un cliente oppure un engagement preciso.</p>
+
+      <div class="tplx-top">
+        <div class="tplx-scope">
+          <label for="scopeB"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8.235 1.559a.5.5 0 0 0-.47 0l-7.5 4a.5.5 0 0 0 0 .882L3.188 8 .264 9.559a.5.5 0 0 0 0 .882l7.5 4a.5.5 0 0 0 .47 0l7.5-4a.5.5 0 0 0 0-.882L12.813 8l2.922-1.559a.5.5 0 0 0 0-.882zm3.515 7.008L14.438 10 8 13.433 1.562 10 4.25 8.567l3.515 1.874a.5.5 0 0 0 .47 0zM8 9.433 1.562 6 8 2.567 14.438 6z"/></svg>Livello</label>
+          <select class="big" id="scopeB">
+            <option value="standard">Standard (globale)</option>
+            <option value="client">Cliente</option>
+            <option value="engagement">Engagement</option>
+          </select>
+          <select class="big" id="targetB" hidden></select>
+        </div>
+        <div class="tplx-top-right" style="margin-left:auto"><span class="pill p-ok">Modificabile</span><button class="btn pri">Salva tutti</button></div>
+      </div>
+
+      <div class="tplx">
+        <div class="tplx-head"><div>Template</div><div>Italiano</div><div>English</div></div>
+        <div class="tplx-row">
+          <div class="tplx-meta"><b>Inizio attività</b><br><small id="bTag">Standard</small></div>
+          <div class="tplx-cell"><label>Oggetto IT</label><div class="fake" id="bSubj">Avvio attività – {{engagement}}</div><label style="margin-top:6px">Corpo IT</label><div class="fake body">Gentile distribution list, l'attività ...</div></div>
+          <div class="tplx-cell"><label>Subject EN</label><div class="fake">Activity start – {{engagement}}</div><label style="margin-top:6px">Body EN</label><div class="fake body">Dear distribution list, the activity ...</div></div>
+        </div>
+      </div>
+
+      <div class="where">Salva su: <b id="bWhere">standard globale</b></div>
+
+      <ul class="pros">
+        <li><b>Massima flessibilità</b>: testo su misura per una singola attività, senza toccare gli altri.</li>
+        <li><b>Completa la catena</b> che il motore già usa per l'invio: standard → cliente → engagement.</li>
+        <li class="no">Un secondo menù da capire: quale livello, e su quale oggetto.</li>
+        <li class="no">Più testi da tenere allineati; serve indicare dove si sta scrivendo (lo fa la riga "Salva su").</li>
+      </ul>
+    </section>
+  </div>
+
+  <p class="note"><b>Nota tecnica.</b> Le due opzioni differiscono solo per l'interfaccia: il motore supporta già i tre livelli e l'ordine di precedenza è <span class="mono">engagement → cliente → standard</span>. Nell'Opzione A il salvataggio dell'ambito "cliente" resta dov'è oggi, cioè <span class="mono">PUT /api/admin/mail-templates/client/{clientId}/{type}</span>; nell'Opzione B si aggiunge un endpoint gemello per l'engagement.</p>
+</main>
+
+<script>
+/* Opzione A: una voce per livello (standard + un cliente per voce). */
+(function () {
+  const scope = document.getElementById('scopeA');
+  const where = document.getElementById('aWhere');
+  const tag = document.getElementById('aTag');
+  scope.addEventListener('change', () => {
+    const [level, id] = scope.value.split('|');
+    if (level === 'standard') {
+      where.textContent = 'standard globale';
+      tag.textContent = 'Standard';
+    } else {
+      const name = scope.options[scope.selectedIndex].textContent.replace(' · override', '');
+      where.textContent = 'override cliente ' + name;
+      tag.textContent = 'Personalizzato · ' + name;
+    }
+  });
+})();
+
+/* Opzione B: prima il livello, poi l'oggetto. */
+(function () {
+  const level = document.getElementById('scopeB');
+  const target = document.getElementById('targetB');
+  const where = document.getElementById('bWhere');
+  const tag = document.getElementById('bTag');
+  const clients = ['Contoso', 'Fabrikam', 'Nova Bank', 'Orion Energia'];
+  const engagements = [
+    'ENG-2026-001 · External Penetration Test',
+    'ENG-2026-003 · Web Application Retest',
+    'ENG-2026-011 · Third-Party Risk Assessment'
+  ];
+
+  function render() {
+    if (level.value === 'standard') {
+      target.hidden = true;
+      where.textContent = 'standard globale';
+      tag.textContent = 'Standard';
+      return;
+    }
+    target.hidden = false;
+    const list = level.value === 'client' ? clients : engagements;
+    target.innerHTML = list.map(item => '<option>' + item + '</option>').join('');
+    const label = level.value === 'client' ? 'override cliente ' : 'override attività ';
+    where.textContent = label + list[0];
+    tag.textContent = 'Personalizzato · ' + list[0];
+  }
+
+  level.addEventListener('change', render);
+  target.addEventListener('change', () => {
+    const label = level.value === 'client' ? 'override cliente ' : 'override attività ';
+    where.textContent = label + target.value;
+    tag.textContent = 'Personalizzato · ' + target.value;
+  });
+  render();
+})();
+</script>
+</body>
+</html>

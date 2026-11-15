@@ -91,7 +91,7 @@ public sealed class InMemoryUserRepository : IUserRepository
             Name = "Luca Ferri",
             Email = "luca.ferri@provider.example",
             Role = Roles.PMO,
-            ClientIds = ["contoso", "fabrikam"]
+            ClientIds = ["anthropic", "nvidia"]
         },
         new UserAccount
         {
@@ -99,7 +99,7 @@ public sealed class InMemoryUserRepository : IUserRepository
             Name = "Sara Conti",
             Email = "sara.conti@provider.example",
             Role = Roles.Pentester,
-            ClientIds = ["contoso", "novabank"]
+            ClientIds = ["anthropic"]
         },
         new UserAccount
         {
@@ -115,7 +115,7 @@ public sealed class InMemoryUserRepository : IUserRepository
             Name = "Elena Fabbri",
             Email = "elena.fabbri@provider.example",
             Role = Roles.Pentester,
-            ClientIds = ["fabrikam"]
+            ClientIds = ["nvidia"]
         },
         new UserAccount
         {
@@ -123,7 +123,7 @@ public sealed class InMemoryUserRepository : IUserRepository
             Name = "Paolo Galli",
             Email = "paolo.galli@provider.example",
             Role = Roles.Auditor,
-            ClientIds = ["novabank"]
+            ClientIds = ["anthropic", "nvidia"]
         }
     ];
 }
