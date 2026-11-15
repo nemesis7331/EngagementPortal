@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<title>Sezione Clienti · proposte di layout</title>
+<style>
+:root{
+  --brand-950:#061d36;--brand-900:#0a2a4d;--brand-700:#0f4275;--brand-600:#0b5fa5;--brand-500:#2a86d8;
+  --brand-100:#e1eefa;--brand-50:#f1f7fc;--accent:#0e9fb5;--ink:#0a1b2e;--muted:#566a80;--muted-2:#7b8a9b;
+  --line:#dfe7ef;--line-soft:#eef2f7;--bg:#f4f7fa;--surface-2:#eceff6;--surface-3:#f8fafc;
+  --st-action:#b42318;--st-action-bg:#fee4e2;--st-action-border:#fda29b;
+  --st-wait:#7a5b00;--st-wait-bg:#fff8c5;--st-wait-border:#eac54f;
+  --st-done:#067647;--st-done-bg:#dcfae6;--st-done-border:#a9efc5;
+  --st-progress:#175cd3;--st-progress-bg:#d1e9ff;--st-progress-border:#b2ddff;
+  --font-sans:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;
+  --radius-sm:8px;--radius-md:10px;--radius-lg:12px;--radius-xl:14px;--radius-pill:999px;
+  --shadow:0 1px 2px rgba(6,29,54,.06),0 6px 20px rgba(6,29,54,.06);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--font-sans);background:var(--bg);color:var(--ink);font-size:14.5px;line-height:1.5;-webkit-font-smoothing:antialiased}
+header.top{background:linear-gradient(100deg,var(--brand-950),var(--brand-900) 60%,var(--brand-700));color:#fff;padding:14px 22px;display:flex;align-items:center;gap:12px}
+header.top .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px}
+header.top .logo i{width:30px;height:30px;border-radius:10px;background:var(--accent);color:var(--brand-950);display:grid;place-items:center;font-style:normal;font-weight:800}
+header.top small{display:block;font-weight:400;font-size:11.5px;opacity:.7;letter-spacing:.06em;text-transform:uppercase}
+main{max-width:1240px;margin:0 auto;padding:22px 22px 70px}
+.lead{color:var(--muted);max-width:104ch}
+.lead b{color:var(--brand-900)}
+nav.toc{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 24px}
+nav.toc a{text-decoration:none;border:1px solid var(--line);background:#fff;border-radius:var(--radius-pill);padding:6px 13px;font-size:12.5px;font-weight:600;color:var(--brand-900)}
+nav.toc a:hover{border-color:var(--brand-500)}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius-xl);box-shadow:var(--shadow);padding:16px;margin-bottom:22px}
+.card > h2{margin:0 0 4px;font-size:19px}
+.card > p.sub{margin:0 0 14px;color:var(--muted);font-size:13px;max-width:104ch}
+.opt{border:1px solid var(--line);border-radius:var(--radius-lg);padding:13px;background:var(--surface-3);margin-bottom:12px}
+.opt-head{display:flex;align-items:center;gap:9px;margin-bottom:11px;flex-wrap:wrap}
+.opt-tag{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:7px;background:var(--brand-900);color:#fff;font-size:12px;font-weight:800}
+.opt-head b{font-size:14.5px;color:var(--brand-900)}
+.opt-head span.d{font-size:12.5px;color:var(--muted)}
+.rec{display:inline-flex;align-items:center;border:1px solid var(--st-done-border);background:var(--st-done-bg);color:var(--st-done);border-radius:var(--radius-pill);padding:2px 9px;font-size:11px;font-weight:800}
+.notes{margin:10px 0 0;padding:0;list-style:none;display:grid;gap:5px;font-size:12.5px;color:var(--muted)}
+.notes li{display:flex;gap:7px}
+.notes li::before{content:"·";color:var(--brand-500);font-weight:800}
+table.cmp{width:100%;border-collapse:collapse;font-size:12.5px;background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);overflow:hidden}
+table.cmp th,table.cmp td{padding:9px 11px;border-bottom:1px solid var(--line-soft);text-align:left;vertical-align:top}
+table.cmp th{background:var(--surface-2);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted-2)}
+table.cmp tr:last-child td{border-bottom:0}
+.btn{border:1px solid var(--line);background:#fff;border-radius:var(--radius-md);padding:7px 12px;font:inherit;font-size:12.5px;font-weight:600;color:var(--brand-900);cursor:pointer}
+.btn.pri{background:var(--brand-600);border-color:var(--brand-600);color:#fff}
+.btn.sm{padding:5px 10px;font-size:12px}
+
+/* ---- oggetti standard (come in app) ---- */
+.obj-client{display:inline-flex;align-items:center;gap:7px;max-width:100%;background:var(--surface-2);border:1px solid var(--line);border-radius:var(--radius-pill);padding:2px 11px 2px 3px;font-weight:600;color:var(--brand-900)}
+.obj-client .mark{width:22px;height:22px;border-radius:50%;flex:none;background:#fff;border:1px solid var(--brand-100);display:grid;place-items:center;font-size:9px;font-weight:800;color:var(--brand-700);overflow:hidden;position:relative}
+.obj-client .mark img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#fff}
+.obj-client.plain{background:none;border:0;padding:0;gap:8px}
+.obj-client.plain .mark{width:26px;height:26px;border-radius:8px}
+.obj-client.lg .mark{width:34px;height:34px;border-radius:10px;font-size:12px}
+.obj-person{display:inline-flex;align-items:center;gap:8px;min-width:0}
+.obj-person .av{width:26px;height:26px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:10px;font-weight:800;background:var(--surface-2);color:var(--muted);border:1px solid var(--line)}
+.obj-person .av.pmo{background:var(--st-wait-bg);color:var(--st-wait);border-color:var(--st-wait-border)}
+.obj-person .av.pentester{background:var(--st-progress-bg);color:var(--st-progress);border-color:var(--st-progress-border)}
+.obj-person .col{display:grid;line-height:1.2;min-width:0}
+.obj-person .nm{font-size:13px;font-weight:600;color:var(--brand-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.obj-person .role{font-size:10.5px;color:var(--muted)}
+.cntpill{display:inline-grid;place-items:center;min-width:22px;height:20px;padding:0 7px;border-radius:var(--radius-pill);background:var(--surface-2);color:var(--brand-900);font-size:11px;font-weight:800;border:1px solid var(--line)}
+.cntpill.n{background:var(--brand-50);border-color:var(--brand-100);color:var(--brand-700)}
+.obj-period{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface-3);border-radius:var(--radius-sm);padding:2px 9px;font-size:12px;font-weight:600;color:var(--brand-900);white-space:nowrap}
+.obj-doc{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:var(--brand-900)}
+.obj-doc .ic{width:24px;height:24px;border-radius:7px;display:grid;place-items:center;flex:none;border:1px solid}
+.obj-doc .ic.exec{background:#e7f1fc;border-color:#cfe0f5;color:#1a5f9e}
+.obj-doc .ic.tech{background:#f3eefc;border-color:#ddd0f7;color:#5b34b5}
+.obj-doc .ic.act{background:#eafaf1;border-color:#bcdfce;color:#0b6b45}
+.obj-doc .ic.retest{background:#e9f7fa;border-color:#bfe6ee;color:#0b6b7c}
+/* ---- pezzi di layout ---- */
+.searchbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);padding:11px 12px;box-shadow:var(--shadow)}
+.searchbar input{flex:1;min-width:220px;padding:9px 13px;border:1px solid var(--line);border-radius:var(--radius-pill);font:inherit;font-size:13px}
+.chip{border:1px solid var(--line);background:#fff;border-radius:var(--radius-pill);padding:5px 12px;font:inherit;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer}
+.chip[aria-pressed="true"]{border-color:var(--brand-500);background:var(--brand-50);color:var(--brand-700)}
+.list{background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow);overflow:auto;max-height:300px;margin-top:12px}
+.row{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line-soft);background:#fff;padding:10px 13px;cursor:pointer;color:inherit;font:inherit}
+.list .row:last-child{border-bottom:0}
+.row:hover{background:var(--surface-3)}
+.row.on{background:var(--brand-50);box-shadow:inset 3px 0 0 var(--brand-600)}
+.row .who{flex:1;min-width:0}
+.row .who b{display:block;font-size:13.5px;color:var(--brand-900)}
+.row .who small{display:block;font-size:11.5px;color:var(--muted)}
+.row .nums{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.detail{margin-top:12px;background:#fff;border:1px solid var(--line);border-radius:var(--radius-xl);box-shadow:var(--shadow);padding:16px}
+.dhead{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line-soft);padding-bottom:12px;margin-bottom:14px}
+.dhead .t{flex:1;min-width:200px}
+.dhead h3{margin:0;font-size:17px}
+.dhead p{margin:2px 0 0;font-size:12.5px;color:var(--muted)}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}
+.block{border:1px solid var(--line);border-radius:var(--radius-md);padding:11px 12px;background:#fff;margin-bottom:10px}
+.block h4{margin:0 0 8px;font-size:13px;display:flex;align-items:center;gap:8px}
+.block h4 .cntpill{margin-left:auto}
+.block .hint{margin:0 0 8px;font-size:11.5px;color:var(--muted)}
+.people{display:grid;gap:8px}
+.person-row{display:flex;align-items:center;gap:9px;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line-soft)}
+.person-row:last-child{border-bottom:0}
+.person-row .mail{font-size:11px;color:var(--muted);overflow-wrap:anywhere}
+.grid-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.minicard{background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow);padding:13px}
+.minicard .top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.minicard .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;text-align:center;border-top:1px solid var(--line-soft);padding-top:10px}
+.minicard .stats b{display:block;font-size:16px;color:var(--brand-900)}
+.minicard .stats span{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.tabs button{border:1px solid var(--line);background:#fff;border-radius:var(--radius-pill);padding:5px 12px;font:inherit;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer}
+.tabs button.on{background:var(--brand-900);border-color:var(--brand-900);color:#fff}
+details.exp{border:1px solid var(--line);border-radius:var(--radius-md);background:#fff;margin-bottom:8px}
+details.exp summary{cursor:pointer;padding:10px 12px;font-weight:600;font-size:13px;list-style:none;display:flex;align-items:center;gap:9px}
+details.exp summary::-webkit-details-marker{display:none}
+details.exp summary::before{content:"▸";color:var(--brand-600)}
+details.exp[open] summary::before{content:"▾"}
+details.exp .body{padding:0 12px 12px}
+.note{margin-top:20px;border:1px solid var(--brand-100);background:var(--brand-50);color:var(--brand-700);border-radius:var(--radius-md);padding:12px 14px;font-size:12.5px}
+.note b{color:var(--brand-900)}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="logo"><i>CE</i><div>Cyber Engagement Portal<small>Anteprima · sezione Clienti</small></div></div>
+</header>
+
+<main>
+  <h1 style="font-size:24px;margin:0 0 6px">Sezione Clienti: quattro layout per uniformarla</h1>
+  <p class="lead">Oggi gli stessi dati si vedono in <b>tre forme diverse</b>: in <b>Portale › Clienti</b> tante card lunghe una sotto l'altra (quattro elenchi ciascuna, senza ricerca), in <b>Amministrazione › Clienti</b> una tabella con solo i numeri, e nella <b>scheda cliente</b> un popup. Nessuna usa gli oggetti standard appena scelti. Qui quattro proposte, tutte con <b>gli stessi oggetti</b> e una sola forma da riusare nei due punti.</p>
+  <nav class="toc">
+    <a href="#a">A · Elenco + dettaglio sotto</a>
+    <a href="#b">B · Tabella con dettaglio</a>
+    <a href="#c">C · Schede compatte</a>
+    <a href="#d">D · Un cliente per volta a schede</a>
+    <a href="#confronto">Confronto</a>
+  </nav>
+
+  <!-- ============ A ============ -->
+  <section class="card" id="a">
+    <h2>A · Elenco + dettaglio sotto</h2>
+    <p class="sub">La stessa forma che hai scelto per la Mailing list: ricerca in alto, elenco scorribile, dettaglio del cliente selezionato sotto. Un solo posto da imparare per due sezioni.</p>
+
+    <div class="opt">
+      <div class="searchbar">
+        <input type="search" placeholder="Cerca cliente, utenza, destinatario o sito…" value="">
+        <button class="chip" aria-pressed="true">Tutti <b>2</b></button>
+        <button class="chip" aria-pressed="false">Con utenze</button>
+        <button class="chip" aria-pressed="false">Senza team</button>
+        <span style="margin-left:auto;font-size:12px;color:var(--muted);font-weight:600">2 clienti</span>
+      </div>
+      <div class="list">
+        <button class="row on">
+          <span class="obj-client plain"><span class="mark"><img src="https://www.google.com/s2/favicons?sz=64&domain=anthropic.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span><span>Anthropic</span></span>
+          <span class="who"><b>8 engagement</b><small>www.anthropic.com · creato il 12/01/2026</small></span>
+          <span class="nums">
+            <span class="cntpill" title="utenze">2</span><span class="cntpill" title="team">3</span>
+            <span class="cntpill" title="notifiche">2</span><span class="cntpill" title="deliverables">2</span>
+            <span class="cntpill n" title="engagement">8</span>
+          </span>
+        </button>
+        <button class="row">
+          <span class="obj-client plain"><span class="mark"><img src="https://www.google.com/s2/favicons?sz=64&domain=nvidia.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span><span>Nvidia</span></span>
+          <span class="who"><b>7 engagement</b><small>www.nvidia.com · creato il 12/01/2026</small></span>
+          <span class="nums">
+            <span class="cntpill" title="utenze">1</span><span class="cntpill" title="team">2</span>
+            <span class="cntpill" title="notifiche">1</span><span class="cntpill" title="deliverables">1</span>
+            <span class="cntpill n" title="engagement">7</span>
+          </span>
+        </button>
+      </div>
+
+      <div class="detail">
+        <div class="dhead">
+          <span class="obj-client plain lg"><span class="mark"><img src="https://www.google.com/s2/favicons?sz=64&domain=anthropic.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span><span style="font-size:17px">Anthropic</span></span>
+          <div class="t"><p style="margin:0">8 engagement · <a href="https://www.anthropic.com" target="_blank" rel="noopener noreferrer">www.anthropic.com</a></p></div>
+          <button class="btn sec sm">Vedi engagement</button>
+          <button class="btn sec sm">Modifica</button>
+        </div>
+        <div class="cols">
+          <div>
+            <section class="block">
+              <h4>Utenze associate <span class="cntpill">2</span></h4>
+              <p class="hint">Chi entra nel portale per questo cliente.</p>
+              <div class="people">
+                <div class="person-row">
+                  <span class="obj-person"><span class="av">MR</span><span class="col"><span class="nm">Marta Rinaldi</span><span class="role">Referente cliente</span></span></span>
+                  <span style="display:grid;gap:2px;justify-items:end"><span class="mail">marta.rinaldi@anthropic.example</span><button class="btn sm">Rimuovi</button></span>
+                </div>
+                <div class="person-row">
+                  <span class="obj-person"><span class="av">AR</span><span class="col"><span class="nm">Anna Rossi</span><span class="role">Referente cliente</span></span></span>
+                  <span style="display:grid;gap:2px;justify-items:end"><span class="mail">anna.rossi@anthropic.example</span><button class="btn sm">Rimuovi</button></span>
+                </div>
+              </div>
+              <div style="margin-top:10px"><button class="btn pri sm">+ Aggiungi utenza</button></div>
+            </section>
+
+            <section class="block">
+              <h4>Team cliente <span class="cntpill">3</span></h4>
+              <p class="hint">Partecipanti esterni comuni a tutte le attività.</p>
+              <div class="people">
+                <div class="person-row"><span class="obj-person"><span class="av">MR</span><span class="col"><span class="nm">Marta Rinaldi</span><span class="role">Cliente</span></span></span><button class="btn sm">Rimuovi</button></div>
+                <div class="person-row"><span class="obj-person"><span class="av pentester">SC</span><span class="col"><span class="nm">Sara Conti</span><span class="role">Provider Pentester</span></span></span><button class="btn sm">Rimuovi</button></div>
+                <div class="person-row"><span class="obj-person"><span class="av pmo">LF</span><span class="col"><span class="nm">Luca Ferri</span><span class="role">Provider PMO</span></span></span><button class="btn sm">Rimuovi</button></div>
+              </div>
+              <div style="margin-top:10px"><button class="btn sec sm">+ Invita partecipante</button></div>
+            </section>
+          </div>
+          <div>
+            <section class="block">
+              <h4>Distribution list · notifiche <span class="cntpill">2</span></h4>
+              <p class="hint">Base del cliente: inizio/fine attività e solleciti.</p>
+              <div class="people">
+                <div class="person-row"><span class="obj-person"><span class="av">MR</span><span class="col"><span class="nm">Marta Rinaldi</span><span class="role">Cliente</span></span></span><button class="btn sm">Rimuovi</button></div>
+                <div class="person-row"><span class="obj-person"><span class="av">AR</span><span class="col"><span class="nm">Anna Rossi</span><span class="role">Cliente</span></span></span><button class="btn sm">Rimuovi</button></div>
+              </div>
+              <div style="margin-top:10px"><button class="btn sec sm">+ Aggiungi destinatario</button></div>
+            </section>
+            <section class="block">
+              <h4>Distribution list · deliverables <span class="cntpill">2</span></h4>
+              <p class="hint">Base del cliente: riceve l'invio dei report.</p>
+              <div class="people">
+                <div class="person-row"><span class="obj-person"><span class="av">AR</span><span class="col"><span class="nm">Anna Rossi</span><span class="role">Cliente</span></span></span><button class="btn sm">Rimuovi</button></div>
+                <div class="person-row"><span class="obj-person"><span class="av">SC</span><span class="col"><span class="nm">Sara Conti</span><span class="role">Provider</span></span></span><button class="btn sm">Rimuovi</button></div>
+              </div>
+              <div style="margin-top:10px"><button class="btn sec sm">+ Aggiungi destinatario</button></div>
+            </section>
+            <section class="block">
+              <h4>Deliverable previsti <span class="cntpill">2</span></h4>
+              <p class="hint">Ereditati dai tipi di attività usati.</p>
+              <div style="display:flex;gap:10px;flex-wrap:wrap">
+                <span class="obj-doc"><span class="ic exec"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 11H2v3h2zm5-4H7v7h2zm5-5v12h-2V2zm-2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"/></svg></span>Executive</span>
+                <span class="obj-doc"><span class="ic tech"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M10.478 1.647a.5.5 0 1 0-.956-.294l-4 13a.5.5 0 0 0 .956.294z"/></svg></span>Technical</span>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+      <ul class="notes">
+        <li>I quattro elenchi stanno in <b>due colonne</b>: l'altezza della pagina si dimezza.</li>
+        <li>I numeri nell'elenco (utenze, team, notifiche, deliverables, engagement) evitano di aprire il cliente solo per contarli.</li>
+        <li>Gli stessi oggetti (<code>clientChip</code>, <code>personChip</code>, <code>docTag</code>) valgono anche in Amministrazione: una sola forma.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ B ============ -->
+  <section class="card" id="b">
+    <h2>B · Tabella con dettaglio</h2>
+    <p class="sub">Come l'attuale tabella di Amministrazione, ma con gli oggetti standard, la ricerca e il dettaglio che si apre sotto la riga scelta.</p>
+
+    <div class="opt">
+      <div class="searchbar"><input type="search" placeholder="Cerca cliente…"><span style="margin-left:auto;font-size:12px;color:var(--muted);font-weight:600">2 clienti</span></div>
+      <div class="list" style="max-height:none">
+        <table class="cmp" style="border:0;border-radius:0">
+          <tr><th>Cliente</th><th>Engagement</th><th>Utenze</th><th>Team</th><th>Notifiche</th><th>Deliverables</th><th></th></tr>
+          <tr class="row on" style="cursor:pointer">
+            <td><span class="obj-client plain"><span class="mark"><img src="https://www.google.com/s2/favicons?sz=64&domain=anthropic.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span><span>Anthropic</span></span></td>
+            <td><span class="cntpill n">8</span></td><td><span class="cntpill">2</span></td><td><span class="cntpill">3</span></td>
+            <td><span class="cntpill">2</span></td><td><span class="cntpill">2</span></td>
+            <td style="text-align:right;white-space:nowrap"><button class="btn sm">Engagement</button> <button class="btn sm">Modifica</button></td>
+          </tr>
+          <tr><td colspan="7" style="background:var(--brand-50);padding:14px">
+            <div class="cols">
+              <div>
+                <section class="block"><h4>Utenze associate <span class="cntpill">2</span></h4>
+                  <div class="people">
+                    <div class="person-row"><span class="obj-person"><span class="av">MR</span><span class="col"><span class="nm">Marta Rinaldi</span><span class="role">Referente</span></span></span><button class="btn sm">Rimuovi</button></div>
+                    <div class="person-row"><span class="obj-person"><span class="av">AR</span><span class="col"><span class="nm">Anna Rossi</span><span class="role">Referente</span></span></span><button class="btn sm">Rimuovi</button></div>
+                  </div>
+                </section>
+                <section class="block"><h4>Team cliente <span class="cntpill">3</span></h4>
+                  <div class="people">
+                    <div class="person-row"><span class="obj-person"><span class="av pentester">SC</span><span class="col"><span class="nm">Sara Conti</span><span class="role">Provider Pentester</span></span></span><button class="btn sm">Rimuovi</button></div>
+                  </div>
+                </section>
+              </div>
+              <div>
+                <section class="block"><h4>Distribution list · notifiche <span class="cntpill">2</span></h4>
+                  <div class="people">
+                    <div class="person-row"><span class="obj-person"><span class="av">MR</span><span class="col"><span class="nm">Marta Rinaldi</span><span class="role">Cliente</span></span></span><button class="btn sm">Rimuovi</button></div>
+                  </div>
+                </section>
+                <section class="block"><h4>Distribution list · deliverables <span class="cntpill">2</span></h4>
+                  <div class="people">
+                    <div class="person-row"><span class="obj-person"><span class="av">AR</span><span class="col"><span class="nm">Anna Rossi</span><span class="role">Cliente</span></span></span><button class="btn sm">Rimuovi</button></div>
+                  </div>
+                </section>
+              </div>
+            </div>
+          </td></tr>
+          <tr style="cursor:pointer">
+            <td><span class="obj-client plain"><span class="mark"><img src="https://www.google.com/s2/favicons?sz=64&domain=nvidia.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span><span>Nvidia</span></span></td>
+            <td><span class="cntpill n">7</span></td><td><span class="cntpill">1</span></td><td><span class="cntpill">2</span></td>
+            <td><span class="cntpill">1</span></td><td><span class="cntpill">1</span></td>
+            <td style="text-align:right;white-space:nowrap"><button class="btn sm">Engagement</button> <button class="btn sm">Modifica</button></td>
+          </tr>
+        </table>
+      </div>
+      <ul class="notes">
+        <li>È la più compatta: si confrontano i clienti a colpo d'occhio e il dettaglio si apre solo dove serve.</li>
+        <li>Con molti clienti regge meglio dell'elenco a card.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ C ============ -->
+  <section class="card" id="c">
+    <h2>C · Schede compatte in griglia</h2>
+    <p class="sub">Pensata per pochi clienti: ogni cliente è una tessera con i quattro numeri e le azioni; il dettaglio si apre in un pannello.</p>
+
+    <div class="opt">
+      <div class="grid-cards">
+        <div class="minicard">
+          <div class="top">
+            <span class="obj-client plain"><span class="mark"><img src="https://www.google.com/s2/favicons?sz=64&domain=anthropic.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span><span style="font-size:15px">Anthropic</span></span>
+          </div>
+          <p class="hint" style="margin:0 0 10px;font-size:11.5px;color:var(--muted)"><a href="https://www.anthropic.com" target="_blank" rel="noopener noreferrer">www.anthropic.com</a></p>
+          <div class="stats">
+            <div><b>8</b><span>Engagement</span></div>
+            <div><b>2</b><span>Utenze</span></div>
+            <div><b>2</b><span>Notifiche</span></div>
+            <div><b>3</b><span>Team</span></div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:12px"><button class="btn pri sm">Apri</button><button class="btn sm">Engagement</button></div>
+        </div>
+        <div class="minicard">
+          <div class="top">
+            <span class="obj-client plain"><span class="mark"><img src="https://www.google.com/s2/favicons?sz=64&domain=nvidia.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span><span style="font-size:15px">Nvidia</span></span>
+          </div>
+          <p class="hint" style="margin:0 0 10px;font-size:11.5px;color:var(--muted)"><a href="https://www.nvidia.com" target="_blank" rel="noopener noreferrer">www.nvidia.com</a></p>
+          <div class="stats">
+            <div><b>7</b><span>Engagement</span></div>
+            <div><b>1</b><span>Utenze</span></div>
+            <div><b>1</b><span>Notifiche</span></div>
+            <div><b>2</b><span>Team</span></div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:12px"><button class="btn pri sm">Apri</button><button class="btn sm">Engagement</button></div>
+        </div>
+      </div>
+      <ul class="notes">
+        <li>Bellissima con due o tre clienti, si allunga molto con dieci.</li>
+        <li>I quattro numeri sono gli stessi dell'elenco di A: cambia solo la forma.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ D ============ -->
+  <section class="card" id="d">
+    <h2>D · Un cliente per volta, a schede</h2>
+    <p class="sub">Elenco compatto a sinistra e, per il cliente scelto, quattro schede (Utenze, Notifiche, Deliverables, Team) invece dei quattro elenchi in verticale.</p>
+
+    <div class="opt">
+      <div class="cols" style="grid-template-columns:280px minmax(0,1fr)">
+        <div>
+          <div class="list" style="margin-top:0;max-height:none">
+            <button class="row on">
+              <span class="obj-client plain"><span class="mark"><img src="https://www.google.com/s2/favicons?sz=64&domain=anthropic.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span><span>Anthropic</span></span>
+              <span class="nums"><span class="cntpill n">8</span></span>
+            </button>
+            <button class="row">
+              <span class="obj-client plain"><span class="mark"><img src="https://www.google.com/s2/favicons?sz=64&domain=nvidia.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span><span>Nvidia</span></span>
+              <span class="nums"><span class="cntpill n">7</span></span>
+            </button>
+          </div>
+        </div>
+        <div>
+          <div class="tabs"><button class="on">Utenze · 2</button><button>Notifiche · 2</button><button>Deliverables · 2</button><button>Team · 3</button></div>
+          <section class="block">
+            <h4>Utenze associate <span class="cntpill">2</span></h4>
+            <div class="people">
+              <div class="person-row"><span class="obj-person"><span class="av">MR</span><span class="col"><span class="nm">Marta Rinaldi</span><span class="role">marta.rinaldi@anthropic.example</span></span></span><button class="btn sm">Rimuovi</button></div>
+              <div class="person-row"><span class="obj-person"><span class="av">AR</span><span class="col"><span class="nm">Anna Rossi</span><span class="role">anna.rossi@anthropic.example</span></span></span><button class="btn sm">Rimuovi</button></div>
+            </div>
+            <div style="margin-top:10px"><button class="btn pri sm">+ Aggiungi utenza</button></div>
+          </section>
+          <details class="exp"><summary>Notifiche · 2 destinatari</summary><div class="body">
+            <div class="person-row"><span class="obj-person"><span class="av">MR</span><span class="col"><span class="nm">Marta Rinaldi</span><span class="role">Cliente</span></span></span><button class="btn sm">Rimuovi</button></div>
+          </div></details>
+          <details class="exp"><summary>Deliverables · 2 destinatari</summary><div class="body">
+            <div class="person-row"><span class="obj-person"><span class="av">AR</span><span class="col"><span class="nm">Anna Rossi</span><span class="role">Cliente</span></span></span><button class="btn sm">Rimuovi</button></div>
+          </div></details>
+          <details class="exp"><summary>Team cliente · 3 partecipanti</summary><div class="body">
+            <div class="person-row"><span class="obj-person"><span class="av pentester">SC</span><span class="col"><span class="nm">Sara Conti</span><span class="role">Provider Pentester</span></span></span><button class="btn sm">Rimuovi</button></div>
+          </div></details>
+        </div>
+      </div>
+      <ul class="notes">
+        <li>Altezza minima: una scheda aperta, le altre richiuse.</li>
+        <li>È la forma del dettaglio engagement (menu a sinistra, contenuto a destra): coerente con il resto del portale.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="card" id="confronto">
+    <h2>Confronto</h2>
+    <table class="cmp">
+      <tr><th></th><th>A · Elenco + dettaglio</th><th>B · Tabella</th><th>C · Griglia di schede</th><th>D · A schede</th></tr>
+      <tr><td><b>Con quanti clienti</b></td><td>Da 3 in su</td><td>Da 3 in su, anche molti</td><td>Fino a 4-5</td><td>Da 2 in su</td></tr>
+      <tr><td><b>Confronto fra clienti</b></td><td>Buono (numeri in riga)</td><td>Ottimo</td><td>Buono</td><td>Debole (uno per volta)</td></tr>
+      <tr><td><b>Ricerca e filtri</b></td><td>Sì, in alto</td><td>Sì, in alto</td><td>Da aggiungere</td><td>Sì, a sinistra</td></tr>
+      <tr><td><b>Coerenza con il resto</b></td><td>Come la Mailing list</td><td>Come Amministrazione</td><td>Nuova forma</td><td>Come il dettaglio engagement</td></tr>
+      <tr><td><b>Altezza pagina</b></td><td>Media</td><td>Minima</td><td>Bassa</td><td>Minima</td></tr>
+    </table>
+    <p class="note"><b>La mia indicazione.</b> La <b>A</b>, perché riusa esattamente la forma che hai già scelto per la Mailing list (ricerca + elenco + dettaglio sotto) e quindi le due sezioni diventano la stessa cosa da imparare; in più i numeri nell'elenco tolgono la necessità di aprire il cliente per contarlo. Se preferisci la massima compattezza, la <b>B</b> è la più vicina all'attuale tabella di Amministrazione. In ogni caso <b>una sola</b> di queste forme va usata sia in Portale › Clienti sia in Amministrazione › Clienti, e dentro vanno gli oggetti standard (pastiglia cliente, scheda persona, icona deliverable).</p>
+  </section>
+</main>
+</body>
+</html>
