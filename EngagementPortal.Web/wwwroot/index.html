@@ -187,7 +187,16 @@ table{width:100%;border-collapse:collapse}th{text-align:left;font-size:var(--fs-
 .solicit-table td:last-child{white-space:nowrap}
 .solicit-table td:last-child .btn{white-space:nowrap}
 .solicit-table th{white-space:nowrap}
-.recipient{white-space:nowrap}
+.recipient-btn{border:0;background:none;padding:0;font:inherit;color:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:4px;border-radius:6px;text-align:left}
+.recipient-btn:hover{color:var(--brand-700);text-decoration:underline}
+.recipient-btn:focus-visible{outline:2px solid var(--brand-500);outline-offset:2px}
+.recipient-caret{font-size:9px;line-height:1;color:var(--muted-2)}
+.recipient-btn:hover .recipient-caret{color:var(--brand-600)}
+/* Elenco completo dei destinatari di un sollecito (nome + email). */
+.rcpt-list{list-style:none;margin:0;padding:0;display:grid;gap:9px;max-height:55vh;overflow:auto}
+.rcpt-item{display:flex;align-items:center;gap:9px;min-width:0}
+.rcpt-item b{display:block;font-size:var(--fs-md);color:var(--brand-900);line-height:1.2}
+.rcpt-item span span{display:block;font-size:var(--fs-sm);color:var(--muted);overflow-wrap:anywhere}
 /* ====== REGOLE DEI SOLLECITI (Amministrazione) ====== */.rule-row{border-bottom:1px solid var(--line-soft);padding:14px 0}
 .rule-row:last-child{border-bottom:0;padding-bottom:0}
 .rule-head{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap}
@@ -395,7 +404,6 @@ table{width:100%;border-collapse:collapse}th{text-align:left;font-size:var(--fs-
 .wf-vstep.cur .wf-vnum{background:var(--brand-600);border-color:var(--brand-600);color:#fff}
 .wf-vlbl{font-size:11.5px;line-height:1.15;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .detail-cols > .context-rail .ctx-card{padding:10px 11px}
-.ctx-more{font-size:11px;color:var(--muted);padding:3px 4px}
 .detail-cols > .context-rail{top:calc(var(--app-header-h,64px) + 12px)}
 .work-panel-head{padding:12px 14px}
 .work-panel-body{padding:14px}
@@ -2498,8 +2506,8 @@ function solicitationSentTable() {
 // Etichetta con cui il server indica il destinatario di un sollecito.
 const recipientLabel = role => (role === 'Client' ? 'Cliente' : role);
 
-// Destinatario vero: i nomi dietro il ruolo, con le email nel tooltip.
-// Se il server non li risolve (nessun contatto configurato) resta il ruolo.
+// Destinatario vero: i nomi dietro il ruolo. Il clic apre l'elenco completo
+// con le email, così il "+1" non nasconde nessuno.
 function recipientCell(item) {
   const owners = (Array.isArray(item.owners) ? item.owners : [])
     .filter(owner => owner && owner.name);
@@ -2509,7 +2517,37 @@ function recipientCell(item) {
     .map(owner => (owner.email ? `${owner.name} <${owner.email}>` : owner.name))
     .join(', ');
   const extra = owners.length > 1 ? ` <span class="cnt">+${owners.length - 1}</span>` : '';
-  return `<span class="recipient" title="${esc(title)}">${esc(owners[0].name)}${extra}</span>`;
+  return `<button class="recipient-btn" data-act="recipients" data-key="${esc(item.key)}"
+    title="${esc(title)}" aria-haspopup="dialog">${esc(owners[0].name)}${extra}<span class="recipient-caret" aria-hidden="true">▾</span></button>`;
+}
+
+// Elenco completo dei destinatari di un sollecito (nome + email).
+function showRecipients(owners, label) {
+  const opener = document.activeElement;
+  const rows = owners.map(owner => `<li class="rcpt-item">
+      <span class="avatar">${esc(initialsOf(owner.name))}</span>
+      <span><b>${esc(owner.name)}</b><span>${esc(owner.email || '')}</span></span>
+    </li>`).join('');
+
+  $('#modal').innerHTML = `
+    <div class="mbox" role="dialog" aria-modal="true" aria-labelledby="rcpt-title">
+      <h2 id="rcpt-title">Destinatari</h2>
+      <p class="sub" style="margin-bottom:12px">${esc(label || '')}</p>
+      <ul class="rcpt-list">${rows}</ul>
+      <div class="mact"><button class="btn pri" data-modal="rcpt-close">Chiudi</button></div>
+    </div>`;
+  $('#modal').classList.add('show');
+
+  const close = () => {
+    $('#modal').classList.remove('show');
+    $('#modal').innerHTML = '';
+    document.removeEventListener('keydown', onKey);
+    if (opener && opener.isConnected && opener.focus) opener.focus();
+  };
+  const onKey = event => { if (event.key === 'Escape') close(); };
+  document.addEventListener('keydown', onKey);
+  $('#modal').querySelector('[data-modal="rcpt-close"]').onclick = close;
+  setTimeout(() => $('#modal').querySelector('[data-modal="rcpt-close"]').focus(), 30);
 }
 
 function renderSolicitations() {
@@ -2840,10 +2878,8 @@ function renderDetail() {
     id: member.id,
     member: true
   }));
-  // Il rail resta leggibile: al massimo quattro persone, il resto nel team.
-  const peopleShown = people.slice(0, 4);
-  const peopleMore = people.length - peopleShown.length;
-  const peopleHtml = peopleShown.map(person => {
+  // Tutte le persone nel rail: nessun "+N" che nasconde qualcuno.
+  const peopleHtml = people.map(person => {
     const removable = person.member && c.canRemoveTeam &&
       (state.role !== 'Client' || person.org === 'Cliente');
     return `<div class="ctx-person-row">
@@ -2853,9 +2889,7 @@ function renderDetail() {
       </button>
       ${removable ? `<button class="ctx-person-x" data-act="remove-team" data-member="${esc(person.id)}" title="Rimuovi ${esc(person.name)}" aria-label="Rimuovi ${esc(person.name)}">×</button>` : ''}
     </div>`;
-  }).join('') + (peopleMore > 0
-    ? `<div class="ctx-more">+${peopleMore} nel team</div>`
-    : '');
+  }).join('');
 
   $('#app').innerHTML = `
     <button class="crumb" data-act="list">← Tutti gli engagement</button>
@@ -6338,6 +6372,12 @@ const actions = {
       toast('Regola aggiornata');
       renderAdmin();
     } catch (error) { toast(error.message); }
+  },
+
+  'recipients': el => {
+    const item = (state.due || []).find(entry => entry.key === el.dataset.key);
+    const owners = (item?.owners || []).filter(owner => owner && owner.name);
+    if (item && owners.length) showRecipients(owners, item.label || '');
   },
 
   'send-solicitation': async el => {
