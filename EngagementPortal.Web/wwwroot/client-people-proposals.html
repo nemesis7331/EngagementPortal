@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<title>Clienti · persone e distribution list · proposte</title>
+<style>
+:root{
+  --brand-950:#061d36;--brand-900:#0a2a4d;--brand-700:#0f4275;--brand-600:#0b5fa5;--brand-500:#2a86d8;
+  --brand-100:#e1eefa;--brand-50:#f1f7fc;--accent:#0e9fb5;--ink:#0a1b2e;--muted:#566a80;--muted-2:#7b8a9b;
+  --line:#dfe7ef;--line-soft:#eef2f7;--bg:#f4f7fa;--surface-2:#eceff6;--surface-3:#f8fafc;
+  --st-action:#b42318;--st-action-bg:#fee4e2;--st-action-border:#fda29b;
+  --st-wait:#7a5b00;--st-wait-bg:#fff8c5;--st-wait-border:#eac54f;
+  --st-done:#067647;--st-done-bg:#dcfae6;--st-done-border:#a9efc5;
+  --st-progress:#175cd3;--st-progress-bg:#d1e9ff;--st-progress-border:#b2ddff;
+  --font-sans:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;
+  --radius-sm:8px;--radius-md:10px;--radius-lg:12px;--radius-xl:14px;--radius-pill:999px;
+  --shadow:0 1px 2px rgba(6,29,54,.06),0 6px 20px rgba(6,29,54,.06);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--font-sans);background:var(--bg);color:var(--ink);font-size:14.5px;line-height:1.5;-webkit-font-smoothing:antialiased}
+header.top{background:linear-gradient(100deg,var(--brand-950),var(--brand-900) 60%,var(--brand-700));color:#fff;padding:14px 22px;display:flex;align-items:center;gap:12px}
+header.top .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px}
+header.top .logo i{width:30px;height:30px;border-radius:10px;background:var(--accent);color:var(--brand-950);display:grid;place-items:center;font-style:normal;font-weight:800}
+header.top small{display:block;font-weight:400;font-size:11.5px;opacity:.7;letter-spacing:.06em;text-transform:uppercase}
+main{max-width:1180px;margin:0 auto;padding:22px 22px 70px}
+h1{font-size:24px;margin:0 0 6px}
+.lead{color:var(--muted);max-width:104ch}
+.lead b{color:var(--brand-900)}
+nav.toc{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 24px}
+nav.toc a{text-decoration:none;border:1px solid var(--line);background:#fff;border-radius:var(--radius-pill);padding:6px 13px;font-size:12.5px;font-weight:600;color:var(--brand-900)}
+nav.toc a:hover{border-color:var(--brand-500)}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius-xl);box-shadow:var(--shadow);padding:16px;margin-bottom:22px}
+.card > h2{margin:0 0 4px;font-size:19px}
+.card > p.sub{margin:0 0 14px;color:var(--muted);font-size:13px;max-width:104ch}
+.opt{border:1px solid var(--line);border-radius:var(--radius-lg);padding:13px;background:var(--surface-3);margin-bottom:12px}
+.rec{display:inline-flex;align-items:center;border:1px solid var(--st-done-border);background:var(--st-done-bg);color:var(--st-done);border-radius:var(--radius-pill);padding:2px 9px;font-size:11px;font-weight:800;vertical-align:middle;margin-left:6px}
+.notes{margin:10px 0 0;padding:0;list-style:none;display:grid;gap:5px;font-size:12.5px;color:var(--muted)}
+.notes li{display:flex;gap:7px}
+.notes li::before{content:"·";color:var(--brand-500);font-weight:800}
+table.cmp{width:100%;border-collapse:collapse;font-size:12.5px;background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);overflow:hidden}
+table.cmp th,table.cmp td{padding:9px 11px;border-bottom:1px solid var(--line-soft);text-align:left;vertical-align:top}
+table.cmp th{background:var(--surface-2);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted-2)}
+table.cmp tr:last-child td{border-bottom:0}
+.btn{border:1px solid var(--line);background:#fff;border-radius:var(--radius-md);padding:7px 12px;font:inherit;font-size:12.5px;font-weight:600;color:var(--brand-900);cursor:pointer}
+.btn:hover{border-color:var(--brand-500)}
+.btn.pri{background:var(--brand-600);border-color:var(--brand-600);color:#fff}
+.btn.pri:hover{background:var(--brand-700);border-color:var(--brand-700)}
+.btn.sm{padding:5px 10px;font-size:12px}
+.btn.ghost{border-color:transparent;background:none;color:var(--muted);padding:4px 8px}
+.btn.ghost:hover{background:var(--surface-2);color:var(--brand-900)}
+
+/* ---- oggetti standard (come in app) ---- */
+.obj-client{display:inline-flex;align-items:center;gap:7px;max-width:100%;background:var(--surface-2);border:1px solid var(--line);border-radius:var(--radius-pill);padding:2px 11px 2px 3px;font-weight:600;color:var(--brand-900)}
+.obj-client .mark{width:22px;height:22px;border-radius:50%;flex:none;background:#fff;border:1px solid var(--brand-100);display:grid;place-items:center;font-size:9px;font-weight:800;color:var(--brand-700);overflow:hidden;position:relative}
+.obj-client .mark img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#fff}
+.obj-client.plain{background:none;border:0;padding:0;gap:8px}
+.obj-client.plain .mark{width:26px;height:26px;border-radius:8px}
+.obj-client.lg .mark{width:34px;height:34px;border-radius:10px;font-size:12px}
+.obj-person{display:inline-flex;align-items:center;gap:9px;min-width:0}
+.obj-person .av{width:28px;height:28px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:10px;font-weight:800;background:var(--surface-2);color:var(--muted);border:1px solid var(--line)}
+.obj-person .av.pmo{background:var(--st-wait-bg);color:var(--st-wait);border-color:var(--st-wait-border)}
+.obj-person .av.pentester{background:var(--st-progress-bg);color:var(--st-progress);border-color:var(--st-progress-border)}
+.obj-person .av.client{background:var(--brand-50);color:var(--brand-700);border-color:var(--brand-100)}
+.obj-person .col{display:grid;line-height:1.25;min-width:0}
+.obj-person .nm{font-size:13px;font-weight:600;color:var(--brand-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.obj-person .role{font-size:10.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cntpill{display:inline-grid;place-items:center;min-width:22px;height:20px;padding:0 7px;border-radius:var(--radius-pill);background:var(--surface-2);color:var(--brand-900);font-size:11px;font-weight:800;border:1px solid var(--line)}
+.cntpill.n{background:var(--brand-50);border-color:var(--brand-100);color:var(--brand-700)}
+
+/* ---- testata del pannello cliente ---- */
+.dhead{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line-soft);padding-bottom:12px;margin-bottom:13px}
+.dhead .t{flex:1;min-width:190px}
+.dhead p{margin:0;font-size:12.5px;color:var(--muted)}
+.dhead p a{color:var(--brand-600)}
+
+/* ---- riepilogo ---- */
+.recap{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:11px}
+.recap .chipbtn{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:#fff;border-radius:var(--radius-pill);padding:5px 12px;font-size:12px;font-weight:600;color:var(--muted)}
+.recap .chipbtn .dot{width:8px;height:8px;border-radius:50%;background:var(--brand-500)}
+.recap .chipbtn .dot.d2{background:var(--accent)}
+.recap .chipbtn b{color:var(--brand-900);font-size:13px}
+.recap .grow{flex:1}
+
+/* ---- checkbox ---- */
+.ck{position:relative;display:inline-grid;place-items:center;cursor:pointer;line-height:0}
+.ck input{position:absolute;opacity:0;width:1px;height:1px;margin:0}
+.ck i{width:20px;height:20px;border:1.5px solid #c8d5e3;border-radius:6px;background:#fff;display:grid;place-items:center;transition:background .15s,border-color .15s}
+.ck i::after{content:"";width:10px;height:6px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg) translateY(-1px);opacity:0;transition:opacity .12s}
+.ck input:checked + i{background:var(--brand-600);border-color:var(--brand-600)}
+.ck input:checked + i::after{opacity:1}
+.ck input:focus-visible + i{outline:2px solid var(--brand-500);outline-offset:2px}
+.ck input:disabled + i{background:var(--surface-2);border-color:var(--line);cursor:not-allowed}
+.ck input:disabled:checked + i{background:#9db8cf;border-color:#9db8cf}
+.ck:hover i{border-color:var(--brand-500)}
+.ck input:disabled ~ i{cursor:not-allowed}
+.ck input:disabled + i::after{border-color:#fff}
+
+/* ---- tabella persone ---- */
+.people-table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px;background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);overflow:hidden}
+.people-table th{padding:7px 10px;background:var(--surface-3);border-bottom:1px solid var(--line);text-align:left;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted-2);font-weight:700;white-space:nowrap}
+.people-table td{padding:8px 10px;border-bottom:1px solid var(--line-soft);vertical-align:middle}
+.people-table tbody tr:last-child td{border-bottom:0}
+.people-table tbody tr:hover td{background:var(--brand-50)}
+.people-table td.mail{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px}
+.people-table th.ckcol,.people-table td.ckcol{width:104px;text-align:center}
+.people-table th.ckcol > span{display:grid;gap:5px;place-items:center}
+.people-table th.ckcol .ck i{width:17px;height:17px;border-radius:5px}
+.people-table th.ckcol small{font-size:9px;letter-spacing:.04em;color:var(--muted-2);font-weight:600;text-transform:none}
+.people-table td.ckcol{line-height:0}
+.people-table .actcol{width:84px;text-align:right;white-space:nowrap}
+.people-table tr.grouprow td{background:var(--brand-50);border-bottom:1px solid var(--brand-100);padding:7px 10px}
+.people-table tr.grouprow:hover td{background:var(--brand-50)}
+.people-table tr.grouprow .grp{display:flex;align-items:center;gap:8px;font-size:11.5px;font-weight:700;color:var(--brand-900)}
+.people-table tr.grouprow .grp .cntpill{height:18px;font-size:10px}
+.people-table tr.grouprow .grp small{font-weight:500;color:var(--muted);text-transform:none;letter-spacing:0}
+
+.tag{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);background:#fff;border-radius:var(--radius-pill);padding:1px 8px;font-size:10.5px;font-weight:700;color:var(--muted);white-space:nowrap}
+.tag::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--muted-2)}
+.tag.portal{color:var(--brand-700);border-color:var(--brand-100);background:var(--brand-50)}
+.tag.portal::before{background:var(--brand-500)}
+.tag.team{color:#5b34b5;border-color:#ddd0f7;background:#f3eefc}
+.tag.team::before{background:#7c5cd6}
+.tag.mail{color:#0b6b7c;border-color:#bfe6ee;background:#e9f7fa}
+.tag.mail::before{background:var(--accent)}
+
+/* ---- matrice compatta ---- */
+.filterbar{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:10px}
+.filterbar .fchip{border:1px solid var(--line);background:#fff;border-radius:var(--radius-pill);padding:5px 11px;font:inherit;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer}
+.filterbar .fchip[aria-pressed="true"]{background:var(--brand-900);border-color:var(--brand-900);color:#fff}
+.filterbar .fchip b{font-weight:800}
+.matrix{width:100%;border-collapse:separate;border-spacing:0;font-size:13px;border:1px solid var(--line);border-radius:var(--radius-lg);overflow:hidden;background:#fff}
+.matrix th{padding:8px 10px;background:var(--surface-3);border-bottom:1px solid var(--line);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted-2);text-align:left}
+.matrix th.mcol{width:120px;text-align:center}
+.matrix td{padding:9px 10px;border-bottom:1px solid var(--line-soft)}
+.matrix tbody tr:last-child td{border-bottom:0}
+.matrix tbody tr:hover td{background:var(--brand-50)}
+.matrix td.mcol{text-align:center;line-height:0}
+.matrix .who{display:flex;align-items:center;gap:9px;min-width:0}
+.matrix .who .txt{display:grid;line-height:1.25;min-width:0}
+.matrix .who .txt b{font-size:13px;color:var(--brand-900);font-weight:600}
+.matrix .who .txt small{font-size:11.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.matrix .origin{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:6px;font-size:9px;font-weight:800;border:1px solid var(--line);background:var(--surface-2);color:var(--muted);flex:none}
+.matrix .origin.portal{background:var(--brand-50);border-color:var(--brand-100);color:var(--brand-700)}
+.matrix .origin.team{background:#f3eefc;border-color:#ddd0f7;color:#5b34b5}
+.matrix .origin.mail{background:#e9f7fa;border-color:#bfe6ee;color:#0b6b7c}
+.matrix tr.off{display:none}
+
+.note{margin-top:20px;border:1px solid var(--brand-100);background:var(--brand-50);color:var(--brand-700);border-radius:var(--radius-md);padding:12px 14px;font-size:12.5px;line-height:1.6}
+.note b{color:var(--brand-900)}
+.rules{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:11px;margin-top:4px}
+.rule{border:1px solid var(--line);border-radius:var(--radius-lg);padding:11px 12px;background:var(--surface-3)}
+.rule b{display:block;font-size:12.5px;color:var(--brand-900);margin-bottom:3px}
+.rule p{margin:0;font-size:12px;color:var(--muted);line-height:1.5}
+.rule code{font-family:ui-monospace,Consolas,monospace;font-size:11px;background:var(--surface-2);padding:1px 5px;border-radius:5px;color:var(--brand-700)}
+@media(max-width:900px){
+  .people-table td.mail{display:none}
+  .people-table .tag{font-size:0;padding:0;width:14px;height:14px;border-radius:50%}
+  .people-table .tag::before{margin:0}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="logo"><i>CE</i><div>Cyber Engagement Portal<small>Anteprima · Clienti e distribution list</small></div></div>
+</header>
+
+<main>
+  <h1>Persone, notifiche e deliverables in una sola lista</h1>
+  <p class="lead">
+    Oggi nella scheda cliente le stesse persone compaiono in <b>tre tab separati</b>
+    (<b>Utenze</b>, <b>Notifiche</b>, <b>Deliverables</b>) e in più nel <b>Team</b>. Per cambiare chi
+    riceve cosa bisogna cambiare tab e cercare la persona in un elenco diverso. Qui tre proposte per
+    mettere <b>due caselle al centro della riga</b> — una per le notifiche, una per i deliverables —
+    e togliere i tab. Le caselle sono l'unico punto di modifica; il resto della riga serve solo a
+    capire chi è quella persona.
+  </p>
+  <nav class="toc">
+    <a href="#a">A · Una tabella «Persone»</a>
+    <a href="#b">B · Due gruppi, stesse caselle</a>
+    <a href="#c">C · Matrice compatta</a>
+    <a href="#regole">Come funziona</a>
+    <a href="#confronto">Confronto</a>
+  </nav>
+
+  <!-- ============ A ============ -->
+  <section class="card" id="a">
+    <h2>A · Una sola tabella «Persone» <span class="rec">Consigliata</span></h2>
+    <p class="sub">
+      Tutti in un unico elenco — chi entra nel portale, chi partecipa al team e chi è solo un
+      indirizzo — con la provenienza come etichetta e le due caselle al centro. Spariscono i tab.
+    </p>
+
+    <div class="opt">
+      <div class="dhead">
+        <span class="obj-client plain lg"><span class="mark"><img src="https://www.google.com/s2/favicons?sz=64&domain=anthropic.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span><span style="font-size:17px">Anthropic</span></span>
+        <div class="t"><p>8 engagement · <a href="https://www.anthropic.com" target="_blank" rel="noopener noreferrer">www.anthropic.com</a></p></div>
+        <button class="btn sm">Vedi engagement</button>
+        <button class="btn sm">Modifica</button>
+      </div>
+
+      <div class="recap">
+        <span class="chipbtn"><b data-total>5</b> persone</span>
+        <span class="chipbtn"><span class="dot"></span> Notifiche <b data-count="notif">3</b></span>
+        <span class="chipbtn"><span class="dot d2"></span> Deliverables <b data-count="deliv">3</b></span>
+        <span class="grow"></span>
+        <button class="btn pri sm">+ Aggiungi persona</button>
+      </div>
+
+      <!-- una sola tabella: le due caselle sono le colonne centrali -->
+      <table class="people-table" data-table="a">
+        <thead>
+          <tr>
+            <th>Persona</th>
+            <th style="width:150px">Origine</th>
+            <th class="ckcol">
+              <span>Notifiche
+                <label class="ck" title="Seleziona o deseleziona tutti"><input type="checkbox" data-all="notif"><i></i></label>
+              </span>
+            </th>
+            <th class="ckcol">
+              <span>Deliverables
+                <label class="ck" title="Seleziona o deseleziona tutti"><input type="checkbox" data-all="deliv"><i></i></label>
+              </span>
+            </th>
+            <th class="actcol"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <span class="obj-person"><span class="av client">MR</span><span class="col"><span class="nm">Marta Rinaldi</span><span class="role">Referente cliente</span></span></span>
+            </td>
+            <td><span class="tag portal">Portale</span></td>
+            <td class="ckcol"><label class="ck"><input type="checkbox" data-kind="notif" checked><i></i></label></td>
+            <td class="ckcol"><label class="ck"><input type="checkbox" data-kind="deliv" checked><i></i></label></td>
+            <td class="actcol"><button class="btn ghost sm" title="Gestisci utenza">⋯</button></td>
+          </tr>
+          <tr>
+            <td>
+              <span class="obj-person"><span class="av client">AR</span><span class="col"><span class="nm">Anna Rossi</span><span class="role">Referente cliente</span></span></span>
+            </td>
+            <td><span class="tag portal">Portale</span></td>
+            <td class="ckcol"><label class="ck"><input type="checkbox" data-kind="notif" checked><i></i></label></td>
+            <td class="ckcol"><label class="ck"><input type="checkbox" data-kind="deliv"><i></i></label></td>
+            <td class="actcol"><button class="btn ghost sm" title="Gestisci utenza">⋯</button></td>
+          </tr>
+          <tr>
+            <td>
+              <span class="obj-person"><span class="av pentester">SC</span><span class="col"><span class="nm">Sara Conti</span><span class="role">Provider Pentester</span></span></span>
+            </td>
+            <td><span class="tag team">Team</span></td>
+            <td class="ckcol"><label class="ck"><input type="checkbox" data-kind="notif"><i></i></label></td>
+            <td class="ckcol"><label class="ck"><input type="checkbox" data-kind="deliv" checked><i></i></label></td>
+            <td class="actcol"><button class="btn ghost sm" title="Gestisci partecipante">⋯</button></td>
+          </tr>
+          <tr>
+            <td>
+              <span class="obj-person"><span class="av pmo">LF</span><span class="col"><span class="nm">Luca Ferri</span><span class="role">Provider PMO</span></span></span>
+            </td>
+            <td><span class="tag team">Team</span></td>
+            <td class="ckcol"><label class="ck"><input type="checkbox" data-kind="notif"><i></i></label></td>
+            <td class="ckcol"><label class="ck"><input type="checkbox" data-kind="deliv"><i></i></label></td>
+            <td class="actcol"><button class="btn ghost sm" title="Gestisci partecipante">⋯</button></td>
+          </tr>
+          <tr>
+            <td>
+              <span class="obj-person"><span class="av">AM</span><span class="col"><span class="nm">Amministrazione Anthropic</span><span class="role">amministrazione@anthropic.example</span></span></span>
+            </td>
+            <td><span class="tag mail">Solo destinatario</span></td>
+            <td class="ckcol"><label class="ck"><input type="checkbox" data-kind="notif" checked><i></i></label></td>
+            <td class="ckcol"><label class="ck"><input type="checkbox" data-kind="deliv" checked><i></i></label></td>
+            <td class="actcol"><button class="btn ghost sm" title="Gestisci destinatario">⋯</button></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <ul class="notes">
+        <li>Le due colonne di caselle stanno <b>al centro</b>: l'occhio va dritto lì, il resto della riga è solo contesto.</li>
+        <li>La colonna <b>Origine</b> dice subito se la persona entra nel portale, è nel team o è un semplice indirizzo: senza quella, le caselle sembrerebbero tutte uguali.</li>
+        <li>Il menu <b>⋯</b> per riga raccoglie le azioni che oggi sono i pulsanti «Rimuovi», più «Rinomina» e «Cambia email».</li>
+        <li>In alto i due contatori dicono <b>quanti ricevono</b> davvero, senza aprire nulla.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ B ============ -->
+  <section class="card" id="b">
+    <h2>B · Due gruppi, stesse caselle</h2>
+    <p class="sub">
+      Un solo elenco ma diviso in due blocchi: <b>persone con accesso</b> (utenze e team) e
+      <b>solo destinatari</b> (indirizzi che non entrano nel portale). Le caselle sono identiche nei
+      due gruppi, così la regola resta una sola.
+    </p>
+
+    <div class="opt">
+      <div class="dhead">
+        <span class="obj-client plain lg"><span class="mark"><img src="https://www.google.com/s2/favicons?sz=64&domain=anthropic.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span><span style="font-size:17px">Anthropic</span></span>
+        <div class="t"><p>8 engagement · 4 persone con accesso · 1 solo destinatario</p></div>
+      </div>
+
+      <div class="recap">
+        <span class="chipbtn"><span class="dot"></span> Notifiche <b data-count="notif">3</b></span>
+        <span class="chipbtn"><span class="dot d2"></span> Deliverables <b data-count="deliv">3</b></span>
+        <span class="grow"></span>
+        <button class="btn sec sm">+ Aggiungi solo indirizzo</button>
+        <button class="btn pri sm">+ Aggiungi utenza</button>
+      </div>
+
+      <table class="people-table" data-table="b">
+        <thead>
+          <tr>
+            <th>Persona</th>
+            <th style="width:150px">Come partecipa</th>
+            <th class="ckcol"><span>Notifiche <label class="ck" title="Tutti"><input type="checkbox" data-all="notif"><i></i></label></span></th>
+            <th class="ckcol"><span>Deliverables <label class="ck" title="Tutti"><input type="checkbox" data-all="deliv"><i></i></label></span></th>
+            <th class="actcol"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="grouprow"><td colspan="5"><span class="grp">Persone con accesso al portale <span class="cntpill">4</span> <small>utenze del cliente e partecipanti del team</small></span></td></tr>
+          <tr>
+            <td><span class="obj-person"><span class="av client">MR</span><span class="col"><span class="nm">Marta Rinaldi</span><span class="role">marta.rinaldi@anthropic.example</span></span></span></td>
+            <td><span class="tag portal">Utenza</span></td>
+            <td class="ckcol"><label class="ck"><input type="checkbox" data-kind="notif" checked><i></i></label></td>
+            <td class="ckcol"><label class="ck"><input type="checkbox" data-kind="deliv" checked><i></i></label></td>
+            <td class="actcol"><button class="btn ghost sm">⋯</button></td>
+          </tr>
+          <tr>
+            <td><span class="obj-person"><span class="av client">AR</span><span class="col"><span class="nm">Anna Rossi</span><span class="role">anna.rossi@anthropic.example</span></span></span></td>
+            <td><span class="tag portal">Utenza</span></td>
+            <td class="ckcol"><label class="ck"><input type="checkbox" data-kind="notif" checked><i></i></label></td>
+            <td class="ckcol"><label class="ck"><input type="checkbox" data-kind="deliv"><i></i></label></td>
+            <td class="actcol"><button class="btn ghost sm">⋯</button></td>
+          </tr>
+          <tr>
+            <td><span class="obj-person"><span class="av pentester">SC</span><span class="col"><span class="nm">Sara Conti</span><span class="role">sara.conti@provider.example</span></span></span></td>
+            <td><span class="tag team">Team · Pentester</span></td>
+            <td class="ckcol"><label class="ck"><input type="checkbox" data-kind="notif"><i></i></label></td>
+            <td class="ckcol"><label class="ck"><input type="checkbox" data-kind="deliv" checked><i></i></label></td>
+            <td class="actcol"><button class="btn ghost sm">⋯</button></td>
+          </tr>
+          <tr>
+            <td><span class="obj-person"><span class="av pmo">LF</span><span class="col"><span class="nm">Luca Ferri</span><span class="role">luca.ferri@provider.example</span></span></span></td>
+            <td><span class="tag team">Team · PMO</span></td>
+            <td class="ckcol"><label class="ck"><input type="checkbox" data-kind="notif"><i></i></label></td>
+            <td class="ckcol"><label class="ck"><input type="checkbox" data-kind="deliv"><i></i></label></td>
+            <td class="actcol"><button class="btn ghost sm">⋯</button></td>
+          </tr>
+          <tr class="grouprow"><td colspan="5"><span class="grp">Solo destinatari <span class="cntpill">1</span> <small>non entrano nel portale, ricevono solo le email</small></span></td></tr>
+          <tr>
+            <td><span class="obj-person"><span class="av">AM</span><span class="col"><span class="nm">Amministrazione Anthropic</span><span class="role">amministrazione@anthropic.example</span></span></span></td>
+            <td><span class="tag mail">Indirizzo</span></td>
+            <td class="ckcol"><label class="ck"><input type="checkbox" data-kind="notif" checked><i></i></label></td>
+            <td class="ckcol"><label class="ck"><input type="checkbox" data-kind="deliv" checked><i></i></label></td>
+            <td class="actcol"><button class="btn ghost sm">⋯</button></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <ul class="notes">
+        <li>È la proposta più <b>fedele ai dati di oggi</b>: le utenze restano utenze, gli indirizzi restano indirizzi, ma le caselle si comportano allo stesso modo.</li>
+        <li>I due pulsanti in alto sono separati (<b>utenza</b> / <b>solo indirizzo</b>): si capisce subito cosa si sta creando.</li>
+        <li>Nel gruppo «Persone con accesso» la colonna dice anche il <b>ruolo</b> (Utenza, Team · PMO, Team · Pentester).</li>
+        <li>Chi è in entrambi i gruppi non esiste: un'utenza è una persona, un indirizzo è un indirizzo.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ C ============ -->
+  <section class="card" id="c">
+    <h2>C · Matrice compatta</h2>
+    <p class="sub">
+      La versione più densa: nessuna etichetta di provenienza in colonna, solo una <b>lettera colorata</b>
+      accanto al nome, e filtri per vedere chi è fuori da entrambe le liste. Pensata per clienti con
+      molte persone.
+    </p>
+
+    <div class="opt">
+      <div class="dhead">
+        <span class="obj-client plain lg"><span class="mark"><img src="https://www.google.com/s2/favicons?sz=64&domain=anthropic.com" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span><span style="font-size:17px">Anthropic</span></span>
+        <div class="t"><p>8 engagement · 5 persone · 3 ricevono le notifiche · 3 i deliverables</p></div>
+        <button class="btn sm">Copia gli indirizzi</button>
+      </div>
+
+      <div class="filterbar" data-filterbar>
+        <button class="fchip" aria-pressed="true" data-filter="all">Tutti <b>5</b></button>
+        <button class="fchip" aria-pressed="false" data-filter="some">In almeno una <b>4</b></button>
+        <button class="fchip" aria-pressed="false" data-filter="none">Fuori da entrambe <b>1</b></button>
+        <span style="margin-left:auto;font-size:11.5px;color:var(--muted)">P=Portale · T=Team · E=Esterno</span>
+      </div>
+
+      <table class="matrix" data-table="c">
+        <thead>
+          <tr>
+            <th>Persona</th>
+            <th class="mcol">Notifiche <label class="ck" style="margin-left:4px"><input type="checkbox" data-all="notif"><i></i></label></th>
+            <th class="mcol">Deliverables <label class="ck" style="margin-left:4px"><input type="checkbox" data-all="deliv"><i></i></label></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr data-member="some">
+            <td><span class="who"><span class="origin portal" title="Utenza del portale">P</span><span class="txt"><b>Marta Rinaldi</b><small>marta.rinaldi@anthropic.example · Referente</small></span></span></td>
+            <td class="mcol"><label class="ck"><input type="checkbox" data-kind="notif" checked><i></i></label></td>
+            <td class="mcol"><label class="ck"><input type="checkbox" data-kind="deliv" checked><i></i></label></td>
+          </tr>
+          <tr data-member="some">
+            <td><span class="who"><span class="origin portal" title="Utenza del portale">P</span><span class="txt"><b>Anna Rossi</b><small>anna.rossi@anthropic.example · Referente</small></span></span></td>
+            <td class="mcol"><label class="ck"><input type="checkbox" data-kind="notif" checked><i></i></label></td>
+            <td class="mcol"><label class="ck"><input type="checkbox" data-kind="deliv"><i></i></label></td>
+          </tr>
+          <tr data-member="some">
+            <td><span class="who"><span class="origin team" title="Partecipante del team">T</span><span class="txt"><b>Sara Conti</b><small>sara.conti@provider.example · Pentester</small></span></span></td>
+            <td class="mcol"><label class="ck"><input type="checkbox" data-kind="notif"><i></i></label></td>
+            <td class="mcol"><label class="ck"><input type="checkbox" data-kind="deliv" checked><i></i></label></td>
+          </tr>
+          <tr data-member="none">
+            <td><span class="who"><span class="origin team" title="Partecipante del team">T</span><span class="txt"><b>Luca Ferri</b><small>luca.ferri@provider.example · PMO</small></span></span></td>
+            <td class="mcol"><label class="ck"><input type="checkbox" data-kind="notif"><i></i></label></td>
+            <td class="mcol"><label class="ck"><input type="checkbox" data-kind="deliv"><i></i></label></td>
+          </tr>
+          <tr data-member="some">
+            <td><span class="who"><span class="origin mail" title="Solo indirizzo, non entra nel portale">E</span><span class="txt"><b>Amministrazione Anthropic</b><small>amministrazione@anthropic.example</small></span></span></td>
+            <td class="mcol"><label class="ck"><input type="checkbox" data-kind="notif" checked><i></i></label></td>
+            <td class="mcol"><label class="ck"><input type="checkbox" data-kind="deliv" checked><i></i></label></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <ul class="notes">
+        <li>Una sola riga per persona, nessun testo ripetuto: con 20-30 persone la lista resta corta.</li>
+        <li>Il filtro <b>«Fuori da entrambe»</b> è quello che serve davvero quando qualcuno si lamenta di non ricevere: si vede subito chi è rimasto fuori.</li>
+        <li>La lettera colorata sostituisce la colonna «Origine», ma resta leggibile a colpo d'occhio (e ha il tooltip).</li>
+        <li>«Copia gli indirizzi» esporta la lista effettiva: utile per un invio straordinario o per un controllo.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ REGOLE ============ -->
+  <section class="card" id="regole">
+    <h2>Come funzionano le caselle (in tutte e tre)</h2>
+    <p class="sub">Le regole valgono identiche nelle tre proposte: cambia solo la forma, non il comportamento.</p>
+    <div class="rules">
+      <div class="rule">
+        <b>Spunta = riceve davvero</b>
+        <p>La casella accesa crea la voce nella distribution list base del cliente; quella spenta la toglie. Nessun «salva» separato: si applica subito, con il toast di conferma.</p>
+      </div>
+      <div class="rule">
+        <b>Il legame è la persona, non l'email</b>
+        <p>Oggi le liste sono elenchi di indirizzi slegati dalle utenze. Perché le caselle restino vere, la voce della lista porta un riferimento alla persona: se cambia email, la lista segue senza restare indietro.</p>
+      </div>
+      <div class="rule">
+        <b>Destinatari senza account</b>
+        <p>Chi riceve solo le email resta una riga con le stesse due caselle, marcata <b>Solo destinatario</b>. Non serve un tab a parte né un secondo componente.</p>
+      </div>
+      <div class="rule">
+        <b>Rimuovere una persona</b>
+        <p>Il menu ⋯ chiede conferma una volta sola e dice cosa succede: <i>«Esce anche dalle liste notifiche e deliverables»</i>. Niente rimozioni silenziose da una lista sola.</p>
+      </div>
+      <div class="rule">
+        <b>La base vale per tutti gli engagement</b>
+        <p>Le caselle sono il <b>default del cliente</b>. Il singolo engagement può aggiungere o togliere qualcuno: la scheda dell'engagement lo mostra come «diverso dalla base».</p>
+      </div>
+      <div class="rule">
+        <b>Permessi</b>
+        <p><b>Manager</b> e <b>PMO</b> modificano; <b>Auditor</b> e <b>Cliente</b> vedono le caselle disabilitate (con il tooltip che spiega perché). La lista resta leggibile a tutti.</p>
+      </div>
+    </div>
+
+    <div class="note">
+      <b>Nota tecnica.</b> Servono due cose piccole: un riferimento opzionale alla persona nella voce della
+      distribution list e <b>un solo endpoint</b> che accende o spegne la casella
+      (<code>persona + tipo + acceso/spento</code>), che crea la voce se manca e la toglie se c'è.
+      Le voci già esistenti si agganciano per email alla prima modifica; da lì in poi seguono la persona.
+      Le API attuali per aggiungere e rimuovere un destinatario restano e vengono usate da lì.
+    </div>
+  </section>
+
+  <!-- ============ CONFRONTO ============ -->
+  <section class="card" id="confronto">
+    <h2>Confronto</h2>
+    <table class="cmp">
+      <tr><th></th><th>A · Una tabella Persone</th><th>B · Due gruppi</th><th>C · Matrice compatta</th></tr>
+      <tr><td><b>Tab da imparare</b></td><td>Nessuno</td><td>Nessuno</td><td>Nessuno</td></tr>
+      <tr><td><b>Chi è chi</b></td><td>Etichetta esplicita</td><td>Gruppo + etichetta</td><td>Lettera + tooltip</td></tr>
+      <tr><td><b>Con molte persone</b></td><td>Buono (righe alte)</td><td>Buono</td><td>Ottimo (una riga secca)</td></tr>
+      <tr><td><b>Rischio di confusione</b></td><td>Basso</td><td>Minimo</td><td>Medio (sigle)</td></tr>
+      <tr><td><b>Distanza dai dati di oggi</b></td><td>Media</td><td>Bassa</td><td>Bassa</td></tr>
+      <tr><td><b>Aggiungere una persona</b></td><td>Un solo pulsante con menu</td><td>Due pulsanti distinti</td><td>Un pulsante</td></tr>
+      <tr><td><b>Controllo «chi è fuori»</b></td><td>Si vede dalle caselle</td><td>Si vede dalle caselle</td><td>Filtro dedicato</td></tr>
+    </table>
+    <p class="note">
+      <b>La mia indicazione: la A.</b> È quella che risponde meglio alla richiesta — <b>due caselle al centro,
+      nessun tab</b> — e resta chiara senza spiegazioni: la colonna «Origine» evita che un'indirizzo esterno
+      sembri un'utenza. La <b>B</b> è la più prudente se vuoi mantenere netta la distinzione fra chi entra nel
+      portale e chi riceve solo email; la <b>C</b> conviene solo se i clienti hanno molti nomi e ti interessa
+      soprattutto il controllo «chi è fuori da tutto». In tutte e tre, la parte da costruire è la stessa: le
+      due caselle, il legame con la persona e l'endpoint unico.
+    </p>
+  </section>
+</main>
+
+<script>
+// Riepilogo e "seleziona tutti": rendono l'anteprima reale, non un disegno.
+document.querySelectorAll('[data-table]').forEach(table => {
+  const boxes = kind => [...table.querySelectorAll(`input[data-kind="${kind}"]`)];
+
+  function syncAll(kind) {
+    const all = table.querySelector(`input[data-all="${kind}"]`);
+    if (!all) return;
+    const list = boxes(kind);
+    const on = list.filter(box => box.checked).length;
+    all.checked = on === list.length && on > 0;
+    all.indeterminate = on > 0 && on < list.length;
+  }
+
+  function syncCounts() {
+    ['notif', 'deliv'].forEach(kind => {
+      const count = boxes(kind).filter(box => box.checked).length;
+      document.querySelectorAll(`[data-count="${kind}"]`).forEach(el => {
+        // aggiorna solo il contatore della proposta che contiene questa tabella
+        if (el.closest('.opt') === table.closest('.opt')) el.textContent = count;
+      });
+      syncAll(kind);
+    });
+  }
+
+  table.addEventListener('change', event => {
+    const input = event.target;
+    if (input.matches('input[data-all]')) {
+      boxes(input.dataset.all).forEach(box => { box.checked = input.checked; });
+    }
+    if (input.matches('input[data-kind]')) {
+      const row = input.closest('tr');
+      if (row && row.dataset.member) {
+        const on = row.querySelectorAll('input[data-kind]:checked').length;
+        row.dataset.member = on === 0 ? 'none' : (on === 2 ? 'both' : 'some');
+      }
+    }
+    syncCounts();
+  });
+
+  syncCounts();
+});
+
+// Filtri della matrice (proposta C).
+document.querySelectorAll('[data-filterbar]').forEach(bar => {
+  const table = bar.parentElement.querySelector('table[data-table]');
+  bar.addEventListener('click', event => {
+    const chip = event.target.closest('[data-filter]');
+    if (!chip) return;
+    bar.querySelectorAll('[data-filter]').forEach(item => item.setAttribute('aria-pressed', String(item === chip)));
+    const filter = chip.dataset.filter;
+    table.querySelectorAll('tbody tr').forEach(row => {
+      const member = row.dataset.member;
+      row.classList.toggle('off', filter === 'all' ? false : filter === 'some' ? member === 'none' : member !== 'none');
+    });
+  });
+});
+</script>
+</body>
+</html>
