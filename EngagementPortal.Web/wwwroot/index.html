@@ -5273,16 +5273,18 @@ function renderClients() {
       : '<div class="empty">Nessun cliente disponibile.</div>'}`;
 }
 
-/* ====== ROUTING (hash) ====== */
-// Ogni sezione ha una URL propria: un refresh o un link diretto riapre la
-// stessa schermata e i tasti indietro/avanti del browser seguono la storia.
+/* ====== ROUTING (URL normali) ====== */
+// Ogni sezione ha una URL propria — /engagements, /engagements/{id}/{tab},
+// /kpi — così refresh, link diretti e tasti indietro/avanti funzionano. Il
+// server serve index.html su qualunque percorso (fallback SPA), quindi gli URL
+// sono "puliti", senza cancelletto. I vecchi link #/... restano validi.
 const BASE_ROUTES = {
-  list: '#/engagements',
-  clients: '#/clients',
-  calendar: '#/calendar',
-  solicitations: '#/solicitations',
-  kpi: '#/kpi',
-  users: '#/users'
+  list: '/engagements',
+  clients: '/clients',
+  calendar: '/calendar',
+  solicitations: '/solicitations',
+  kpi: '/kpi',
+  users: '/users'
 };
 const DETAIL_TABS = ['setup', 'docs', 'scope', 'plan', 'cred', 'run', 'reports', 'mail'];
 const ROUTE_ADMIN_TABS = ADMIN_TABS.map(([id]) => id);
@@ -5296,32 +5298,49 @@ function currentRoute() {
   if (state.view === 'detail' && state.detail) {
     const id = encodeURIComponent(state.detail.engagement.id);
     const tab = DETAIL_TABS.includes(state.tab) ? '/' + state.tab : '';
-    return `#/engagements/${id}${tab}`;
+    return `/engagements/${id}${tab}`;
   }
   if (state.view === 'admin') {
     const tab = canUseAdminTab(state.adminTab) ? state.adminTab : (adminTabsForRole()[0] || 'users');
-    return `#/admin/${tab}`;
+    return `/admin/${tab}`;
   }
   if (state.view === 'list' && LIST_FILTERS.includes(state.listFilter))
-    return `#/engagements?filter=${state.listFilter}`;
+    return `/engagements?filter=${state.listFilter}`;
   return BASE_ROUTES[state.view] || BASE_ROUTES.list;
+}
+
+// Percorso richiesto al server, senza i parametri che non ci riguardano
+// (ruolo, utente e cliente servono solo alla demo lato API).
+function locationRoute() {
+  const params = new URLSearchParams(location.search);
+  const filter = params.get('filter');
+  const path = location.pathname === '/index.html' ? '/' : location.pathname;
+  return filter ? `${path}?filter=${filter}` : path;
+}
+
+// Route richiesta dalla barra degli indirizzi: i vecchi link #/... restano validi.
+function requestedRoute() {
+  return location.hash.startsWith('#/')
+    ? location.hash
+    : location.pathname + location.search;
 }
 
 // Aggiorna la URL senza ricaricare: push per la navigazione, replace per la
 // prima scrittura (così il tasto indietro non esce dall'app).
 function syncRoute() {
   if (!routeReady || routeBusy) return;
-  const hash = currentRoute();
-  if (hash === lastRoute) return;
+  const route = currentRoute();
+  if (route === lastRoute) return;
   const first = !lastRoute;
-  lastRoute = hash;
-  if (first) history.replaceState(null, '', hash);
-  else history.pushState(null, '', hash);
+  lastRoute = route;
+  if (first) history.replaceState(null, '', route);
+  else history.pushState(null, '', route);
 }
 
-function parseRoute(hash) {
-  const raw = String(hash || '').replace(/^#\/?/, '');
-  if (!raw) return null;
+// Accetta sia i percorsi (/engagements) sia i vecchi link con cancelletto.
+function parseRoute(value) {
+  const raw = String(value || '').replace(/^#/, '');
+  if (!raw || raw === '/index.html') return null;
 
   const [pathPart, queryPart] = raw.split('?');
   const parts = pathPart.split('/').filter(Boolean).map(part => {
@@ -5432,7 +5451,7 @@ async function applyRoute(target) {
   state.view = 'list';
   state.listTab = 'eng';
   state.listFilter = filter;
-  if (state.list.length && currentRoute() === location.hash) {
+  if (state.list.length && currentRoute() === locationRoute()) {
     render();
     return;
   }
@@ -5442,16 +5461,16 @@ async function applyRoute(target) {
 // Applica l'URL corrente (refresh, indietro/avanti, link diretto).
 async function handleRoute() {
   if (routeBusy) return;
-  if (location.hash === currentRoute()) return;
+  if (locationRoute() === currentRoute()) return;
 
   routeBusy = true;
   try {
-    await applyRoute(parseRoute(location.hash));
+    await applyRoute(parseRoute(requestedRoute()));
   } finally {
     routeBusy = false;
     const canonical = currentRoute();
     lastRoute = canonical;
-    if (location.hash !== canonical) history.replaceState(null, '', canonical);
+    if (locationRoute() !== canonical) history.replaceState(null, '', canonical);
   }
 }
 
@@ -6830,11 +6849,11 @@ function init() {
       updateHeader();
       await loadList();
       routeReady = true;
-      const bootRoute = parseRoute(location.hash);
+      const bootRoute = parseRoute(requestedRoute());
       if (!bootRoute) {
         syncRoute();
         lastRoute = currentRoute();
-        if (location.hash !== lastRoute) history.replaceState(null, '', lastRoute);
+        if (locationRoute() !== lastRoute) history.replaceState(null, '', lastRoute);
         return;
       }
       await handleRoute();
