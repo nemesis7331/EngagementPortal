@@ -939,8 +939,11 @@ api.MapPost("/engagements", (
         Name = request.Name.Trim(),
         Type = request.Type,
         Owner = user.Name,
-        CreatedDate = clock.UtcNow
+        CreatedDate = clock.UtcNow,
+        SetupDone = false,
+        Language = "it"
     };
+    engagement.DeliverableTypes.Clear();
 
     engagement.AddAudit(
         user.Name,
@@ -1420,6 +1423,69 @@ api.MapGet("/engagements/{id}/scope", (
         });
 });
 
+api.MapPut("/engagements/{id}/setup", (
+    string id,
+    SetupRequest request,
+    HttpContext context,
+    IEngagementRepository repository) =>
+{
+    var user = GetUser(context);
+    var engagement = Find(repository, id, user);
+
+    if (engagement is null)
+        return Results.NotFound();
+
+    if (user.Role is not (Roles.Manager or Roles.PMO))
+        return Forbidden();
+
+    var language = (request.Language ?? string.Empty)
+        .Trim()
+        .ToLowerInvariant();
+
+    if (language is not ("it" or "en"))
+        return Results.BadRequest("Lingua non valida: usa it o en.");
+
+    var requested = (request.DeliverableTypes ?? [])
+        .Where(type => !string.IsNullOrWhiteSpace(type))
+        .Select(type => type.Trim())
+        .Distinct(StringComparer.OrdinalIgnoreCase)
+        .ToList();
+
+    if (requested.Count == 0)
+        return Results.BadRequest(
+            "Seleziona almeno una tipologia di deliverable.");
+
+    var canonical = new List<string>();
+
+    foreach (var type in requested)
+    {
+        var match = DeliverableKinds.All.FirstOrDefault(kind =>
+            string.Equals(kind, type, StringComparison.OrdinalIgnoreCase));
+
+        if (match is null)
+            return Results.BadRequest(
+                $"Tipologia di deliverable non valida: {type}.");
+
+        canonical.Add(match);
+    }
+
+    engagement.Language = language;
+    engagement.DeliverableTypes.Clear();
+    engagement.DeliverableTypes.AddRange(
+        DeliverableKinds.All.Where(kind => canonical.Contains(kind)));
+    engagement.SetupDone = true;
+
+    engagement.AddAudit(
+        user.Name,
+        user.Role,
+        $"Setup aggiornato · lingua {language.ToUpperInvariant()} · " +
+        string.Join(", ", engagement.DeliverableTypes),
+        AuditVisibility.ProviderOnly);
+
+    repository.Save(engagement);
+    return Results.Ok(new { status = "ok" });
+});
+
 api.MapPut("/engagements/{id}/scope", (
     string id,
     ScopeRequest request,
@@ -1576,13 +1642,61 @@ api.MapPost("/engagements/{id}/reports", (
         ? Path.GetExtension(name).TrimStart('.').ToUpperInvariant()
         : request.Type.Trim().ToUpperInvariant();
 
+    var requestedKind = request.Kind?.Trim();
+    string kind;
+
+    if (string.IsNullOrWhiteSpace(requestedKind))
+    {
+        kind = engagement.DeliverableTypes.FirstOrDefault() ??
+            DeliverableKinds.Technical;
+    }
+    else
+    {
+        kind = DeliverableKinds.All.FirstOrDefault(candidate =>
+            string.Equals(candidate, requestedKind,
+                StringComparison.OrdinalIgnoreCase)) ?? string.Empty;
+
+        if (kind.Length == 0)
+            return Results.BadRequest(
+                $"Tipologia di deliverable non valida: {requestedKind}.");
+
+        if (engagement.DeliverableTypes.Count > 0 &&
+            !engagement.DeliverableTypes.Any(configured =>
+                string.Equals(configured, kind,
+                    StringComparison.OrdinalIgnoreCase)))
+        {
+            return Results.BadRequest(
+                $"La tipologia {kind} non è prevista dal setup.");
+        }
+    }
+
+    var version = engagement.Reports
+        .Where(report => string.Equals(
+            report.Kind, kind, StringComparison.OrdinalIgnoreCase))
+        .Select(report => report.Version)
+        .DefaultIfEmpty(0)
+        .Max() + 1;
+
+    for (var index = 0; index < engagement.Reports.Count; index++)
+    {
+        var report = engagement.Reports[index];
+        if (string.Equals(report.Kind, kind,
+                StringComparison.OrdinalIgnoreCase) && report.IsLatest)
+        {
+            engagement.Reports[index] = report with { IsLatest = false };
+        }
+    }
+
     engagement.Reports.Add(new ReportFile(
         $"R-{Guid.NewGuid():N}"[..10],
         name,
         string.IsNullOrWhiteSpace(type) ? "PDF" : type,
         request.Size,
         clock.UtcNow,
-        false));
+        false,
+        kind,
+        version,
+        true));
 
     var hadReview = engagement.ReviewStatus != ReviewStatus.None;
     engagement.ReviewStatus = ReviewStatus.None;
@@ -1591,12 +1705,12 @@ api.MapPost("/engagements/{id}/reports", (
         user.Name,
         user.Role,
         hadReview
-            ? "Deliverable caricato; revisione azzerata"
-            : "Deliverable caricato come bozza",
+            ? $"Deliverable {kind} v{version} caricato; revisione azzerata"
+            : $"Deliverable {kind} v{version} caricato come bozza",
         AuditVisibility.ProviderOnly);
 
     repository.Save(engagement);
-    return Results.Ok(new { status = "ok" });
+    return Results.Ok(new { status = "ok", kind, version });
 });
 
 api.MapPost("/engagements/{id}/reports/{reportId}/download", (
@@ -1779,6 +1893,12 @@ api.MapPost("/engagements/{id}/review/submit", (
     if (user.Role != Roles.Pentester)
         return Forbidden();
 
+    var missingTypes = engagement.MissingReportTypes;
+
+    if (missingTypes.Count > 0)
+        return Results.BadRequest(
+            "Mancano i deliverable: " + string.Join(", ", missingTypes) + ".");
+
     if (!engagement.Reports.Any(report => !report.Published))
         return Results.BadRequest("Nessun deliverable da inviare in revisione.");
 
@@ -1847,6 +1967,12 @@ api.MapPost("/engagements/{id}/reports/publish", (
     if (user.Role != Roles.Pentester ||
         engagement.ReviewStatus != ReviewStatus.Approved)
         return Forbidden();
+
+    var missingTypes = engagement.MissingReportTypes;
+
+    if (missingTypes.Count > 0)
+        return Results.BadRequest(
+            "Mancano i deliverable: " + string.Join(", ", missingTypes) + ".");
 
     var unpublished = engagement.Reports
         .Where(report => !report.Published)
@@ -2976,6 +3102,11 @@ static object Detail(
             engagement.ClientName,
             engagement.Name,
             engagement.Type,
+            engagement.SetupDone,
+            engagement.Language,
+            engagement.DeliverableTypes,
+            engagement.ReportsComplete,
+            engagement.MissingReportTypes,
             Owner = user.Role == Roles.Client
             ? null
             : engagement.Owner,
@@ -3088,6 +3219,7 @@ static object Detail(
             CanInviteTeam = Team.CanInvite(user.Role),
             CanRemoveTeam = user.Role is Roles.Manager or Roles.Client,
             CanManageMailTemplates = user.Role is Roles.Manager or Roles.Pentester,
+            CanManageSetup = user.Role is Roles.Manager or Roles.PMO,
             CanManageMail = user.Role == Roles.PMO,
             CanManageSolicitations = user.Role == Roles.PMO,
             CanReview = user.Role == Roles.Manager,
@@ -3143,7 +3275,10 @@ static object MapReport(ReportFile report) => new
     report.Type,
     report.Size,
     report.Date,
-    report.Published
+    report.Published,
+    report.Kind,
+    report.Version,
+    report.IsLatest
 };
 
 static object MapUser(

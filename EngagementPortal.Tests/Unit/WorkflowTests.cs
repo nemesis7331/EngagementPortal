@@ -456,13 +456,68 @@ public class WorkflowTests
     [Fact]
     public void StepIndex_FollowsWorkflowOrder()
     {
-        Assert.Equal(0, EngagementWorkflow.StepIndex(EngagementPhase.Docs));
-        Assert.Equal(1, EngagementWorkflow.StepIndex(EngagementPhase.Scope));
-        Assert.Equal(2, EngagementWorkflow.StepIndex(EngagementPhase.Planning));
-        Assert.Equal(3, EngagementWorkflow.StepIndex(EngagementPhase.Credentials));
-        Assert.Equal(4, EngagementWorkflow.StepIndex(EngagementPhase.Running));
-        Assert.Equal(5, EngagementWorkflow.StepIndex(EngagementPhase.Reporting));
-        Assert.Equal(6, EngagementWorkflow.StepIndex(EngagementPhase.Done));
+        Assert.Equal(0, EngagementWorkflow.StepIndex(EngagementPhase.Setup));
+        Assert.Equal(1, EngagementWorkflow.StepIndex(EngagementPhase.Docs));
+        Assert.Equal(2, EngagementWorkflow.StepIndex(EngagementPhase.Scope));
+        Assert.Equal(3, EngagementWorkflow.StepIndex(EngagementPhase.Planning));
+        Assert.Equal(4, EngagementWorkflow.StepIndex(EngagementPhase.Credentials));
+        Assert.Equal(5, EngagementWorkflow.StepIndex(EngagementPhase.Running));
+        Assert.Equal(6, EngagementWorkflow.StepIndex(EngagementPhase.Reporting));
+        Assert.Equal(7, EngagementWorkflow.StepIndex(EngagementPhase.Done));
+    }
+
+    [Fact]
+    public void SetupIncomplete_ReturnsSetupAndLocksNextSteps()
+    {
+        var engagement = NewEngagement();
+        engagement.SetupDone = false;
+        var workflow = Workflow();
+        var todos = new TodoResolver(workflow);
+
+        Assert.Equal(EngagementPhase.Setup, workflow.Resolve(engagement));
+        Assert.Equal("setup",
+            todos.Resolve(engagement, Roles.PMO)?.TargetTab);
+
+        var tabs = todos.ResolveTabs(engagement, Roles.PMO);
+        Assert.Equal("todo", tabs["setup"].State);
+        Assert.Equal("lock", tabs["docs"].State);
+        Assert.Equal("lock", tabs["plan"].State);
+    }
+
+    [Fact]
+    public void MissingReportKinds_BlockReportingCompletion()
+    {
+        var engagement = NewEngagement();
+        engagement.DeliverableTypes.Clear();
+        engagement.DeliverableTypes.AddRange(
+        [
+            DeliverableKinds.Executive,
+            DeliverableKinds.Technical
+        ]);
+        engagement.Reports.Add(new ReportFile(
+            "R-1",
+            "technical.pdf",
+            "PDF",
+            10,
+            new DateTimeOffset(2026, 6, 15, 0, 0, 0, TimeSpan.Zero),
+            true,
+            DeliverableKinds.Technical));
+
+        Assert.False(engagement.ReportsComplete);
+        Assert.Contains(DeliverableKinds.Executive,
+            engagement.MissingReportTypes);
+
+        engagement.Reports.Add(new ReportFile(
+            "R-2",
+            "executive.pdf",
+            "PDF",
+            10,
+            new DateTimeOffset(2026, 6, 15, 0, 0, 0, TimeSpan.Zero),
+            true,
+            DeliverableKinds.Executive));
+
+        Assert.True(engagement.ReportsComplete);
+        Assert.Empty(engagement.MissingReportTypes);
     }
 
     [Fact]

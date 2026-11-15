@@ -27,12 +27,20 @@ App Service a ogni push su `main`.
 - **Calendario**: vista da oggi a fine mese successivo con gli engagement
   **pianificati** (blu) e **proposti** (ambra), filtrati per visibilità utente.
   Clic su un evento: apre l'engagement; per le proposte porta alla pianificazione.
+- **Setup iniziale**: primo passo del workflow, dove si definiscono **team**,
+  **distribution list**, **lingua** (Italiano/Inglese) e **tipologie di
+  deliverable** (Executive, Technical, Activity, Custom). Finché non è
+  completato, i passi successivi restano bloccati; team e liste si possono
+  aggiornare anche dopo.
+- **Report versionati**: il Pentester carica una versione per **ogni tipologia**
+  definita nel setup. Una nuova versione diventa l'ultima e le precedenti
+  restano nello storico; revisione e pubblicazione richiedono tutte le tipologie.
 - **Amministrazione**: sezioni **Utenti**, **Clienti**, **Mailing list**
   (notifiche e deliverables per cliente ed engagement, con editor destinatari),
   **Template mail** (standard e override per cliente) e **Impostazioni**
   (retention, 2FA, solleciti), raggiungibili dalla sidebar globale.
 - **Retention deliverables**: i report vengono cancellati automaticamente
-  **90 giorni** dopo la pubblicazione (valore demo, configurabile).
+  **1 anno** dopo la pubblicazione (valore demo, configurabile).
 - **Team**: partecipanti esterni per cliente (base comune) e per engagement.
   Gli inviti sono aperti a tutti i profili tranne l'Auditor; rimuovono il
   Manager (tutti) e il Cliente (solo organizzazione `Cliente`).

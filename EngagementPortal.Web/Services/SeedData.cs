@@ -118,7 +118,22 @@ public static class SeedData
         Mail(engagement, "end", 4);
         Proposal(engagement, "P-003", Today.AddDays(-10), Today.AddDays(-5),
             ProposalStatus.Accepted, ProposalParty.Client, "Marta Rinaldi");
-        Report(engagement, "R-003", "Report_ENG-2026-003_bozza.txt", false, 1);
+        engagement.DeliverableTypes.Clear();
+        engagement.DeliverableTypes.AddRange(
+        [
+            DeliverableKinds.Executive,
+            DeliverableKinds.Technical,
+            DeliverableKinds.Activity
+        ]);
+        Report(engagement, "R-003",
+            "Report_ENG-2026-003_executive.txt", false, 1,
+            DeliverableKinds.Executive);
+        Report(engagement, "R-003-T",
+            "Report_ENG-2026-003_bozza.txt", false, 1,
+            DeliverableKinds.Technical);
+        Report(engagement, "R-003-A",
+            "Report_ENG-2026-003_attivita.txt", false, 1,
+            DeliverableKinds.Activity);
         TeamAdd(engagement, "TM-ENG-2026-003-1", "Marco Verdi",
             "marco.verdi@studioverdi.example", "Partner",
             "Consulente legale");
@@ -227,8 +242,21 @@ public static class SeedData
         Mail(engagement, "deliver", 25);
         Proposal(engagement, "P-015", Today.AddDays(-35), Today.AddDays(-25),
             ProposalStatus.Accepted);
+        engagement.DeliverableTypes.Clear();
+        engagement.DeliverableTypes.AddRange(
+        [
+            DeliverableKinds.Executive,
+            DeliverableKinds.Technical
+        ]);
         Report(engagement, "R-015",
-            "Report_ENG-2026-015_finale.txt", true, 25);
+            "Report_ENG-2026-015_v1.txt", true, 28,
+            DeliverableKinds.Technical, 1);
+        Report(engagement, "R-015-V2",
+            "Report_ENG-2026-015_finale.txt", true, 25,
+            DeliverableKinds.Technical, 2);
+        Report(engagement, "R-015-E",
+            "Report_ENG-2026-015_executive.txt", true, 25,
+            DeliverableKinds.Executive);
         engagement.ReviewStatus = ReviewStatus.Approved;
         Audit(engagement, "Sara Conti", Roles.Pentester,
             "Deliverable pubblicati");
@@ -624,15 +652,41 @@ public static class SeedData
         string id,
         string name,
         bool published,
-        int daysAgo)
+        int daysAgo,
+        string kind = DeliverableKinds.Technical,
+        int version = 0)
     {
+        if (version <= 0)
+        {
+            version = engagement.Reports
+                .Where(report => string.Equals(
+                    report.Kind, kind, StringComparison.OrdinalIgnoreCase))
+                .Select(report => report.Version)
+                .DefaultIfEmpty(0)
+                .Max() + 1;
+        }
+
+        for (var index = 0; index < engagement.Reports.Count; index++)
+        {
+            var report = engagement.Reports[index];
+            if (string.Equals(report.Kind, kind,
+                    StringComparison.OrdinalIgnoreCase) && report.IsLatest)
+            {
+                engagement.Reports[index] =
+                    report with { IsLatest = false };
+            }
+        }
+
         engagement.Reports.Add(new ReportFile(
             id,
             name,
             "TXT",
             2048,
             DaysAgo(daysAgo),
-            published));
+            published,
+            kind,
+            version,
+            true));
     }
 
     private static void TeamAdd(

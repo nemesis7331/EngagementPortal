@@ -17,7 +17,7 @@ public sealed class EngagementWorkflow(IDateProvider clock)
         EngagementPhase phase,
         DateOnly today)
     {
-        if (phase == EngagementPhase.Done)
+        if (phase is EngagementPhase.Setup or EngagementPhase.Done)
             return null;
 
         var start = engagement.AcceptedProposal?.StartDate;
@@ -49,6 +49,9 @@ public sealed class EngagementWorkflow(IDateProvider clock)
         DateOnly? currentDate = null)
     {
         var today = currentDate ?? clock.Today;
+
+        if (!engagement.SetupDone)
+            return EngagementPhase.Setup;
 
         if (!DocsComplete(engagement))
             return EngagementPhase.Docs;
@@ -84,13 +87,14 @@ public sealed class EngagementWorkflow(IDateProvider clock)
 
     public static int StepIndex(EngagementPhase phase) => phase switch
     {
-        EngagementPhase.Docs => 0,
-        EngagementPhase.Scope => 1,
-        EngagementPhase.Planning => 2,
-        EngagementPhase.Credentials => 3,
-        EngagementPhase.Scheduled or EngagementPhase.Running => 4,
-        EngagementPhase.Reporting => 5,
-        EngagementPhase.Done => 6,
+        EngagementPhase.Setup => 0,
+        EngagementPhase.Docs => 1,
+        EngagementPhase.Scope => 2,
+        EngagementPhase.Planning => 3,
+        EngagementPhase.Credentials => 4,
+        EngagementPhase.Scheduled or EngagementPhase.Running => 5,
+        EngagementPhase.Reporting => 6,
+        EngagementPhase.Done => 7,
         _ => 0
     };
 
@@ -232,6 +236,15 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
         var pending = engagement.Proposals
             .FirstOrDefault(p => p.Status == ProposalStatus.Pending);
 
+        if (phase == EngagementPhase.Setup)
+        {
+            return role is Roles.Manager or Roles.PMO
+                ? new TodoItem(
+                    "Completa il setup: team, liste, lingua e deliverable",
+                    "setup")
+                : null;
+        }
+
         // Le proposte di pianificazione possono essere inviate da cliente o PMO,
         // ma solo il Manager le approva o le rifiuta.
         if (role == Roles.Manager)
@@ -300,6 +313,12 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
         if (phase == EngagementPhase.Reporting &&
             role == Roles.Pentester)
         {
+            var missingTypes = engagement.MissingReportTypes;
+            if (missingTypes.Count > 0)
+                return new TodoItem(
+                    $"Carica i deliverable mancanti: {string.Join(", ", missingTypes)}",
+                    "reports");
+
             if (!engagement.Reports.Any(report => !report.Published))
                 return new TodoItem("Carica i deliverables", "reports");
 
@@ -364,7 +383,19 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
 
         var tabs = new Dictionary<string, TabState>(StringComparer.Ordinal);
 
-        tabs["docs"] = EngagementWorkflow.DocsComplete(engagement)
+        tabs["setup"] = engagement.SetupDone
+            ? new TabState("ok", null)
+            : todo?.TargetTab == "setup"
+                ? new TabState("todo", todo.Action)
+                : role is Roles.Manager or Roles.PMO
+                    ? new TabState(
+                        "todo",
+                        "Definisci team, liste, lingua e deliverable")
+                    : new TabState("wait", "In attesa del setup dal PMO");
+
+        tabs["docs"] = !engagement.SetupDone
+            ? new TabState("lock", "Si sblocca dopo il setup iniziale")
+            : EngagementWorkflow.DocsComplete(engagement)
             ? new TabState("ok", null)
             : todo?.TargetTab == "docs"
                 ? new TabState("todo", todo.Action)
@@ -381,8 +412,8 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
         var pendingProposal = engagement.Proposals
             .FirstOrDefault(p => p.Status == ProposalStatus.Pending);
 
-        tabs["plan"] = !EngagementWorkflow.DocsComplete(engagement)
-            ? new TabState("lock", "Si sblocca dopo firma, ordine, costi e approvazione")
+        tabs["plan"] = !engagement.SetupDone || !EngagementWorkflow.DocsComplete(engagement)
+            ? new TabState("lock", "Si sblocca dopo il setup, firma, ordine, costi e approvazione")
             : todo?.TargetTab == "plan"
                 ? new TabState("todo", todo.Action)
                 : pendingProposal is not null
@@ -393,14 +424,15 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
                         ? new TabState("ok", null)
                         : new TabState("wait", "In attesa di una proposta di date");
 
-        var docsReady = EngagementWorkflow.DocsComplete(engagement);
+        var docsReady = engagement.SetupDone &&
+            EngagementWorkflow.DocsComplete(engagement);
         var canEditPreparation = EngagementWorkflow.CanEditPreparation(
             engagement, role, phase);
         var canEditCredentials = EngagementWorkflow.CanEditCredentials(
             engagement, role, phase);
 
         tabs["scope"] = !docsReady
-            ? new TabState("lock", "Si sblocca dopo firma, ordine, costi e approvazione")
+            ? new TabState("lock", "Si sblocca dopo setup, firma, ordine, costi e approvazione")
             : engagement.ScopeDone
                 ? new TabState("ok", null)
                 : todo?.TargetTab == "scope"
@@ -412,7 +444,7 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
                         : new TabState("wait", "In attesa dello scope dal cliente");
 
         tabs["cred"] = !docsReady
-            ? new TabState("lock", "Si sblocca dopo firma, ordine, costi e approvazione")
+            ? new TabState("lock", "Si sblocca dopo setup, firma, ordine, costi e approvazione")
             : !EngagementWorkflow.CanSeeCredentials(role)
                 ? new TabState("lock", "Non visibile al tuo profilo")
                 : engagement.CredentialsDone
@@ -427,7 +459,13 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
                                 "wait",
                                 "In attesa delle credenziali dal cliente");
 
-        if (todo?.TargetTab == "reports")
+        if (!engagement.SetupDone)
+        {
+            tabs["reports"] = new TabState(
+                "lock",
+                "Si sblocca dopo il setup iniziale");
+        }
+        else if (todo?.TargetTab == "reports")
         {
             tabs["reports"] = new TabState("todo", todo.Action);
         }
@@ -482,6 +520,13 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
 
         switch (phase)
         {
+            case EngagementPhase.Setup:
+                return Wait(
+                    "PMO/Manager",
+                    "PMO o Manager",
+                    "In attesa del setup iniziale",
+                    SinceDocs(engagement));
+
             case EngagementPhase.Docs:
                 if (!engagement.HasManleva)
                 {
@@ -645,6 +690,7 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
         Engagement engagement,
         EngagementPhase phase) => phase switch
     {
+        EngagementPhase.Setup => SinceDocs(engagement),
         EngagementPhase.Docs => SinceDocs(engagement),
         EngagementPhase.Planning =>
             PendingProposal(engagement) is { } pending

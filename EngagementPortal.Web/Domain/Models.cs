@@ -11,6 +11,7 @@ public enum EngagementType
 
 public enum EngagementPhase
 {
+    Setup,       // 0. Setup: team, liste, lingua e deliverable
     Docs,        // 1. Ordine e manleva
     Scope,       // 2. Scope
     Planning,    // 3. Pianificazione
@@ -165,6 +166,17 @@ public sealed record MailLogEntry(
     string? TemplateSource = null);
 
 
+public static class DeliverableKinds
+{
+    public const string Executive = "Executive";
+    public const string Technical = "Technical";
+    public const string Activity = "Activity";
+    public const string Custom = "Custom";
+
+    public static readonly string[] All =
+        [Executive, Technical, Activity, Custom];
+}
+
 public sealed class Engagement
 {
     public required string Id { get; init; }
@@ -177,6 +189,21 @@ public sealed class Engagement
     public DateTimeOffset CreatedDate { get; init; } = DateTimeOffset.UtcNow;
     public bool HasManleva { get; set; }
     public bool OrderConfirmed { get; set; }
+
+    /// <summary>Setup iniziale: team, liste, lingua e tipologie di deliverable.</summary>
+    public bool SetupDone { get; set; } = true;
+    public string Language { get; set; } = "it";
+    public List<string> DeliverableTypes { get; init; } =
+        [DeliverableKinds.Technical];
+
+    public bool ReportsComplete => DeliverableTypes.All(type =>
+        Reports.Any(report => report.IsLatest &&
+            string.Equals(report.Kind, type, StringComparison.OrdinalIgnoreCase)));
+
+    public IReadOnlyList<string> MissingReportTypes => DeliverableTypes
+        .Where(type => !Reports.Any(report => report.IsLatest &&
+            string.Equals(report.Kind, type, StringComparison.OrdinalIgnoreCase)))
+        .ToList();
 
     public bool ScopeDone { get; set; }
     public bool CredentialsDone { get; set; }
@@ -252,7 +279,10 @@ public sealed record ReportFile(
     string Type,
     long Size,
     DateTimeOffset Date,
-    bool Published);
+    bool Published,
+    string Kind = DeliverableKinds.Technical,
+    int Version = 1,
+    bool IsLatest = true);
 
 /// <summary>
 /// Link di download monouso per un deliverable pubblicato. Il token è
@@ -303,7 +333,12 @@ public sealed record DecideProposalRequest(
 public sealed record AddReportRequest(
     string Name,
     string Type,
-    long Size);
+    long Size,
+    string? Kind = null);
+
+public sealed record SetupRequest(
+    string Language,
+    List<string>? DeliverableTypes);
 
 public sealed record ReviewDecisionRequest(
     bool Approve,

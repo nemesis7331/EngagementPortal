@@ -183,7 +183,7 @@ tr:last-child td{border-bottom:0}
 .p-progress,.p-info{background:var(--st-progress-bg);color:var(--st-progress);border-color:var(--st-progress-border)}
 .p-blocked,.p-neutral,.p-mute{background:var(--st-neutral-bg);color:var(--st-neutral);border-color:var(--st-neutral-border)}
 .p-prog{background:var(--st-progress-bg);color:var(--st-progress);border-color:var(--st-progress-border)}
-.mini{display:flex;gap:4px}.mini i{width:22px;height:6px;border-radius:3px;background:var(--line)}.mini i.on{background:var(--accent)}.mini i.cur{background:var(--brand-500)}
+.mini{display:flex;gap:4px}.mini i{width:18px;height:6px;border-radius:3px;background:var(--line)}.mini i.on{background:var(--accent)}.mini i.cur{background:var(--brand-500)}
 /* buttons */
 .btn{border:1px solid transparent;border-radius:var(--radius-md);padding:9px 16px;font-weight:var(--fw-semibold);transition:.15s}
 .btn.pri{background:var(--brand-600);color:#fff}.btn.pri:hover{background:var(--brand-700)}
@@ -219,6 +219,16 @@ tr:last-child td{border-bottom:0}
 }
 .doc{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--line)}
 .doc:last-child{border-bottom:0}
+.doc-hist{opacity:.8}
+.report-kinds{display:grid;gap:12px;margin-top:12px}
+.report-kind{border:1px solid var(--line);border-radius:var(--radius-md);padding:12px 14px;background:#fff}
+.rk-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:4px}
+.rk-head h3{font-size:var(--fs-base);margin:0;display:flex;align-items:center;gap:6px}
+.rk-head p{font-size:var(--fs-sm);color:var(--muted);margin:2px 0 0}
+.rk-actions{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
+.rk-hist{margin-top:8px;border-top:1px solid var(--line-soft);padding-top:8px}
+.rk-hist summary{cursor:pointer;font-size:var(--fs-sm);color:var(--brand-600);font-weight:var(--fw-semibold)}
+.rk-hist .doc{padding:10px 0}
 .ico{width:42px;height:42px;border-radius:var(--radius-md);background:var(--brand-100);color:var(--brand-600);display:grid;place-items:center;font-weight:var(--fw-black);font-size:var(--fs-sm)}
 .doc .t{flex:1}.doc .t b{display:block}.doc .t span{font-size:var(--fs-sm);color:var(--muted)}
 .note{background:var(--brand-50);border:1px solid var(--brand-100);border-radius:var(--radius-md);padding:12px 14px;color:var(--brand-700);font-size:var(--fs-md);margin-bottom:16px}
@@ -229,6 +239,23 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--brand-500);outli
 .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .fgrid .full{grid-column:1/-1}
 @media(max-width:620px){.fgrid{grid-template-columns:1fr}}
+/* Setup iniziale */
+.setup-types{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.setup-type{display:flex;align-items:flex-start;gap:9px;border:1px solid var(--line);border-radius:var(--radius-md);padding:9px 11px;margin:0;font-weight:var(--fw-regular);cursor:pointer;background:#fff}
+.setup-type input{margin:2px 0 0;accent-color:var(--brand-600);flex:none}
+.setup-type b{display:block;color:var(--brand-900);font-size:var(--fs-md)}
+.setup-type span span{display:block;color:var(--muted);font-size:var(--fs-sm)}
+.setup-type:has(input:disabled){opacity:.7;cursor:default}
+.setup-fold{margin-top:16px;border:1px solid var(--line);border-radius:var(--radius);background:#fff;overflow:hidden}
+.setup-fold summary{cursor:pointer;padding:13px 16px;font-weight:var(--fw-semibold);color:var(--brand-900);list-style:none}
+.setup-fold summary::-webkit-details-marker{display:none}
+.setup-fold summary::before{content:"▸ ";color:var(--brand-600)}
+.setup-fold[open] summary::before{content:"▾ "}
+.setup-fold[open] summary{border-bottom:1px solid var(--line)}
+.setup-fold > .card{border:0;box-shadow:none;border-radius:0;margin:0}
+.setup-fold > .note{margin:14px 16px}
+.setup-fold .card + .card{border-top:1px solid var(--line-soft)}
+@media(max-width:620px){.setup-types{grid-template-columns:1fr}}
 .prop{display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--line);border-radius:var(--radius-lg);margin-bottom:10px;flex-wrap:wrap}
 .prop .d{flex:1;min-width:220px}.prop .d b{color:var(--brand-900)}.prop .d span{display:block;color:var(--muted);font-size:var(--fs-sm)}
 .tl{list-style:none;padding:0;margin:0}.tl li{position:relative;padding:0 0 14px 22px;font-size:var(--fs-md)}
@@ -952,6 +979,7 @@ const TYPES = [
   ['CloudSecurity', 'Cloud Security']
 ];
 const STEPS = [
+  ['Setup', 'Team, distribution list, lingua e tipologie di deliverable'],
   ['Documenti e dati economici', 'Scheda tecnica, ordine, costi e margine approvati'],
   ['Scope', 'Perimetro e obiettivi dell\'attività'],
   ['Pianificazione', 'Proposta e approvazione delle date'],
@@ -1845,6 +1873,9 @@ function legacyTabState(d, k) {
   const e = d.engagement;
   const c = d.capabilities || {};
   const pending = (e.proposals || []).some(p => p.status === 'Pending');
+  if (k === 'setup') {
+    return e.setupDone ? 'ok' : c.canManageSetup ? 'todo' : 'wait';
+  }
   if (k === 'docs') {
     const nS = !e.hasManleva && c.canUploadManleva;
     const nO = !e.orderConfirmed && c.canManageEngagementDocs;
@@ -1876,7 +1907,24 @@ function legacyTabState(d, k) {
 }
 
 function defaultTab(d) {
-  return ['docs', 'scope', 'plan', 'cred', 'reports'].find(k => tabState(d, k) === 'todo') || 'docs';
+  const tabs = isClient()
+    ? ['docs', 'scope', 'plan', 'cred', 'reports']
+    : ['setup', 'docs', 'scope', 'plan', 'cred', 'reports'];
+  const todo = tabs.find(k => tabState(d, k) === 'todo');
+  if (todo) return todo;
+  const byPhase = {
+    Setup: 'setup',
+    Docs: 'docs',
+    Scope: 'scope',
+    Planning: 'plan',
+    Credentials: 'cred',
+    Scheduled: 'run',
+    Running: 'run',
+    Reporting: 'reports',
+    Done: 'reports'
+  };
+  const target = byPhase[d.phase] || 'docs';
+  return isClient() && target === 'setup' ? 'docs' : target;
 }
 
 function canEditPreparation(d) {
@@ -2345,12 +2393,13 @@ function nextAction(d) {
 }
 
 const DETAIL_PANELS = {
-  docs: { n:'1', short:'Documenti', group:'Workflow', title:'Documenti e dati economici', desc:'Scheda tecnica, ordine e dati economici' },
-  scope: { n:'2', short:'Scope', group:'Workflow', title:'Scope', desc:'Perimetro, finestre e referente' },
-  plan: { n:'3', short:'Pianificazione', group:'Workflow', title:'Pianificazione', desc:'Proposta e approvazione delle date' },
-  cred: { n:'4', short:'Credenziali', group:'Workflow', title:'Credenziali', desc:'Accessi per l\'esecuzione' },
-  run: { n:'5', short:'Esecuzione', group:'Workflow', title:'Esecuzione', desc:'Avanzamento dell\'attività' },
-  reports: { n:'6', short:'Report', group:'Workflow', title:'Report', desc:'Revisione e consegna dei deliverable' },
+  setup: { n:'1', short:'Setup', group:'Workflow', title:'Setup', desc:'Team, liste, lingua e deliverable' },
+  docs: { n:'2', short:'Documenti', group:'Workflow', title:'Documenti e dati economici', desc:'Scheda tecnica, ordine e dati economici' },
+  scope: { n:'3', short:'Scope', group:'Workflow', title:'Scope', desc:'Perimetro, finestre e referente' },
+  plan: { n:'4', short:'Pianificazione', group:'Workflow', title:'Pianificazione', desc:'Proposta e approvazione delle date' },
+  cred: { n:'5', short:'Credenziali', group:'Workflow', title:'Credenziali', desc:'Accessi per l\'esecuzione' },
+  run: { n:'6', short:'Esecuzione', group:'Workflow', title:'Esecuzione', desc:'Avanzamento dell\'attività' },
+  reports: { n:'7', short:'Report', group:'Workflow', title:'Report', desc:'Revisione e consegna dei deliverable' },
   dl: { n:'', short:'Distribution list', group:'Gestione', title:'Distribution list', desc:'Notifiche e invio deliverables' },
   team: { n:'', short:'Team', group:'Gestione', title:'Team esterno', desc:'Partecipanti al cliente e all\'engagement' },
   mail: { n:'', short:'Comunicazioni', group:'Gestione', title:'Comunicazioni', desc:'Email automatiche e registro invii' },
@@ -2396,10 +2445,11 @@ function renderDetail() {
   const c = d.capabilities || {};
   const st = statusPill(d);
   const owner = statusOwner(d);
-  const activeKey = state.tab;
+  const activeKey = isClient() && state.tab === 'setup' ? 'docs' : state.tab;
   const activeMeta = DETAIL_PANELS[activeKey] || DETAIL_PANELS.docs;
   const activeState = panelState(d, activeKey);
   const body = {
+    setup: tabSetup,
     docs: tabDocs,
     plan: tabPlan,
     scope: tabScope,
@@ -2428,12 +2478,14 @@ function renderDetail() {
     : 'Da definire';
   const pending = (e.proposals || []).find(p => p.status === 'Pending');
 
-  const steps = ['docs', 'scope', 'plan', 'cred', 'run', 'reports'];
-  const stepNav = steps.map(key => {
+  const steps = isClient()
+    ? ['docs', 'scope', 'plan', 'cred', 'run', 'reports']
+    : ['setup', 'docs', 'scope', 'plan', 'cred', 'run', 'reports'];
+  const stepNav = steps.map((key, index) => {
     const s = panelState(d, key);
     const meta = DETAIL_PANELS[key];
     return `<button class="wnav-btn s-${s} ${state.tab === key ? 'on' : ''}" data-act="tab" data-tab="${key}" title="${esc(meta.desc)} · ${esc(panelStateLabel(d, key))}">
-      <span class="wnav-num">${s === 'ok' ? '✓' : meta.n}</span>
+      <span class="wnav-num">${s === 'ok' ? '✓' : index + 1}</span>
       <span class="wnav-h"><b>${esc(meta.short)}</b><span>${esc(meta.desc)}</span></span>
     </button>`;
   }).join('');
@@ -2900,10 +2952,15 @@ function reviewCard(d) {
   const e = d.engagement;
   const reports = e.reports || [];
   const unpublished = reports.filter(r => !r.published).length;
+  const missingTypes = e.missingReportTypes || [];
   const status = reviewLabel(e.reviewStatus);
   let action = '';
 
-  if (state.role === 'Pentester' && unpublished > 0 &&
+  if (state.role === 'Pentester' && missingTypes.length > 0 &&
+      e.reviewStatus !== 'Pending') {
+    action = `<div class="note waiting" style="margin:0"><b>Mancano i deliverable:</b> ${missingTypes.map(esc).join(', ')}. Carica una versione per ogni tipologia prima di inviare in revisione.</div>`;
+  }
+  else if (state.role === 'Pentester' && unpublished > 0 &&
       (e.reviewStatus === 'None' || e.reviewStatus === 'Changes')) {
     action = `<button class="btn pri" data-act="submit-review">Invia in revisione al manager</button>`;
   }
@@ -2913,7 +2970,8 @@ function reviewCard(d) {
       <button class="decide warn" data-act="review-decide" data-approve="0">Richiedi modifiche</button>
     </div>`;
   }
-  if (state.role === 'Pentester' && unpublished > 0 && e.reviewStatus === 'Approved') {
+  if (state.role === 'Pentester' && unpublished > 0 && e.reviewStatus === 'Approved' &&
+      missingTypes.length === 0) {
     action = `<button class="btn acc" data-act="publish">Pubblica al cliente${entryAuto(d.mail, 'deliver') ? ' e invia email' : ''}</button>`;
   }
 
@@ -2960,6 +3018,67 @@ function tabRun(d) {
   </div>`;
 }
 
+function tabSetup(d) {
+  const e = d.engagement;
+  const c = d.capabilities || {};
+  const canEdit = !!c.canManageSetup;
+  const language = e.language || 'it';
+  const selected = e.deliverableTypes || [];
+  const done = !!e.setupDone;
+
+  const types = [
+    ['Executive', 'Executive', 'Sintesi per il management'],
+    ['Technical', 'Technical', 'Dettaglio tecnico ed evidenze'],
+    ['Activity', 'Activity', 'Log delle attività svolte'],
+    ['Custom', 'Custom', 'Deliverable personalizzato concordato']
+  ];
+
+  const team = (d.teamEffective || []).length;
+  const notifications = (d.distributionEffective || []).length;
+  const deliverables = (d.deliverablesEffective || []).length;
+
+  return `<div class="card">
+    <h2>Setup attività ${done ? pill(['Completato', 'ok']) : pill(['Da completare', 'wait'])}</h2>
+    <p class="sub">Prima di documenti e scope: chi lavora, chi riceve le comunicazioni, in che lingua e quali deliverable produrre.</p>
+    <div class="fgrid">
+      <div>
+        <label for="setup_lang">Lingua dei deliverable</label>
+        <select id="setup_lang" class="f" ${canEdit ? '' : 'disabled'}>
+          <option value="it" ${language === 'it' ? 'selected' : ''}>Italiano</option>
+          <option value="en" ${language === 'en' ? 'selected' : ''}>Inglese</option>
+        </select>
+      </div>
+      <div class="full">
+        <label>Tipologie di deliverable*</label>
+        <div class="setup-types">
+          ${types.map(([value, label, description]) => `
+            <label class="setup-type">
+              <input type="checkbox" name="setup_type" value="${value}" ${selected.includes(value) ? 'checked' : ''} ${canEdit ? '' : 'disabled'}>
+              <span><b>${label}</b><span>${description}</span></span>
+            </label>`).join('')}
+        </div>
+        <p class="hint">Il Pentester dovrà caricare almeno una versione per ogni tipologia selezionata.</p>
+      </div>
+    </div>
+    <div class="inline-actions" style="margin-top:12px">
+      ${canEdit
+        ? '<button class="btn pri" data-act="save-setup">Salva setup</button>'
+        : '<span class="hint">Sola lettura per il tuo profilo.</span>'}
+      ${!done
+        ? '<span class="hint">Completa il setup per sbloccare i passi successivi.</span>'
+        : ''}
+    </div>
+  </div>
+  <details class="setup-fold">
+    <summary>Team · ${team} persone</summary>
+    ${tabTeam(d)}
+  </details>
+  <details class="setup-fold">
+    <summary>Distribution list · ${notifications} notifiche · ${deliverables} deliverables</summary>
+    ${tabDl(d)}
+  </details>`;
+}
+
 function tabReports(d) {
   const e = d.engagement;
   const c = d.capabilities || {};
@@ -2978,32 +3097,85 @@ function tabReports(d) {
     sentEmails.some(email => !currentEmails.includes(email)) ||
     currentEmails.some(email => !sentEmails.includes(email)));
 
+  const required = e.deliverableTypes || [];
+  const present = [...new Set(reports.map(r => r.kind || 'Technical'))];
+  const kinds = c.isClient ? present : [...new Set([...required, ...present])];
+  const kindDesc = {
+    Executive: 'Sintesi per il management',
+    Technical: 'Dettaglio tecnico ed evidenze',
+    Activity: 'Log delle attività svolte',
+    Custom: 'Deliverable personalizzato concordato'
+  };
+  const kindOf = r => r.kind || 'Technical';
+  const groupOf = kind => {
+    const list = reports
+      .filter(r => kindOf(r).toLowerCase() === kind.toLowerCase())
+      .sort((a, b) => (b.version || 1) - (a.version || 1));
+    return {
+      list,
+      latest: list[0] || null,
+      history: list.slice(1)
+    };
+  };
+  const loadedKinds = required.filter(kind =>
+    reports.some(r => kindOf(r).toLowerCase() === kind.toLowerCase()));
+  const missingKinds = required.filter(kind => !loadedKinds.includes(kind));
+
   if (!reports.length && !c.canUploadReports) {
     return '<div class="note lockbox"><b>Nessun deliverable disponibile.</b> La reportistica viene caricata dal Pentester e pubblicata al cliente dopo la revisione del manager.</div>';
   }
+
+  const reportRow = (r, historic = false) => `<div class="doc${historic ? ' doc-hist' : ''}">
+      <div class="ico">${esc((r.type || 'FILE').substring(0, 4))}</div>
+      <div class="t"><b>${esc(r.name)}</b>
+        <span>v${r.version || 1} · ${r.published ? `Pubblicato il ${fmtTime(r.date)}` : `Bozza del ${fmtTime(r.date)}`} · ${fmtSize(r.size)}${historic ? ' · superata' : ''}</span></div>
+      ${r.published ? pill(['Pubblicato', 'ok']) : pill(['Bozza', 'mute'])}
+      <div class="report-actions">
+        <button class="btn pri sm" data-act="download-report" data-rid="${esc(r.id)}">Scarica</button>
+        ${r.published && canLink
+          ? `<button class="btn sec sm" data-act="create-download-link" data-rid="${esc(r.id)}">Link monouso</button>`
+          : ''}
+      </div>
+    </div>`;
 
   let html = '';
   if (!c.isClient && (reports.length || e.reviewStatus !== 'None')) {
     html += reviewCard(d);
   }
 
-  html += `<div class="card"><h2>Reportistica</h2>${
-    reports.length
-      ? reports.map(r => `<div class="doc">
-          <div class="ico">${esc((r.type || 'FILE').substring(0, 4))}</div>
-          <div class="t"><b>${esc(r.name)}</b>
-            <span>${r.published ? `Pubblicato il ${fmtTime(r.date)}` : `Bozza del ${fmtTime(r.date)}`} · ${fmtSize(r.size)}</span></div>
-          ${r.published ? pill(['Pubblicato', 'ok']) : pill(['Bozza', 'mute'])}
-          <div class="report-actions">
-            <button class="btn pri sm" data-act="download-report" data-rid="${esc(r.id)}">Scarica</button>
-            ${r.published && canLink
-              ? `<button class="btn sec sm" data-act="create-download-link" data-rid="${esc(r.id)}">Link monouso</button>`
-              : ''}
-          </div>
-        </div>`).join('')
-      : '<div class="empty">Nessun deliverable disponibile.</div>'
-  }${canLink ? '<p class="hint" style="margin-top:10px">Il link monouso scade dopo 5 giorni e può essere usato una sola volta.</p>' : ''}
-    <p class="hint" style="margin-top:${canLink ? 4 : 10}px"><b>Policy di retention:</b> i deliverables vengono cancellati automaticamente dopo <b>90 giorni</b> dalla pubblicazione.</p></div>`;
+  html += `<div class="card"><h2>Reportistica ${c.isClient ? '' : `<span class="hint" style="font-weight:500">· ${loadedKinds.length}/${required.length || kinds.length} tipologie</span>`}</h2>
+    ${missingKinds.length && !c.isClient
+      ? `<div class="note waiting" style="margin:0 0 12px"><b>Deliverable mancanti:</b> ${missingKinds.map(esc).join(', ')}. Il Pentester deve caricare almeno una versione per ogni tipologia del setup.</div>`
+      : ''}
+    <div class="report-kinds">
+      ${kinds.length
+        ? kinds.map(kind => {
+            const group = groupOf(kind);
+            const latest = group.latest;
+            const isRequired = required.some(k => k.toLowerCase() === kind.toLowerCase());
+            return `<section class="report-kind">
+              <div class="rk-head">
+                <div><h3>${esc(kind)}${isRequired ? '' : ' <span class="hint">(storico)</span>'}</h3>
+                  <p>${esc(kindDesc[kind] || 'Deliverable')}</p></div>
+                ${latest
+                  ? (latest.published ? pill(['Pubblicato', 'ok']) : pill(['Bozza', 'mute']))
+                  : pill(['Mancante', 'wait'])}
+              </div>
+              ${latest
+                ? reportRow(latest)
+                : `<div class="empty" style="padding:10px 0">Nessun ${esc(kind)} caricato.</div>`}
+              ${group.history.length
+                ? `<details class="rk-hist"><summary>Versioni precedenti (${group.history.length})</summary>${group.history.map(r => reportRow(r, true)).join('')}</details>`
+                : ''}
+              ${c.canUploadReports
+                ? `<div class="rk-actions"><button class="btn ${latest ? 'sec' : 'pri'} sm" data-act="upload-report" data-kind="${esc(kind)}">${latest ? 'Carica nuova versione' : `Carica ${esc(kind)}`}</button></div>`
+                : ''}
+            </section>`;
+          }).join('')
+        : '<div class="empty">Nessuna tipologia definita nel setup.</div>'}
+    </div>
+    ${canLink ? '<p class="hint" style="margin-top:10px">Il link monouso scade dopo 5 giorni e può essere usato una sola volta.</p>' : ''}
+    <p class="hint" style="margin-top:${canLink ? 4 : 10}px"><b>Policy di retention:</b> i deliverables vengono cancellati automaticamente dopo <b>1 anno</b> dalla pubblicazione.</p></div>`;
 
   if (!c.isClient) {
     const recipientChips = deliverRecipients.length
@@ -3034,12 +3206,6 @@ function tabReports(d) {
       </div>` : ''}
       <div style="margin-top:14px;border-top:1px solid var(--line-soft);padding-top:12px">${sentInfo}</div>
     </div>`;
-  }
-
-  if (c.canUploadReports) {
-    html += `<div class="card" style="margin-top:16px"><h2>Carica deliverables</h2>
-      <p class="sub" style="margin-bottom:12px">I file caricati restano in bozza fino all'approvazione del manager. Un nuovo file azzera la revisione.</p>
-      <button class="btn sec" data-act="upload-report">Carica file</button></div>`;
   }
 
   return html;
@@ -3781,7 +3947,7 @@ function adminTemplatesHTML() {
 
 function adminSettingsHTML() {
   return `<div class="card"><h2>Retention deliverables</h2>
-    <p class="sub">Policy informativa: i deliverables vengono cancellati automaticamente dopo <b>90 giorni</b> dalla pubblicazione. Il valore è configurabile in produzione.</p>
+    <p class="sub">Policy informativa: i deliverables vengono cancellati automaticamente dopo <b>1 anno</b> dalla pubblicazione. Il valore è configurabile in produzione.</p>
     <div class="note waiting" style="margin-top:12px"><b>Nota:</b> il job di cancellazione non è ancora attivo in questa alpha.</div>
   </div>
   <div class="card" style="margin-top:14px"><h2>Sicurezza e accessi</h2>
@@ -4828,16 +4994,35 @@ const actions = {
     } catch (error) { toast(error.message); }
   },
 
-  'upload-report': async () => {
+  'upload-report': async el => {
+    const kind = el.dataset.kind || '';
     const name = await pickFile('.pdf,.xlsx,.docx');
     if (!name) return;
     const type = (name.split('.').pop() || 'PDF').toUpperCase().substring(0, 4);
     const size = Math.floor(200000 + Math.random() * 5000000);
     try {
-      await api(`/api/engagements/${engagedId()}/reports?` + qs(), {
-        method: 'POST', body: JSON.stringify({ name, type, size })
+      const result = await api(`/api/engagements/${engagedId()}/reports?` + qs(), {
+        method: 'POST', body: JSON.stringify({ name, type, size, kind })
       });
-      toast('Deliverable caricato come bozza');
+      toast(`${kind || 'Deliverable'} · versione ${result.version || 1} caricata come bozza`);
+      await refreshDetail();
+    } catch (error) { toast(error.message); }
+  },
+
+  'save-setup': async () => {
+    const language = $('#setup_lang')?.value || 'it';
+    const deliverableTypes = [...document.querySelectorAll('input[name="setup_type"]:checked')]
+      .map(input => input.value);
+    if (!deliverableTypes.length) {
+      toast('Seleziona almeno una tipologia di deliverable');
+      return;
+    }
+    try {
+      await api(`/api/engagements/${engagedId()}/setup?` + qs(), {
+        method: 'PUT',
+        body: JSON.stringify({ language, deliverableTypes })
+      });
+      toast('Setup salvato');
       await refreshDetail();
     } catch (error) { toast(error.message); }
   },
@@ -5077,7 +5262,7 @@ const busyActions = new Set([
   'add-client-dl', 'remove-client-dl', 'invite-client-team', 'remove-client-team',
   'new-engagement', 'save-rule', 'send-solicitation', 'upload-manleva',
   'upload-ingaggio', 'register-order', 'save-order', 'edit-financials', 'save-financials-inline', 'approve-financials', 'propose', 'reschedule',
-  'decide', 'save-scope', 'save-credentials', 'upload-report',
+  'decide', 'save-scope', 'save-credentials', 'save-setup', 'upload-report',
   'download-report', 'create-download-link', 'submit-review', 'review-decide', 'publish', 'add-dl',
   'remove-dl', 'invite-team', 'remove-team', 'toggle-mail', 'send-mail', 'export-log', 'retry-list',
   'save-mail-template', 'reset-mail-template'
