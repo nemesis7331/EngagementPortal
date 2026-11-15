@@ -1169,7 +1169,7 @@ function ask({ title, text, fields = [], ok = 'Conferma', danger = false }) {
     const opener = document.activeElement;
     const fieldsHtml = fields.map(f => {
       const control = f.area
-        ? `<textarea id="m_${esc(f.id)}" rows="3" placeholder="${esc(f.ph || '')}"></textarea>`
+        ? `<textarea id="m_${esc(f.id)}" rows="3" placeholder="${esc(f.ph || '')}">${esc(f.value || '')}</textarea>`
         : f.type === 'select'
           ? `<select class="f" id="m_${esc(f.id)}">${(f.options || [])
               .map(o => `<option value="${esc(o[0])}" ${o[0] === (f.value || (f.options[0] || [])[0]) ? 'selected' : ''}>${esc(o[1])}</option>`)
@@ -1215,6 +1215,50 @@ function ask({ title, text, fields = [], ok = 'Conferma', danger = false }) {
     if (first) setTimeout(() => first.focus(), 30);
     else setTimeout(() => $('#modal').querySelector('[data-modal="ok"]').focus(), 30);
   });
+}
+
+/* Sceglie come consegnare un report: invio automatico dal portale (con i
+   destinatari della DL, modificabili al volo) oppure invio manuale. */
+async function askSendMode({ title, text, recipients = [], ok = 'Invia' }) {
+  const value = await ask({
+    title,
+    text,
+    ok,
+    fields: [
+      {
+        id: 'mode',
+        label: 'Modalità di invio',
+        type: 'select',
+        options: [
+          ['auto', 'Automatico · email dal portale'],
+          ['manual', 'Manuale · fuori dal portale']
+        ]
+      },
+      {
+        id: 'recipients',
+        label: 'Destinatari (separati da virgola; ignorati con invio manuale)',
+        area: true,
+        value: recipients.join(', ')
+      }
+    ]
+  });
+
+  if (!value) return null;
+
+  const list = String(value.recipients || '')
+    .split(/[,;\s]+/)
+    .map(item => item.trim())
+    .filter(Boolean);
+
+  if (value.mode === 'auto' && !list.length) {
+    toast('Aggiungi almeno un destinatario o scegli l\'invio manuale');
+    return null;
+  }
+
+  return {
+    mode: value.mode === 'manual' ? 'manual' : 'auto',
+    recipients: value.mode === 'manual' ? [] : list
+  };
 }
 
 /* ====== NAVIGAZIONE ====== */
@@ -3182,13 +3226,14 @@ function tabPlan(d) {
   const pending = (e.proposals || []).find(p => p.status === 'Pending');
   const accepted = e.acceptedProposal;
   const notice = d.planningNotice;
+  // Preavviso 14 giorni: bloccante per cliente/PMO, derogabile dal Manager.
+  const noticeBlocked = !!notice && !accepted && state.role !== 'Manager';
   const earlyWarning = notice && !accepted && canPropose
-    ? `<div class="note waiting"><b>Avviso pianificazione.</b>
-        Non è possibile proporre una pianificazione prima di due settimane dalla
-        richiesta (${fmt(notice.requestDate)}): potrai proporla dal
-        <b>${fmt(notice.availableFrom)}</b>${notice.daysRemaining > 0
-          ? `, tra ${notice.daysRemaining} ${notice.daysRemaining === 1 ? 'giorno' : 'giorni'}`
-          : ''}. L'avviso non blocca l'invio.</div>`
+    ? (state.role === 'Manager'
+        ? `<div class="note waiting"><b>Deroga Manager.</b> La proposta arriva prima di due settimane dalla richiesta (${fmt(notice.requestDate)}): puoi inviarla comunque.</div>`
+        : `<div class="note blocked"><b>Preavviso di 14 giorni.</b> La proposta si può inviare dal <b>${fmt(notice.availableFrom)}</b>${notice.daysRemaining > 0
+            ? `, tra ${notice.daysRemaining} ${notice.daysRemaining === 1 ? 'giorno' : 'giorni'}`
+            : ''}. Solo il Manager può derogare.</div>`)
     : '';
 
   const list = (e.proposals || []).length
@@ -3228,6 +3273,8 @@ function tabPlan(d) {
         Approvata dal Manager${accepted.from === 'Client' ? ' · proposta del cliente' : ' · proposta del PMO'}.</div>${action}`;
   } else if (!canPropose) {
     right = `<h2>Nuova proposta</h2><div class="note lockbox">Sola lettura: le date sono gestite da cliente, PMO e Manager.</div>`;
+  } else if (noticeBlocked) {
+    right = `<h2>Nuova proposta</h2>${earlyWarning}`;
   } else {
     right = `<h2>Nuova proposta</h2>
       ${earlyWarning}
@@ -3393,9 +3440,9 @@ function reviewCard(d) {
       <button class="decide warn" data-act="review-decide" data-approve="0">Richiedi modifiche</button>
     </div>`;
   }
-  if (state.role === 'Pentester' && unpublished > 0 && e.reviewStatus === 'Approved' &&
+  if (d.capabilities?.canPublish && unpublished > 0 && e.reviewStatus === 'Approved' &&
       missingTypes.length === 0) {
-    action = `<button class="btn acc" data-act="publish">Pubblica al cliente${entryAuto(d.mail, 'deliver') ? ' e invia email' : ''}</button>`;
+    action = `<button class="btn acc" data-act="publish">Pubblica al cliente</button>`;
   }
 
   return `<div class="card" style="margin-bottom:16px"><h2>Revisione del manager ${pill(status)}</h2>
@@ -6768,15 +6815,6 @@ const actions = {
     if (endDate < startDate) { toast('La data di fine precede l\'inizio'); return; }
     const days = Math.round((Date.parse(endDate) - Date.parse(startDate)) / 86400000);
     if (days > 60) { toast('La durata massima è di 60 giorni'); return; }
-    const notice = state.detail.planningNotice;
-    if (notice && (state.role === 'Client' || state.role === 'PMO')) {
-      const proceed = await ask({
-        title: 'Avviso pianificazione',
-        text: `La proposta arriva prima di due settimane dalla richiesta (${fmt(notice.requestDate)}). Potrai proporla dal ${fmt(notice.availableFrom)}. Vuoi inviarla comunque?`,
-        ok: 'Invia comunque'
-      });
-      if (!proceed) return;
-    }
     try {
       const result = await api(`/api/engagements/${engagedId()}/proposals?` + qs(), {
         method: 'POST', body: JSON.stringify({ startDate, endDate, note })
@@ -6936,7 +6974,7 @@ const actions = {
   'retest-request': async () => {
     try {
       await api(`/api/engagements/${engagedId()}/retest/request?` + qs(), { method: 'POST' });
-      toast('Retest richiesto');
+      toast('Recheck confermato');
       await refreshDetail();
     } catch (error) { toast(error.message); }
   },
@@ -6980,9 +7018,22 @@ const actions = {
   },
 
   'retest-send': async () => {
+    const recipients = (state.detail?.deliverablesEffective || [])
+      .map(entry => entry.email).filter(Boolean);
+    const choice = await askSendMode({
+      title: 'Invia il report di retest',
+      text: 'Il report va al cliente senza approvazione. Con l\'invio automatico parte l\'email dal portale ai destinatari qui sotto (puoi modificarli ora). Con l\'invio manuale consegni tu il report.',
+      recipients,
+      ok: 'Invia'
+    });
+    if (!choice) return;
     try {
-      await api(`/api/engagements/${engagedId()}/retest/send?` + qs(), { method: 'POST' });
-      toast('Report di retest inviato al cliente');
+      await api(`/api/engagements/${engagedId()}/retest/send?` + qs(), {
+        method: 'POST', body: JSON.stringify(choice)
+      });
+      toast(choice.mode === 'manual'
+        ? 'Report di retest inviato · invio manuale'
+        : 'Report di retest inviato al cliente');
       await refreshDetail();
     } catch (error) { toast(error.message); }
   },
@@ -7111,15 +7162,22 @@ const actions = {
   },
 
   publish: async () => {
-    const ok = await ask({
+    const recipients = (state.detail?.deliverablesEffective || [])
+      .map(entry => entry.email).filter(Boolean);
+    const choice = await askSendMode({
       title: 'Pubblica al cliente',
-      text: 'I deliverables saranno visibili al cliente e l\'engagement risulterà completato. L\'operazione non è reversibile.',
+      text: 'Scegli come consegnare i deliverable. Con l\'invio automatico parte l\'email dal portale ai destinatari qui sotto (puoi modificarli ora). Con l\'invio manuale consegni tu il report, senza email dal portale.',
+      recipients,
       ok: 'Pubblica'
     });
-    if (!ok) return;
+    if (!choice) return;
     try {
-      const result = await api(`/api/engagements/${engagedId()}/reports/publish?` + qs(), { method: 'POST' });
-      toast(`Deliverables pubblicati${result && result.published ? ` (${result.published})` : ''}`);
+      const result = await api(`/api/engagements/${engagedId()}/reports/publish?` + qs(), {
+        method: 'POST', body: JSON.stringify(choice)
+      });
+      toast(choice.mode === 'manual'
+        ? `Deliverables pubblicati · invio manuale${result && result.published ? ` (${result.published})` : ''}`
+        : `Deliverables pubblicati e inviati${result && result.published ? ` (${result.published})` : ''}`);
       await refreshDetail();
     } catch (error) { toast(error.message); }
   },

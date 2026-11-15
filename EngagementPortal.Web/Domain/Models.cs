@@ -511,6 +511,14 @@ public sealed record CredentialsRequest(
 /// <summary>Conferma o annulla la raggiungibilità di un singolo target.</summary>
 public sealed record ReachabilityRequest(string Target, bool Verified);
 
+/// <summary>
+/// Invio dei deliverable al cliente: automatico (email dal portale, con
+/// destinatari modificabili al volo) oppure manuale (fuori dal portale).
+/// </summary>
+public sealed record SendReportRequest(
+    string? Mode = null,
+    List<string>? Recipients = null);
+
 public sealed record DistributionEntryRequest(
     string Name,
     string Email,

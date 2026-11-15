@@ -1718,6 +1718,22 @@ api.MapPost("/engagements/{id}/proposals", (
     }
 
     var today = clock.Today;
+
+    // Preavviso minimo di 14 giorni dalla richiesta: bloccante per cliente e
+    // PMO, derogabile dal Manager.
+    if (user.Role != Roles.Manager)
+    {
+        var notice = EngagementWorkflow.PlanningNotice(engagement, today);
+
+        if (notice is not null)
+        {
+            return Results.BadRequest(
+                $"La proposta si può inviare dal {notice.AvailableFrom:dd/MM/yyyy}: " +
+                "serve un preavviso di 14 giorni dalla richiesta. " +
+                "Solo il Manager può derogare.");
+        }
+    }
+
     var duration =
         request.EndDate.DayNumber - request.StartDate.DayNumber;
 
@@ -2600,6 +2616,7 @@ api.MapPost("/engagements/{id}/review/decide", (
 
 api.MapPost("/engagements/{id}/reports/publish", (
     string id,
+    SendReportRequest request,
     HttpContext context,
     IEngagementRepository repository,
     IClientRepository clients,
@@ -2612,7 +2629,8 @@ api.MapPost("/engagements/{id}/reports/publish", (
     if (engagement is null)
         return Results.NotFound();
 
-    if (user.Role != Roles.Pentester ||
+    // Pentester, oppure Manager che si sostituisce.
+    if (user.Role is not (Roles.Pentester or Roles.Manager) ||
         engagement.ReviewStatus != ReviewStatus.Approved)
         return Forbidden();
 
@@ -2629,27 +2647,62 @@ api.MapPost("/engagements/{id}/reports/publish", (
     if (unpublished.Count == 0)
         return Results.BadRequest("Nessun deliverable da pubblicare.");
 
+    var manual = string.Equals(
+        request.Mode, "manual", StringComparison.OrdinalIgnoreCase);
+
+    var client = clients.Get(engagement.ClientId);
+    var baseList = client?.DistributionList ?? [];
+    var baseDeliverables = client?.DeliverablesDistributionList ?? [];
+    var effective = Distribution.EffectiveDeliverables(
+        engagement,
+        baseDeliverables,
+        baseList);
+
+    var chosen = (request.Recipients ?? [])
+        .Select(email => email?.Trim() ?? string.Empty)
+        .Where(email => email.Length > 0)
+        .Distinct(StringComparer.OrdinalIgnoreCase)
+        .ToList();
+
+    if (!manual && chosen.Count == 0)
+    {
+        chosen = effective
+            .Select(entry => entry.Email)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+    }
+
+    if (!manual && chosen.Count == 0)
+    {
+        return Results.BadRequest(
+            "Nessun destinatario: aggiungi almeno un indirizzo " +
+            "o scegli l'invio manuale.");
+    }
+
     for (var index = 0; index < engagement.Reports.Count; index++)
     {
         engagement.Reports[index] =
             engagement.Reports[index] with { Published = true };
     }
 
-    engagement.AddAudit(
-        user.Name,
-        user.Role,
-        "Deliverables pubblicati",
-        AuditVisibility.All);
+    if (manual)
+    {
+        engagement.MailLog.Add(new MailLogEntry(
+            $"M-{Guid.NewGuid():N}"[..10],
+            "deliver",
+            clock.UtcNow,
+            string.Empty,
+            false,
+            "All",
+            "Invio manuale dei deliverable"));
 
-    var client = clients.Get(engagement.ClientId);
-    var baseList = client?.DistributionList ?? [];
-    var baseDeliverables = client?.DeliverablesDistributionList ?? [];
-    var recipients = Distribution.EffectiveDeliverables(
-        engagement,
-        baseDeliverables,
-        baseList);
-
-    if (engagement.Mail.Deliver && recipients.Count > 0)
+        engagement.AddAudit(
+            user.Name,
+            user.Role,
+            "Deliverables pubblicati · invio manuale al cliente",
+            AuditVisibility.All);
+    }
+    else
     {
         var standard = MailTemplates.Standard(
             settings.Get<MailTemplateSet>(MailTemplates.StandardKey));
@@ -2664,12 +2717,18 @@ api.MapPost("/engagements/{id}/reports/publish", (
             $"M-{Guid.NewGuid():N}"[..10],
             "deliver",
             clock.UtcNow,
-            string.Join("; ", recipients.Select(entry => entry.Email)),
+            string.Join("; ", chosen),
             true,
             "All",
             resolved.Subject,
             resolved.Body,
             resolved.Source));
+
+        engagement.AddAudit(
+            user.Name,
+            user.Role,
+            $"Deliverables pubblicati e inviati a {chosen.Count} destinatari",
+            AuditVisibility.All);
     }
 
     repository.Save(engagement);
@@ -3342,6 +3401,7 @@ api.MapPost("/engagements/{id}/retest/report", (
 // Invio del report di retest al cliente: nessuna approvazione richiesta.
 api.MapPost("/engagements/{id}/retest/send", (
     string id,
+    SendReportRequest request,
     HttpContext context,
     IEngagementRepository repository,
     IClientRepository clients,
@@ -3365,41 +3425,84 @@ api.MapPost("/engagements/{id}/retest/send", (
     if (engagement.RetestReportSentDate is not null)
         return Results.Conflict("Il report di retest è già stato inviato.");
 
+    var manual = string.Equals(
+        request.Mode, "manual", StringComparison.OrdinalIgnoreCase);
+
+    var client = clients.Get(engagement.ClientId);
+    var effective = Distribution.EffectiveDeliverables(
+        engagement,
+        client?.DeliverablesDistributionList ?? [],
+        client?.DistributionList ?? []);
+
+    var chosen = (request.Recipients ?? [])
+        .Select(email => email?.Trim() ?? string.Empty)
+        .Where(email => email.Length > 0)
+        .Distinct(StringComparer.OrdinalIgnoreCase)
+        .ToList();
+
+    if (!manual && chosen.Count == 0)
+    {
+        chosen = effective
+            .Select(entry => entry.Email)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+    }
+
+    if (!manual && chosen.Count == 0)
+    {
+        return Results.BadRequest(
+            "Nessun destinatario: aggiungi almeno un indirizzo " +
+            "o scegli l'invio manuale.");
+    }
+
     engagement.RetestReport = report with { Published = true };
     engagement.RetestReportSentDate = clock.UtcNow;
 
-    var client = clients.Get(engagement.ClientId);
-    var recipients = Solicitation.Recipients(
-        engagement,
-        [Roles.Client],
-        client,
-        []);
+    if (manual)
+    {
+        engagement.MailLog.Add(new MailLogEntry(
+            $"M-{Guid.NewGuid():N}"[..10],
+            "retestreport",
+            clock.UtcNow,
+            string.Empty,
+            false,
+            "All",
+            "Invio manuale del report di retest"));
 
-    var standard = MailTemplates.Standard(
-        settings.Get<MailTemplateSet>(MailTemplates.StandardKey));
-    var resolved = MailTemplates.Resolve(
-        "retestreport",
-        engagement,
-        standard,
-        client?.MailTemplates,
-        clock.Today);
+        engagement.AddAudit(
+            user.Name,
+            user.Role,
+            "Report di retest · invio manuale al cliente",
+            AuditVisibility.All);
+    }
+    else
+    {
+        var standard = MailTemplates.Standard(
+            settings.Get<MailTemplateSet>(MailTemplates.StandardKey));
+        var resolved = MailTemplates.Resolve(
+            "retestreport",
+            engagement,
+            standard,
+            client?.MailTemplates,
+            clock.Today);
 
-    engagement.MailLog.Add(new MailLogEntry(
-        $"M-{Guid.NewGuid():N}"[..10],
-        "retestreport",
-        clock.UtcNow,
-        string.Join("; ", recipients.Select(entry => entry.Email)),
-        false,
-        "All",
-        resolved.Subject,
-        resolved.Body,
-        resolved.Source));
+        engagement.MailLog.Add(new MailLogEntry(
+            $"M-{Guid.NewGuid():N}"[..10],
+            "retestreport",
+            clock.UtcNow,
+            string.Join("; ", chosen),
+            true,
+            "All",
+            resolved.Subject,
+            resolved.Body,
+            resolved.Source));
 
-    engagement.AddAudit(
-        user.Name,
-        user.Role,
-        "Report di retest inviato al cliente (senza revisione)",
-        AuditVisibility.All);
+        engagement.AddAudit(
+            user.Name,
+            user.Role,
+            "Report di retest inviato al cliente (senza revisione)",
+            AuditVisibility.All);
+    }
 
     repository.Save(engagement);
     return Results.Ok(new { status = "ok" });
@@ -4451,7 +4554,7 @@ static object Detail(
             CanManageMail = user.Role == Roles.PMO,
             CanManageSolicitations = user.Role != Roles.Auditor,
             CanReview = user.Role == Roles.Manager,
-            CanPublish = user.Role == Roles.Pentester,
+            CanPublish = user.Role is (Roles.Pentester or Roles.Manager),
             CanUploadManleva = user.Role is Roles.Client or Roles.PMO,
             CanManageEngagementDocs = user.Role == Roles.PMO,
             CanPropose = user.Role is Roles.Client or Roles.PMO or Roles.Manager,
