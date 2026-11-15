@@ -1067,8 +1067,11 @@ function fillUserSelect() {
   if (!select) return;
 
   const roleOrder = ['Manager', 'PMO', 'Pentester', 'Auditor', 'Client'];
+  const visibleUsers = isClient()
+    ? state.demoUsers.filter(user => user.role === 'Client')
+    : state.demoUsers;
   const groups = roleOrder
-    .map(role => [role, state.demoUsers.filter(user => user.role === role)])
+    .map(role => [role, visibleUsers.filter(user => user.role === role)])
     .filter(([, list]) => list.length);
 
   select.innerHTML = groups.length
@@ -1706,10 +1709,11 @@ function renderList() {
     ? `Engagement di ${esc(clientLabel(state.clientId))}`
     : (isClient() ? 'Il tuo cliente' : 'Tutti i clienti');
 
+  const canUsers = state.role === 'Manager' || state.role === 'PMO';
   const headActions = canCreateEngagement()
-    ? `${state.role === 'Manager' ? '<button class="btn sec" data-act="users">Utenti e accessi</button>' : ''}<button class="btn sec" data-act="clients">Clienti e utenze</button><button class="btn pri" data-act="new-engagement">+ Nuovo engagement</button>`
+    ? `${canUsers ? '<button class="btn sec" data-act="users">Utenti e accessi</button>' : ''}<button class="btn sec" data-act="clients">Clienti e utenze</button><button class="btn pri" data-act="new-engagement">+ Nuovo engagement</button>`
     : isInternalRole()
-      ? `${state.role === 'Manager' ? '<button class="btn sec" data-act="users">Utenti e accessi</button>' : ''}<button class="btn sec" data-act="clients">Clienti e utenze</button>`
+      ? `${canUsers ? '<button class="btn sec" data-act="users">Utenti e accessi</button>' : ''}<button class="btn sec" data-act="clients">Clienti e utenze</button>`
       : '';
 
   const tile = (key, cls, count, label) =>
@@ -2113,7 +2117,7 @@ function renderDetail() {
       <div class="eng-hero-t">
         <p class="side-kicker">${esc(e.id)} · ${esc(typeLabel(e.type))}</p>
         <h1>${esc(e.name)}</h1>
-        <p class="sub">${esc(e.clientName)} · ${esc(e.owner)} · creato il ${fmt(e.createdDate)}</p>
+        <p class="sub">${[e.clientName, e.owner, `creato il ${fmt(e.createdDate)}`].filter(Boolean).map(value => esc(value)).join(' · ')}</p>
       </div>
       <div class="eng-hero-s">
         ${pill(st)}
@@ -2574,7 +2578,7 @@ function tabRun(d) {
     </div>
     ${prepMissing ? `<div class="note waiting" style="margin-top:14px"><b>Preparazione incompleta:</b> mancano ${esc(prepMissing)}. L'avvio potrebbe slittare.</div>` : ''}
     <table class="detail-table" style="margin-top:14px">
-      <tr><td>Responsabile</td><td><b>${esc(e.owner)}</b></td></tr>
+      ${e.owner ? `<tr><td>Responsabile</td><td><b>${esc(e.owner)}</b></td></tr>` : ''}
       <tr><td>Cliente</td><td><b>${esc(e.clientName)}</b></td></tr>
       <tr><td>Finestra concordata</td><td><b>${fmt(p.startDate)} → ${fmt(p.endDate)}</b></td></tr>
       <tr><td>Stato</td><td><b>${esc(stateLabel)}</b></td></tr>
@@ -2613,7 +2617,8 @@ function tabReports(d) {
           </div>
         </div>`).join('')
       : '<div class="empty">Nessun deliverable disponibile.</div>'
-  }${canLink ? '<p class="hint" style="margin-top:10px">Il link monouso scade dopo 5 giorni e può essere usato una sola volta.</p>' : ''}</div>`;
+  }${canLink ? '<p class="hint" style="margin-top:10px">Il link monouso scade dopo 5 giorni e può essere usato una sola volta.</p>' : ''}
+    <p class="hint" style="margin-top:${canLink ? 4 : 10}px"><b>Policy di retention:</b> i deliverables vengono cancellati automaticamente dopo <b>90 giorni</b> dalla pubblicazione.</p></div>`;
 
   if (c.canUploadReports) {
     html += `<div class="card" style="margin-top:16px"><h2>Carica deliverables</h2>
@@ -2942,8 +2947,8 @@ async function loadUsers() {
 }
 
 function renderUsers() {
-  if (state.role !== 'Manager') {
-    $('#app').innerHTML = `<div class="note lockbox"><b>Accesso riservato.</b> La sezione Utenti è gestita dal Manager.</div>`;
+  if (state.role !== 'Manager' && state.role !== 'PMO') {
+    $('#app').innerHTML = `<div class="note lockbox"><b>Accesso riservato.</b> La sezione Utenti è gestita da Manager e PMO.</div>`;
     return;
   }
 
@@ -2978,7 +2983,7 @@ function renderUsers() {
     <div class="headrow">
       <div><h1>Utenti e accessi</h1>
         <p class="sub" style="margin-bottom:0">Persone interne e visibilità per assegnazione · ${state.users.length} utenti</p></div>
-      <div class="head-acts"><button class="btn sec" data-act="new-user">+ Utente interno</button></div>
+      <div class="head-acts">${state.role === 'Manager' ? '<button class="btn sec" data-act="new-user">+ Utente interno</button>' : ''}</div>
     </div>
     ${state.usersError ? `<div class="errorbox"><span>${esc(state.usersError)}</span><button class="btn sec sm" data-act="users">Riprova</button></div>` : ''}
     <div class="users-split">
@@ -3228,8 +3233,8 @@ const actions = {
     loadClients().then(render);
   },
   users: () => {
-    if (state.role !== 'Manager') {
-      toast('Sezione riservata al Manager');
+    if (state.role !== 'Manager' && state.role !== 'PMO') {
+      toast('Sezione riservata a Manager e PMO');
       return;
     }
     state.view = 'users';

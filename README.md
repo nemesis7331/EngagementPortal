@@ -20,6 +20,9 @@ App Service a ogni push su `main`.
 - **Utenti e accessi**: directory degli utenti interni con **assegnazioni a
   clienti/engagement**. Il Manager vede tutto e amministra; PMO, Pentester,
   Auditor e utenti Cliente vedono solo ciò che è assegnato (filtro lato API).
+  Il PMO può assegnare utenti solo entro i propri clienti.
+- **Retention deliverables**: i report vengono cancellati automaticamente
+  **90 giorni** dopo la pubblicazione (valore demo, configurabile).
 - **Team**: partecipanti esterni per cliente (base comune) e per engagement.
   Gli inviti sono aperti a tutti i profili tranne l'Auditor; rimuovono il
   Manager (tutti) e il Cliente (solo organizzazione `Cliente`).
@@ -326,8 +329,10 @@ visibili solo a PMO e Manager e restano **compressi di default** nel dettaglio.
 Il selettore **Utente demo** in alto permette di provare i diversi profili: Manager,
 PMO, Pentester, Auditor e utenti Cliente. La visibilità è per **assegnazione**:
 il Manager vede tutti i clienti/engagement, gli altri solo quelli assegnati.
-La sezione **Utenti e accessi** (solo Manager) gestisce utenti interni e
-assegnazioni; clienti ed engagement visibili sono cliccabili.
+La sezione **Utenti e accessi** è gestita da **Manager e PMO** (il PMO solo
+entro i propri clienti); clienti ed engagement visibili sono cliccabili. Gli
+utenti interni hanno **un solo ruolo**, le assegnazioni **non scadono** e il
+Cliente **non vede** nomi/ruoli dei pentester assegnati.
 
 > Nota: l'identità è simulata tramite parametri `role`/`client` per rendere la
 > demo navigabile senza configurare Entra ID. In produzione va sostituita con

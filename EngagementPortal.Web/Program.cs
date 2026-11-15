@@ -178,16 +178,43 @@ api.MapGet("/users", (
 {
     var current = GetUser(context);
 
-    if (current.Role != Roles.Manager)
+    if (current.Role is not (Roles.Manager or Roles.PMO))
         return Forbidden();
 
     var allEngagements = engagements.List(string.Empty, true);
+    var accessibleEngagements = Access.AccessibleEngagements(
+        engagements,
+        current);
+
+    HashSet<string>? allowedClients = null;
+    HashSet<string>? allowedEngagements = null;
+
+    if (current.Role != Roles.Manager)
+    {
+        allowedEngagements = accessibleEngagements
+            .Select(engagement => engagement.Id)
+            .ToHashSet(StringComparer.Ordinal);
+        allowedClients = accessibleEngagements
+            .Select(engagement => engagement.ClientId)
+            .Concat(clients.List()
+                .Where(client => Access.CanAccessClient(current, client.Id))
+                .Select(client => client.Id))
+            .ToHashSet(StringComparer.Ordinal);
+    }
 
     var providerUsers = users.List().Select(account =>
-        MapUser(account, clients, allEngagements));
-    var clientUsers = clients.List().SelectMany(client =>
-        client.Users.Select(user =>
-            MapClientUser(user, client, allEngagements)));
+        MapUser(
+            account,
+            clients,
+            allEngagements,
+            allowedClients,
+            allowedEngagements));
+    var clientUsers = clients.List()
+        .Where(client =>
+            allowedClients is null || allowedClients.Contains(client.Id))
+        .SelectMany(client =>
+            client.Users.Select(user =>
+                MapClientUser(user, client, allEngagements)));
 
     return Results.Ok(providerUsers.Concat(clientUsers));
 });
@@ -237,7 +264,7 @@ api.MapPost("/users/{id}/assignments", (
 {
     var current = GetUser(context);
 
-    if (current.Role != Roles.Manager)
+    if (current.Role is not (Roles.Manager or Roles.PMO))
         return Forbidden();
 
     var account = users.Get(id);
@@ -257,8 +284,13 @@ api.MapPost("/users/{id}/assignments", (
 
     if (type == "client")
     {
-        if (clients.Get(targetId) is null)
+        var targetClient = clients.Get(targetId);
+
+        if (targetClient is null)
             return Results.NotFound();
+
+        if (!Access.CanAccessClient(current, targetClient.Id))
+            return Forbidden();
 
         if (!account.ClientIds.Contains(targetId))
             account.ClientIds.Add(targetId);
@@ -276,6 +308,9 @@ api.MapPost("/users/{id}/assignments", (
         if (engagement is null)
             return Results.NotFound();
 
+        if (!Access.CanAccess(current, engagement))
+            return Forbidden();
+
         if (account.ClientIds.Contains(engagement.ClientId))
             return Results.Conflict();
 
@@ -288,10 +323,7 @@ api.MapPost("/users/{id}/assignments", (
     }
 
     users.Save(account);
-    return Results.Ok(MapUser(
-        account,
-        clients,
-        engagements.List(string.Empty, true)));
+    return Results.Ok(new { status = "ok" });
 });
 
 api.MapDelete("/users/{id}/assignments/{type}/{targetId}", (
@@ -305,7 +337,7 @@ api.MapDelete("/users/{id}/assignments/{type}/{targetId}", (
 {
     var current = GetUser(context);
 
-    if (current.Role != Roles.Manager)
+    if (current.Role is not (Roles.Manager or Roles.PMO))
         return Forbidden();
 
     var account = users.Get(id);
@@ -314,9 +346,24 @@ api.MapDelete("/users/{id}/assignments/{type}/{targetId}", (
         return Results.NotFound();
 
     if (string.Equals(type, "client", StringComparison.OrdinalIgnoreCase))
+    {
+        if (!Access.CanAccessClient(current, targetId))
+            return Forbidden();
+
         account.ClientIds.Remove(targetId);
+    }
     else if (string.Equals(type, "engagement", StringComparison.OrdinalIgnoreCase))
+    {
+        var engagement = engagements.Get(targetId, string.Empty, true);
+
+        if (engagement is null)
+            return Results.NotFound();
+
+        if (!Access.CanAccess(current, engagement))
+            return Forbidden();
+
         account.EngagementIds.Remove(targetId);
+    }
 
     users.Save(account);
     return Results.NoContent();
@@ -2589,7 +2636,9 @@ static object Summary(
         engagement.Name,
         engagement.ClientName,
         engagement.Type,
-        engagement.Owner,
+        Owner = user.Role == Roles.Client
+            ? null
+            : engagement.Owner,
         Phase = phase,
         StepIndex = EngagementWorkflow.StepIndex(phase),
         Todo = todos.Resolve(engagement, user.Role),
@@ -2646,7 +2695,9 @@ static object Detail(
             engagement.ClientName,
             engagement.Name,
             engagement.Type,
-            engagement.Owner,
+            Owner = user.Role == Roles.Client
+            ? null
+            : engagement.Owner,
             engagement.CreatedDate,
             engagement.HasManleva,
             engagement.ManlevaFile,
@@ -2815,15 +2866,28 @@ static object MapReport(ReportFile report) => new
 static object MapUser(
     UserAccount account,
     IClientRepository clients,
-    IReadOnlyList<Engagement> engagements)
+    IReadOnlyList<Engagement> engagements,
+    IReadOnlySet<string>? allowedClients = null,
+    IReadOnlySet<string>? allowedEngagements = null)
 {
     var manager = account.Role == Roles.Manager;
+    var clientIds = manager || allowedClients is null
+        ? account.ClientIds.ToList()
+        : account.ClientIds
+            .Where(allowedClients.Contains)
+            .ToList();
+    var engagementIds = manager || allowedEngagements is null
+        ? account.EngagementIds.ToList()
+        : account.EngagementIds
+            .Where(allowedEngagements.Contains)
+            .ToList();
+
     var effectiveEngagements = manager
         ? engagements
         : engagements
             .Where(engagement =>
-                account.ClientIds.Contains(engagement.ClientId) ||
-                account.EngagementIds.Contains(engagement.Id))
+                clientIds.Contains(engagement.ClientId) ||
+                engagementIds.Contains(engagement.Id))
             .ToList();
     var effectiveClientIds = manager
         ? clients.List().Select(client => client.Id).ToList()
@@ -2840,8 +2904,8 @@ static object MapUser(
         account.Role,
         account.Active,
         account.CreatedDate,
-        account.ClientIds,
-        account.EngagementIds,
+        ClientIds = clientIds,
+        EngagementIds = engagementIds,
         EffectiveClientIds = effectiveClientIds,
         EffectiveEngagementIds = effectiveEngagements
             .Select(engagement => engagement.Id)
