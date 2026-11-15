@@ -632,6 +632,7 @@ const STEPS = [
   ['Scope', 'Perimetro e obiettivi dell\'attività'],
   ['Pianificazione', 'Proposta e approvazione delle date'],
   ['Credenziali', 'Dati di accesso per l\'esecuzione'],
+  ['Raggiungibilità', 'Verifica che tutti i target in scope rispondano'],
   ['Esecuzione', 'Attività in corso'],
   ['Report', 'Revisione e consegna'],
   ['Retest', 'Verifiche dopo i fix: richiesta del cliente e date'],
@@ -1017,7 +1018,7 @@ function docTag(kind, opts = {}) {
 // Anello di avanzamento: stessi numeri della pastiglia engagement, riusabile
 // dove serve una versione compatta (lista, calendario).
 function progressRing(e, opts = {}) {
-  const total = Number(e && e.stepCount) || (e && e.retestPlanned ? 9 : 7);
+  const total = Number(e && e.stepCount) || (e && e.retestPlanned ? 10 : 8);
   const index = Math.max(0, Math.min(Number(e && e.stepIndex) || 0, total));
   const percent = Math.round((index / total) * 100);
   const label = `Passo ${index} di ${total}`;
@@ -1034,7 +1035,7 @@ function engPill(e, opts = {}) {
     : daysSince((actionState(e) || {}).since) >= STALE_DAYS;
   const client = clientFor(e);
   const src = faviconUrl(client && client.website);
-  const total = Number(e.stepCount) || (e.retestPlanned ? 9 : 7);
+  const total = Number(e.stepCount) || (e.retestPlanned ? 10 : 8);
   const index = Math.max(0, Math.min(Number(e.stepIndex) || 0, total));
 
   return `<span class="eng-pill${late ? ' late' : ''}" title="${esc(e.name)} · ${esc(e.clientName || '')} · passo ${index} di ${total}">
@@ -2098,6 +2099,7 @@ const PHASES = [
   ['Scope', 'Scope'],
   ['Planning', 'Pianificazione'],
   ['Credentials', 'Credenziali'],
+  ['Reachability', 'Raggiungibilità'],
   ['Scheduled', 'Pianificato'],
   ['Running', 'In esecuzione'],
   ['Reporting', 'Report'],
@@ -2671,6 +2673,14 @@ function nextAction(d) {
     case 'Credentials':
       message = `Scope completato: in attesa delle credenziali di accesso per l'esecuzione.`;
       break;
+    case 'Reachability': {
+      const reach = d.reachability || {};
+      const targets = [d.scope?.host, d.scope?.ipRange].filter(Boolean);
+      message = reach.verified
+        ? `Target verificati dal Pentester${reach.verifiedBy ? ` (${reach.verifiedBy})` : ''}: l'attività può partire.`
+        : `Credenziali ricevute: il Pentester deve verificare che tutti i target in scope rispondano${targets.length ? ` (${targets.join(', ')})` : ''}.`;
+      break;
+    }
     case 'Scheduled':
       message = `Tutto pronto: attività pianificata dal ${fmt(accepted?.startDate)} al ${fmt(accepted?.endDate)}.`;
       break;
@@ -2732,10 +2742,11 @@ const DETAIL_PANELS = {
   scope: { n:'2', short:'Scope', group:'Workflow', title:'Scope', desc:'Perimetro, finestre e referente', phase:'Scope' },
   plan: { n:'3', short:'Pianificazione', group:'Workflow', title:'Pianificazione', desc:'Proposta e approvazione delle date', phase:'Planning' },
   cred: { n:'4', short:'Credenziali', group:'Workflow', title:'Credenziali', desc:'Accessi per l\'esecuzione', phase:'Credentials' },
-  run: { n:'5', short:'Esecuzione', group:'Workflow', title:'Esecuzione', desc:'Avanzamento dell\'attività', phase:'Scheduled,Running' },
-  reports: { n:'6', short:'Report', group:'Workflow', title:'Report', desc:'Revisione e consegna dei deliverable', phase:'Reporting' },
-  retest: { n:'7', short:'Retest', group:'Workflow', tab:'reports', title:'Retest', desc:'Verifiche dopo i fix: richiesta del cliente e date', phase:'Retest' },
-  retestreport: { n:'8', short:'Report retest', group:'Workflow', tab:'reports', title:'Report di retest', desc:'Invio al cliente senza revisione', phase:'RetestReporting' },
+  reach: { n:'5', short:'Raggiungibilità', group:'Workflow', tab:'cred', title:'Raggiungibilità', desc:'Verifica che tutti i target in scope rispondano', phase:'Reachability' },
+  run: { n:'6', short:'Esecuzione', group:'Workflow', title:'Esecuzione', desc:'Avanzamento dell\'attività', phase:'Scheduled,Running' },
+  reports: { n:'7', short:'Report', group:'Workflow', title:'Report', desc:'Revisione e consegna dei deliverable', phase:'Reporting' },
+  retest: { n:'8', short:'Retest', group:'Workflow', tab:'reports', title:'Retest', desc:'Verifiche dopo i fix: richiesta del cliente e date', phase:'Retest' },
+  retestreport: { n:'9', short:'Report retest', group:'Workflow', tab:'reports', title:'Report di retest', desc:'Invio al cliente senza revisione', phase:'RetestReporting' },
   dl: { n:'', short:'Distribution list', group:'Gestione', title:'Distribution list', desc:'Notifiche e invio deliverables' },
   team: { n:'', short:'Team', group:'Gestione', title:'Team esterno', desc:'Partecipanti al cliente e all\'engagement' },
   mail: { n:'', short:'Comunicazioni', group:'Gestione', title:'Comunicazioni', desc:'Email automatiche e registro invii' },
@@ -2745,8 +2756,8 @@ const DETAIL_PANELS = {
 // I due passi del retest esistono solo se il recheck è previsto.
 function workflowSteps(d) {
   const base = isClient()
-    ? ['docs', 'scope', 'plan', 'cred', 'run', 'reports']
-    : ['setup', 'docs', 'scope', 'plan', 'cred', 'run', 'reports'];
+    ? ['docs', 'scope', 'plan', 'cred', 'reach', 'run', 'reports']
+    : ['setup', 'docs', 'scope', 'plan', 'cred', 'reach', 'run', 'reports'];
 
   return d.retest?.planned ? [...base, 'retest', 'retestreport'] : base;
 }
@@ -3266,6 +3277,32 @@ function tabScope(d) {
   </div>`;
 }
 
+// Verifica raggiungibilità: il Pentester conferma che i target in scope
+// rispondano con le credenziali ricevute (prima dell'esecuzione).
+function reachabilityCard(d) {
+  const r = d.reachability || {};
+  const targets = [d.scope?.host, d.scope?.ipRange].filter(Boolean);
+  const status = r.verified
+    ? pill(['Verificata', 'ok'])
+    : pill(['Da verificare', 'action']);
+
+  return `<div class="card" style="margin-top:12px">
+    <h2>Verifica raggiungibilità ${status}</h2>
+    <p class="sub">Il Pentester controlla che tutti i target in scope rispondano con le credenziali fornite, prima dell'avvio.</p>
+    <div class="note">Target in scope: ${targets.length
+      ? targets.map(target => `<b>${esc(target)}</b>`).join(' · ')
+      : 'non indicati nello scope'}.</div>
+    ${r.verified
+      ? `<p class="hint">Verificata da ${esc(r.verifiedBy || 'Pentester')}${r.verifiedDate ? ` il ${fmt(r.verifiedDate)}` : ''}.</p>`
+      : '<p class="hint">In attesa della conferma del Pentester.</p>'}
+    ${r.canVerify ? `<div class="inline-actions">
+      ${r.verified
+        ? '<button class="btn sec" data-act="verify-reachability" data-verified="0">Annulla verifica</button>'
+        : '<button class="btn pri" data-act="verify-reachability" data-verified="1">Confermo: tutti i target sono raggiungibili</button>'}
+    </div>` : ''}
+  </div>`;
+}
+
 function tabCred(d) {
   const e = d.engagement;
   if (!e.hasManleva || !e.orderConfirmed || !e.financialsDone || !e.financialsApproved) {
@@ -3293,7 +3330,7 @@ function tabCred(d) {
         ['Note', c.notes || '–']
       ].map(r => `<tr><td>${r[0]}</td><td><b>${esc(r[1])}</b></td></tr>`).join('')}
       </table>
-    </div>`;
+    </div>${reachabilityCard(d)}`;
   }
 
   const options = ['Vault aziendale', 'File cifrato (password su canale separato)', 'Altro (concordato con Pentester)'];
@@ -3316,7 +3353,7 @@ function tabCred(d) {
       <button class="btn pri" data-act="save-credentials">Salva credenziali</button>
       <span class="hint">Salva prima di cambiare sezione.</span>
     </div>
-  </div>`;
+  </div>${reachabilityCard(d)}`;
 }
 
 function reviewCard(d) {
@@ -5064,7 +5101,7 @@ function calPopHtml(ev, todayKey) {
     : stateLabel;
   const workDays = calWorkingDays(ev.start, ev.end);
 
-  return `<div class="cal-pop" role="dialog" aria-label="Dettaglio engagement">
+  return `<div class="cal-pop" role="dialog" aria-label="Dettaglio engagement" data-start="${esc(ev.start)}" data-end="${esc(ev.end)}" data-kind="${esc(ev.kind)}">
     <div class="cp-head">
       <b>${esc(ev.name)}</b>
       <span class="pill p-${stateKind}">${esc(stateLabel)}</span>
@@ -5122,20 +5159,37 @@ async function loadCalendarSolicitation(id) {
   }
 }
 
-// Dopo il dettaglio: se chi aspetta può sollecitare, aggiunge il pulsante.
+// Dopo il dettaglio: se chi aspetta può sollecitare, aggiunge il pulsante; se
+// l'evento è una proposta di date, il Manager può approvarla o rifiutarla.
 function renderCalendarPopFoot() {
-  const foot = document.querySelector('.cal-pop .cp-foot');
+  const pop = document.querySelector('.cal-pop .cp-foot');
   const detail = state.calendarDetail;
-  if (!foot || !detail) return;
+  if (!pop || !detail) return;
+
+  const root = document.querySelector('.cal-pop');
+  const start = root?.dataset.start || '';
+  const end = root?.dataset.end || '';
+  const proposals = detail.engagement?.proposals || [];
+  const pending = proposals.find(proposal =>
+    proposal.status === 'Pending' &&
+    String(proposal.startDate || '').slice(0, 10) === start &&
+    String(proposal.endDate || proposal.startDate || '').slice(0, 10) === end);
+  const decide = pending && state.role === 'Manager'
+    ? `<button class="decide yes sm" data-act="cal-decide" data-id="${esc(detail.engagement.id)}" data-pid="${esc(pending.id)}" data-accept="1">Approva</button>
+       <button class="decide no sm" data-act="cal-decide" data-id="${esc(detail.engagement.id)}" data-pid="${esc(pending.id)}" data-accept="0">Rifiuta</button>`
+    : '';
+
   const s = detail.solicitation;
   const owners = (s?.owners || []).filter(owner => owner && owner.name);
   const who = owners.length ? owners[0].name : (s?.recipient || '');
   const solicit = s?.canSend
     ? `<button class="btn sec sm" data-act="cal-solicit" data-id="${esc(detail.engagement.id)}">Sollecita${who ? ` ${esc(who)}` : ''}</button>`
     : '';
-  foot.innerHTML = `
+
+  pop.innerHTML = `
     <button class="btn pri sm" data-act="open-action" data-id="${esc(detail.engagement.id)}">Apri engagement</button>
     ${solicit}
+    ${decide}
     <button class="btn sec sm" data-act="cal-select" data-key="">Chiudi</button>`;
 }
 
@@ -6462,6 +6516,31 @@ const actions = {
     } catch (error) { toast(error.message); }
   },
 
+  'cal-decide': async el => {
+    const accept = el.dataset.accept === '1';
+    let reason = null;
+    if (!accept) {
+      const v = await ask({
+        title: 'Rifiuta proposta',
+        ok: 'Rifiuta',
+        danger: true,
+        fields: [{ id: 'reason', label: 'Motivazione*', area: true }]
+      });
+      if (!v) return;
+      if (!v.reason) { toast('Indica il motivo del rifiuto'); return; }
+      reason = v.reason;
+    }
+    try {
+      await api(`/api/engagements/${encodeURIComponent(el.dataset.id)}/proposals/${encodeURIComponent(el.dataset.pid)}/decide?` + qs(), {
+        method: 'POST', body: JSON.stringify({ accept, reason })
+      });
+      toast(accept ? 'Proposta approvata' : 'Proposta rifiutata');
+      state.calendarSel = '';
+      state.calendarDetail = null;
+      await loadCalendar();
+    } catch (error) { toast(error.message); }
+  },
+
   'start-edit': el => {
     state.editing[el.dataset.key] = true;
     render();
@@ -6779,6 +6858,18 @@ const actions = {
       await refreshDetail();
       await loadCredentials();
       render();
+    } catch (error) { toast(error.message); }
+  },
+
+  'verify-reachability': async el => {
+    const verified = el.dataset.verified === '1';
+    try {
+      await api(`/api/engagements/${engagedId()}/reachability?` + qs(), {
+        method: 'POST', body: JSON.stringify({ verified })
+      });
+      toast(verified ? 'Raggiungibilità confermata' : 'Verifica annullata');
+      await refreshDetail();
+      await loadList();
     } catch (error) { toast(error.message); }
   },
 
@@ -7103,6 +7194,7 @@ const busyActions = new Set([
   'new-engagement', 'save-rule-details', 'send-solicitation', 'upload-manleva',
   'upload-ingaggio', 'register-order', 'save-order', 'edit-financials', 'save-financials-inline', 'approve-financials', 'propose', 'reschedule',
   'decide', 'save-scope', 'save-credentials', 'save-setup', 'upload-report',
+  'verify-reachability',
   'download-report', 'create-download-link', 'submit-review', 'review-decide', 'publish', 'add-dl',
   'remove-dl', 'invite-team', 'remove-team', 'toggle-mail', 'send-mail', 'export-log', 'retry-list',
   'admin-save-templates'

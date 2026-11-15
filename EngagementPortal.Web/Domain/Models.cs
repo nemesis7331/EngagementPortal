@@ -21,9 +21,10 @@ public enum EngagementPhase
     Scope,       // 2. Scope
     Planning,    // 3. Pianificazione
     Credentials, // 4. Credenziali
-    Scheduled,   // 5. Esecuzione (prima dell'avvio)
-    Running,     // 5. Esecuzione (in corso)
-    Reporting,   // 6. Report
+    Reachability,// 5. Verifica raggiungibilità dei target in scope
+    Scheduled,   // 6. Esecuzione (prima dell'avvio)
+    Running,     // 6. Esecuzione (in corso)
+    Reporting,   // 7. Report
     Retest,          // 7. Retest: richiesta del cliente, date ed esecuzione
     RetestReporting, // 8. Report del retest: invio al cliente senza revisione
     Done
@@ -324,6 +325,15 @@ public sealed class Engagement
     public bool CredentialsDone { get; set; }
     public string? SecretReference { get; set; }
 
+    /// <summary>
+    /// Il Pentester ha verificato che tutti i target in scope siano
+    /// raggiungibili con le credenziali fornite: senza questa conferma
+    /// l'attività non passa all'esecuzione.
+    /// </summary>
+    public bool ReachabilityVerified { get; set; }
+    public string? ReachabilityVerifiedBy { get; set; }
+    public DateTimeOffset? ReachabilityVerifiedDate { get; set; }
+
     public string? ManlevaFile { get; set; }
     public string? DocumentoIngaggioFile { get; set; }
     public string? OrderRef { get; set; }
@@ -482,6 +492,9 @@ public sealed record CredentialsRequest(
     string? Users,
     string? DeliveryMethod,
     string? Notes);
+
+/// <summary>Conferma o annulla la verifica di raggiungibilità dei target.</summary>
+public sealed record ReachabilityRequest(bool Verified);
 
 public sealed record DistributionEntryRequest(
     string Name,

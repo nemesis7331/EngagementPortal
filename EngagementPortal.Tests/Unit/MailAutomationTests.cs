@@ -38,7 +38,8 @@ public sealed class MailAutomationTests
             Margin = 46m,
             FinancialsApproved = true,
             ScopeDone = true,
-            CredentialsDone = true
+            CredentialsDone = true,
+        ReachabilityVerified = true
         };
 
         engagement.Proposals.Add(new Proposal
@@ -99,7 +100,8 @@ public sealed class MailAutomationTests
             HasManleva = true,
             OrderConfirmed = true,
             ScopeDone = true,
-            CredentialsDone = true
+            CredentialsDone = true,
+        ReachabilityVerified = true
         };
 
         engagement.Proposals.Add(new Proposal

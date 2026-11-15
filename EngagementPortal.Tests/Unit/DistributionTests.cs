@@ -150,6 +150,7 @@ public sealed class DistributionTests
         Margin = 46m,
         FinancialsApproved = true,
         ScopeDone = true,
-        CredentialsDone = true
+        CredentialsDone = true,
+        ReachabilityVerified = true
     };
 }

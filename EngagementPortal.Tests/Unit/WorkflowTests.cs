@@ -37,7 +37,8 @@ public class WorkflowTests
         Margin = 46m,
         FinancialsApproved = true,
         ScopeDone = true,
-        CredentialsDone = true
+        CredentialsDone = true,
+        ReachabilityVerified = true
     };
 
     private static void AddAcceptedProposal(
@@ -167,6 +168,31 @@ public class WorkflowTests
     {
         var engagement = NewEngagement();
         AddAcceptedProposal(engagement, Today.AddDays(2), Today.AddDays(5));
+
+        Assert.Equal(
+            EngagementPhase.Scheduled,
+            Workflow().Resolve(engagement));
+    }
+
+    [Fact]
+    public void Reachability_IsRequiredBeforeExecution()
+    {
+        var engagement = NewEngagement();
+        engagement.ReachabilityVerified = false;
+        AddAcceptedProposal(engagement, Today.AddDays(2), Today.AddDays(6));
+
+        // Con le credenziali ma senza verifica dei target si resta fermi qui.
+        Assert.Equal(
+            EngagementPhase.Reachability,
+            Workflow().Resolve(engagement));
+
+        var todo = new TodoResolver(Workflow())
+            .Resolve(engagement, Roles.Pentester);
+
+        Assert.NotNull(todo);
+        Assert.Equal("reach", todo!.TargetTab);
+
+        engagement.ReachabilityVerified = true;
 
         Assert.Equal(
             EngagementPhase.Scheduled,
@@ -461,11 +487,12 @@ public class WorkflowTests
         Assert.Equal(2, EngagementWorkflow.StepIndex(EngagementPhase.Scope));
         Assert.Equal(3, EngagementWorkflow.StepIndex(EngagementPhase.Planning));
         Assert.Equal(4, EngagementWorkflow.StepIndex(EngagementPhase.Credentials));
-        Assert.Equal(5, EngagementWorkflow.StepIndex(EngagementPhase.Running));
-        Assert.Equal(6, EngagementWorkflow.StepIndex(EngagementPhase.Reporting));
-        Assert.Equal(7, EngagementWorkflow.StepIndex(EngagementPhase.Retest));
-        Assert.Equal(8, EngagementWorkflow.StepIndex(EngagementPhase.RetestReporting));
-        Assert.Equal(9, EngagementWorkflow.StepIndex(EngagementPhase.Done));
+        Assert.Equal(5, EngagementWorkflow.StepIndex(EngagementPhase.Reachability));
+        Assert.Equal(6, EngagementWorkflow.StepIndex(EngagementPhase.Running));
+        Assert.Equal(7, EngagementWorkflow.StepIndex(EngagementPhase.Reporting));
+        Assert.Equal(8, EngagementWorkflow.StepIndex(EngagementPhase.Retest));
+        Assert.Equal(9, EngagementWorkflow.StepIndex(EngagementPhase.RetestReporting));
+        Assert.Equal(10, EngagementWorkflow.StepIndex(EngagementPhase.Done));
     }
 
     [Fact]

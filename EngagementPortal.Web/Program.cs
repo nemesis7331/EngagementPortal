@@ -621,7 +621,7 @@ api.MapGet("/admin/mailing-lists", (
             EngagementType = engagement.TypeKey,
             StepIndex = EngagementWorkflow.StepIndex(
                 workflow.Resolve(engagement, clock.Today)),
-            StepCount = engagement.RetestPlanned ? 9 : 7,
+            StepCount = engagement.RetestPlanned ? 10 : 8,
             Kind = "notifications",
             KindLabel = "Notifiche",
             Recipients = engagement.DistributionList,
@@ -644,7 +644,7 @@ api.MapGet("/admin/mailing-lists", (
             EngagementType = engagement.TypeKey,
             StepIndex = EngagementWorkflow.StepIndex(
                 workflow.Resolve(engagement, clock.Today)),
-            StepCount = engagement.RetestPlanned ? 9 : 7,
+            StepCount = engagement.RetestPlanned ? 10 : 8,
             Kind = "deliverables",
             KindLabel = "Deliverables",
             Recipients = engagement.DeliverablesDistributionList,
@@ -2083,8 +2083,7 @@ api.MapPut("/engagements/{id}/credentials", (
     IEngagementRepository repository,
     EngagementWorkflow workflow,
     IDateProvider clock) =>
-{
-    var user = GetUser(context);
+{    var user = GetUser(context);
     var engagement = Find(repository, id, user);
 
     if (engagement is null)
@@ -2119,6 +2118,55 @@ api.MapPut("/engagements/{id}/credentials", (
 
     repository.Save(engagement);
     return Results.Ok(credentials);
+});
+
+// Verifica raggiungibilità dei target in scope: conferma del Pentester dopo le
+// credenziali e prima dell'esecuzione (si può annullare finché non è partita).
+api.MapPost("/engagements/{id}/reachability", (
+    string id,
+    ReachabilityRequest request,
+    HttpContext context,
+    IEngagementRepository repository,
+    EngagementWorkflow workflow,
+    IDateProvider clock) =>
+{
+    var user = GetUser(context);
+    var engagement = Find(repository, id, user);
+
+    if (engagement is null)
+        return Results.NotFound();
+
+    if (user.Role != Roles.Pentester)
+        return Forbidden();
+
+    if (!engagement.CredentialsDone)
+        return Results.BadRequest("Prima servono le credenziali di accesso.");
+
+    var phase = workflow.Resolve(engagement, clock.Today);
+
+    if (phase is not (EngagementPhase.Reachability or EngagementPhase.Scheduled))
+    {
+        return Results.BadRequest(
+            "La verifica si può fare solo prima dell'esecuzione.");
+    }
+
+    if (request.Verified != engagement.ReachabilityVerified)
+    {
+        engagement.ReachabilityVerified = request.Verified;
+        engagement.ReachabilityVerifiedBy = request.Verified ? user.Name : null;
+        engagement.ReachabilityVerifiedDate = request.Verified ? clock.UtcNow : null;
+
+        engagement.AddAudit(
+            user.Name,
+            user.Role,
+            request.Verified
+                ? "Verificata la raggiungibilità di tutti i target in scope"
+                : "Verifica di raggiungibilità annullata",
+            AuditVisibility.ProviderOnly);
+    }
+
+    repository.Save(engagement);
+    return Results.Ok(new { verified = engagement.ReachabilityVerified });
 });
 
 api.MapGet("/engagements/{id}/reports", (
@@ -3922,7 +3970,7 @@ static object Summary(
         Phase = phase,
         StepIndex = EngagementWorkflow.StepIndex(phase),
         // Passi totali: sette, piu i due di retest quando il recheck e previsto.
-        StepCount = engagement.RetestPlanned ? 9 : 7,
+        StepCount = engagement.RetestPlanned ? 10 : 8,
         RetestPlanned = engagement.RetestPlanned,
         Todo = todos.Resolve(engagement, user.Role),
         ActionState = todos.ResolveAction(
@@ -4211,9 +4259,20 @@ static object Detail(
         },
         Phase = phase,
         StepIndex = EngagementWorkflow.StepIndex(phase),
-        // Passi totali: sette, piu i due di retest quando il recheck e previsto.
-        StepCount = engagement.RetestPlanned ? 9 : 7,
+        // Passi totali: otto, piu i due di retest quando il recheck e previsto.
+        StepCount = engagement.RetestPlanned ? 10 : 8,
         RetestPlanned = engagement.RetestPlanned,
+        // Verifica raggiungibilità: la conferma è del Pentester, prima
+        // dell'esecuzione; si può annullare finché l'attività non è partita.
+        Reachability = new
+        {
+            Verified = engagement.ReachabilityVerified,
+            VerifiedBy = engagement.ReachabilityVerifiedBy,
+            VerifiedDate = engagement.ReachabilityVerifiedDate?.ToString("yyyy-MM-dd"),
+            CanVerify = user.Role == Roles.Pentester &&
+                (phase is EngagementPhase.Reachability or EngagementPhase.Scheduled) &&
+                engagement.CredentialsDone
+        },
         Todo = todos.Resolve(engagement, user.Role),
         ActionState = todos.ResolveAction(
             engagement,

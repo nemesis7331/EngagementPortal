@@ -34,6 +34,9 @@ public sealed class EngagementWorkflow(IDateProvider clock)
         if (!engagement.CredentialsDone)
             missing.Add("credenziali");
 
+        if (engagement.CredentialsDone && !engagement.ReachabilityVerified)
+            missing.Add("verifica raggiungibilità");
+
         if (missing.Count == 0)
             return null;
 
@@ -80,6 +83,11 @@ public sealed class EngagementWorkflow(IDateProvider clock)
         if (!engagement.CredentialsDone)
             return EngagementPhase.Credentials;
 
+        // Ultimo controllo prima dell'esecuzione: il Pentester conferma che i
+        // target in scope rispondono con le credenziali ricevute.
+        if (!engagement.ReachabilityVerified)
+            return EngagementPhase.Reachability;
+
         if (today < proposal.StartDate)
             return EngagementPhase.Scheduled;
 
@@ -120,11 +128,12 @@ public sealed class EngagementWorkflow(IDateProvider clock)
         EngagementPhase.Scope => 2,
         EngagementPhase.Planning => 3,
         EngagementPhase.Credentials => 4,
-        EngagementPhase.Scheduled or EngagementPhase.Running => 5,
-        EngagementPhase.Reporting => 6,
-        EngagementPhase.Retest => 7,
-        EngagementPhase.RetestReporting => 8,
-        EngagementPhase.Done => 9,
+        EngagementPhase.Reachability => 5,
+        EngagementPhase.Scheduled or EngagementPhase.Running => 6,
+        EngagementPhase.Reporting => 7,
+        EngagementPhase.Retest => 8,
+        EngagementPhase.RetestReporting => 9,
+        EngagementPhase.Done => 10,
         _ => 0
     };
 
@@ -177,10 +186,12 @@ public sealed class EngagementWorkflow(IDateProvider clock)
             Roles.Client => phase is EngagementPhase.Scope or
                 EngagementPhase.Planning or
                 EngagementPhase.Credentials or
+                EngagementPhase.Reachability or
                 EngagementPhase.Scheduled,
             Roles.PMO => phase is EngagementPhase.Scope or
                 EngagementPhase.Planning or
                 EngagementPhase.Credentials or
+                EngagementPhase.Reachability or
                 EngagementPhase.Scheduled or
                 EngagementPhase.Running,
             _ => false
@@ -205,10 +216,12 @@ public sealed class EngagementWorkflow(IDateProvider clock)
             Roles.Client => phase is EngagementPhase.Scope or
                 EngagementPhase.Planning or
                 EngagementPhase.Credentials or
+                EngagementPhase.Reachability or
                 EngagementPhase.Scheduled,
             Roles.PMO => phase is EngagementPhase.Scope or
                 EngagementPhase.Planning or
                 EngagementPhase.Credentials or
+                EngagementPhase.Reachability or
                 EngagementPhase.Scheduled or
                 EngagementPhase.Running,
             Roles.Manager => phase is not EngagementPhase.Done,
@@ -398,6 +411,16 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
             role is Roles.Client or Roles.PMO)
             return new TodoItem("Fornisci le credenziali di accesso", "cred");
 
+        // Raggiungibilità: la conferma è del Pentester, dopo le credenziali.
+        if (phase == EngagementPhase.Reachability)
+        {
+            return role == Roles.Pentester
+                ? new TodoItem(
+                    "Verifica la raggiungibilità di tutti i target in scope",
+                    "reach")
+                : null;
+        }
+
         if (phase == EngagementPhase.Reporting &&
             role == Roles.Pentester)
         {
@@ -547,6 +570,18 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
                                 "wait",
                                 "In attesa delle credenziali dal cliente");
 
+        // Verifica raggiungibilità: passo del Pentester tra credenziali ed
+        // esecuzione, visibile nella scheda Credenziali.
+        tabs["reach"] = !docsReady
+            ? new TabState("lock", "Si sblocca dopo setup, firma, ordine, costi e approvazione")
+            : !engagement.CredentialsDone
+                ? new TabState("wait", "Si sblocca dopo le credenziali di accesso")
+                : engagement.ReachabilityVerified
+                    ? new TabState("ok", null)
+                    : todo?.TargetTab == "reach"
+                        ? new TabState("todo", todo.Action)
+                        : new TabState("wait", "In attesa della verifica del Pentester");
+
         if (!engagement.SetupDone)
         {
             tabs["reports"] = new TabState(
@@ -604,6 +639,7 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
         // anche quando l'attività è già pianificata o in corso.
         if ((phase is EngagementPhase.Scope or
                 EngagementPhase.Credentials or
+                EngagementPhase.Reachability or
                 EngagementPhase.Scheduled or
                 EngagementPhase.Running) &&
             PendingProposal(engagement) is { } reschedule)
@@ -690,6 +726,13 @@ public sealed class TodoResolver(EngagementWorkflow workflow)
                     Roles.Client,
                     OwnerLabel(Roles.Client),
                     "In attesa delle credenziali dal cliente",
+                    SincePreparation(engagement));
+
+            case EngagementPhase.Reachability:
+                return Wait(
+                    Roles.Pentester,
+                    OwnerLabel(Roles.Pentester),
+                    "In attesa della verifica di raggiungibilità dei target",
                     SincePreparation(engagement));
 
             case EngagementPhase.Scheduled:

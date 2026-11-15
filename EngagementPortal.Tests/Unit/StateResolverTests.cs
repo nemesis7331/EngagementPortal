@@ -37,7 +37,8 @@ public sealed class StateResolverTests
         Margin = 46m,
         FinancialsApproved = true,
         ScopeDone = true,
-        CredentialsDone = true
+        CredentialsDone = true,
+        ReachabilityVerified = true
     };
 
     private static void AddAcceptedProposal(

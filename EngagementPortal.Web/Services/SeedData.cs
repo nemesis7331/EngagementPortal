@@ -363,7 +363,8 @@ public static class SeedData
     {
         var engagement = New(
             "ENG-2026-008", "nvidia", "Nvidia",
-            "CR API pagamenti", EngagementType.CodeReview, 8);
+            "CR API pagamenti", EngagementType.CodeReview, 8,
+            reachabilityVerified: false);
 
         var start = Monday(3);
         var end = Friday(start);
@@ -390,7 +391,8 @@ public static class SeedData
         var engagement = New(
             "ENG-2026-009", "anthropic", "Anthropic",
             "PT app mobile",
-            EngagementType.PenetrationTest, 3);
+            EngagementType.PenetrationTest, 3,
+            reachabilityVerified: false);
 
         Docs(engagement, "PO-2026-0210");
         Financials(engagement, 16000m, 46m);
@@ -557,7 +559,8 @@ public static class SeedData
         string name,
         EngagementType type,
         int createdDaysAgo,
-        bool? retestPlanned = null) => new()
+        bool? retestPlanned = null,
+        bool reachabilityVerified = true) => new()
         {
             Id = id,
             ClientId = clientId,
@@ -569,7 +572,9 @@ public static class SeedData
             // Default del catalogo tipi: il Red Team non prevede il retest.
             RetestPlanned = retestPlanned ?? type != EngagementType.RedTeam,
             RetestDecidedByName = "Luca Ferri",
-            RetestDecidedDate = DaysAgo(createdDaysAgo)
+            RetestDecidedDate = DaysAgo(createdDaysAgo),
+            // Le attività già avviate hanno passato la verifica dei target.
+            ReachabilityVerified = reachabilityVerified
         };
 
     private static void Docs(Engagement engagement, string orderRef)
