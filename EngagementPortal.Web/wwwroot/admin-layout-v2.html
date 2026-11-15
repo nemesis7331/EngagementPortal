@@ -78,16 +78,29 @@ h1{font-size:32px;line-height:1.12;letter-spacing:-.025em;color:var(--navy);marg
 .icon-btn:hover{background:var(--surface);color:var(--navy)}
 .m-av{width:28px;height:28px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;font-size:10px;font-weight:800}
 .m-body{display:flex;height:calc(100% - 52px);min-height:0}
-.m-side{width:228px;background:var(--navy);color:#c9d9e7;display:flex;flex-direction:column;padding:12px 10px;flex:none}
-.side-label{font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;color:#7d9bb4;padding:4px 9px 8px;font-weight:800}
-.side-item{display:flex;align-items:center;gap:9px;width:100%;border:0;background:none;color:#b9cee0;padding:8px 9px;border-radius:7px;text-align:left;font-size:12.5px;font-weight:550}
+.m-side{width:228px;background:var(--navy);color:#c9d9e7;display:flex;flex-direction:column;padding:12px 10px;flex:none;transition:width .18s ease,padding .18s ease}
+.side-group{display:grid;gap:1px;margin-bottom:8px}
+.side-label{font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;color:#7d9bb4;padding:4px 9px 8px;font-weight:800;white-space:nowrap}
+.side-item{display:flex;align-items:center;gap:9px;width:100%;border:0;background:none;color:#b9cee0;padding:8px 9px;border-radius:7px;text-align:left;font-size:12.5px;font-weight:550;white-space:nowrap}
 .side-item:hover{background:rgba(255,255,255,.06);color:#fff}
 .side-item.on{background:#123e63;color:#fff;box-shadow:inset 2px 0 0 var(--teal)}
 .side-item .side-cnt{margin-left:auto;font-size:10.5px;background:rgba(255,255,255,.09);border-radius:999px;padding:1px 6px;color:#c9d9e7}
 .side-item.on .side-cnt{background:rgba(14,159,181,.22);color:#9ee7f0}
+.side-item .side-cnt.warn{background:rgba(245,158,11,.18);color:#fcd34d}
 .side-sep{height:1px;background:rgba(255,255,255,.09);margin:10px 6px}
 .side-foot{margin-top:auto;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);border-radius:9px;padding:9px 10px;font-size:10.5px;color:#9db8ce;line-height:1.4}
 .side-foot b{color:#fff;font-family:var(--mono);font-size:10px;border:1px solid rgba(255,255,255,.2);border-radius:4px;padding:1px 5px}
+.side-foot .foot-mini{display:none}
+.side-toggle{margin-right:1px}
+.m-side.is-collapsed{width:64px;padding:12px 8px}
+.m-side.is-collapsed .side-label,.m-side.is-collapsed .side-txt,.m-side.is-collapsed .side-cnt{display:none}
+.m-side.is-collapsed .side-item{justify-content:center;padding:9px 0;gap:0}
+.m-side.is-collapsed .side-item .ic{width:18px;height:18px}
+.m-side.is-collapsed .side-group{margin-bottom:4px}
+.m-side.is-collapsed .side-sep{margin:8px 4px}
+.m-side.is-collapsed .side-foot{padding:7px 0;text-align:center;border-radius:7px}
+.m-side.is-collapsed .side-foot .foot-full{display:none}
+.m-side.is-collapsed .side-foot .foot-mini{display:block;border:0;font-size:10px;letter-spacing:.06em}
 .m-main{flex:1;min-width:0;padding:14px 16px;display:flex;flex-direction:column;gap:11px;overflow:auto}
 .m-pagehead{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap}
 .m-pagehead h2{font-size:19px;letter-spacing:-.01em;color:var(--navy);line-height:1.2}
@@ -432,6 +445,7 @@ tr.on .expander{transform:rotate(90deg);border-color:#cfe2f4;color:var(--blue);b
 <body>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-panel" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></symbol>
   <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.6-3 2.8-4.6 5.5-4.6S13.9 16 14.5 19"/><path d="M16 6.4a3 3 0 0 1 0 5.8"/><path d="M17.5 14.6c2 .5 3.2 1.9 3.6 4.4"/></symbol>
   <symbol id="i-building" viewBox="0 0 24 24"><path d="M4 21V5.5A1.5 1.5 0 0 1 5.5 4h7A1.5 1.5 0 0 1 14 5.5V21"/><path d="M14 10h4.5A1.5 1.5 0 0 1 20 11.5V21"/><path d="M2.5 21h19"/><path d="M7 8h4M7 12h4M7 16h4M17 13h1M17 17h1"/></symbol>
   <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></symbol>
@@ -489,7 +503,7 @@ tr.on .expander{transform:rotate(90deg);border-color:#cfe2f4;color:var(--blue);b
       <div class="note"><b>Oggi:</b> il dettaglio occupa 340 px anche da vuoto. Le proposte qui sotto spostano il dettaglio in un drawer, in una banda inline, in una peek panel o in un comando: si apre <b>solo quando serve</b>.</div>
     </div>
     <div class="switcher" role="tablist" aria-label="Layout proposti">
-      <button class="on" data-v="a" role="tab" aria-selected="true"><span class="k">A</span>Classic admin <span class="hint">· topbar + sidebar + KPI</span></button>
+      <button class="on" data-v="a" role="tab" aria-selected="true"><span class="k">A</span>Classic admin <span class="hint">· sidebar globale collassabile</span></button>
       <button data-v="b" role="tab" aria-selected="false"><span class="k">B</span>Inbox split <span class="hint">· rail icone + lista + dettaglio</span></button>
       <button data-v="c" role="tab" aria-selected="false"><span class="k">C</span>Inline expand <span class="hint">· zero pannelli</span></button>
       <button data-v="d" role="tab" aria-selected="false"><span class="k">D</span>Data grid <span class="hint">· bulk + editing</span></button>
@@ -500,11 +514,12 @@ tr.on .expander{transform:rotate(90deg);border-color:#cfe2f4;color:var(--blue);b
   <!-- ===== A ===== -->
   <section class="proposal active" id="p-a">
     <div class="p-head"><span class="p-tag">Proposta A · standard</span><h2>Classic admin + scheda a tutto schermo</h2></div>
-    <p class="p-desc">La struttura che tutti conoscono: topbar globale, sidebar scura da 228 px, KPI compatti, toolbar e tabella full width. Il dettaglio non è un drawer stretto con i tab: è un <b>pannello centrale che occupa quasi tutto lo schermo</b> e mostra profilo, permessi, clienti, engagement, mailing list, sicurezza e attività <b>in un colpo d'occhio</b>.</p>
-    <div class="p-metrics"><span><b>Pannello ~90%</b></span><span><b>0 tab</b></span><span><b>Tabella ~990 px</b></span><span><b>Tutto</b> in una vista</span></div>
+    <p class="p-desc">La struttura che tutti conoscono, ma con <b>una sola navigazione per tutto il portale</b>: Engagement, Clienti, Solleciti, Amministrazione e Audit nella stessa sidebar, che si comprime a 64 px lasciando solo le icone. Utenti e Clienti sono le stesse pagine dell'area Amministrazione: una voce sola, non due. Il dettaglio è un <b>pannello centrale che occupa quasi tutto lo schermo</b> e mostra profilo, permessi, clienti, engagement, mailing list, sicurezza e attività <b>in un colpo d'occhio</b>, senza tab.</p>
+    <div class="p-metrics"><span><b>Sidebar 228 ↔ 64 px</b></span><span><b>1</b> navigazione per tutto il sito</span><span><b>Pannello ~90%</b></span><span><b>0 tab</b></span></div>
 
     <div class="mock" data-mock="a">
       <div class="m-top">
+        <button class="icon-btn side-toggle" data-side-toggle="a" title="Comprimi menu ( [ )" aria-label="Comprimi menu"><svg class="ic sm"><use href="#i-panel"/></svg></button>
         <div class="m-brand"><i>CE</i>Cyber Engagement Portal</div>
         <div class="m-crumb">Amministrazione <span>/</span> <b>Utenti</b></div>
         <div class="m-glob"><svg class="ic sm"><use href="#i-search"/></svg><span>Cerca utenti, clienti, azioni…</span><kbd>⌘K</kbd></div>
@@ -514,17 +529,26 @@ tr.on .expander{transform:rotate(90deg);border-color:#cfe2f4;color:var(--blue);b
         </div>
       </div>
       <div class="m-body">
-        <aside class="m-side">
-          <div class="side-label">Amministrazione</div>
-          <button class="side-item on" data-sect="Utenti"><svg class="ic sm"><use href="#i-users"/></svg>Utenti<span class="side-cnt">13</span></button>
-          <button class="side-item" data-sect="Clienti"><svg class="ic sm"><use href="#i-building"/></svg>Clienti<span class="side-cnt">6</span></button>
-          <button class="side-item" data-sect="Mailing list"><svg class="ic sm"><use href="#i-mail"/></svg>Mailing list<span class="side-cnt">42</span></button>
-          <button class="side-item" data-sect="Template mail"><svg class="ic sm"><use href="#i-file"/></svg>Template mail<span class="side-cnt">7</span></button>
-          <button class="side-item" data-sect="Impostazioni"><svg class="ic sm"><use href="#i-sliders"/></svg>Impostazioni</button>
-          <div class="side-sep"></div>
-          <button class="side-item" data-sect="Audit"><svg class="ic sm"><use href="#i-shield"/></svg>Audit</button>
-          <button class="side-item" data-sect="Esportazioni"><svg class="ic sm"><use href="#i-download"/></svg>Esportazioni</button>
-          <div class="side-foot"><b>⌘K</b> salta a un utente o a un'azione senza usare il mouse.</div>
+        <aside class="m-side" id="a-side">
+          <div class="side-group">
+            <div class="side-label">Portale</div>
+            <button class="side-item" data-sect="Engagement" title="Engagement"><svg class="ic sm"><use href="#i-grid"/></svg><span class="side-txt">Engagement</span><span class="side-cnt">15</span></button>
+            <button class="side-item" data-sect="Clienti" title="Clienti"><svg class="ic sm"><use href="#i-building"/></svg><span class="side-txt">Clienti</span><span class="side-cnt">6</span></button>
+            <button class="side-item" data-sect="Solleciti" title="Solleciti"><svg class="ic sm"><use href="#i-bell"/></svg><span class="side-txt">Solleciti</span><span class="side-cnt warn">3</span></button>
+          </div>
+          <div class="side-group">
+            <div class="side-label">Amministrazione</div>
+            <button class="side-item on" data-sect="Utenti" title="Utenti"><svg class="ic sm"><use href="#i-users"/></svg><span class="side-txt">Utenti</span><span class="side-cnt">13</span></button>
+            <button class="side-item" data-sect="Mailing list" title="Mailing list"><svg class="ic sm"><use href="#i-mail"/></svg><span class="side-txt">Mailing list</span><span class="side-cnt">42</span></button>
+            <button class="side-item" data-sect="Template mail" title="Template mail"><svg class="ic sm"><use href="#i-file"/></svg><span class="side-txt">Template mail</span><span class="side-cnt">7</span></button>
+            <button class="side-item" data-sect="Impostazioni" title="Impostazioni"><svg class="ic sm"><use href="#i-sliders"/></svg><span class="side-txt">Impostazioni</span></button>
+          </div>
+          <div class="side-group">
+            <div class="side-label">Sistema</div>
+            <button class="side-item" data-sect="Audit" title="Audit"><svg class="ic sm"><use href="#i-shield"/></svg><span class="side-txt">Audit</span></button>
+            <button class="side-item" data-sect="Esportazioni" title="Esportazioni"><svg class="ic sm"><use href="#i-download"/></svg><span class="side-txt">Esportazioni</span></button>
+          </div>
+          <div class="side-foot"><span class="foot-full"><b>⌘K</b> salta a un utente o a un'azione senza usare il mouse.</span><span class="foot-mini">⌘K</span></div>
         </aside>
         <section class="m-main">
           <div class="m-pagehead">
@@ -592,10 +616,10 @@ tr.on .expander{transform:rotate(90deg);border-color:#cfe2f4;color:var(--blue);b
     </div>
 
     <div class="pc">
-      <div class="good"><h5>Perché funziona</h5><ul><li>È il pattern che ogni admin riconosce: zero apprendimento.</li><li>La scheda grande mostra tutto subito: niente tab da scoprire.</li><li>La tabella resta full width finché la scheda è chiusa.</li><li>KPI e azioni stanno sopra la tabella, dove servono.</li></ul></div>
-      <div class="bad"><h5>Da valutare</h5><ul><li>La scheda copre quasi tutta la tabella mentre è aperta.</li><li>Molte informazioni insieme: serve una buona gerarchia visiva.</li><li>Su schermi piccoli la scheda passa a 2 o 1 colonna.</li></ul></div>
+      <div class="good"><h5>Perché funziona</h5><ul><li>Una sola sidebar per tutto il sito: niente “app dentro l’app”.</li><li>Si comprime a 64 px: più spazio alla tabella su laptop.</li><li>La scheda grande mostra tutto subito: niente tab da scoprire.</li><li>Persone, Clienti, Mailing list e Template sono voci dello stesso menu.</li></ul></div>
+      <div class="bad"><h5>Da valutare</h5><ul><li>Serve una IA chiara: gruppi Portale / Amministrazione / Sistema.</li><li>La scheda copre quasi tutta la tabella mentre è aperta.</li><li>Su schermi piccoli la sidebar diventa off-canvas.</li></ul></div>
     </div>
-    <div class="verdict"><svg class="ic"><use href="#i-check"/></svg><div><b>Ideale se</b> vuoi la scelta più sicura e standard, con una tabella larga e una scheda che mostra tutto in una volta. È la base da cui partire.</div></div>
+    <div class="verdict"><svg class="ic"><use href="#i-check"/></svg><div><b>Ideale se</b> vuoi un portale unico e coerente: una navigazione, una sidebar collassabile e una scheda che mostra tutto in una volta. Premi <b>[</b> nel mock per comprimere il menu.</div></div>
   </section>
 
   <!-- ===== B ===== -->
@@ -618,8 +642,11 @@ tr.on .expander{transform:rotate(90deg);border-color:#cfe2f4;color:var(--blue);b
         <div class="b-body">
           <aside class="icon-rail">
             <div class="ir-logo">CE</div>
-            <button class="ir-btn on" title="Utenti" data-sect="Utenti"><svg class="ic"><use href="#i-users"/></svg></button>
+            <button class="ir-btn" title="Engagement" data-sect="Engagement"><svg class="ic"><use href="#i-grid"/></svg></button>
             <button class="ir-btn" title="Clienti" data-sect="Clienti"><svg class="ic"><use href="#i-building"/></svg></button>
+            <button class="ir-btn" title="Solleciti" data-sect="Solleciti"><svg class="ic"><use href="#i-bell"/></svg></button>
+            <div class="ir-sep"></div>
+            <button class="ir-btn on" title="Utenti" data-sect="Utenti"><svg class="ic"><use href="#i-users"/></svg></button>
             <button class="ir-btn" title="Mailing list" data-sect="Mailing list"><svg class="ic"><use href="#i-mail"/></svg></button>
             <button class="ir-btn" title="Template" data-sect="Template mail"><svg class="ic"><use href="#i-file"/></svg></button>
             <button class="ir-btn" title="Impostazioni" data-sect="Impostazioni"><svg class="ic"><use href="#i-sliders"/></svg></button>
@@ -663,6 +690,7 @@ tr.on .expander{transform:rotate(90deg);border-color:#cfe2f4;color:var(--blue);b
 
     <div class="mock" data-mock="c">
       <div class="m-top">
+        <button class="icon-btn side-toggle" data-side-toggle="c" title="Comprimi menu ( [ )" aria-label="Comprimi menu"><svg class="ic sm"><use href="#i-panel"/></svg></button>
         <div class="m-brand"><i>CE</i>Cyber Engagement Portal</div>
         <div class="m-crumb">Amministrazione <span>/</span> <b>Utenti</b></div>
         <div class="m-glob"><svg class="ic sm"><use href="#i-search"/></svg><span>Cerca utenti, clienti, azioni…</span><kbd>⌘K</kbd></div>
@@ -670,13 +698,24 @@ tr.on .expander{transform:rotate(90deg);border-color:#cfe2f4;color:var(--blue);b
       </div>
       <div class="m-body">
         <aside class="m-side">
-          <div class="side-label">Amministrazione</div>
-          <button class="side-item on" data-sect="Utenti"><svg class="ic sm"><use href="#i-users"/></svg>Utenti<span class="side-cnt">13</span></button>
-          <button class="side-item" data-sect="Clienti"><svg class="ic sm"><use href="#i-building"/></svg>Clienti<span class="side-cnt">6</span></button>
-          <button class="side-item" data-sect="Mailing list"><svg class="ic sm"><use href="#i-mail"/></svg>Mailing list<span class="side-cnt">42</span></button>
-          <button class="side-item" data-sect="Template mail"><svg class="ic sm"><use href="#i-file"/></svg>Template mail<span class="side-cnt">7</span></button>
-          <button class="side-item" data-sect="Impostazioni"><svg class="ic sm"><use href="#i-sliders"/></svg>Impostazioni</button>
-          <div class="side-foot"><b>Hai cliccato</b> una riga? Il dettaglio si apre lì sotto. Esc o click di nuovo per chiudere.</div>
+          <div class="side-group">
+            <div class="side-label">Portale</div>
+            <button class="side-item" data-sect="Engagement" title="Engagement"><svg class="ic sm"><use href="#i-grid"/></svg><span class="side-txt">Engagement</span><span class="side-cnt">15</span></button>
+            <button class="side-item" data-sect="Clienti" title="Clienti"><svg class="ic sm"><use href="#i-building"/></svg><span class="side-txt">Clienti</span><span class="side-cnt">6</span></button>
+            <button class="side-item" data-sect="Solleciti" title="Solleciti"><svg class="ic sm"><use href="#i-bell"/></svg><span class="side-txt">Solleciti</span><span class="side-cnt warn">3</span></button>
+          </div>
+          <div class="side-group">
+            <div class="side-label">Amministrazione</div>
+            <button class="side-item on" data-sect="Utenti" title="Utenti"><svg class="ic sm"><use href="#i-users"/></svg><span class="side-txt">Utenti</span><span class="side-cnt">13</span></button>
+            <button class="side-item" data-sect="Mailing list" title="Mailing list"><svg class="ic sm"><use href="#i-mail"/></svg><span class="side-txt">Mailing list</span><span class="side-cnt">42</span></button>
+            <button class="side-item" data-sect="Template mail" title="Template mail"><svg class="ic sm"><use href="#i-file"/></svg><span class="side-txt">Template mail</span><span class="side-cnt">7</span></button>
+            <button class="side-item" data-sect="Impostazioni" title="Impostazioni"><svg class="ic sm"><use href="#i-sliders"/></svg><span class="side-txt">Impostazioni</span></button>
+          </div>
+          <div class="side-group">
+            <div class="side-label">Sistema</div>
+            <button class="side-item" data-sect="Audit" title="Audit"><svg class="ic sm"><use href="#i-shield"/></svg><span class="side-txt">Audit</span></button>
+          </div>
+          <div class="side-foot"><span class="foot-full"><b>Hai cliccato</b> una riga? Il dettaglio si apre lì sotto. Esc o click di nuovo per chiudere.</span><span class="foot-mini">i</span></div>
         </aside>
         <section class="c-main">
           <div class="m-pagehead">
@@ -734,8 +773,11 @@ tr.on .expander{transform:rotate(90deg);border-color:#cfe2f4;color:var(--blue);b
         </div>
         <div class="d-shell-body">
           <aside class="d-rail">
-            <button class="ir-btn on" title="Utenti" data-sect="Utenti"><svg class="ic"><use href="#i-users"/></svg></button>
+            <button class="ir-btn" title="Engagement" data-sect="Engagement"><svg class="ic"><use href="#i-grid"/></svg></button>
             <button class="ir-btn" title="Clienti" data-sect="Clienti"><svg class="ic"><use href="#i-building"/></svg></button>
+            <button class="ir-btn" title="Solleciti" data-sect="Solleciti"><svg class="ic"><use href="#i-bell"/></svg></button>
+            <div class="ir-sep"></div>
+            <button class="ir-btn on" title="Utenti" data-sect="Utenti"><svg class="ic"><use href="#i-users"/></svg></button>
             <button class="ir-btn" title="Mailing" data-sect="Mailing list"><svg class="ic"><use href="#i-mail"/></svg></button>
             <button class="ir-btn" title="Template" data-sect="Template mail"><svg class="ic"><use href="#i-file"/></svg></button>
             <button class="ir-btn" title="Impostazioni" data-sect="Impostazioni"><svg class="ic"><use href="#i-sliders"/></svg></button>
@@ -788,8 +830,11 @@ tr.on .expander{transform:rotate(90deg);border-color:#cfe2f4;color:var(--blue);b
         <aside class="e-rail">
           <div class="ir-logo">CE</div>
           <button class="ir-btn on" title="Home" data-toast="Home (demo)"><svg class="ic"><use href="#i-grid"/></svg></button>
-          <button class="ir-btn" title="Utenti" data-toast="Utenti (demo)"><svg class="ic"><use href="#i-users"/></svg></button>
+          <button class="ir-btn" title="Engagement" data-toast="Engagement (demo)"><svg class="ic"><use href="#i-list"/></svg></button>
           <button class="ir-btn" title="Clienti" data-toast="Clienti (demo)"><svg class="ic"><use href="#i-building"/></svg></button>
+          <button class="ir-btn" title="Solleciti" data-toast="Solleciti (demo)"><svg class="ic"><use href="#i-bell"/></svg></button>
+          <div class="ir-sep" style="background:rgba(255,255,255,.1)"></div>
+          <button class="ir-btn" title="Utenti" data-toast="Utenti (demo)"><svg class="ic"><use href="#i-users"/></svg></button>
           <button class="ir-btn" title="Mailing" data-toast="Mailing list (demo)"><svg class="ic"><use href="#i-mail"/></svg></button>
           <button class="ir-btn" title="Template" data-toast="Template (demo)"><svg class="ic"><use href="#i-file"/></svg></button>
           <button class="ir-btn" title="Impostazioni" data-toast="Impostazioni (demo)"><svg class="ic"><use href="#i-sliders"/></svg></button>
@@ -862,7 +907,7 @@ tr.on .expander{transform:rotate(90deg);border-color:#cfe2f4;color:var(--blue);b
     <table>
       <thead><tr><th></th><th>A · Classic</th><th>B · Inbox split</th><th>C · Inline</th><th>D · Data grid</th><th>E · Command</th></tr></thead>
       <tbody>
-        <tr><td>Chrome permanente</td><td>228 px</td><td>354 px</td><td>228 px</td><td>52 px</td><td>62 px</td></tr>
+        <tr><td>Chrome permanente</td><td>228 / 64 px</td><td>354 px</td><td>228 / 64 px</td><td>52 px</td><td>62 px</td></tr>
         <tr><td>Spazio tabella/dati</td><td>~990 px</td><td>~894 px (dettaglio)</td><td>~1010 px</td><td>~1190 px</td><td>~1180 px</td></tr>
         <tr><td>Dettaglio</td><td>Scheda 90%</td><td>Sempre visibile</td><td>Banda inline</td><td>Peek 392 px</td><td>Peek 392 px</td></tr>
         <tr><td>Click per modificare</td><td>2</td><td>1</td><td>2</td><td>1 (cella)</td><td>2 + ⌘K</td></tr>
@@ -873,10 +918,11 @@ tr.on .expander{transform:rotate(90deg);border-color:#cfe2f4;color:var(--blue);b
       </tbody>
     </table>
     <div class="reco">
-      <b>La mia raccomandazione:</b> ossatura <b>A</b> (standard, riconoscibile) + <b>C</b> come comportamento base delle tabelle:
-      il dettaglio si apre inline, senza pannelli permanenti. <b>D</b> diventa la “modalità avanzata” per le assegnazioni in blocco,
+      <b>La mia raccomandazione:</b> ossatura <b>A</b> (standard, riconoscibile) con <b>una sola sidebar globale collassabile</b>:
+      Engagement, Clienti, Solleciti e Amministrazione nella stessa navigazione, 228 px → 64 px quando serve spazio.
+      <b>C</b> come comportamento base delle tabelle (dettaglio inline), <b>D</b> come “modalità avanzata” per le assegnazioni in blocco,
       <b>E</b> uno strato ⌘K sopra tutto, <b>B</b> la variante per chi lavora una persona alla volta.
-      Così la tabella resta larga, il dettaglio non occupa spazio da vuoto e l'area resta familiare.
+      Così non ci sono due navigazioni da imparare e il dettaglio non occupa spazio da vuoto.
     </div>
   </section>
 
@@ -950,10 +996,32 @@ $$('.switcher button').forEach(btn => btn.addEventListener('click', () => {
 
 /* ===== sidebar demo ===== */
 $$('[data-sect]').forEach(btn => btn.addEventListener('click', () => {
-  const group = btn.parentElement;
-  group.querySelectorAll('[data-sect]').forEach(b => b.classList.toggle('on', b===btn));
+  const side = btn.closest('.m-side');
+  if (!side) return;
+  side.querySelectorAll('[data-sect]').forEach(b => b.classList.toggle('on', b===btn));
   if (btn.dataset.sect !== 'Utenti') toast(btn.dataset.sect + ' · mock della sezione');
 }));
+
+/* sidebar collassabile (proposta A) */
+$$('[data-side-toggle]').forEach(btn => btn.addEventListener('click', () => {
+  const mock = btn.closest('.mock');
+  const side = mock?.querySelector('.m-side');
+  if (!side) return;
+  const collapsed = side.classList.toggle('is-collapsed');
+  btn.title = collapsed ? 'Espandi menu ( [ )' : 'Comprimi menu ( [ )';
+  btn.setAttribute('aria-label', collapsed ? 'Espandi menu' : 'Comprimi menu');
+}));
+
+document.addEventListener('keydown', e => {
+  if (e.key !== '[' || e.metaKey || e.ctrlKey || e.altKey) return;
+  const tag = (e.target.tagName || '').toLowerCase();
+  if (tag === 'input' || tag === 'textarea' || e.target.isContentEditable) return;
+  if (!document.querySelector('.proposal.active')) return;
+  const toggle = document.querySelector('.proposal.active [data-side-toggle]');
+  if (!toggle) return;
+  e.preventDefault();
+  toggle.click();
+});
 
 /* ===== A: tabella + drawer ===== */
 function renderA(){
