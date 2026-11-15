@@ -211,7 +211,8 @@ public sealed class InMemoryClientRepository : IClientRepository
                 $"DL-B-{clientId}-{index + 1}",
                 users[index].Name,
                 users[index].Email,
-                "Cliente"));
+                "Cliente",
+                $"CU-{clientId}-{index + 1}"));
 
             account.Team.Add(new TeamMember(
                 $"TM-B-{clientId}-{index + 1}",

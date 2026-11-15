@@ -97,7 +97,10 @@ public sealed record DistributionEntry(
     string Id,
     string Name,
     string Email,
-    string Organization);
+    string Organization,
+    // Persona del portale (utenza o partecipante) a cui la voce appartiene.
+    // Null per gli indirizzi che ricevono solo le email.
+    string? PersonId = null);
 
 public sealed record TeamMember(
     string Id,
@@ -455,6 +458,19 @@ public sealed record DistributionEntryRequest(
     string Name,
     string Email,
     string Organization);
+
+/// <summary>
+/// Appartenenza di una persona alle due liste base del cliente. Con
+/// <see cref="PersonId"/> la voce segue l'utenza o il partecipante; senza,
+/// vale l'indirizzo passato a mano (destinatario che non entra nel portale).
+/// </summary>
+public sealed record DistributionMembershipRequest(
+    string Kind,
+    bool Included,
+    string? PersonId,
+    string? Name,
+    string? Email,
+    string? Organization);
 
 public sealed record TeamMemberRequest(
     string? Scope,

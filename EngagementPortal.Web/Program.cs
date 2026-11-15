@@ -984,6 +984,21 @@ api.MapDelete("/clients/{clientId}/users/{userId}", (
     if (user.Role != Roles.Manager)
         return Forbidden();
 
+    var account = clients.Get(clientId);
+
+    if (account is null)
+        return Results.NotFound();
+
+    var person = account.Users
+        .FirstOrDefault(item => item.Id == userId);
+
+    if (person is null)
+        return Results.NotFound();
+
+    // L'utenza esce anche dalle due liste base: nessun indirizzo orfano.
+    ClientDistribution.RemovePerson(account, person.Id, person.Email);
+    clients.Save(account);
+
     return clients.RemoveUser(clientId, userId)
         ? Results.NoContent()
         : Results.NotFound();
@@ -1075,6 +1090,84 @@ api.MapDelete("/clients/{clientId}/distribution-list/{entryId}", (
     return Results.NoContent();
 });
 
+// Un solo interruttore per le due liste base: accende o spegne una persona
+// (utenza o partecipante) oppure un indirizzo senza account. È idempotente:
+// la casella già accesa non crea doppioni, quella già spenta non fallisce.
+api.MapPost("/clients/{clientId}/distribution-membership", (
+    string clientId,
+    DistributionMembershipRequest request,
+    HttpContext context,
+    IClientRepository clients) =>
+{
+    var user = GetUser(context);
+
+    if (user.Role is not (Roles.Manager or Roles.PMO))
+        return Forbidden();
+
+    var account = clients.Get(clientId);
+
+    if (account is null)
+        return Results.NotFound();
+
+    if (!Access.CanAccessClient(user, account.Id))
+        return Forbidden();
+
+    if (request.Kind is not ("notifications" or "deliverables"))
+        return Results.BadRequest(
+            "Lista non valida: usa notifications o deliverables.");
+
+    var personId = request.PersonId?.Trim();
+    string name;
+    string email;
+    string organization;
+
+    if (!string.IsNullOrWhiteSpace(personId))
+    {
+        var person = ClientDistribution.FindPerson(account, personId);
+
+        if (person is null)
+            return Results.NotFound();
+
+        (name, email, organization) = person.Value;
+    }
+    else
+    {
+        // Destinatario senza account: l'indirizzo è l'identità.
+        name = request.Name?.Trim() ?? string.Empty;
+        email = request.Email?.Trim() ?? string.Empty;
+        organization = request.Organization?.Trim() ?? "Cliente";
+
+        if (string.IsNullOrWhiteSpace(name) ||
+            !IsEmail(email))
+        {
+            return Results.BadRequest(
+                "Nome ed email valida sono obbligatori.");
+        }
+    }
+
+    var list = request.Kind == "deliverables"
+        ? account.DeliverablesDistributionList
+        : account.DistributionList;
+
+    if (request.Included)
+        ClientDistribution.Include(
+            list,
+            personId,
+            name,
+            email,
+            organization);
+    else
+        ClientDistribution.Exclude(list, personId, email);
+
+    clients.Save(account);
+
+    return Results.Ok(new
+    {
+        notifications = account.DistributionList,
+        deliverables = account.DeliverablesDistributionList
+    });
+});
+
 // Team esterno del cliente: base comune a tutti i suoi engagement.
 api.MapPost("/clients/{clientId}/team", (
     string clientId,
@@ -1155,6 +1248,8 @@ api.MapDelete("/clients/{clientId}/team/{memberId}", (
     if (!Team.CanRemove(user.Role, member))
         return Forbidden();
 
+    // Anche il partecipante esce dalle due liste base del cliente.
+    ClientDistribution.RemovePerson(account, member.Id, member.Email);
     account.Team.Remove(member);
     clients.Save(account);
     return Results.NoContent();

@@ -170,7 +170,51 @@ table{width:100%;border-collapse:collapse}th{text-align:left;font-size:var(--fs-
 .admin-tpl-card{padding:14px}/* ====== RETEST: righe informative nel pannello ====== */
 .kv{display:grid;gap:6px;margin:0}.kvline{display:flex;justify-content:space-between;gap:12px;font-size:var(--fs-sm);color:var(--muted);border-bottom:1px solid var(--line-soft);padding-bottom:5px}.kvline:last-child{border-bottom:0;padding-bottom:0}.kvline b{color:var(--brand-900);text-align:right;font-weight:var(--fw-semibold)}/* Campo di ricerca con icona: stile di base,valido in qualunque contesto. */
 .search{position:relative}.search input{width:100%;margin:0;padding:9px 12px 9px 36px;border-radius:var(--radius-pill);font-size:var(--fs-md)}.search-ico{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:15px;height:15px;fill:var(--muted);pointer-events:none}/* ====== CLIENTI · esploratore ====== */
-.clients-explorer{display:grid;grid-template-columns:300px minmax(0,1fr);gap:14px;align-items:start}.clients-rail{background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow);padding:12px}.clients-rail .list{max-height:520px}.clients-panel{background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow);padding:16px;min-width:0}.cl-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line-soft);padding-bottom:12px;margin-bottom:12px}.cl-head .t{flex:1;min-width:180px}.cl-head p{margin:0;font-size:var(--fs-sm);color:var(--muted)}.cl-head p a{color:var(--brand-600)}.cl-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}.cl-tab{border:1px solid var(--line);background:#fff;border-radius:var(--radius-pill);padding:5px 13px;font:inherit;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--muted);cursor:pointer}.cl-tab:hover{border-color:var(--brand-500);color:var(--brand-900)}.cl-tab.on{background:var(--brand-900);border-color:var(--brand-900);color:#fff}.cl-tab .cnt{margin-left:5px;font-size:var(--fs-2xs);font-weight:var(--fw-black);opacity:.75}.cl-block .hint{margin:0 0 10px}.cl-rows{display:grid;gap:0}.cl-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:9px 0;border-bottom:1px solid var(--line-soft)}.cl-row:last-child{border-bottom:0}.cl-row .cl-mail{flex:1;min-width:180px;font-size:var(--fs-xs);color:var(--muted);overflow-wrap:anywhere}.clients-rail .row{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line-soft);background:#fff;padding:9px 11px;cursor:pointer;color:inherit;font:inherit}.clients-rail .row:last-child{border-bottom:0}.clients-rail .row:hover{background:var(--surface-3)}.clients-rail .row.on{background:var(--brand-50);box-shadow:inset 3px 0 0 var(--brand-600)}.clients-rail .row .who{flex:1;min-width:0}.clients-rail .row .who small{font-size:var(--fs-2xs);color:var(--muted)}
+.clients-explorer{display:grid;grid-template-columns:300px minmax(0,1fr);gap:14px;align-items:start}.clients-rail{background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow);padding:12px}.clients-rail .list{max-height:520px}.clients-panel{background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow);padding:16px;min-width:0}.cl-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line-soft);padding-bottom:12px;margin-bottom:12px}.cl-head .t{flex:1;min-width:180px}.cl-head p{margin:0;font-size:var(--fs-sm);color:var(--muted)}.cl-head p a{color:var(--brand-600)}.cl-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}.cl-tab{border:1px solid var(--line);background:#fff;border-radius:var(--radius-pill);padding:5px 13px;font:inherit;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--muted);cursor:pointer}.cl-tab:hover{border-color:var(--brand-500);color:var(--brand-900)}.cl-tab.on{background:var(--brand-900);border-color:var(--brand-900);color:#fff}.cl-tab .cnt{margin-left:5px;font-size:var(--fs-2xs);font-weight:var(--fw-black);opacity:.75}.cl-block .hint{margin:0 0 10px}.cl-rows{display:grid;gap:0}.cl-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:9px 0;border-bottom:1px solid var(--line-soft)}.cl-row:last-child{border-bottom:0}.cl-row .cl-mail{flex:1;min-width:180px;font-size:var(--fs-xs);color:var(--muted);overflow-wrap:anywhere}
+/* Persone del cliente: una riga, due caselle al centro. */
+.cl-recap{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 4px}
+.cl-recap .chip{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:#fff;border-radius:var(--radius-pill);padding:4px 11px;font-size:var(--fs-2xs);font-weight:var(--fw-semibold);color:var(--muted)}
+.cl-recap .chip b{color:var(--brand-900);font-size:var(--fs-xs)}
+.cl-recap .dot{width:7px;height:7px;border-radius:50%;background:var(--brand-500)}
+.cl-recap .dot.d2{background:#0e9fb5}
+.cl-people .cl-group{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:16px 0 4px;padding:6px 0;border-bottom:1px solid var(--brand-100)}
+.cl-people .cl-group:first-of-type{margin-top:0}
+.cl-people .cl-group b{font-size:var(--fs-xs);color:var(--brand-900)}
+.cl-people .cl-group small{font-size:var(--fs-2xs);color:var(--muted)}
+.cl-people .cl-group .grow{flex:1}
+.cl-people .cl-headrow,.cl-people .cl-row{display:grid;grid-template-columns:minmax(160px,1.5fr) 132px 62px 62px auto;align-items:center;gap:10px}
+.cl-people .cl-headrow{padding:5px 0;border-bottom:1px solid var(--line);font-size:var(--fs-2xs);text-transform:uppercase;letter-spacing:.06em;color:var(--muted-2);font-weight:var(--fw-bold)}
+.cl-people .cl-headrow span:nth-child(3),.cl-people .cl-headrow span:nth-child(4){text-align:center}
+.cl-people .cl-row{padding:8px 0}
+.cl-people .obj-person .role{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cl-people .ckcell{display:grid;place-items:center}
+.cl-tag{display:inline-flex;align-items:center;gap:5px;min-width:0;max-width:132px;border:1px solid var(--line);background:#fff;border-radius:var(--radius-pill);padding:1px 8px;font-size:var(--fs-2xs);font-weight:var(--fw-semibold);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cl-tag::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--muted-2);flex:none}
+.cl-tag.portal{color:var(--brand-700);border-color:var(--brand-100);background:var(--brand-50)}
+.cl-tag.portal::before{background:var(--brand-500)}
+.cl-tag.team{color:#5b34b5;border-color:#ddd0f7;background:#f3eefc}
+.cl-tag.team::before{background:#7c5cd6}
+.cl-tag.mail{color:#0b6b7c;border-color:#bfe6ee;background:#e9f7fa}
+.cl-tag.mail::before{background:#0e9fb5}
+.ckbox{position:relative;display:inline-grid;place-items:center;cursor:pointer;line-height:0}
+.ckbox input{position:absolute;opacity:0;width:1px;height:1px;margin:0}
+.ckbox i{width:20px;height:20px;border:1.5px solid #c8d5e3;border-radius:6px;background:#fff;display:grid;place-items:center;transition:background .15s,border-color .15s}
+.ckbox i::after{content:"";width:10px;height:6px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg) translateY(-1px);opacity:0;transition:opacity .12s}
+.ckbox input:checked + i{background:var(--brand-600);border-color:var(--brand-600)}
+.ckbox input:checked + i::after{opacity:1}
+.ckbox input:focus-visible + i{outline:2px solid var(--brand-500);outline-offset:2px}
+.ckbox input:disabled + i{background:var(--surface-2);border-color:var(--line);cursor:not-allowed}
+.ckbox input:disabled:checked + i{background:#9db8cf;border-color:#9db8cf}
+.ckbox:hover i{border-color:var(--brand-500)}
+@media(max-width:1080px){
+  .cl-people .cl-headrow,.cl-people .cl-row{grid-template-columns:minmax(150px,1fr) 62px 62px auto}
+  .cl-people .cl-headrow span:nth-child(2),.cl-people .cl-tag{display:none}
+}
+@media(max-width:760px){
+  .cl-people .cl-headrow{display:none}
+  .cl-people .cl-row{grid-template-columns:minmax(0,1fr) 56px 56px auto}
+}
+.clients-rail .row{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line-soft);background:#fff;padding:9px 11px;cursor:pointer;color:inherit;font:inherit}.clients-rail .row:last-child{border-bottom:0}.clients-rail .row:hover{background:var(--surface-3)}.clients-rail .row.on{background:var(--brand-50);box-shadow:inset 3px 0 0 var(--brand-600)}.clients-rail .row .who{flex:1;min-width:0}.clients-rail .row .who small{font-size:var(--fs-2xs);color:var(--muted)}
 @media(max-width:1000px){.clients-explorer{grid-template-columns:minmax(0,1fr)}}/* ====== OGGETTI STANDARD ======
    Un solo modo per disegnare cliente,persona,tipo,stato,periodo e
    deliverable: nome,icona e colori restano coerenti in tutto il portale. */
@@ -457,7 +501,6 @@ const state = {
   // Sezione Clienti: cliente scelto e scheda attiva.
   clientSel: '',
   clientQuery: '',
-  clientTab: 'users',
   adminError: null,
   loading: false,
   error: null,
@@ -4516,13 +4559,9 @@ function renderClients() {
 /* ====== CLIENTI · esploratore (elenco a sinistra, schede a destra) ====== */
 // Una sola forma per Portale › Clienti e Amministrazione › Clienti: elenco
 // compatto dei clienti e, per quello scelto, una scheda per volta.
-const CLIENT_GROUPS = [
-  ['users', 'Utenze', 'Chi entra nel portale per questo cliente.'],
-  ['notifications', 'Notifiche', 'Base del cliente: inizio e fine attività, solleciti.'],
-  ['deliverables', 'Deliverables', "Base del cliente: riceve l'invio dei report."],
-  ['team', 'Team', 'Partecipanti esterni comuni a tutte le attività.']
-];
-
+// La scheda cliente non ha più tab: una sola lista di persone con le due
+// caselle al centro, una per le notifiche e una per i deliverables. Le utenze
+// e il team hanno accesso al portale; gli altri sono solo indirizzi.
 function clientsExplorerHTML() {
   const manage = canManageClients();
   const items = state.clients || [];
@@ -4567,45 +4606,132 @@ function clientsExplorerHTML() {
   </div>`;
 }
 
+function clientSameEmail(left, right) {
+  return String(left || '').trim().toLowerCase() ===
+    String(right || '').trim().toLowerCase();
+}
+
+// Una riga per persona: utenze, partecipanti del team e indirizzi senza
+// account. L'appartenenza alle due liste si legge dal legame con la persona
+// (personId) e, per le voci storiche, dall'email.
+function clientPeople(client) {
+  const notifications = client.distributionList || [];
+  const deliverables = client.deliverablesDistributionList || [];
+
+  const matches = (entry, person) =>
+    (entry.personId && entry.personId === person.id) ||
+    (!entry.personId && clientSameEmail(entry.email, person.email));
+
+  const people = [];
+  const seen = new Set();
+
+  const add = (person, origin, role, organization) => {
+    const key = String(person.email || '').trim().toLowerCase();
+    // La stessa persona può essere utenza e partecipante (stessa email):
+    // una riga sola, con la provenienza più forte.
+    if (seen.has(key)) return;
+    seen.add(key);
+    people.push({
+      id: person.id,
+      name: person.name,
+      email: person.email,
+      origin,
+      role,
+      organization: organization || 'Cliente',
+      inNotifications: notifications.some(entry => matches(entry, person)),
+      inDeliverables: deliverables.some(entry => matches(entry, person))
+    });
+  };
+
+  (client.users || []).forEach(user =>
+    add(user, 'utenza', 'Referente cliente', 'Cliente'));
+
+  (client.team || []).forEach(member =>
+    add(member, 'team', member.role || 'Partecipante', member.organization));
+
+  // Solo destinatari: voci di lista che non corrispondono a una persona.
+  [...notifications, ...deliverables].forEach(entry => {
+    const key = String(entry.email || '').trim().toLowerCase();
+    if (!key) return;
+    if (people.some(person => matches(entry, person))) return;
+    if (seen.has('ext:' + key)) return;
+    seen.add('ext:' + key);
+    people.push({
+      id: '',
+      name: entry.name,
+      email: entry.email,
+      origin: 'mail',
+      role: entry.organization || 'Cliente',
+      organization: entry.organization || 'Cliente',
+      inNotifications: notifications.some(item => clientSameEmail(item.email, entry.email)),
+      inDeliverables: deliverables.some(item => clientSameEmail(item.email, entry.email))
+    });
+  });
+
+  return people;
+}
+
 function clientPanelHTML(client, manage) {
-  const group = CLIENT_GROUPS.find(([key]) => key === state.clientTab) || CLIENT_GROUPS[0];
-  const counts = clientGroupCounts(client);
-  const engagements = client.engagementCount || 0;
+  const people = clientPeople(client);
+  const access = people.filter(person => person.origin !== 'mail');
+  const external = people.filter(person => person.origin === 'mail');
+  const notificationCount = (client.distributionList || []).length;
+  const deliverableCount = (client.deliverablesDistributionList || []).length;
+  const canEditLists = state.role === 'Manager' || state.role === 'PMO';
   const canTeamInvite = state.role !== 'Auditor';
   const canTeamRemove = state.role === 'Manager' || state.role === 'Client';
+  const engagements = client.engagementCount || 0;
 
-  const list = {
-    users: () => {
-      const users = client.users || [];
-      if (!users.length) return '<div class="empty" style="padding:14px 0">Nessuna utenza associata.</div>';
-      return users.map(u => `<div class="cl-row">
-        ${personChip(u.name, 'Referente cliente')}
-        <span class="cl-mail">${esc(u.email)}</span>
-        ${manage ? `<button class="btn dng sm" data-act="remove-client-user" data-client="${esc(client.id)}" data-user="${esc(u.id)}">Rimuovi</button>` : ''}
-      </div>`).join('');
-    },
-    notifications: () => distributionRows(client, client.distributionList || [], 'notifications', manage),
-    deliverables: () => distributionRows(client, client.deliverablesDistributionList || [], 'deliverables', manage),
-    team: () => {
-      const team = client.team || [];
-      if (!team.length) return '<div class="empty" style="padding:14px 0">Nessun partecipante esterno.</div>';
-      return team.map(member => {
-        const removable = canTeamRemove && (state.role !== 'Client' || member.organization === 'Cliente');
-        return `<div class="cl-row">
-          ${personChip(member.name, member.role || member.organization || 'Partecipante')}
-          <span class="cl-mail">${esc(member.email)}</span>
-          ${removable ? `<button class="btn dng sm" data-act="remove-client-team" data-client="${esc(client.id)}" data-member="${esc(member.id)}">Rimuovi</button>` : ''}
-        </div>`;
-      }).join('');
-    }
-  }[group[0]]();
+  const personCell = person => `<span class="obj-person">
+    <span class="av ${personRoleClass(person.role)}">${esc(initialsOf(person.name))}</span>
+    <span class="col"><span class="nm">${esc(person.name)}</span><span class="role">${esc(person.email)}</span></span>
+  </span>`;
 
-  const addButton = {
-    users: manage ? `<button class="btn pri sm" data-act="add-client-user" data-client="${esc(client.id)}">+ Aggiungi utenza</button>` : '',
-    notifications: manage ? `<button class="btn sec sm" data-act="add-client-dl" data-client="${esc(client.id)}" data-list="notifications">+ Aggiungi destinatario</button>` : '',
-    deliverables: manage ? `<button class="btn sec sm" data-act="add-client-dl" data-client="${esc(client.id)}" data-list="deliverables">+ Aggiungi destinatario</button>` : '',
-    team: canTeamInvite ? `<button class="btn sec sm" data-act="invite-client-team" data-client="${esc(client.id)}">+ Invita partecipante</button>` : ''
-  }[group[0]];
+  const originTag = person => person.origin === 'utenza'
+    ? '<span class="cl-tag portal">Utenza</span>'
+    : person.origin === 'team'
+      ? `<span class="cl-tag team" title="${esc(person.role)}">Team · ${esc(person.role)}</span>`
+      : '<span class="cl-tag mail">Indirizzo</span>';
+
+  const checkbox = (person, kind, checked) => {
+    const label = kind === 'deliverables' ? 'Deliverables' : 'Notifiche';
+    return `<label class="ckbox" title="${label}">
+      <input type="checkbox" data-change="client-dl"
+        data-client="${esc(client.id)}" data-kind="${kind}"
+        data-person="${esc(person.id)}"
+        data-name="${esc(person.name)}" data-email="${esc(person.email)}"
+        data-org="${esc(person.organization)}"
+        ${checked ? 'checked' : ''} ${canEditLists ? '' : 'disabled'}
+        aria-label="${label} per ${esc(person.name)}">
+      <i></i>
+    </label>`;
+  };
+
+  const row = person => {
+    const remove = person.origin === 'utenza' && manage
+      ? `<button class="btn dng sm" data-act="remove-client-user" data-client="${esc(client.id)}" data-user="${esc(person.id)}">Rimuovi</button>`
+      : person.origin === 'team' && canTeamRemove &&
+        (state.role !== 'Client' || person.organization === 'Cliente')
+        ? `<button class="btn dng sm" data-act="remove-client-team" data-client="${esc(client.id)}" data-member="${esc(person.id)}">Rimuovi</button>`
+        : person.origin === 'mail' && canEditLists
+          ? `<button class="btn dng sm" data-act="remove-client-address" data-client="${esc(client.id)}"
+              data-name="${esc(person.name)}" data-email="${esc(person.email)}">Rimuovi</button>`
+          : '';
+
+    return `<div class="cl-row">
+      ${personCell(person)}
+      ${originTag(person)}
+      <span class="ckcell">${checkbox(person, 'notifications', person.inNotifications)}</span>
+      <span class="ckcell">${checkbox(person, 'deliverables', person.inDeliverables)}</span>
+      <span class="cl-act">${remove}</span>
+    </div>`;
+  };
+
+  const headRow = `<div class="cl-headrow" aria-hidden="true">
+    <span>Persona</span><span>Come partecipa</span>
+    <span style="text-align:center">Notifiche</span>
+    <span style="text-align:center">Deliverables</span><span></span>
+  </div>`;
 
   return `<div class="cl-head">
     <span class="obj-client plain lg">${clientMark(client)}<span class="nm" style="font-size:17px">${esc(client.name)}</span></span>
@@ -4619,33 +4745,34 @@ function clientPanelHTML(client, manage) {
       ${manage ? `<button class="btn sec sm" data-act="rename-client" data-client="${esc(client.id)}">Modifica</button>` : ''}
     </div>
   </div>
-  <div class="cl-tabs" role="tablist">
-    ${CLIENT_GROUPS.map(([key, label]) => `<button class="cl-tab${key === group[0] ? ' on' : ''}" role="tab" aria-selected="${key === group[0]}"
-      data-act="client-tab" data-tab="${key}">${esc(label)} <span class="cnt">${counts[key]}</span></button>`).join('')}
+  <div class="cl-recap">
+    <span class="chip"><span class="dot"></span>Notifiche base <b>${notificationCount}</b></span>
+    <span class="chip"><span class="dot d2"></span>Deliverables base <b>${deliverableCount}</b></span>
   </div>
-  <div class="cl-block">
-    <p class="hint">${esc(group[2])}</p>
-    <div class="cl-rows">${list}</div>
-    ${addButton ? `<div class="inline-actions" style="margin-top:12px">${addButton}</div>` : ''}
+  <div class="cl-people">
+    <p class="hint">Le due caselle al centro decidono chi riceve le notifiche e chi riceve i deliverables: valgono per tutti gli engagement del cliente.</p>
+    <div class="cl-group">
+      <b>Persone con accesso al portale</b><span class="cntpill">${access.length}</span>
+      <small>utenze e partecipanti del team</small>
+      <span class="grow"></span>
+      ${manage ? `<button class="btn sec sm" data-act="add-client-user" data-client="${esc(client.id)}">+ Utenza</button>` : ''}
+      ${canTeamInvite ? `<button class="btn sec sm" data-act="invite-client-team" data-client="${esc(client.id)}">+ Partecipante</button>` : ''}
+    </div>
+    ${headRow}
+    ${access.length
+      ? access.map(row).join('')
+      : '<div class="empty" style="padding:12px 0">Nessuna persona con accesso.</div>'}
+    <div class="cl-group">
+      <b>Solo destinatari</b><span class="cntpill">${external.length}</span>
+      <small>non entrano nel portale, ricevono solo le email</small>
+      <span class="grow"></span>
+      ${canEditLists ? `<button class="btn sec sm" data-act="add-client-dl" data-client="${esc(client.id)}">+ Indirizzo</button>` : ''}
+    </div>
+    ${headRow}
+    ${external.length
+      ? external.map(row).join('')
+      : '<div class="empty" style="padding:12px 0">Nessun destinatario fuori dal portale.</div>'}
   </div>`;
-}
-
-function clientGroupCounts(client) {
-  return {
-    users: (client.users || []).length,
-    notifications: (client.distributionList || []).length,
-    deliverables: (client.deliverablesDistributionList || []).length,
-    team: (client.team || []).length
-  };
-}
-
-function distributionRows(client, entries, kind, manage) {
-  if (!entries.length) return '<div class="empty" style="padding:14px 0">Nessun destinatario base.</div>';
-  return entries.map(entry => `<div class="cl-row">
-    ${personChip(entry.name, entry.organization || 'Cliente')}
-    <span class="cl-mail">${esc(entry.email)}</span>
-    ${manage ? `<button class="btn dng sm" data-act="remove-client-dl" data-client="${esc(client.id)}" data-list="${kind}" data-entry="${esc(entry.id)}">Rimuovi</button>` : ''}
-  </div>`).join('');
 }
 
 
@@ -5077,10 +5204,6 @@ const actions = {
     state.clientSel = el.dataset.client || '';
     render();
   },
-  'client-tab': el => {
-    state.clientTab = el.dataset.tab || 'users';
-    render();
-  },
   'kpi-client': el => {
     // Drill-down: il pannello KPI segue il cliente scelto in header.
     state.clientId = el.dataset.client || '';
@@ -5320,7 +5443,7 @@ const actions = {
     const userId = el.dataset.user;
     const v = await ask({
       title: 'Rimuovere l\'utenza?',
-      text: 'L\'utenza non avrà più accesso al portale. L\'operazione non è reversibile.',
+      text: 'L\'utenza non avrà più accesso al portale ed esce dalle liste notifiche e deliverables. L\'operazione non è reversibile.',
       ok: 'Rimuovi',
       danger: true
     });
@@ -5334,19 +5457,21 @@ const actions = {
   },
   'add-client-dl': async el => {
     const clientId = el.dataset.client;
-    const kind = el.dataset.list === 'deliverables' ? 'deliverables' : 'notifications';
-    const deliverables = kind === 'deliverables';
     const v = await ask({
-      title: deliverables
-        ? 'Aggiungi destinatario deliverables'
-        : 'Aggiungi destinatario notifiche',
-      text: deliverables
-        ? 'Sarà incluso nell\'invio dei report per tutti gli engagement del cliente.'
-        : 'Riceverà inizio/fine attività e i solleciti di tutti gli engagement del cliente.',
+      title: 'Aggiungi solo indirizzo',
+      text: 'Non entra nel portale: riceve solo le email della lista che scegli.',
       ok: 'Aggiungi',
       fields: [
         { id: 'name', label: 'Nome e cognome*' },
-        { id: 'email', label: 'Email*', type: 'email', ph: 'nome@dominio.it' }
+        { id: 'email', label: 'Email*', type: 'email', ph: 'nome@dominio.it' },
+        {
+          id: 'list', label: 'Cosa riceve', type: 'select',
+          options: [
+            ['notifications', 'Notifiche'],
+            ['deliverables', 'Deliverables'],
+            ['both', 'Entrambe']
+          ]
+        }
       ]
     });
     if (!v) return;
@@ -5354,35 +5479,93 @@ const actions = {
       toast('Nome ed email valida sono obbligatori');
       return;
     }
+
+    const kinds = v.list === 'both'
+      ? ['notifications', 'deliverables']
+      : [v.list];
+
     try {
-      await api(`/api/clients/${encodeURIComponent(clientId)}/distribution-list?` + qs({ kind }), {
-        method: 'POST',
-        body: JSON.stringify({ name: v.name, email: v.email, organization: 'Cliente' })
-      });
-      toast('Destinatario base aggiunto');
+      for (const kind of kinds) {
+        await api(`/api/clients/${encodeURIComponent(clientId)}/distribution-membership?` + qs(), {
+          method: 'POST',
+          body: JSON.stringify({
+            kind,
+            included: true,
+            name: v.name,
+            email: v.email,
+            organization: 'Cliente'
+          })
+        });
+      }
+      toast(kinds.length > 1
+        ? 'Destinatario aggiunto a entrambe le liste'
+        : 'Destinatario aggiunto');
       await loadClients();
       render();
     } catch (error) { toast(error.message); }
   },
-  'remove-client-dl': async el => {
+  'remove-client-address': async el => {
     const clientId = el.dataset.client;
-    const entryId = el.dataset.entry;
-    const kind = el.dataset.list === 'deliverables' ? 'deliverables' : 'notifications';
+    const name = el.dataset.name || 'questo indirizzo';
+    const email = el.dataset.email || '';
     const v = await ask({
-      title: 'Rimuovere il destinatario base?',
-      text: kind === 'deliverables'
-        ? 'Non riceverà più i deliverables degli engagement del cliente, salvo aggiunta specifica sul singolo engagement.'
-        : 'Non riceverà più le notifiche degli engagement del cliente, salvo aggiunta specifica sul singolo engagement.',
+      title: 'Rimuovere l\'indirizzo?',
+      text: `${name} esce da entrambe le liste e non riceve più le email del cliente.`,
       ok: 'Rimuovi',
       danger: true
     });
     if (!v) return;
     try {
-      await api(`/api/clients/${encodeURIComponent(clientId)}/distribution-list/${encodeURIComponent(entryId)}?` + qs({ kind }), { method: 'DELETE' });
-      toast('Destinatario base rimosso');
+      // Non ha un account: si toglie per indirizzo da tutte e due le liste.
+      for (const kind of ['notifications', 'deliverables']) {
+        await api(`/api/clients/${encodeURIComponent(clientId)}/distribution-membership?` + qs(), {
+          method: 'POST',
+          body: JSON.stringify({ kind, included: false, name, email })
+        });
+      }
+      toast('Indirizzo rimosso');
       await loadClients();
       render();
     } catch (error) { toast(error.message); }
+  },
+  'client-dl-toggle': async el => {
+    const clientId = el.dataset.client;
+    const kind = el.dataset.kind === 'deliverables' ? 'deliverables' : 'notifications';
+    const included = el.checked;
+    const personId = el.dataset.person || '';
+
+    el.disabled = true;
+
+    try {
+      const result = await api(`/api/clients/${encodeURIComponent(clientId)}/distribution-membership?` + qs(), {
+        method: 'POST',
+        body: JSON.stringify({
+          kind,
+          included,
+          personId: personId || null,
+          name: el.dataset.name || '',
+          email: el.dataset.email || '',
+          organization: el.dataset.org || 'Cliente'
+        })
+      });
+
+      const client = (state.clients || []).find(item => item.id === clientId);
+      if (client && result) {
+        client.distributionList = result.notifications || [];
+        client.deliverablesDistributionList = result.deliverables || [];
+      } else {
+        await loadClients();
+      }
+
+      render();
+      toast(included
+        ? `Aggiunto alle ${kind === 'deliverables' ? 'deliverables' : 'notifiche'}`
+        : `Rimosso dalle ${kind === 'deliverables' ? 'deliverables' : 'notifiche'}`);
+    } catch (error) {
+      el.checked = !included;
+      el.disabled = false;
+      toast(error.message);
+    }
   },
   'invite-client-team': async el => {
     const clientId = el.dataset.client;
@@ -5419,7 +5602,7 @@ const actions = {
     const memberId = el.dataset.member;
     const v = await ask({
       title: 'Rimuovere il partecipante?',
-      text: 'Non farà più parte del team del cliente.',
+      text: 'Non farà più parte del team del cliente ed esce dalle liste notifiche e deliverables.',
       ok: 'Rimuovi',
       danger: true
     });
@@ -6079,7 +6262,8 @@ const actions = {
 /* ====== EVENTI ====== */
 const busyActions = new Set([
   'new-client', 'rename-client', 'add-client-user', 'remove-client-user',
-  'add-client-dl', 'remove-client-dl', 'invite-client-team', 'remove-client-team',
+  'add-client-dl', 'remove-client-address',
+  'invite-client-team', 'remove-client-team',
   'new-engagement', 'save-rule', 'send-solicitation', 'upload-manleva',
   'upload-ingaggio', 'register-order', 'save-order', 'edit-financials', 'save-financials-inline', 'approve-financials', 'propose', 'reschedule',
   'decide', 'save-scope', 'save-credentials', 'save-setup', 'upload-report',
@@ -6163,6 +6347,9 @@ document.addEventListener('change', event => {
   const kind = el.dataset.change;
   if (kind === 'rule') {
     Promise.resolve(actions['save-rule'](el)).catch(error => toast(error.message));
+  }
+  if (kind === 'client-dl') {
+    Promise.resolve(actions['client-dl-toggle'](el)).catch(error => toast(error.message));
   }
   if (kind === 'log-author') {
     state.logAuthor = el.value;
