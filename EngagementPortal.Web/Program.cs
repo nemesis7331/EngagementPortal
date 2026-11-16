@@ -4388,6 +4388,26 @@ static object Detail(
             baseDistribution,
             accounts);
 
+    // Stato e proprietari effettivi del passo corrente. Il workflow dichiara il
+    // ruolo che deve agire ("Manager", "PMO/Manager", "Client"): qui il ruolo
+    // diventa l'elenco delle persone reali, così la scheda può scrivere
+    // "In attesa di Marta Rinaldi, Anna Rossi" invece del solo ruolo.
+    var actionState = todos.ResolveAction(
+        engagement,
+        user.Role,
+        clock.Today);
+    IReadOnlyList<DistributionEntry> currentTaskOwners =
+        actionState.Owner is { Length: > 0 } ownerRoles
+            ? Solicitation.Owners(
+                engagement,
+                ownerRoles.Split(
+                    '/',
+                    StringSplitOptions.RemoveEmptyEntries |
+                    StringSplitOptions.TrimEntries),
+                baseDistribution,
+                accounts)
+            : [];
+
     return new
     {
         engagement = new
@@ -4469,10 +4489,25 @@ static object Detail(
                 engagement.Scope.Targets.Count > 0
         },
         Todo = todos.Resolve(engagement, user.Role),
-        ActionState = todos.ResolveAction(
-            engagement,
-            user.Role,
-            clock.Today),
+        ActionState = actionState,
+        // Riassunto del passo corrente per l'intestazione: stato, cosa manca e
+        // chi ha l'azione in carico (persone reali, non ruoli).
+        CurrentTask = new
+        {
+            actionState.Kind,
+            actionState.Label,
+            actionState.Owner,
+            actionState.OwnerLabel,
+            actionState.TargetTab,
+            Since = actionState.Since?.ToString("yyyy-MM-dd"),
+            Owners = currentTaskOwners.Select(entry => new
+            {
+                entry.Id,
+                entry.Name,
+                entry.Email,
+                entry.Organization
+            })
+        },
         PreparationAlert = EngagementWorkflow.PreparationAlertFor(
             engagement,
             phase,
