@@ -365,6 +365,13 @@ table{width:100%;border-collapse:collapse}th{text-align:left;font-size:var(--fs-
   .eng-c-when{min-height:0}
   .eng-c-when .mini{display:none}
 }
+/* Nella lista delle attese chi aspettiamo conta più delle date. */
+@container (max-width:1100px){
+  .eng-table.keep-who{--eng-cols:minmax(0,1.2fr) 126px 134px minmax(0,1.9fr) 150px 12px}
+  .eng-table.keep-who.hide-cli{--eng-cols:minmax(0,1.2fr) 134px minmax(0,1.9fr) 150px 12px}
+  .eng-table.keep-who .eng-c-who,.eng-table.keep-who .eng-h-who{display:flex}
+  .eng-table.keep-who .eng-c-when,.eng-table.keep-who .eng-h-when{display:none}
+}
 /* Colonna da telefono: la riga diventa una card su tre piani, senza perdere nulla. */
 @container (max-width:820px){
   .eng-scroll{overflow:visible;margin:0;padding:0}
@@ -2372,12 +2379,15 @@ function dashPanel(title, count, hint, body, tag = '') {
 
 // Tabella degli engagement in Dashboard: colonne allineate e stessa grammatica
 // della scheda (azienda come pastiglia, stato, persone reali, fase).
-function dashEngTable(rows, emptyText) {
+function dashEngTable(rows, emptyText, opts = {}) {
   const head = ['Engagement', 'Azienda', 'Stato', 'Azione', 'Chi']
     .map((label, i) => `<span class="${i === 1 ? 'eng-h-cli' : i === 4 ? 'eng-h-who' : ''}">${esc(label)}</span>`)
     .join('');
+  const classes = ['eng-table'];
+  if (isClient()) classes.push('hide-cli');
+  if (opts.who) classes.push('keep-who');
 
-  return `<div class="eng-scroll"><div class="eng-table${isClient() ? ' hide-cli' : ''}">
+  return `<div class="eng-scroll"><div class="${classes.join(' ')}">
     <div class="eng-thead" aria-hidden="true">${head}<span class="eng-h-when">Fase · periodo</span><span></span></div>
     ${rows || `<div class="empty">${esc(emptyText)}</div>`}
   </div></div>`;
@@ -2549,7 +2559,7 @@ function dashWaitingHTML() {
     'In attesa di terzi',
     list.length,
     'Cosa aspetta cliente, PMO, Manager o Pentester: dalla più vecchia.',
-    dashEngTable(rows, 'Nessuna attesa aperta.'));
+    dashEngTable(rows, 'Nessuna attesa aperta.', { who: true }));
 }
 
 // 4. Dove sono gli engagement: conteggio per fase del workflow.
