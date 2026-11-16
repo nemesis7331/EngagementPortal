@@ -2733,19 +2733,18 @@ function dashSolicitationsHTML() {
 }
 
 function renderDashboard() {
-  const all = state.list || [];
   const manager = state.role === 'Manager' || state.role === 'PMO';
 
-  // Box finali per profilo: chi coordina vede team e clienti, gli altri il
-  // proprio portafoglio (o i deliverable, per il cliente).
-  let extras = '';
+  // Il portafoglio si legge dall'alto: prima quello che spetta a me, poi le
+  // attese, poi gli avvii; sotto i riepiloghi e in fondo i solleciti.
+  let analytics = '';
 
   if (manager) {
-    extras = `<div class="kpi-cols">${dashClientsHTML()}${dashSolicitationsHTML()}</div>`;
+    analytics = `${dashPhasesHTML()}${dashClientsHTML()}${dashSolicitationsHTML()}`;
   } else if (isClient()) {
-    extras = `<div class="kpi-cols">${dashDeliverablesHTML()}${dashTypesHTML()}</div>`;
+    analytics = `${dashPhasesHTML()}${dashDeliverablesHTML()}${dashTypesHTML()}`;
   } else {
-    extras = `<div class="kpi-cols">${dashSolicitationsHTML()}${dashTypesHTML()}</div>`;
+    analytics = `${dashPhasesHTML()}${dashTypesHTML()}${dashSolicitationsHTML()}`;
   }
 
   $('#app').innerHTML = `
@@ -2756,14 +2755,9 @@ function renderDashboard() {
     </div>
 
     ${dashRequestsHTML()}
+    ${dashWaitingHTML()}
     ${dashStartsHTML()}
-
-    <div class="kpi-cols">
-      ${dashWaitingHTML()}
-      ${dashPhasesHTML()}
-    </div>
-
-    ${extras}`;
+    ${analytics}`;
 }
 
 async function loadDashboard() {
