@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard engagement — proposte di riga</title>
+<style>
+  :root{
+    --brand-900:#0a2540; --brand-700:#0d3f73; --brand-600:#0b5fa5; --brand-500:#2a86d8;
+    --brand-100:#e1eefa; --brand-50:#f1f7fc;
+    --ink:#0a1b2e; --muted:#566a80; --muted-2:#7b8a9b;
+    --line:#dfe7ef; --line-soft:#eef2f7; --surface-2:#eceff6; --bg:#f4f7fa;
+    --st-action:#b42318; --st-action-bg:#fee4e2; --st-action-border:#fda29b;
+    --st-wait:#7a5b00; --st-wait-bg:#fff8c5; --st-wait-border:#eac54f;
+    --st-progress:#175cd3; --st-progress-bg:#d1e9ff; --st-progress-border:#b2ddff;
+    --st-risk:#9a3412; --st-risk-bg:#ffead5; --st-risk-border:#f9c39a;
+    --radius-sm:8px; --radius-md:10px; --radius-lg:12px; --radius-pill:999px;
+    --fs-2xs:10.5px; --fs-xs:11.5px; --fs-sm:12.5px; --fs-md:13.5px; --fs-base:14.5px; --fs-lg:17px;
+    --fw-semibold:600; --fw-bold:700; --fw-black:800;
+    --font:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:var(--fs-base)/1.5 var(--font);-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}
+  .wrap{max-width:1180px;margin:0 auto;padding:28px 22px 64px}
+  .kicker{font-size:var(--fs-2xs);font-weight:var(--fw-black);letter-spacing:.08em;text-transform:uppercase;color:var(--brand-600);margin:0 0 6px}
+  h1{font-size:26px;line-height:1.2;margin:0 0 8px}
+  .lede{color:var(--muted);max-width:78ch;margin:0 0 20px}
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 16px}
+  .tab{border:1px solid var(--line);background:#fff;border-radius:var(--radius-pill);padding:6px 14px;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--muted);cursor:pointer}
+  .tab[aria-selected="true"]{background:var(--brand-900);border-color:var(--brand-900);color:#fff}
+  .pane{display:none}
+  .pane.on{display:block}
+  .panel{background:#fff;border:1px solid #e6edf4;border-radius:var(--radius-lg);box-shadow:0 1px 2px rgba(6,29,54,.05);padding:14px 16px}
+  .panel-head{display:flex;align-items:baseline;gap:8px;margin:0 0 2px}
+  .panel-head h2{font-size:var(--fs-lg);margin:0}
+  .count{font-size:var(--fs-sm);font-weight:var(--fw-bold);color:var(--brand-600);background:var(--brand-50);border:1px solid var(--brand-100);border-radius:var(--radius-pill);padding:0 7px}
+  .hint{margin:0 0 10px;color:var(--muted);font-size:var(--fs-sm)}
+  .note{display:flex;gap:16px;flex-wrap:wrap;margin:14px 2px 0;font-size:var(--fs-sm);color:var(--muted)}
+  .note b{color:var(--ink)}
+  .rec{display:inline-flex;align-items:center;gap:6px;background:#ecfdf3;border:1px solid #a6e9c0;color:#067647;border-radius:var(--radius-pill);padding:1px 9px;font-size:var(--fs-2xs);font-weight:var(--fw-bold);letter-spacing:.04em;text-transform:uppercase}
+  .divider{height:1px;background:var(--line-soft);margin:10px 0}
+
+  /* oggetti comuni */
+  .tm{width:24px;height:24px;flex:none;border-radius:6px;background:var(--brand-50);border:1px solid var(--brand-100);color:var(--brand-700);display:grid;place-items:center;font-size:9.5px;font-weight:var(--fw-black);letter-spacing:.02em}
+  .cl{display:inline-flex;align-items:center;gap:6px;max-width:170px;background:var(--surface-2);border:1px solid var(--line);border-radius:var(--radius-pill);padding:1px 9px 1px 2px;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--brand-900);vertical-align:middle;white-space:nowrap}
+  .cl i{width:19px;height:19px;flex:none;border-radius:50%;background:#fff;border:1px solid var(--line);display:grid;place-items:center;font-size:8px;font-weight:var(--fw-black);color:var(--brand-700);font-style:normal}
+  .cl span{overflow:hidden;text-overflow:ellipsis}
+  .st{display:inline-flex;align-items:center;gap:6px;border-radius:var(--radius-pill);padding:1px 9px 1px 7px;font-size:var(--fs-xs);font-weight:var(--fw-bold);border:1px solid;white-space:nowrap;flex:none}
+  .st i{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.9;flex:none}
+  .st em{font-style:normal;font-weight:var(--fw-semibold);opacity:.8;font-size:var(--fs-2xs)}
+  .st.action{color:var(--st-action);background:var(--st-action-bg);border-color:var(--st-action-border)}
+  .st.wait{color:var(--st-wait);background:var(--st-wait-bg);border-color:var(--st-wait-border)}
+  .st.progress{color:var(--st-progress);background:var(--st-progress-bg);border-color:var(--st-progress-border)}
+  .me{color:var(--st-action);font-weight:var(--fw-bold);font-size:var(--fs-xs);white-space:nowrap}
+  .who{display:inline-flex;align-items:center;gap:3px;flex:none}
+  .who .av{width:19px;height:19px;border-radius:50%;display:grid;place-items:center;font-size:7.5px;font-weight:var(--fw-bold);color:#fff;background:var(--brand-600);flex:none;border:1px solid #fff}
+  .who .av.b{background:#7a5ca8}.who .av.c{background:#0e9fb5}
+  .who .pn{font-size:var(--fs-2xs);font-weight:var(--fw-semibold);color:var(--brand-900);white-space:nowrap;max-width:64px;overflow:hidden;text-overflow:ellipsis}
+  .org{font-size:8.5px;font-weight:var(--fw-black);letter-spacing:.06em;color:var(--muted-2);text-transform:uppercase;flex:none}
+  .ring{width:12px;height:12px;border-radius:50%;background:conic-gradient(var(--brand-500) 0 62%,#e2e9f2 62% 100%);position:relative;flex:none}
+  .ring::after{content:"";position:absolute;inset:3px;background:#fff;border-radius:50%}
+  .phase{display:inline-flex;align-items:center;gap:5px;font-size:var(--fs-2xs);color:var(--muted);white-space:nowrap}
+  .per{font-size:var(--fs-2xs);color:var(--muted);white-space:nowrap;display:inline-flex;align-items:center;gap:4px}
+  .per::before{content:"";width:9px;height:9px;border:1px solid var(--muted-2);border-radius:2px;opacity:.55}
+  .go{color:var(--muted-2);font-weight:var(--fw-bold);flex:none}
+  .flag{display:inline-flex;align-items:center;gap:5px;border-radius:var(--radius-pill);padding:1px 8px;font-size:var(--fs-2xs);font-weight:var(--fw-semibold);border:1px solid;white-space:nowrap;flex:none}
+  .flag.risk{color:var(--st-risk);background:var(--st-risk-bg);border-color:var(--st-risk-border)}
+  .flag.wait{color:var(--st-wait);background:var(--st-wait-bg);border-color:var(--st-wait-border)}
+
+  /* ====== OGGI: card a due righe (riferimento) ====== */
+  .cur{background:#fff;border:1px solid var(--line);border-radius:var(--radius-md);box-shadow:0 1px 2px rgba(6,29,54,.04);padding:10px 12px;margin-top:8px}
+  .cur.is-late{border-left:3px solid var(--st-action)}
+  .cur-head{display:flex;align-items:center;gap:8px;min-width:0}
+  .cur-name{font-size:var(--fs-md);font-weight:var(--fw-semibold);color:var(--brand-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+  .cur-id{font-size:var(--fs-2xs);font-weight:var(--fw-black);color:var(--muted-2);letter-spacing:.02em}
+  .cur-cli{margin-left:auto}
+  .cur-band{display:flex;align-items:center;gap:6px 10px;flex-wrap:wrap;margin:8px 0 0;padding:8px 0 0;border-top:1px solid var(--line-soft)}
+  .cur-meta{margin-left:auto;display:inline-flex;align-items:center;gap:8px;color:var(--muted)}
+  .cur-req{font-size:var(--fs-2xs);color:var(--muted);font-weight:var(--fw-semibold)}
+
+  /* ====== A: riga sottile, una linea ====== */
+  .va-row{display:flex;align-items:center;gap:9px;min-width:0;padding:7px 2px;border-bottom:1px solid var(--line-soft)}
+  .va-row:last-child{border-bottom:0}
+  .va-name{display:flex;align-items:center;gap:7px;min-width:0;flex:0 0 auto;max-width:330px}
+  .va-name b{flex:0 0 auto;max-width:200px;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--brand-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .va-sub{font-size:9.5px;font-weight:var(--fw-bold);color:var(--muted-2);letter-spacing:.01em;white-space:nowrap;flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis}
+  .va-who{flex:none;display:flex;align-items:center;gap:4px;max-width:270px;overflow:hidden}
+  .va-who .org{display:none}
+  .va-req{flex:1 1 80px;min-width:0;font-size:var(--fs-sm);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .va-right{display:flex;align-items:center;gap:9px;flex:none}
+  .va-flags{display:flex;gap:4px;flex:none}
+
+  /* ====== B: card compatta a due righe ====== */
+  .vb-list{display:grid;gap:6px;margin-top:2px}
+  .vb{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:1px 10px;align-items:center;background:#fff;border:1px solid #e6edf4;border-radius:var(--radius-sm);padding:5px 10px 6px}
+  .vb:hover{border-color:var(--brand-500)}
+  .vb.is-late{border-left:3px solid var(--st-action)}
+  .vb-head{display:flex;align-items:center;gap:8px;min-width:0;grid-column:1}
+  .vb-name{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--brand-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .vb-id{font-size:10px;font-weight:var(--fw-black);color:var(--muted-2);flex:none;letter-spacing:.02em}
+  .vb-cli{grid-column:2;justify-self:end}
+  .vb-sub{grid-column:1/-1;display:flex;align-items:center;gap:8px;min-width:0;margin-top:1px}
+  .vb-req{flex:1;min-width:0;font-size:var(--fs-xs);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .vb-meta{display:flex;align-items:center;gap:8px;flex:none}
+
+  /* ====== C: elenco piatto a due piani, senza scatole ====== */
+  .vc-row{display:grid;grid-template-columns:13px minmax(0,1fr) auto;gap:1px 9px;padding:8px 2px;border-bottom:1px solid var(--line-soft)}
+  .vc-row:last-child{border-bottom:0}
+  .vc-dot{width:7px;height:7px;border-radius:50%;margin:7px 0 0 2px}
+  .vc-dot.action{background:var(--st-action)}
+  .vc-dot.wait{background:var(--st-wait)}
+  .vc-dot.progress{background:var(--st-progress)}
+  .vc-top{display:flex;align-items:center;gap:8px;min-width:0}
+  .vc-name{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--brand-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .vc-sub{display:flex;align-items:center;gap:6px;font-size:9.5px;font-weight:var(--fw-bold);color:var(--muted-2);letter-spacing:.01em;white-space:nowrap;flex:none}
+  .vc-sub .cl{padding:0 6px 0 1px;font-size:9.5px;font-weight:var(--fw-semibold)}
+  .vc-sub .cl i{width:13px;height:13px;font-size:5.5px}
+  .vc-meta{display:flex;align-items:center;gap:10px;justify-self:end;flex:none}
+  .vc-low{grid-column:2/-1;display:flex;align-items:center;gap:8px;min-width:0;margin-top:1px}
+  .vc-state{font-size:var(--fs-xs);font-weight:var(--fw-bold);white-space:nowrap;flex:none}
+  .vc-state.action{color:var(--st-action)}.vc-state.wait{color:var(--st-wait)}.vc-state.progress{color:var(--st-progress)}
+  .vc-state em{font-style:normal;font-weight:var(--fw-semibold);color:var(--muted-2);font-size:var(--fs-2xs);margin-left:4px}
+  .vc-req{flex:1;min-width:0;font-size:var(--fs-xs);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .vc-flags{display:flex;gap:4px;flex:none}
+
+  @media (max-width:860px){
+    .va-name{flex-basis:220px}
+    .va-req .who{display:none}
+    .va-flags{display:none}
+    .vc-flags{display:none}
+    .vc-sub .cl{display:none}
+  }
+  @media (max-width:640px){
+    .va-name{flex:1}
+    .va-right .per{display:none}
+    .vb-sub .who{display:none}
+    .cur-band .band-org{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="kicker">Dashboard · engagement</p>
+  <h1>Quattro modi di mostrare la stessa riga</h1>
+  <p class="lede">Il contenuto non cambia: nome, cliente, stato con anzianità, richiesta in corso, persone, fase e periodo. Cambia solo la forma. La prima è quella di oggi, le altre tre sono più compatte e senza spazi morti.</p>
+
+  <nav class="tabs" id="tabs">
+    <button class="tab" data-p="oggi" aria-selected="false">Oggi (riferimento)</button>
+    <button class="tab" data-p="a" aria-selected="false">A · Riga sottile</button>
+    <button class="tab" data-p="b" aria-selected="true">B · Card compatta</button>
+    <button class="tab" data-p="c" aria-selected="false">C · Elenco piatto</button>
+  </nav>
+
+  <section class="pane" id="pane-oggi">
+    <div class="panel">
+      <div class="panel-head"><h2>Richieste da gestire</h2><span class="count">5</span></div>
+      <p class="hint">La versione attuale: card a due righe con la fascia separata dal filetto. Corretta ma ogni riga occupa ~78&nbsp;px e la richiesta resta lontana dalla meta a destra.</p>
+      <div id="rows-oggi"></div>
+    </div>
+    <div class="note">
+      <span><b>Altezza riga</b> ~78 px</span>
+      <span><b>Punti di forza</b> gerarchia chiara, persone leggibili</span>
+      <span><b>Da stringere</b> fascia su due livelli sempre, meta all'estrema destra, molto vuoto in mezzo</span>
+    </div>
+  </section>
+
+  <section class="pane on" id="pane-b">
+    <div class="panel">
+      <div class="panel-head"><h2>Richieste da gestire</h2><span class="count">5</span></div>
+      <p class="hint">Card compatta: due righe attaccate, chip piccoli, meta accanto al testo invece che all'estrema destra.</p>
+      <div class="vb-list" id="rows-b"></div>
+    </div>
+    <div class="note">
+      <span class="rec">Consigliata</span>
+      <span><b>Altezza riga</b> ~60 px</span>
+      <span><b>Perché</b> conserva la fascia della scheda senza i vuoti: stato e richiesta sulla stessa linea, persone e meta subito dopo</span>
+    </div>
+  </section>
+
+  <section class="pane" id="pane-a">
+    <div class="panel">
+      <div class="panel-head"><h2>Richieste da gestire</h2><span class="count">5</span></div>
+      <p class="hint">Riga unica: tutto su una linea, separatori sottili al posto delle card. La più densa; la richiesta si tronca.</p>
+      <div id="rows-a"></div>
+    </div>
+    <div class="note">
+      <span><b>Altezza riga</b> ~40 px</span>
+      <span><b>Perché</b> massima densità, lettura orizzontale immediata, ideale per chi passa spesso dalla Dashboard</span>
+      <span><b>Attenzione</b> niente criticità e richiesta troncata: la riga unica regge solo nome, stato, persone e date</span>
+    </div>
+  </section>
+
+  <section class="pane" id="pane-c">
+    <div class="panel">
+      <div class="panel-head"><h2>Richieste da gestire</h2><span class="count">5</span></div>
+      <p class="hint">Elenco piatto: niente card né pastiglie, righe separate da un filetto e stato come pallino colorato. La forma più calma.</p>
+      <div id="rows-c"></div>
+    </div>
+    <div class="note">
+      <span><b>Altezza riga</b> ~58 px</span>
+      <span><b>Perché</b> toglie scatole e colori di riempimento: resta la gerarchia, sparisce il rumore</span>
+      <span><b>Attenzione</b> lo stato si legge dal testo, non dalla pastiglia</span>
+    </div>
+  </section>
+</div>
+
+<script>
+const rows = [
+  { type:'CS', name:'VA ambiente Azure', id:'ENG-2026-002', client:'Nvidia', st:['Da gestire', 9, 'action'], req:'Inserisci costi e margine', me:true, phase:'Documenti', period:'16/11/2026 → 04/12/2026', late:true, avvio:'' },
+  { type:'PT', name:'PT perimetro esterno', id:'ENG-2026-001', client:'Anthropic', st:['Da gestire', 6, 'action'], req:'Proposta di pianificazione: approva o rifiuta', me:true, phase:'Scope', period:'17/11/2026 → 27/11/2026', late:true, avvio:'' },
+  { type:'CR', name:'CR API pagamenti', id:'ENG-2026-008', client:'Nvidia', st:['In attesa', 2, 'wait'], req:'Verifica raggiungibilità del target', people:[['Sara Conti','Provider','a'],['Marco Verdi','Provider','b'],['Elena Fabbri','Provider','c']], flags:[['Manca Credenziali','risk'],['1 sollecito','wait']], phase:'Raggiungibilità', period:'23/11/2026 → 27/11/2026', avvio:'7 gg' },
+  { type:'RT', name:'RT e-commerce', id:'ENG-2026-013', client:'Anthropic', st:['In corso', 0, 'progress'], req:'Nessuna criticità', phase:'Esecuzione', period:'16/11/2026 → 04/12/2026', avvio:'oggi' }
+];
+
+const initials = name => name.split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase();
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
+const st = e => `<span class="st ${e.st[2]}"><i></i>${esc(e.st[0])}${e.st[1] ? `<em>${e.st[1]} gg</em>` : ''}</span>`;
+const cli = (e, small) => `<span class="cl"${small ? ' style="font-size:9.5px;padding:0 7px 0 1px"' : ''}><i>${initials(e.client)}</i><span>${esc(e.client)}</span></span>`;
+const tm = e => `<span class="tm">${esc(e.type)}</span>`;
+const who = e => e.people
+  ? `<span class="who">${e.people.map(p => `<span class="av ${p[2]}">${initials(p[0])}</span><span class="pn">${esc(p[0])}</span>`).join('')}<span class="org">${esc(e.people[0][1])}</span></span>`
+  : (e.me ? '<span class="me">Tocca a te</span>' : '');
+const flags = e => e.flags ? `<span class="va-flags">${e.flags.map(f => `<span class="flag ${f[1]}">${esc(f[0])}</span>`).join('')}</span>` : '';
+const meta = e => `<span class="per">${esc(e.period)}</span>${e.avvio ? `<span class="flag wait">${esc(e.avvio)}</span>` : ''}<span class="phase"><span class="ring"></span>${esc(e.phase)}</span>`;
+
+document.getElementById('rows-oggi').innerHTML = rows.map(e => `
+  <article class="cur${e.late ? ' is-late' : ''}">
+    <div class="cur-head">${tm(e)}<b class="cur-name">${esc(e.name)}</b><span class="cur-id">${esc(e.id)}</span>
+      <span class="cur-cli">${cli(e)}</span><span class="go">→</span></div>
+    <div class="cur-band">${st(e)}${who(e)}<span class="cur-req">${esc(e.req)}</span>
+      <span class="cur-meta">${meta(e)}</span></div>
+  </article>`).join('');
+
+document.getElementById('rows-a').innerHTML = rows.map(e => `
+  <article class="va-row">
+    <span class="va-name" title="${esc(e.id + ' · ' + e.client)}">${tm(e)}<b>${esc(e.name)}</b><span class="va-sub">${esc(e.client)}</span></span>
+    ${st(e)}
+    <span class="va-who">${who(e)}</span>
+    <span class="va-req">${esc(e.req)}</span>
+    <span class="va-right">${meta(e)}<span class="go">→</span></span>
+  </article>`).join('');
+
+document.getElementById('rows-b').innerHTML = rows.map(e => `
+  <article class="vb${e.late ? ' is-late' : ''}">
+    <div class="vb-head">${tm(e)}<b class="vb-name">${esc(e.name)}</b><span class="vb-id">${esc(e.id)}</span></div>
+    <span class="vb-cli">${cli(e)}</span>
+    <div class="vb-sub">${st(e)}${who(e)}<span class="vb-req">${esc(e.req)}</span>
+      <span class="vb-meta">${flags(e)}${meta(e)}<span class="go">→</span></span></div>
+  </article>`).join('');
+
+document.getElementById('rows-c').innerHTML = rows.map(e => `
+  <article class="vc-row">
+    <span class="vc-dot ${e.st[2]}"></span>
+    <span class="vc-top"><b class="vc-name">${esc(e.name)}</b>
+      <span class="vc-sub">${esc(e.id)} · ${cli(e, true)}</span></span>
+    <span class="vc-meta">${meta(e)}<span class="go">→</span></span>
+    <span class="vc-low">
+      <span class="vc-state ${e.st[2]}">${esc(e.st[0])}${e.st[1] ? `<em>${e.st[1]} gg</em>` : ''}</span>
+      ${who(e)}<span class="vc-req">${esc(e.req)}</span>${flags(e)}
+    </span>
+  </article>`).join('');
+
+document.getElementById('tabs').addEventListener('click', ev => {
+  const b = ev.target.closest('.tab');
+  if (!b) return;
+  document.querySelectorAll('.tab').forEach(t => t.setAttribute('aria-selected', String(t === b)));
+  document.querySelectorAll('.pane').forEach(p => p.classList.toggle('on', p.id === 'pane-' + b.dataset.p));
+});
+</script>
+</body>
+</html>
