@@ -293,7 +293,6 @@ table{width:100%;border-collapse:collapse}th{text-align:left;font-size:var(--fs-
 .dash-table .pill{padding:2px 8px}
 .dash-task{white-space:normal;min-width:170px;max-width:300px;color:var(--brand-900)}
 .dash-task span{display:block;margin-top:2px;font-size:var(--fs-2xs);color:var(--muted)}
-.dash-flags{display:flex;flex-wrap:wrap;gap:5px;min-width:180px;white-space:normal}
 .dash-mute{color:var(--muted)}
 .kpi-table tbody tr.is-late td:first-child{box-shadow:inset 3px 0 0 var(--st-risk)}
 .dash-phases{display:grid;gap:7px;margin-top:6px}
@@ -304,27 +303,81 @@ table{width:100%;border-collapse:collapse}th{text-align:left;font-size:var(--fs-
 .dash-phase-note{font-size:var(--fs-2xs);color:var(--st-action)}
 .dash-panel-foot{margin:10px 0 0;display:flex;justify-content:flex-end}
 @media(max-width:820px){.dash-opt{display:none}}
-/* Righe-card degli engagement in Dashboard: stesso linguaggio della scheda
-   (nome, cliente, fascia con stato e persone reali, meta a destra). */
-.eng-list{display:grid;gap:8px}
-.eng-row{background:#fff;border:1px solid var(--line);border-radius:var(--radius-md);box-shadow:0 1px 2px rgba(6,29,54,.04);padding:10px 12px;cursor:pointer;transition:border-color .15s,box-shadow .15s}
-.eng-row:hover{border-color:var(--brand-500);box-shadow:var(--shadow)}
-.eng-row:focus-visible{outline:2px solid var(--brand-500);outline-offset:2px}
-.eng-row.is-late{border-left:3px solid var(--st-action)}
-.eng-row-head{display:flex;align-items:center;gap:8px;min-width:0}
-.eng-row-name{font-size:var(--fs-md);font-weight:var(--fw-semibold);color:var(--brand-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
-.eng-row-id{font-size:var(--fs-2xs);font-weight:var(--fw-black);color:var(--muted-2);letter-spacing:.02em;white-space:nowrap}
-.eng-row-cli{margin-left:auto;min-width:0}
-.eng-row-go{color:var(--muted-2);font-weight:var(--fw-bold);flex:none}
-.eng-row .eng-row-band{margin:8px 0 0;padding:8px 0 0;border-top:1px solid var(--line-soft);gap:6px 10px}
-.eng-row-meta{margin-left:auto;display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:var(--fs-2xs);color:var(--muted)}
-.eng-row-meta .phase{display:flex;align-items:center;gap:6px}
-.eng-row-meta .phase-name{font-size:var(--fs-2xs);max-width:110px}
-.eng-row .band-person{padding:1px 8px 1px 1px}
-.eng-row .band-person .avatar{width:18px;height:18px;font-size:8px}
-.row-run{font-weight:var(--fw-semibold);color:var(--muted);white-space:nowrap}
-.row-run.late{color:var(--st-action)}
-@media(max-width:700px){.eng-row-head{flex-wrap:wrap}.eng-row-cli{margin-left:0;order:4}.eng-row-go{margin-left:auto}}
+/* Engagement in Dashboard: tabella snella, colonne allineate e stessa lingua
+   della scheda (azienda, stato, persone, fase). L'azione in corso e' il testo
+   in evidenza; chi la tiene in carico ha la sua colonna. Le misure reagiscono
+   allo spazio del pannello, non a quello della finestra. */
+.eng-scroll{overflow-x:auto;margin:0 -2px;padding:0 2px;container-type:inline-size}
+.eng-table{--eng-cols:minmax(0,1.15fr) 138px 134px minmax(0,1.65fr) 168px 176px 12px;min-width:900px}
+.eng-thead,.eng-trow{display:grid;grid-template-columns:var(--eng-cols);gap:10px;align-items:center;min-width:0}
+.eng-thead{font-size:var(--fs-2xs);font-weight:var(--fw-black);letter-spacing:var(--tracking-caps);text-transform:uppercase;color:var(--muted-2);padding:0 2px 6px;border-bottom:1px solid var(--line)}
+.eng-h-when{text-align:right}
+.eng-trow{padding:7px 2px;border-bottom:1px solid var(--line-soft);cursor:pointer;transition:background .12s}
+.eng-trow:last-child{border-bottom:0}
+.eng-trow:hover{background:var(--brand-50)}
+.eng-trow:focus-visible{outline:2px solid var(--brand-500);outline-offset:-2px}
+.eng-trow.is-late{box-shadow:inset 3px 0 0 var(--st-action)}
+.eng-c-eng{display:flex;align-items:center;gap:8px;min-width:0}
+.eng-c-eng .eng-lines{display:grid;gap:0;min-width:0}
+.eng-c-eng b{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--brand-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.35}
+.eng-c-eng .eng-sub{font-size:var(--fs-2xs);font-weight:var(--fw-bold);color:var(--muted-2);letter-spacing:.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.25;margin:0}
+.eng-c-cli{min-width:0;display:flex}
+.eng-c-cli .obj-client{max-width:100%;font-size:var(--fs-xs);padding:1px 9px 1px 2px;cursor:inherit;pointer-events:none}
+.eng-c-cli .obj-client .mark{width:18px;height:18px;font-size:8px}
+.eng-c-cli .obj-client .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.eng-c-st{min-width:0;display:flex}
+.eng-c-actwrap{display:flex;align-items:center;gap:6px;min-width:0;overflow:hidden}
+.eng-c-act{flex:0 1 auto;min-width:0;font-size:var(--fs-md);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--muted)}
+.eng-c-act.action{color:var(--ink);font-weight:var(--fw-bold)}
+.eng-c-act.wait{color:var(--st-wait);font-weight:var(--fw-semibold)}
+.eng-c-act.progress{color:var(--muted)}
+.eng-flags{display:flex;align-items:center;gap:4px;flex:none}
+.eng-flags .pill{flex:none}
+.eng-c-who{display:flex;align-items:center;min-width:0;overflow:hidden}
+.eng-c-who .band-owner{display:flex;align-items:center;gap:5px;min-width:0;overflow:hidden;font-size:var(--fs-xs);color:var(--muted)}
+.eng-c-who .band-person{display:inline-flex;align-items:center;gap:5px;min-width:0;border:1px solid var(--line);background:var(--surface-3);border-radius:var(--radius-pill);padding:1px 7px 1px 1px;font-size:var(--fs-2xs);font-weight:var(--fw-semibold);color:var(--brand-900);white-space:nowrap;overflow:hidden}
+.eng-c-who .band-person .avatar{width:17px;height:17px;flex:none;font-size:7.5px}
+.eng-c-who .band-person .pn{overflow:hidden;text-overflow:ellipsis;min-width:0}
+/* Dal secondo in poi solo l'iniziale: il nome sta nel title. */
+.eng-c-who .band-person + .band-person{padding-right:1px}
+.eng-c-who .band-person + .band-person .pn{display:none}
+.eng-c-who .band-more{font-size:var(--fs-2xs);font-weight:var(--fw-bold);color:var(--muted);background:var(--surface-2);border:1px solid var(--line);border-radius:var(--radius-pill);padding:0 5px;flex:none}
+.eng-c-who .band-me{color:var(--st-action);font-weight:var(--fw-bold);font-size:var(--fs-2xs);white-space:nowrap}
+.eng-c-who .band-org{display:none}
+.eng-c-who .band-note{font-size:var(--fs-2xs);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.eng-c-when{display:grid;gap:0;justify-items:end;align-content:center;min-width:0;min-height:36px;text-align:right}
+.eng-c-when .eng-w1{display:flex;align-items:center;gap:5px;justify-content:flex-end;min-width:0;max-width:100%;font-size:var(--fs-2xs);font-weight:var(--fw-semibold);color:var(--muted);white-space:nowrap}
+.eng-c-when .eng-w1 .eng-per{overflow:hidden;text-overflow:ellipsis}
+.eng-c-when .eng-w1 .eng-per.late{color:var(--st-action)}
+.eng-c-when .pill{padding:0 7px;font-size:var(--fs-2xs);font-weight:var(--fw-bold);line-height:16px;min-height:0;gap:4px}
+.eng-c-when .eng-w2{display:flex;justify-content:flex-end;min-width:0;max-width:100%}
+.eng-c-when .phase{min-width:0}
+.eng-c-when .phase-name{font-size:var(--fs-2xs);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.eng-go{color:var(--muted-2);font-weight:var(--fw-bold)}
+/* Azienda: la colonna sparisce per l'utente cliente, che la conosce gia. */
+.eng-table.hide-cli{--eng-cols:minmax(0,1.15fr) 134px minmax(0,1.65fr) 168px 176px 12px}
+.eng-table.hide-cli .eng-h-cli,.eng-table.hide-cli .eng-c-cli{display:none}
+/* Pannello stretto: le persone escono, il periodo resta con la sola fase. */
+@container (max-width:1100px){
+  .eng-table{--eng-cols:minmax(0,1.25fr) 126px 134px minmax(0,1.9fr) 152px 12px;min-width:0}
+  .eng-table.hide-cli{--eng-cols:minmax(0,1.25fr) 134px minmax(0,2fr) 152px 12px}
+  .eng-c-who,.eng-h-who{display:none}
+  .eng-c-when{min-height:0}
+  .eng-c-when .mini{display:none}
+}
+/* Colonna da telefono: la riga diventa una card su tre piani, senza perdere nulla. */
+@container (max-width:820px){
+  .eng-scroll{overflow:visible;margin:0;padding:0}
+  .eng-thead{display:none}
+  .eng-trow{display:flex;flex-wrap:wrap;align-items:center;gap:5px 10px;padding:9px 2px}
+  .eng-c-eng{order:1;flex:1 1 100%;min-width:0}
+  .eng-c-st{order:2;flex:none}
+  .eng-c-cli{order:3;flex:none;min-width:0}
+  .eng-c-who{display:flex;order:4;flex:0 1 auto;min-width:0}
+  .eng-c-actwrap{order:5;flex:1 1 100%;min-width:0}
+  .eng-c-when{display:none}
+  .eng-go{display:none}
+}
 
 /* ====== TIPI DI ATTIVITÀ ====== */
 .admin-table.act-table{table-layout:auto}
@@ -1857,9 +1910,9 @@ function taskOwner(d, opts = {}) {
   const orgs = [...new Set(shown.map(person => person.organization).filter(Boolean))];
 
   return `<span class="band-owner">
-    <span>In carico a</span>
+    ${opts.label === false ? '' : '<span>In carico a</span>'}
     ${shown.map(person => `<span class="band-person" title="${esc(person.email || person.name)}">
-      <span class="avatar">${esc(initialsOf(person.name))}</span>${esc(person.name)}
+      <span class="avatar">${esc(initialsOf(person.name))}</span><span class="pn">${esc(person.name)}</span>
     </span>`).join('')}
     ${more > 0 ? `<span class="band-more" title="${esc(hidden)}">+${more}</span>` : ''}
     ${orgs.length ? `<span class="band-org">${esc(orgs.join(' · '))}</span>` : ''}
@@ -2317,32 +2370,73 @@ function dashPanel(title, count, hint, body, tag = '') {
   </section>`;
 }
 
-// Riga-card della Dashboard: la stessa grammatica della scheda engagement
-// (nome e cliente in testa, fascia con stato, persone reali e meta a destra)
-// al posto delle tabelle dense.
+// Tabella degli engagement in Dashboard: colonne allineate e stessa grammatica
+// della scheda (azienda come pastiglia, stato, persone reali, fase).
+function dashEngTable(rows, emptyText) {
+  const head = ['Engagement', 'Azienda', 'Stato', 'Azione', 'Chi']
+    .map((label, i) => `<span class="${i === 1 ? 'eng-h-cli' : i === 4 ? 'eng-h-who' : ''}">${esc(label)}</span>`)
+    .join('');
+
+  return `<div class="eng-scroll"><div class="eng-table${isClient() ? ' hide-cli' : ''}">
+    <div class="eng-thead" aria-hidden="true">${head}<span class="eng-h-when">Fase · periodo</span><span></span></div>
+    ${rows || `<div class="empty">${esc(emptyText)}</div>`}
+  </div></div>`;
+}
+
+// Cosa serve adesso su quell'engagement, con il tono giusto: azione aperta in
+// evidenza, attesa in giallo, il resto in sordina.
+function dashAction(e) {
+  const s = actionState(e) || {};
+  if (s.kind === 'action') return { text: s.label || 'Richiesta aperta', tone: 'action' };
+  if (s.kind === 'waiting') return { text: s.label || 'In attesa di terzi', tone: 'wait' };
+  return { text: 'Nessuna criticità', tone: 'mute' };
+}
+
+// Date brevi: l'anno è nel titolo, in tabella bastano giorno e mese.
+function shortDate(value) {
+  const raw = String(value || '').substring(0, 10);
+  return raw.length >= 10 ? `${raw.substring(8, 10)}/${raw.substring(5, 7)}` : '';
+}
+
+function dashWhenCell(e, opts = {}) {
+  const start = shortDate(e.periodStart);
+  const end = shortDate(e.periodEnd);
+  const range = start && end ? `${start} → ${end}` : start || '';
+
+  if (opts.avvio) {
+    const late = !!e.periodStart && String(e.periodStart).substring(0, 10) < today();
+    return `<span class="eng-w1">${start ? `<span class="eng-per${late ? ' late' : ''}" title="Avvio ${esc(fmt(e.periodStart))}">avvio ${esc(start)}</span>` : ''}</span>
+      <span class="eng-w2">${phaseCell(e)}</span>`;
+  }
+
+  return `<span class="eng-w1">${range ? `<span class="eng-per" title="${esc(fmt(e.periodStart))}${e.periodEnd ? ` → ${esc(fmt(e.periodEnd))}` : ''}">${esc(range)}</span>` : ''}
+      ${opts.day ? dashPill(opts.day) : ''}</span>
+    <span class="eng-w2">${phaseCell(e)}</span>`;
+}
+
+// Riga della tabella: un solo link, con la pastiglia dell'azienda da leggere.
 function dashEngRow(e, opts = {}) {
+  const act = opts.action || dashAction(e);
+  const tab = opts.tab ? ` data-tab="${esc(opts.tab)}"` : '';
   const client = isClient()
     ? ''
-    : `<span class="eng-row-cli">${clientChip(clientFor(e), { still: true })}</span>`;
-  const tab = opts.tab ? ` data-tab="${esc(opts.tab)}"` : '';
+    : `<span class="eng-c-cli">${clientChip(clientFor(e), { still: true })}</span>`;
+  const flags = opts.flags ? `<span class="eng-flags">${opts.flags}</span>` : '';
+  // Con i segnali in riga il testo dell'azione è ridondante: resta solo la
+  // pastiglia di stato. Senza segnali si legge per esteso.
+  const showText = !flags;
 
-  return `<article class="eng-row${opts.late ? ' is-late' : ''}"
+  return `<article class="eng-trow${opts.late ? ' is-late' : ''}"
       data-act="${opts.act || 'open'}" data-id="${esc(e.id)}"${tab}
       role="link" tabindex="0"
       title="Apri ${esc(e.name)}${opts.tab ? ' sul passo da completare' : ''}">
-    <div class="eng-row-head">
-      ${typeBadge(e.type)}
-      <b class="eng-row-name">${esc(e.name)}</b>
-      <span class="eng-row-id">${esc(e.id)}</span>
-      ${client}
-      <span class="eng-row-go" aria-hidden="true">→</span>
-    </div>
-    <div class="hero-band eng-row-band">
-      ${objState(e, { days: !!opts.days })}
-      ${taskOwner(e, { compact: true })}
-      ${opts.notes || ''}
-      ${opts.meta ? `<span class="eng-row-meta">${opts.meta}</span>` : ''}
-    </div>
+    <span class="eng-c-eng">${typeBadge(e.type)}<span class="eng-lines"><b>${esc(e.name)}</b><span class="eng-sub">${esc(e.id)}</span></span></span>
+    ${client}
+    <span class="eng-c-st">${objState(e, { days: !!opts.days })}</span>
+    <span class="eng-c-actwrap">${showText ? `<span class="eng-c-act ${act.tone}" title="${esc(act.text)}">${esc(act.text)}</span>` : ''}${flags}</span>
+    <span class="eng-c-who">${taskOwner(e, { compact: true, label: false })}</span>
+    <span class="eng-c-when">${opts.when || ''}</span>
+    <span class="eng-go" aria-hidden="true">→</span>
   </article>`;
 }
 
@@ -2358,17 +2452,14 @@ function dashRequestsHTML() {
 
   const rows = list.map(e => {
     const s = actionState(e) || {};
-    const start = dashDaysToStart(e);
 
     return dashEngRow(e, {
       act: 'open-action',
       tab: s.targetTab,
       days: true,
       late: dashAge(e) >= STALE_DAYS,
-      notes: `<span class="band-note">${esc(s.label || 'Richiesta aperta')}</span>`,
-      meta: `${start === null
-        ? ''
-        : `<span class="row-run${start < 0 ? ' late' : ''}">avvio ${esc(fmt(e.periodStart))}</span>`}${phaseCell(e)}`
+      action: { text: s.label || 'Richiesta aperta', tone: 'action' },
+      when: dashWhenCell(e, { avvio: true })
     });
   }).join('');
 
@@ -2383,7 +2474,7 @@ function dashRequestsHTML() {
     'Richieste da gestire',
     list.length,
     `Cosa aspetta il tuo profilo, dalla richiesta più vecchia: la riga apre il passo da completare.${stale}`,
-    `<div class="eng-list">${rows || `<div class="empty">${esc(empty)}</div>`}</div>`);
+    dashEngTable(rows, empty));
 }
 
 // 2. Prossimi avvii: date accettate da qui in avanti, con i segnali che
@@ -2424,18 +2515,19 @@ function dashStartsHTML() {
     return dashEngRow(e, {
       days: true,
       late: urgent,
-      notes: `<span class="dash-flags">${flags.join('') || '<span class="dash-mute">Nessuna criticità</span>'}</span>`,
-      meta: `${periodBox(e.periodStart, e.periodEnd, { id: e.id, name: e.name })}
-        ${dashPill([days === 0 ? 'oggi' : days === 1 ? 'domani' : `${days} gg`, dayKind])}
-        ${phaseCell(e)}`
+      action: dashAction(e),
+      flags: flags.join(''),
+      when: dashWhenCell(e, {
+        day: [days === 0 ? 'oggi' : days === 1 ? 'domani' : `${days} gg`, dayKind]
+      })
     });
   }).join('');
 
   return dashPanel(
     'Prossimi avvii',
     upcoming.length,
-    'Date accettate da qui in avanti: la fascia segnala cosa può far slittare la partenza.',
-    `<div class="eng-list">${rows || `<div class="empty">${esc('Nessuna data di avvio pianificata.')}</div>`}</div>`);
+    'Date accettate da qui in avanti: la colonna Azione segnala cosa può far slittare la partenza.',
+    dashEngTable(rows, 'Nessuna data di avvio pianificata.'));
 }
 
 // 3. In attesa di terzi: il flusso non dipende dal profilo attivo.
@@ -2448,8 +2540,8 @@ function dashWaitingHTML() {
     const s = actionState(e) || {};
     return dashEngRow(e, {
       days: true,
-      notes: `<span class="band-note">${esc(s.label || '—')}</span>`,
-      meta: phaseCell(e)
+      action: { text: s.label || 'In attesa di terzi', tone: 'wait' },
+      when: dashWhenCell(e)
     });
   }).join('');
 
@@ -2457,7 +2549,7 @@ function dashWaitingHTML() {
     'In attesa di terzi',
     list.length,
     'Cosa aspetta cliente, PMO, Manager o Pentester: dalla più vecchia.',
-    `<div class="eng-list">${rows || `<div class="empty">${esc('Nessuna attesa aperta.')}</div>`}</div>`);
+    dashEngTable(rows, 'Nessuna attesa aperta.'));
 }
 
 // 4. Dove sono gli engagement: conteggio per fase del workflow.
@@ -7403,10 +7495,10 @@ document.addEventListener('click', event => {
     });
 });
 
-// Le righe-card della Dashboard sono link: Enter e Spazio le aprono come un clic.
+// Le righe-tabella della Dashboard sono link: Enter e Spazio le aprono come un clic.
 document.addEventListener('keydown', event => {
   if (event.key !== 'Enter' && event.key !== ' ') return;
-  const row = event.target.closest && event.target.closest('.eng-row[data-act]');
+  const row = event.target.closest && event.target.closest('.eng-trow[data-act]');
   if (!row || row !== event.target) return;
   event.preventDefault();
   row.click();
