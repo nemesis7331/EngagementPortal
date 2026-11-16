@@ -294,9 +294,7 @@ table{width:100%;border-collapse:collapse}th{text-align:left;font-size:var(--fs-
 .dash-task{white-space:normal;min-width:170px;max-width:300px;color:var(--brand-900)}
 .dash-task span{display:block;margin-top:2px;font-size:var(--fs-2xs);color:var(--muted)}
 .dash-flags{display:flex;flex-wrap:wrap;gap:5px;min-width:180px;white-space:normal}
-.dash-go{text-align:right;color:var(--muted-2);font-weight:var(--fw-bold)}
 .dash-mute{color:var(--muted)}
-.dash-date.late{color:var(--st-negative);font-weight:var(--fw-semibold)}
 .kpi-table tbody tr.is-late td:first-child{box-shadow:inset 3px 0 0 var(--st-risk)}
 .dash-phases{display:grid;gap:7px;margin-top:6px}
 .dash-phase{display:grid;grid-template-columns:minmax(88px,120px) minmax(0,1fr) 26px 88px;align-items:center;gap:9px;font-size:var(--fs-sm)}
@@ -306,6 +304,28 @@ table{width:100%;border-collapse:collapse}th{text-align:left;font-size:var(--fs-
 .dash-phase-note{font-size:var(--fs-2xs);color:var(--st-action)}
 .dash-panel-foot{margin:10px 0 0;display:flex;justify-content:flex-end}
 @media(max-width:820px){.dash-opt{display:none}}
+/* Righe-card degli engagement in Dashboard: stesso linguaggio della scheda
+   (nome, cliente, fascia con stato e persone reali, meta a destra). */
+.eng-list{display:grid;gap:8px}
+.eng-row{background:#fff;border:1px solid var(--line);border-radius:var(--radius-md);box-shadow:0 1px 2px rgba(6,29,54,.04);padding:10px 12px;cursor:pointer;transition:border-color .15s,box-shadow .15s}
+.eng-row:hover{border-color:var(--brand-500);box-shadow:var(--shadow)}
+.eng-row:focus-visible{outline:2px solid var(--brand-500);outline-offset:2px}
+.eng-row.is-late{border-left:3px solid var(--st-action)}
+.eng-row-head{display:flex;align-items:center;gap:8px;min-width:0}
+.eng-row-name{font-size:var(--fs-md);font-weight:var(--fw-semibold);color:var(--brand-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.eng-row-id{font-size:var(--fs-2xs);font-weight:var(--fw-black);color:var(--muted-2);letter-spacing:.02em;white-space:nowrap}
+.eng-row-cli{margin-left:auto;min-width:0}
+.eng-row-go{color:var(--muted-2);font-weight:var(--fw-bold);flex:none}
+.eng-row .eng-row-band{margin:8px 0 0;padding:8px 0 0;border-top:1px solid var(--line-soft);gap:6px 10px}
+.eng-row-meta{margin-left:auto;display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:var(--fs-2xs);color:var(--muted)}
+.eng-row-meta .phase{display:flex;align-items:center;gap:6px}
+.eng-row-meta .phase-name{font-size:var(--fs-2xs);max-width:110px}
+.eng-row .band-person{padding:1px 8px 1px 1px}
+.eng-row .band-person .avatar{width:18px;height:18px;font-size:8px}
+.row-run{font-weight:var(--fw-semibold);color:var(--muted);white-space:nowrap}
+.row-run.late{color:var(--st-action)}
+@media(max-width:700px){.eng-row-head{flex-wrap:wrap}.eng-row-cli{margin-left:0;order:4}.eng-row-go{margin-left:auto}}
+
 /* ====== TIPI DI ATTIVITÀ ====== */
 .admin-table.act-table{table-layout:auto}
 .act-table td{vertical-align:middle}
@@ -1004,6 +1024,12 @@ function clientChip(client, opts = {}) {
 
   if (opts.plain) {
     return `<span class="obj-client plain" title="${esc(name)}">${clientMark(c)}<span class="nm">${esc(name)}</span></span>`;
+  }
+
+  // Nelle righe-card il chip è solo un oggetto da leggere: niente pulsante
+  // annidato dentro una riga che è già un link.
+  if (opts.still) {
+    return `<span class="obj-client" title="${esc(name)}">${clientMark(c)}<span class="nm">${esc(name)}</span></span>`;
   }
 
   return `<button class="obj-client" data-act="client-card" data-client="${esc(c.id || '')}" title="Apri la scheda di ${esc(name)}">${clientMark(c)}<span class="nm">${esc(name)}</span></button>`;
@@ -1795,7 +1821,7 @@ function statusOwner(e) {
 // Chi ha in carico il passo corrente. Il server manda i nomi veri dietro al
 // ruolo del workflow (currentTask.owners); se il ruolo non ha persone attive
 // si ripiega sull'etichetta ("Manager", "PMO o Manager").
-function taskOwner(d) {
+function taskOwner(d, opts = {}) {
   const task = d.currentTask;
   if (!task) return '';
 
@@ -1812,8 +1838,14 @@ function taskOwner(d) {
     // etichette che ripetono la pastiglia restano fuori.
     const redundant = ['In esecuzione', 'In corso', 'Completato'];
     if (task.kind === 'progress' && task.label &&
-        !redundant.includes(task.label))
-      return `<span class="band-owner band-note">${esc(task.label)}</span>`;
+        !redundant.includes(task.label)) {
+      // "Pianificato" + "Pianificato dal 23/11/2026": la pastiglia basta.
+      const [stateLabel] = statusPill(d);
+      const repeats = stateLabel &&
+        task.label.toLowerCase().startsWith(stateLabel.toLowerCase());
+      if (!(repeats && opts.compact))
+        return `<span class="band-owner band-note">${esc(task.label)}</span>`;
+    }
     return '';
   }
 
@@ -2285,6 +2317,35 @@ function dashPanel(title, count, hint, body, tag = '') {
   </section>`;
 }
 
+// Riga-card della Dashboard: la stessa grammatica della scheda engagement
+// (nome e cliente in testa, fascia con stato, persone reali e meta a destra)
+// al posto delle tabelle dense.
+function dashEngRow(e, opts = {}) {
+  const client = isClient()
+    ? ''
+    : `<span class="eng-row-cli">${clientChip(clientFor(e), { still: true })}</span>`;
+  const tab = opts.tab ? ` data-tab="${esc(opts.tab)}"` : '';
+
+  return `<article class="eng-row${opts.late ? ' is-late' : ''}"
+      data-act="${opts.act || 'open'}" data-id="${esc(e.id)}"${tab}
+      role="link" tabindex="0"
+      title="Apri ${esc(e.name)}${opts.tab ? ' sul passo da completare' : ''}">
+    <div class="eng-row-head">
+      ${typeBadge(e.type)}
+      <b class="eng-row-name">${esc(e.name)}</b>
+      <span class="eng-row-id">${esc(e.id)}</span>
+      ${client}
+      <span class="eng-row-go" aria-hidden="true">→</span>
+    </div>
+    <div class="hero-band eng-row-band">
+      ${objState(e, { days: !!opts.days })}
+      ${taskOwner(e, { compact: true })}
+      ${opts.notes || ''}
+      ${opts.meta ? `<span class="eng-row-meta">${opts.meta}</span>` : ''}
+    </div>
+  </article>`;
+}
+
 function dashEmptyRow(cols, text) {
   return `<tr><td colspan="${cols}"><div class="empty">${esc(text)}</div></td></tr>`;
 }
@@ -2297,24 +2358,18 @@ function dashRequestsHTML() {
 
   const rows = list.map(e => {
     const s = actionState(e) || {};
-    const days = dashAge(e);
     const start = dashDaysToStart(e);
-    const stale = days >= STALE_DAYS;
-    const kind = stale ? 'negative' : days >= 3 ? 'wait' : 'neutral';
 
-    return `<tr class="${stale ? 'is-late' : ''}"
-        data-act="open-action" data-id="${esc(e.id)}" data-tab="${esc(s.targetTab || '')}"
-        title="Apri ${esc(e.name)}${s.targetTab ? ' sul passo da completare' : ''}">
-      ${dashEngCell(e)}
-      <td>${clientChip(e.clientId)}</td>
-      <td class="dash-opt">${phaseCell(e)}</td>
-      <td class="dash-task">${esc(s.label || 'Richiesta aperta')}<span>${esc(s.ownerLabel || '')}</span></td>
-      <td class="dash-opt">${start === null
-        ? '<span class="dash-mute">–</span>'
-        : `<span class="dash-date${start < 0 ? ' late' : ''}">${fmt(e.periodStart)}</span>`}</td>
-      <td>${dashPill([days === 0 ? 'oggi' : `${days} gg`, kind])}</td>
-      <td class="dash-go dash-opt" aria-hidden="true">→</td>
-    </tr>`;
+    return dashEngRow(e, {
+      act: 'open-action',
+      tab: s.targetTab,
+      days: true,
+      late: dashAge(e) >= STALE_DAYS,
+      notes: `<span class="band-note">${esc(s.label || 'Richiesta aperta')}</span>`,
+      meta: `${start === null
+        ? ''
+        : `<span class="row-run${start < 0 ? ' late' : ''}">avvio ${esc(fmt(e.periodStart))}</span>`}${phaseCell(e)}`
+    });
   }).join('');
 
   const empty = state.role === 'Auditor'
@@ -2328,11 +2383,7 @@ function dashRequestsHTML() {
     'Richieste da gestire',
     list.length,
     `Cosa aspetta il tuo profilo, dalla richiesta più vecchia: la riga apre il passo da completare.${stale}`,
-    `<div class="tablewrap"><table class="kpi-table dash-table">
-      <caption class="sr-only">Richieste da gestire per il profilo attivo</caption>
-      <thead><tr><th>Engagement</th><th>Cliente</th><th class="dash-opt">Fase</th><th>Richiesta</th><th class="dash-opt">Avvio</th><th>Ferma da</th><th class="dash-opt"></th></tr></thead>
-      <tbody>${rows || dashEmptyRow(7, empty)}</tbody>
-    </table></div>`);
+    `<div class="eng-list">${rows || `<div class="empty">${esc(empty)}</div>`}</div>`);
 }
 
 // 2. Prossimi avvii: date accettate da qui in avanti, con i segnali che
@@ -2370,26 +2421,21 @@ function dashStartsHTML() {
     const urgent = !!alert || days <= 3;
     const dayKind = alert ? 'negative' : days <= 7 ? 'wait' : 'neutral';
 
-    return `<tr class="${urgent ? 'is-late' : ''}" data-act="open" data-id="${esc(e.id)}">
-      ${dashEngCell(e)}
-      <td>${esc(e.clientName || '')}</td>
-      <td>${periodBox(e.periodStart, e.periodEnd, { id: e.id, name: e.name })}</td>
-      <td>${dashPill([days === 0 ? 'oggi' : days === 1 ? 'domani' : `${days} gg`, dayKind])}</td>
-      <td class="dash-opt">${phaseCell(e)}</td>
-      <td class="dash-flags">${flags.join('') || '<span class="dash-mute">Nessuna criticità</span>'}</td>
-      <td class="dash-opt">${objState(e)}</td>
-    </tr>`;
+    return dashEngRow(e, {
+      days: true,
+      late: urgent,
+      notes: `<span class="dash-flags">${flags.join('') || '<span class="dash-mute">Nessuna criticità</span>'}</span>`,
+      meta: `${periodBox(e.periodStart, e.periodEnd, { id: e.id, name: e.name })}
+        ${dashPill([days === 0 ? 'oggi' : days === 1 ? 'domani' : `${days} gg`, dayKind])}
+        ${phaseCell(e)}`
+    });
   }).join('');
 
   return dashPanel(
     'Prossimi avvii',
     upcoming.length,
-    'Date accettate da qui in avanti: le colonne a destra segnalano cosa può far slittare la partenza.',
-    `<div class="tablewrap"><table class="kpi-table dash-table">
-      <caption class="sr-only">Engagement con avvio pianificato e criticità aperte</caption>
-      <thead><tr><th>Engagement</th><th>Cliente</th><th>Periodo</th><th>Avvio tra</th><th class="dash-opt">Fase</th><th>Criticità</th><th class="dash-opt">Stato</th></tr></thead>
-      <tbody>${rows || dashEmptyRow(7, 'Nessuna data di avvio pianificata.')}</tbody>
-    </table></div>`);
+    'Date accettate da qui in avanti: la fascia segnala cosa può far slittare la partenza.',
+    `<div class="eng-list">${rows || `<div class="empty">${esc('Nessuna data di avvio pianificata.')}</div>`}</div>`);
 }
 
 // 3. In attesa di terzi: il flusso non dipende dal profilo attivo.
@@ -2400,24 +2446,18 @@ function dashWaitingHTML() {
 
   const rows = list.map(e => {
     const s = actionState(e) || {};
-    const days = dashAge(e);
-    return `<tr data-act="open" data-id="${esc(e.id)}">
-      ${dashEngCell(e)}
-      <td class="dash-task">${esc(s.label || '—')}</td>
-      <td class="dash-opt">${esc(s.ownerLabel || '—')}</td>
-      <td>${dashPill([days === 0 ? 'oggi' : `${days} gg`, days >= STALE_DAYS ? 'wait' : 'neutral'])}</td>
-    </tr>`;
+    return dashEngRow(e, {
+      days: true,
+      notes: `<span class="band-note">${esc(s.label || '—')}</span>`,
+      meta: phaseCell(e)
+    });
   }).join('');
 
   return dashPanel(
     'In attesa di terzi',
     list.length,
     'Cosa aspetta cliente, PMO, Manager o Pentester: dalla più vecchia.',
-    `<div class="tablewrap"><table class="kpi-table dash-table">
-      <caption class="sr-only">Engagement in attesa di altri soggetti</caption>
-      <thead><tr><th>Engagement</th><th>Si aspetta</th><th class="dash-opt">Chi</th><th>Da</th></tr></thead>
-      <tbody>${rows || dashEmptyRow(4, 'Nessuna attesa aperta.')}</tbody>
-    </table></div>`);
+    `<div class="eng-list">${rows || `<div class="empty">${esc('Nessuna attesa aperta.')}</div>`}</div>`);
 }
 
 // 4. Dove sono gli engagement: conteggio per fase del workflow.
@@ -7361,6 +7401,15 @@ document.addEventListener('click', event => {
         el.removeAttribute('aria-busy');
       }
     });
+});
+
+// Le righe-card della Dashboard sono link: Enter e Spazio le aprono come un clic.
+document.addEventListener('keydown', event => {
+  if (event.key !== 'Enter' && event.key !== ' ') return;
+  const row = event.target.closest && event.target.closest('.eng-row[data-act]');
+  if (!row || row !== event.target) return;
+  event.preventDefault();
+  row.click();
 });
 
 document.addEventListener('input', event => {

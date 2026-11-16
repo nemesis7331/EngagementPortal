@@ -1305,6 +1305,8 @@ api.MapDelete("/clients/{clientId}/team/{memberId}", (
 api.MapGet("/engagements", (
     HttpContext context,
     IEngagementRepository repository,
+    IClientRepository clients,
+    IUserRepository users,
     EngagementWorkflow workflow,
     TodoResolver todos,
     IDateProvider clock) =>
@@ -1312,7 +1314,7 @@ api.MapGet("/engagements", (
     var user = GetUser(context);
 
     var result = Access.VisibleEngagements(repository, user)
-        .Select(e => Summary(e, user, workflow, todos, clock));
+        .Select(e => Summary(e, user, workflow, todos, clock, clients, users));
 
     return Results.Ok(result);
 });
@@ -4135,9 +4137,30 @@ static object Summary(
     UserContext user,
     EngagementWorkflow workflow,
     TodoResolver todos,
-    IDateProvider clock)
+    IDateProvider clock,
+    IClientRepository clients,
+    IUserRepository users)
 {
     var phase = workflow.Resolve(engagement, clock.Today);
+
+    // Stato e persone reali dietro al ruolo del passo corrente: le stesse che
+    // la scheda mostra in fascia, così anche le liste possono scrivere un nome
+    // invece del solo "Manager" o "Cliente".
+    var actionState = todos.ResolveAction(
+        engagement,
+        user.Role,
+        clock.Today);
+    IReadOnlyList<DistributionEntry> currentTaskOwners =
+        actionState.Owner is { Length: > 0 } ownerRoles
+            ? Solicitation.Owners(
+                engagement,
+                ownerRoles.Split(
+                    '/',
+                    StringSplitOptions.RemoveEmptyEntries |
+                    StringSplitOptions.TrimEntries),
+                clients.Get(engagement.ClientId)?.DistributionList ?? [],
+                users.List())
+            : [];
 
     return new
     {
@@ -4155,10 +4178,23 @@ static object Summary(
         StepCount = engagement.RetestPlanned ? 9 : 7,
         RetestPlanned = engagement.RetestPlanned,
         Todo = todos.Resolve(engagement, user.Role),
-        ActionState = todos.ResolveAction(
-            engagement,
-            user.Role,
-            clock.Today),
+        ActionState = actionState,
+        CurrentTask = new
+        {
+            actionState.Kind,
+            actionState.Label,
+            actionState.Owner,
+            actionState.OwnerLabel,
+            actionState.TargetTab,
+            Since = actionState.Since?.ToString("yyyy-MM-dd"),
+            Owners = currentTaskOwners.Select(entry => new
+            {
+                entry.Id,
+                entry.Name,
+                entry.Email,
+                entry.Organization
+            })
+        },
         PreparationAlert = EngagementWorkflow.PreparationAlertFor(
             engagement,
             phase,
